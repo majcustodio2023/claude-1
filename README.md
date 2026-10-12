@@ -1,3 +1,31 @@
 # Agency Tracker
 
-Private tracker for agency finances, pipeline, team and Meta Ads.
+A private web app for running the agency: money in vs. the monthly expense and ₱250k revenue targets, recurring clients, pipeline deals, expenses, daily/weekly check-ins, team, tasks, a daily to-do with advice and a Bible verse, and Meta Ads analysis across several ad accounts.
+
+## What's in it
+
+- **Today**: stay-afloat meter (expenses covered) and revenue-goal meter, money breakdown, advice built from the current numbers, a KJV verse, and a to-do list generated each day from collections, deals, tasks and ads.
+- **Income**: recurring streams per month with a "Mark collected" button. Local Ecom Hero pays 15% of the revenue you enter, or the ₱25,000 floor. AACIO is entered as actual monthly sales. One-time income too.
+- **Pipeline**: deals with stages. "Closed & collected" records the full payment and adds it to money made; deposits can be recorded separately. Open deals never count as money made.
+- **Expenses**: fixed monthly lines (with optional start/end months, e.g. the ₱20k debt Nov–Apr), paid checkboxes, and other spending such as ad spend.
+- **Daily log**: leads, booked calls, show-ups, closes, ad spend, energy, wins and blockers. Weekly totals show on Today.
+- **Tasks**: the 50-item Eisenhower checklist from the Oct 11 plan, with owners and due dates. **Team**: members, cost, and their open tasks.
+- **Meta Ads**: add ad accounts (yours and teammates'), save an access token per account, pick which campaigns to track, and analyze them: cost per result, ROAS, link CTR, CPC, CPM, frequency, hook rate (3s views ÷ impressions), hold rate (ThruPlays ÷ 3s views), plus per-ad results. Each campaign is **View only** (suggestions) or **Manage** (suggestions get one-click buttons to pause losing ads or change the daily budget ±20%, each confirmed before it's sent to Meta).
+
+## Running locally
+
+```bash
+npm install
+npm run dev     # http://localhost:3000, data saved in .data/tracker.json
+npm test
+```
+
+## Deploying (Vercel)
+
+1. Create a Supabase project (or use an existing one) and run `supabase/schema.sql`, then register your `TRACKER_DB_KEY` with the insert at the bottom of that file.
+2. Import this repo in Vercel and set the variables from `.env.example`.
+3. Add the subdomain (e.g. `tracker.majcustodioph.com`) under the project's Domains.
+
+## Meta tokens
+
+Use a System User token from Meta Business Settings (doesn't expire) with `ads_read`, plus `ads_management` if you'll use Manage mode. Tokens are checked against Meta, encrypted with `APP_SECRET`, and never returned to the browser.
