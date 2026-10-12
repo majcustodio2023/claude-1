@@ -12,14 +12,15 @@ export default function Team() {
 
   return (
     <Card
-      title={`Team · ${peso(total)} per month`}
+      icon="⬢"
+      title={`Squad · ${peso(total)} per month`}
       actions={<Btn kind="soft" onClick={() => update((d) => void d.team.push({ id: uid("tm"), name: "New member", role: "", monthlyCost: 0, active: true }))}>Add member</Btn>}
     >
       <div className="space-y-4">
         {data.team.map((m) => {
           const open = data.tasks.filter((t) => !t.done && t.owner.toLowerCase().includes(m.name.split(/[ /]/)[0].toLowerCase()));
           return (
-            <div key={m.id} className="border border-line rounded-xl p-3 space-y-2">
+            <div key={m.id} className="border border-line bg-card-2/50 rounded-[3px] p-3 space-y-2">
               <div className="grid md:grid-cols-6 gap-2 items-center">
                 <TextInput className="md:col-span-2 font-medium" value={m.name} onChange={(v) => set(m.id, { name: v })} placeholder="Name" />
                 <TextInput className="md:col-span-2" value={m.role} onChange={(v) => set(m.id, { role: v })} placeholder="Role" />

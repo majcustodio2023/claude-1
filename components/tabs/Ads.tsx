@@ -38,7 +38,7 @@ export default function Ads() {
 
   return (
     <div className="space-y-4">
-      <Card title="Ad accounts">
+      <Card icon="◉" title="Ad accounts">
         <p className="text-sm text-muted mb-3">
           Add each Meta ad account (yours and your team members&apos;). Each needs an access token with <code>ads_read</code> (and <code>ads_management</code> if you want the app to make changes).
           Tokens are encrypted on the server and never shown again.
@@ -65,6 +65,8 @@ export default function Ads() {
       </Card>
 
       <Card
+        icon="📡"
+        glow="hero"
         title="Tracked campaigns"
         actions={
           <select value={preset} onChange={(e) => setPreset(e.target.value as DatePreset)}>
@@ -132,7 +134,7 @@ function AccountRow({ account }: { account: AdAccount }) {
     });
 
   return (
-    <div className="border border-line rounded-xl p-3 space-y-2">
+    <div className="border border-line bg-card-2/50 rounded-[3px] p-3 space-y-2">
       <div className="flex items-center gap-2 flex-wrap">
         <span className="font-medium">{account.label}</span>
         <span className="text-xs text-muted">{account.owner} · {account.accountId}</span>
@@ -217,14 +219,14 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
   const m = result?.metrics;
 
   return (
-    <div className="border border-line rounded-xl p-3 space-y-3">
+    <div className="border border-line bg-card-2/50 rounded-[3px] p-3 space-y-3">
       <div className="flex items-center gap-2 flex-wrap">
         <span className="font-medium">{tracked.name}</span>
         <span className="text-xs text-muted">{account?.label}</span>
         <div className="flex-1" />
-        <div className="flex rounded-lg border border-line overflow-hidden text-xs">
+        <div className="flex rounded-[3px] border border-line overflow-hidden text-xs">
           {(["view", "manage"] as const).map((mode) => (
-            <button key={mode} onClick={() => set({ mode })} className={`px-2 py-1 ${tracked.mode === mode ? "bg-accent text-white dark:text-black" : ""}`}>
+            <button key={mode} onClick={() => set({ mode })} className={`px-2 py-1 ${tracked.mode === mode ? "bg-accent text-[#031018]" : ""}`}>
               {mode === "view" ? "View only" : "Manage"}
             </button>
           ))}

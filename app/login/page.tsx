@@ -19,15 +19,16 @@ export default function Login() {
 
   return (
     <main className="min-h-screen grid place-items-center px-4">
-      <form onSubmit={submit} className="w-full max-w-sm bg-card border border-line rounded-2xl p-6 space-y-4">
-        <div>
-          <h1 className="text-xl font-semibold">Agency Tracker</h1>
-          <p className="text-sm text-muted">Enter your passcode to continue.</p>
+      <form onSubmit={submit} className="hud hud-hero w-full max-w-sm p-7 space-y-5">
+        <div className="text-center space-y-2">
+          <div className="font-display text-[0.65rem] text-hero uppercase">Hero HQ</div>
+          <h1 className="font-display text-2xl font-extrabold glow-text-cyan">AGENCY TRACKER</h1>
+          <p className="text-sm text-muted">Enter your passcode to start the day.</p>
         </div>
-        <input type="password" autoFocus className="w-full" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Passcode" />
-        {error && <p className="text-sm text-bad">{error}</p>}
-        <button disabled={busy} className="w-full rounded-lg bg-accent text-white dark:text-black py-2 font-medium disabled:opacity-60">
-          {busy ? "Signing in…" : "Sign in"}
+        <input type="password" autoFocus className="w-full text-center tracking-[0.3em]" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" aria-label="Passcode" />
+        {error && <p className="text-sm text-bad text-center">{error}</p>}
+        <button disabled={busy} className="btn btn-primary w-full py-3">
+          {busy ? "Loading…" : "Press start"}
         </button>
       </form>
     </main>

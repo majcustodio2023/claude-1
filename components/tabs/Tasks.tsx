@@ -25,7 +25,9 @@ export default function Tasks() {
   return (
     <div className="space-y-4">
       <Card
-        title={`Master checklist · ${done} of ${data.tasks.length} done (${data.tasks.length ? Math.round((done / data.tasks.length) * 100) : 0}%)`}
+        icon="◎"
+        glow="hero"
+        title={`Mission plan · ${done} of ${data.tasks.length} done (${data.tasks.length ? Math.round((done / data.tasks.length) * 100) : 0}%)`}
         actions={
           <>
             <select value={owner} onChange={(e) => setOwner(e.target.value)}>
@@ -62,7 +64,7 @@ export default function Tasks() {
           const all = data.tasks.filter((t) => t.quadrant === q);
           const list = all.filter((t) => (owner === "all" || t.owner === owner) && !(hideDone && t.done));
           return (
-            <Card key={q} title={`${label} · ${all.filter((t) => t.done).length}/${all.length}`}>
+            <Card key={q} glow={q === "do" ? "hero" : q === "schedule" ? "cyan" : q === "delegate" ? "good" : "gold"} title={`${label} · ${all.filter((t) => t.done).length}/${all.length}`}>
               <p className="text-xs text-muted -mt-2 mb-3">{desc}</p>
               <ul className="space-y-2">
                 {list.map((t) => (

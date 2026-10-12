@@ -1,49 +1,243 @@
 @import "tailwindcss";
+@import "@fontsource/rajdhani/500.css";
+@import "@fontsource/rajdhani/600.css";
+@import "@fontsource/rajdhani/700.css";
+@import "@fontsource/orbitron/600.css";
+@import "@fontsource/orbitron/800.css";
 
+/* "Hero HQ": a dark, neon game HUD. Colors stay as tokens so every screen shares them. */
 @theme {
-  --color-bg: #f6f5f2;
-  --color-card: #ffffff;
-  --color-ink: #1c1b19;
-  --color-muted: #6b6860;
-  --color-line: #e4e1da;
-  --color-accent: #2f5d50;
-  --color-accent-soft: #e3eee9;
-  --color-good: #2e7d4f;
-  --color-warn: #b7791f;
-  --color-bad: #c0392b;
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-bg: #06070d;
+  --color-card: #0d1120;
+  --color-card-2: #121833;
+  --color-ink: #e9f0ff;
+  --color-muted: #8d99bd;
+  --color-line: #1f2a4d;
+  --color-accent: #2ee6ff;
+  --color-accent-soft: #0f2a3f;
+  --color-hero: #ff3ddb;
+  --color-gold: #ffc940;
+  --color-good: #3dffa2;
+  --color-warn: #ffae2b;
+  --color-bad: #ff4f72;
+  --font-sans: "Rajdhani", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Orbitron", "Rajdhani", ui-sans-serif, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #151513;
-    --color-card: #1f1f1c;
-    --color-ink: #ecebe6;
-    --color-muted: #a19e95;
-    --color-line: #34332f;
-    --color-accent: #7fbfa8;
-    --color-accent-soft: #233630;
-    --color-good: #6cc58f;
-    --color-warn: #e0b057;
-    --color-bad: #ef7d6f;
-  }
+:root {
+  color-scheme: dark;
+}
+
+html {
+  font-size: 16.5px;
 }
 
 body {
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(900px 500px at 85% -10%, rgba(255, 61, 219, 0.16), transparent 60%),
+    radial-gradient(900px 600px at -10% 10%, rgba(46, 230, 255, 0.14), transparent 60%),
+    linear-gradient(rgba(46, 230, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46, 230, 255, 0.045) 1px, transparent 1px);
+  background-size: auto, auto, 44px 44px, 44px 44px;
+  background-attachment: fixed;
   color: var(--color-ink);
+  font-weight: 500;
+  letter-spacing: 0.01em;
 }
 
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
+}
+
+/* Panels: angled frame with glowing corner brackets */
+.hud {
+  position: relative;
+  background: linear-gradient(160deg, rgba(18, 24, 51, 0.92), rgba(10, 13, 26, 0.92));
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px rgba(46, 230, 255, 0.03) inset, 0 20px 40px -24px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(6px);
+}
+.hud::before,
+.hud::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  border-color: var(--hud-glow, var(--color-accent));
+  filter: drop-shadow(0 0 4px var(--hud-glow, var(--color-accent)));
+}
+.hud::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+.hud::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+.hud-hero { --hud-glow: var(--color-hero); }
+.hud-gold { --hud-glow: var(--color-gold); }
+.hud-good { --hud-glow: var(--color-good); }
+
+/* Energy bars */
+.bar {
+  position: relative;
+  height: 14px;
+  background: #0a0f1e;
+  border: 1px solid var(--color-line);
+  border-radius: 2px;
+  overflow: hidden;
+  transform: skewX(-12deg);
+}
+.bar > .fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, var(--bar-from), var(--bar-to));
+  box-shadow: 0 0 12px var(--bar-to);
+  transition: width 900ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.bar > .fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.45) 45%, transparent 70%);
+  background-size: 200% 100%;
+  animation: shine 2.8s linear infinite;
+}
+.bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 2px), rgba(6, 7, 13, 0.85) calc(10% - 2px) 10%);
+  pointer-events: none;
+}
+.bar-thin { height: 8px; }
+.bar-cyan { --bar-from: #1aa3ff; --bar-to: var(--color-accent); }
+.bar-hero { --bar-from: #8a3dff; --bar-to: var(--color-hero); }
+.bar-gold { --bar-from: #ff8a1a; --bar-to: var(--color-gold); }
+.bar-good { --bar-from: #10b981; --bar-to: var(--color-good); }
+.bar-bad { --bar-from: #b3123a; --bar-to: var(--color-bad); }
+
+@keyframes shine {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+.glow-text-cyan { text-shadow: 0 0 18px rgba(46, 230, 255, 0.55); }
+.glow-text-hero { text-shadow: 0 0 18px rgba(255, 61, 219, 0.55); }
+.glow-text-gold { text-shadow: 0 0 18px rgba(255, 201, 64, 0.6); }
+
+/* Buttons */
+.btn {
+  position: relative;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  padding: 0.45rem 0.95rem;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  transition: transform 120ms, box-shadow 160ms, background 160ms, filter 160ms;
+}
+.btn:active { transform: translateY(1px) scale(0.98); }
+.btn:disabled { opacity: 0.45; }
+.btn-primary {
+  background: linear-gradient(90deg, #12b5ff, var(--color-accent));
+  color: #031018;
+}
+.btn-primary:hover { filter: brightness(1.15); box-shadow: 0 0 18px rgba(46, 230, 255, 0.6); }
+.btn-hero {
+  background: linear-gradient(90deg, #8a3dff, var(--color-hero));
+  color: #fff;
+}
+.btn-hero:hover { filter: brightness(1.15); }
+.btn-ghost {
+  background: rgba(46, 230, 255, 0.06);
+  color: var(--color-ink);
+  box-shadow: inset 0 0 0 1px var(--color-line);
+}
+.btn-ghost:hover { background: rgba(46, 230, 255, 0.14); }
+.btn-danger {
+  background: rgba(255, 79, 114, 0.08);
+  color: var(--color-bad);
+}
+.btn-danger:hover { background: rgba(255, 79, 114, 0.18); }
+
 input, select, textarea {
-  background: var(--color-card);
+  background: rgba(6, 9, 20, 0.85);
   color: var(--color-ink);
   border: 1px solid var(--color-line);
-  border-radius: 8px;
+  border-radius: 3px;
   padding: 6px 10px;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 600;
   min-width: 0;
 }
+input::placeholder, textarea::placeholder { color: #56618a; }
 input:focus, select:focus, textarea:focus {
-  outline: 2px solid var(--color-accent);
-  outline-offset: -1px;
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(46, 230, 255, 0.18);
 }
+input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1.5px solid var(--color-accent);
+  border-radius: 2px;
+  transform: rotate(45deg) scale(0.85);
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+input[type="checkbox"]:checked {
+  background: var(--color-accent);
+  box-shadow: 0 0 10px var(--color-accent);
+}
+input[type="checkbox"]:checked::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: #031018;
+}
+input[type="date"], input[type="month"] { color-scheme: dark; }
+
+/* Achievement toast + burst */
+@keyframes toast-in {
+  0% { transform: translate(-50%, 30px) scale(0.9); opacity: 0; }
+  12% { transform: translate(-50%, 0) scale(1.03); opacity: 1; }
+  18% { transform: translate(-50%, 0) scale(1); }
+  85% { opacity: 1; }
+  100% { transform: translate(-50%, -10px); opacity: 0; }
+}
+.toast { animation: toast-in 3.6s ease-out forwards; }
+@keyframes burst {
+  from { transform: translate(0, 0) scale(1); opacity: 1; }
+  to { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
+}
+.particle { animation: burst 900ms ease-out forwards; }
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 201, 64, 0.0); }
+  50% { box-shadow: 0 0 22px 2px rgba(255, 201, 64, 0.35); }
+}
+.pulse-gold { animation: pulse-glow 2.4s ease-in-out infinite; }
+
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.spin-slow { animation: spin-slow 24s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+::-webkit-scrollbar { height: 8px; width: 8px; }
+::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 4px; }

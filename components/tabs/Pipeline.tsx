@@ -4,7 +4,7 @@ import { useState } from "react";
 import { dealBalance, dealPaid, uid } from "@/lib/finance";
 import type { Deal, DealStage } from "@/lib/types";
 import { useTracker } from "../App";
-import { Badge, Btn, Card, NumInput, TextInput, peso } from "../ui";
+import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate, peso } from "../ui";
 
 const STAGES: [DealStage, string][] = [
   ["lead", "Lead"],
@@ -24,7 +24,7 @@ export default function Pipeline() {
 
   return (
     <div className="space-y-4">
-      <Card title="Add an upcoming deal or receivable">
+      <Card title="Spawn a new boss (deal or receivable)" icon="⚔" glow="hero">
         <form
           className="flex flex-wrap gap-2"
           onSubmit={(e) => {
@@ -40,8 +40,8 @@ export default function Pipeline() {
         </form>
       </Card>
 
-      <Section title={`Open pipeline · ${peso(open.reduce((a, d) => a + d.value, 0))}`} deals={open} />
-      <Section title={`Closed · ${peso(won.reduce((a, d) => a + dealPaid(d), 0))} collected, ${peso(won.reduce((a, d) => a + dealBalance(d), 0))} to collect`} deals={won} />
+      <Section title={`Bosses in the field · ${peso(open.reduce((a, d) => a + d.value, 0))}`} deals={open} />
+      <Section title={`Defeated · ${peso(won.reduce((a, d) => a + dealPaid(d), 0))} collected, ${peso(won.reduce((a, d) => a + dealBalance(d), 0))} to collect`} deals={won} />
       {lost.length > 0 && <Section title="Lost" deals={lost} />}
     </div>
   );
@@ -50,7 +50,7 @@ export default function Pipeline() {
 function Section({ title, deals }: { title: string; deals: Deal[] }) {
   if (!deals.length) return null;
   return (
-    <Card title={title}>
+    <Card title={title} icon="◆">
       <div className="grid md:grid-cols-2 gap-3">
         {deals.map((d) => (
           <DealCard key={d.id} deal={d} />
@@ -67,15 +67,31 @@ function DealCard({ deal }: { deal: Deal }) {
   const paid = dealPaid(deal);
   const balance = dealBalance(deal);
   const set = (patch: Partial<Deal>) => update((d) => void Object.assign(d.deals.find((x) => x.id === deal.id)!, patch));
-  const addPayment = (amount: number, date: string, note?: string) =>
+  const addPayment = (amount: number, date: string, note?: string) => {
     update((d) => {
       const x = d.deals.find((y) => y.id === deal.id)!;
       x.payments.push({ id: uid("pay"), amount, date, note });
       if (x.stage !== "won") x.stage = "won";
     });
+    const defeated = amount >= balance;
+    celebrate({
+      kicker: defeated ? "Boss defeated" : "Critical hit",
+      title: `+${peso(amount)} collected`,
+      sub: defeated ? `${deal.name} is fully paid.` : `${deal.name}: ${peso(balance - amount)} HP left`,
+      icon: defeated ? "🐉" : "💥",
+    });
+  };
+  const hp = deal.stage === "lost" ? 0 : deal.value ? balance / deal.value : 0;
 
   return (
-    <div className="border border-line rounded-xl p-3 space-y-3">
+    <div className={`border rounded-[3px] p-3.5 space-y-3 ${deal.stage === "won" && balance === 0 ? "border-gold/50 bg-gold/5" : "border-line bg-card-2/50"}`}>
+      <div>
+        <div className="flex justify-between text-[0.7rem] uppercase tracking-[0.12em] mb-1">
+          <span className="text-muted">{deal.stage === "won" && balance === 0 ? "Defeated" : deal.stage === "lost" ? "Escaped" : "Boss HP"}</span>
+          <span className={`font-display ${balance === 0 ? "text-gold" : "text-bad"}`}>{peso(balance)} / {peso(deal.value)}</span>
+        </div>
+        <Bar pct={hp} tone={balance === 0 ? "gold" : "bad"} thin />
+      </div>
       <div className="flex items-start gap-2">
         <TextInput className="flex-1 font-medium" value={deal.name} onChange={(v) => set({ name: v })} />
         <select value={deal.stage} onChange={(e) => set({ stage: e.target.value as DealStage })}>
@@ -92,17 +108,6 @@ function DealCard({ deal }: { deal: Deal }) {
           Expected close <input type="date" value={deal.expectedClose ?? ""} onChange={(e) => set({ expectedClose: e.target.value || undefined })} />
         </label>
       </div>
-      {deal.stage === "won" && (
-        <div>
-          <div className="flex justify-between text-xs text-muted mb-1">
-            <span>Collected {peso(paid)}</span>
-            <span>{balance > 0 ? `${peso(balance)} left` : <Badge tone="good">Fully paid</Badge>}</span>
-          </div>
-          <div className="h-2 rounded-full bg-line overflow-hidden">
-            <div className="h-full bg-good" style={{ width: `${deal.value ? Math.min(paid / deal.value, 1) * 100 : 0}%` }} />
-          </div>
-        </div>
-      )}
       {deal.payments.length > 0 && (
         <ul className="text-xs space-y-1">
           {deal.payments.map((p) => (
@@ -118,11 +123,11 @@ function DealCard({ deal }: { deal: Deal }) {
       <TextInput className="w-full text-xs" value={deal.notes} onChange={(v) => set({ notes: v })} placeholder="Notes" />
       <div className="flex gap-2 flex-wrap">
         {balance > 0 && deal.stage !== "lost" && (
-          <Btn kind="primary" onClick={() => addPayment(balance, today, paid ? "Balance" : "Full payment")}>
-            {paid ? `Collect balance ${peso(balance)}` : `Closed & collected ${peso(balance)}`}
+          <Btn kind="hero" onClick={() => addPayment(balance, today, paid ? "Balance" : "Full payment")}>
+            {paid ? `Finish it · collect ${peso(balance)}` : `Closed & collected ${peso(balance)}`}
           </Btn>
         )}
-        {deal.stage !== "lost" && <Btn onClick={() => setShowPay(!showPay)}>Record deposit / payment</Btn>}
+        {deal.stage !== "lost" && <Btn onClick={() => setShowPay(!showPay)}>Record deposit</Btn>}
         <Btn kind="danger" onClick={() => confirm(`Delete ${deal.name}?`) && update((d) => void (d.deals = d.deals.filter((x) => x.id !== deal.id)))}>
           Delete
         </Btn>

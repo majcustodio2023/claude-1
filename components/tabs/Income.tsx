@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { expectedForStream, monthOf, summarize, uid } from "@/lib/finance";
 import type { IncomeStream, StreamKind, StreamMonth } from "@/lib/types";
 import { useTracker } from "../App";
-import { Badge, Btn, Card, NumInput, TextInput, peso } from "../ui";
+import { Badge, Btn, Card, NumInput, TextInput, celebrate, peso } from "../ui";
 
 const KIND_LABEL: Record<StreamKind, string> = {
   fixed: "Fixed monthly fee",
@@ -35,6 +35,7 @@ export default function Income() {
   return (
     <div className="space-y-4">
       <Card
+        icon="◆"
         title={`Recurring income · ${month}`}
         actions={<Btn onClick={() => setEditing(!editing)}>{editing ? "Done editing" : "Edit streams"}</Btn>}
       >
@@ -43,7 +44,7 @@ export default function Income() {
             const st = r.stream;
             const margin = st.directCost ? r.expected - st.directCost : null;
             return (
-              <div key={st.id} className="border border-line rounded-xl p-3 flex flex-col md:flex-row md:items-center gap-3">
+              <div key={st.id} className={`border rounded-[3px] p-3.5 flex ${r.isCollected ? "border-good/40 bg-good/5" : "border-line bg-card-2/50"} flex-col md:flex-row md:items-center gap-3`}>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium">{st.name}</span>
@@ -81,7 +82,14 @@ export default function Income() {
                       <Btn onClick={() => setSM(st.id, { collected: undefined, collectedOn: undefined })}>Undo</Btn>
                     </>
                   ) : (
-                    <Btn kind="primary" onClick={() => setSM(st.id, { collected: expectedForStream(st, r.month), collectedOn: collectDate })}>
+                    <Btn
+                      kind="primary"
+                      onClick={() => {
+                        const amt = expectedForStream(st, r.month);
+                        setSM(st.id, { collected: amt, collectedOn: collectDate });
+                        celebrate({ kicker: "Loot collected", title: `+${peso(amt)}`, sub: st.name, icon: "💰" });
+                      }}
+                    >
                       Mark collected
                     </Btn>
                   )}
@@ -97,7 +105,7 @@ export default function Income() {
       </Card>
 
       {editing && (
-        <Card title="Edit income streams" actions={<Btn kind="soft" onClick={() => update((d) => void d.streams.push({ id: uid("stream"), name: "New client", kind: "fixed", amount: 0, active: true }))}>Add stream</Btn>}>
+        <Card icon="⚙" title="Edit income streams" actions={<Btn kind="soft" onClick={() => update((d) => void d.streams.push({ id: uid("stream"), name: "New client", kind: "fixed", amount: 0, active: true }))}>Add stream</Btn>}>
           <div className="space-y-3">
             {data.streams.map((st) => (
               <div key={st.id} className="grid grid-cols-2 md:grid-cols-7 gap-2 items-end border-b border-line pb-3">
@@ -149,7 +157,7 @@ export default function Income() {
         </Card>
       )}
 
-      <Card title={`One-time income · ${month}`}>
+      <Card icon="◆" title={`One-time income · ${month}`}>
         <form
           className="flex flex-wrap gap-2 mb-3"
           onSubmit={(e) => {

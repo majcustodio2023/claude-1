@@ -20,7 +20,8 @@ export default function Expenses() {
   return (
     <div className="space-y-4">
       <Card
-        title={`Monthly expenses · ${month} · ${peso(s.fixedExpenses)}`}
+        icon="▼"
+        title={`Monthly upkeep · ${month} · ${peso(s.fixedExpenses)}`}
         actions={<Btn kind="soft" onClick={() => update((d) => void d.expenses.push({ id: uid("exp"), name: "New expense", amount: 0, category: "other", active: true }))}>Add expense</Btn>}
       >
         <div className="space-y-2">
@@ -60,7 +61,7 @@ export default function Expenses() {
         </p>
       </Card>
 
-      <Card title={`Other spending · ${month} · ${peso(s.adHocExpenses)}`}>
+      <Card icon="▼" title={`Other spending · ${month} · ${peso(s.adHocExpenses)}`}>
         <form
           className="flex flex-wrap gap-2 mb-3"
           onSubmit={(e) => {

@@ -23,7 +23,7 @@ export default function Log() {
 
   return (
     <div className="space-y-4">
-      <Card title="Daily check-in" actions={<input type="date" value={date} onChange={(e) => e.target.value && setDate(e.target.value)} />}>
+      <Card icon="✦" glow="hero" title="Daily check-in" actions={<input type="date" value={date} onChange={(e) => e.target.value && setDate(e.target.value)} />}>
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-3">
           {NUM_FIELDS.map(([k, label]) => (
             <label key={k} className="text-xs text-muted flex flex-col gap-1">
@@ -54,7 +54,7 @@ export default function Log() {
         </div>
       </Card>
 
-      <Card title="Recent days">
+      <Card icon="◆" title="Recent days">
         {recent.length === 0 ? (
           <p className="text-sm text-muted">No entries yet.</p>
         ) : (
@@ -74,7 +74,7 @@ export default function Log() {
               </thead>
               <tbody className="divide-y divide-line">
                 {recent.map((l) => (
-                  <tr key={l.date} className="cursor-pointer hover:bg-accent-soft" onClick={() => setDate(l.date)}>
+                  <tr key={l.date} className="cursor-pointer hover:bg-white/[0.03]" onClick={() => setDate(l.date)}>
                     <td className="py-1.5 pr-3 whitespace-nowrap">{l.date}</td>
                     <td className="pr-3 tabular-nums">{l.leads ?? "–"}</td>
                     <td className="pr-3 tabular-nums">{l.bookedCalls ?? "–"}</td>

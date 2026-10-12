@@ -18,7 +18,7 @@ export default function SettingsTab() {
 
   return (
     <div className="space-y-4">
-      <Card title="Targets">
+      <Card icon="🎯" title="Targets">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <label className="text-xs text-muted flex flex-col gap-1">
             Monthly revenue goal
@@ -38,7 +38,7 @@ export default function SettingsTab() {
           </label>
         </div>
       </Card>
-      <Card title="Data">
+      <Card icon="⚙" title="Data">
         <div className="flex gap-2 flex-wrap">
           <Btn onClick={exportJson}>Download backup (JSON)</Btn>
           <Btn
