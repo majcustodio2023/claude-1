@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import { Hero, SfxBurst } from "./characters";
 
 type Glow = "cyan" | "hero" | "gold" | "good";
 const GLOW_CLASS: Record<Glow, string> = { cyan: "", hero: "hud-hero", gold: "hud-gold", good: "hud-good" };
+const CAPTION_CLASS: Record<Glow, string> = { cyan: "caption-cyan", hero: "caption-hero", gold: "", good: "caption-good" };
 
 export function Card({ title, icon, actions, children, className = "", glow = "cyan" }: { title?: ReactNode; icon?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string; glow?: Glow }) {
   return (
@@ -11,8 +13,8 @@ export function Card({ title, icon, actions, children, className = "", glow = "c
       {(title || actions) && (
         <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
           {title && (
-            <h2 className="font-display text-[0.8rem] font-semibold uppercase text-ink flex items-center gap-2">
-              {icon && <span className="text-accent text-base">{icon}</span>}
+            <h2 className={`caption ${CAPTION_CLASS[glow]}`}>
+              {icon && <span aria-hidden>{icon}</span>}
               {title}
             </h2>
           )}
@@ -25,6 +27,7 @@ export function Card({ title, icon, actions, children, className = "", glow = "c
 }
 
 export type BarTone = "cyan" | "hero" | "gold" | "good" | "bad";
+const TONE_TEXT: Record<BarTone, string> = { cyan: "text-accent", hero: "text-hero", gold: "text-gold", good: "text-good", bad: "text-bad" };
 
 export function Bar({ pct, tone = "cyan", thin }: { pct: number; tone?: BarTone; thin?: boolean }) {
   return (
@@ -36,34 +39,32 @@ export function Bar({ pct, tone = "cyan", thin }: { pct: number; tone?: BarTone;
 
 export function Meter({ label, icon, value, target, sub, tone }: { label: string; icon?: ReactNode; value: number; target: number; sub?: ReactNode; tone: BarTone }) {
   const pct = target > 0 ? value / target : 0;
-  const color = { cyan: "text-accent glow-text-cyan", hero: "text-hero glow-text-hero", gold: "text-gold glow-text-gold", good: "text-good", bad: "text-bad" }[pct >= 1 ? "gold" : tone];
+  const t = pct >= 1 ? "gold" : tone;
   return (
     <div className="space-y-3">
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="font-display text-[0.72rem] uppercase text-muted flex items-center gap-2">
-          {icon && <span className="text-base">{icon}</span>}
+      <div className="flex items-center justify-between gap-2">
+        <span className="font-display text-2xl tracking-wide flex items-center gap-2">
+          {icon && <span aria-hidden>{icon}</span>}
           {label}
         </span>
-        <span className={`font-display text-2xl font-extrabold tabular-nums ${color}`}>{Math.round(pct * 100)}%</span>
+        <span className={`comic-num text-4xl ${TONE_TEXT[t]}`}>{Math.round(pct * 100)}%</span>
       </div>
       <div className="flex items-baseline gap-2 flex-wrap">
-        <span className="font-display text-[1.7rem] font-extrabold tabular-nums leading-none">{peso(value)}</span>
-        <span className="text-muted">/ {peso(target)}</span>
+        <span className="comic-num text-5xl leading-none">{peso(value)}</span>
+        <span className="text-lg text-muted font-bold">of {peso(target)}</span>
       </div>
-      <Bar pct={pct} tone={pct >= 1 ? "gold" : tone} />
-      {sub && <div className="text-sm text-muted">{sub}</div>}
+      <Bar pct={pct} tone={t} />
+      {sub && <div className="text-base text-muted font-bold">{sub}</div>}
     </div>
   );
 }
 
-export function Stat({ label, value, hint, tone }: { label: string; value: ReactNode; hint?: ReactNode; tone?: "cyan" | "hero" | "gold" | "good" | "bad" }) {
-  const color = tone ? { cyan: "text-accent", hero: "text-hero", gold: "text-gold", good: "text-good", bad: "text-bad" }[tone] : "";
+export function Stat({ label, value, hint, tone }: { label: string; value: ReactNode; hint?: ReactNode; tone?: BarTone }) {
   return (
-    <div className="relative bg-card-2/70 border border-line rounded-[3px] p-3 overflow-hidden">
-      <div className="absolute left-0 top-0 h-full w-[3px] bg-accent/60" />
-      <div className="text-[0.7rem] uppercase tracking-[0.12em] text-muted font-semibold">{label}</div>
-      <div className={`font-display text-lg font-semibold tabular-nums mt-0.5 ${color}`}>{value}</div>
-      {hint && <div className="text-xs text-muted mt-0.5">{hint}</div>}
+    <div className="relative bg-card-2 border-[3px] border-outline rounded-[10px] p-3.5 shadow-[4px_4px_0_var(--color-outline)]">
+      <div className="text-sm text-muted font-extrabold uppercase tracking-wide">{label}</div>
+      <div className={`comic-num text-3xl mt-1 ${tone ? TONE_TEXT[tone] : "text-ink"}`}>{value}</div>
+      {hint && <div className="text-sm text-muted mt-0.5">{hint}</div>}
     </div>
   );
 }
@@ -116,15 +117,15 @@ export function TextInput({ value, onChange, className = "", placeholder }: { va
 
 export function Badge({ tone = "muted", children }: { tone?: "good" | "warn" | "bad" | "muted" | "accent" | "gold" | "hero"; children: ReactNode }) {
   const t = {
-    good: "text-good border-good/50 bg-good/10",
-    warn: "text-warn border-warn/50 bg-warn/10",
-    bad: "text-bad border-bad/50 bg-bad/10",
-    muted: "text-muted border-line bg-white/[0.02]",
-    accent: "text-accent border-accent/50 bg-accent/10",
-    gold: "text-gold border-gold/60 bg-gold/10",
-    hero: "text-hero border-hero/50 bg-hero/10",
+    good: "bg-good text-outline",
+    warn: "bg-warn text-outline",
+    bad: "bg-bad text-outline",
+    muted: "bg-line text-ink",
+    accent: "bg-accent text-outline",
+    gold: "bg-gold text-outline",
+    hero: "bg-hero text-outline",
   }[tone];
-  return <span className={`inline-block text-[0.68rem] font-bold uppercase tracking-[0.1em] border rounded-[2px] px-1.5 py-0.5 ${t}`}>{children}</span>;
+  return <span className={`inline-block font-display text-[0.95rem] leading-none tracking-wide border-2 border-outline rounded-md px-2 pt-1 pb-0.5 shadow-[2px_2px_0_var(--color-outline)] ${t}`}>{children}</span>;
 }
 
 export function peso(n: number): string {
@@ -138,13 +139,15 @@ export interface CelebrateDetail {
   sub?: string;
   icon?: string;
   kicker?: string;
+  /** Big comic sound effect, e.g. "KA-CHING!" */
+  sfx?: string;
 }
 
 export function celebrate(detail: CelebrateDetail) {
   window.dispatchEvent(new CustomEvent<CelebrateDetail>("tracker:celebrate", { detail }));
 }
 
-/** Pop-up banner with a particle burst, triggered by celebrate(). */
+/** Anime-style impact frame: flash, speed lines, SFX burst and the hero cheering. */
 export function Celebrations() {
   const [queue, setQueue] = useState<(CelebrateDetail & { key: number })[]>([]);
   useEffect(() => {
@@ -155,32 +158,29 @@ export function Celebrations() {
   const current = queue[0];
   useEffect(() => {
     if (!current) return;
-    const t = setTimeout(() => setQueue((q) => q.slice(1)), 3600);
+    document.body.classList.remove("shake");
+    void document.body.offsetWidth;
+    document.body.classList.add("shake");
+    const t = setTimeout(() => setQueue((q) => q.slice(1)), 3400);
     return () => clearTimeout(t);
   }, [current]);
   if (!current) return null;
-  const particles = Array.from({ length: 18 }, (_, i) => {
-    const angle = (i / 18) * Math.PI * 2;
-    const dist = 90 + (i % 3) * 30;
-    return { dx: Math.cos(angle) * dist, dy: Math.sin(angle) * dist, c: ["#2ee6ff", "#ff3ddb", "#ffc940"][i % 3] };
-  });
   return (
-    <div key={current.key} className="toast fixed left-1/2 bottom-8 z-50 pointer-events-none" role="status">
-      <div className="relative">
-        {particles.map((p, i) => (
-          <span
-            key={i}
-            className="particle absolute left-1/2 top-1/2 w-2 h-2 rotate-45"
-            style={{ background: p.c, boxShadow: `0 0 8px ${p.c}`, ["--dx" as string]: `${p.dx}px`, ["--dy" as string]: `${p.dy}px` }}
-          />
-        ))}
-        <div className="hud hud-gold pulse-gold px-6 py-4 flex items-center gap-4 min-w-72">
-          <span className="text-4xl">{current.icon ?? "🏆"}</span>
-          <div>
-            <div className="font-display text-[0.65rem] uppercase text-gold">{current.kicker ?? "Achievement unlocked"}</div>
-            <div className="font-display text-lg font-extrabold glow-text-gold">{current.title}</div>
-            {current.sub && <div className="text-sm text-muted">{current.sub}</div>}
+    <div key={current.key} className="fixed inset-0 z-50 pointer-events-none overflow-hidden" role="status">
+      <div className="impact-flash absolute inset-0 bg-white" />
+      <div className="impact-lines absolute inset-[-20%]" />
+      <div className="sfx-in absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,560px)]">
+        <div className="relative flex items-end justify-center">
+          <Hero mood="hype" size={150} className="bob -mr-6 relative z-10 drop-shadow-[6px_6px_0_#0b0a14]" />
+          <SfxBurst text={current.sfx ?? "POW!"} className="w-56 sm:w-64 -mb-2" />
+        </div>
+        <div className="hud hud-gold -mt-3 mx-auto max-w-md px-5 py-4 text-center !animate-none">
+          <div className="caption mb-2">{current.kicker ?? "Achievement unlocked"}</div>
+          <div className="font-display text-3xl tracking-wide">
+            <span className="mr-2">{current.icon ?? "🏆"}</span>
+            {current.title}
           </div>
+          {current.sub && <div className="text-base text-muted font-bold mt-1">{current.sub}</div>}
         </div>
       </div>
     </div>

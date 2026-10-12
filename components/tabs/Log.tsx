@@ -26,12 +26,12 @@ export default function Log() {
       <Card icon="✦" glow="hero" title="Daily check-in" actions={<input type="date" value={date} onChange={(e) => e.target.value && setDate(e.target.value)} />}>
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-3">
           {NUM_FIELDS.map(([k, label]) => (
-            <label key={k} className="text-xs text-muted flex flex-col gap-1">
+            <label key={k} className="text-sm text-muted flex flex-col gap-1">
               {label}
               <NumInput value={log[k] as number | undefined} onChange={(v) => set({ [k]: v })} />
             </label>
           ))}
-          <label className="text-xs text-muted flex flex-col gap-1">
+          <label className="text-sm text-muted flex flex-col gap-1">
             Energy (1–5)
             <select value={log.energy ?? ""} onChange={(e) => set({ energy: e.target.value ? Number(e.target.value) : undefined })}>
               <option value="">–</option>
@@ -41,7 +41,7 @@ export default function Log() {
         </div>
         <div className="grid md:grid-cols-3 gap-3">
           {(["wins", "blockers", "notes"] as const).map((k) => (
-            <label key={k} className="text-xs text-muted flex flex-col gap-1 capitalize">
+            <label key={k} className="text-sm text-muted flex flex-col gap-1 capitalize">
               {k}
               <textarea
                 rows={3}
@@ -60,7 +60,7 @@ export default function Log() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="text-xs text-muted text-left">
+              <thead className="text-sm text-muted text-left">
                 <tr>
                   <th className="py-1 pr-3">Date</th>
                   <th className="pr-3">Leads</th>
@@ -82,7 +82,7 @@ export default function Log() {
                     <td className="pr-3 tabular-nums">{l.closes ?? "–"}</td>
                     <td className="pr-3 tabular-nums">{l.adSpend != null ? peso(l.adSpend) : "–"}</td>
                     <td className="pr-3 tabular-nums">{l.adSpend && l.leads ? peso(l.adSpend / l.leads) : "–"}</td>
-                    <td className="text-xs text-muted truncate max-w-64">{[l.wins, l.blockers].filter(Boolean).join(" · ")}</td>
+                    <td className="text-sm text-muted truncate max-w-64">{[l.wins, l.blockers].filter(Boolean).join(" · ")}</td>
                   </tr>
                 ))}
               </tbody>

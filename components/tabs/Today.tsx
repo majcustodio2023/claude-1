@@ -6,6 +6,7 @@ import { daysLeftInMonth, monthOf, summarize, uid, weekLogs } from "@/lib/financ
 import { QUEST_XP, achievements } from "@/lib/game";
 import { useTracker } from "../App";
 import { Badge, Bar, Btn, Card, Meter, Stat, celebrate, peso } from "../ui";
+import { Kit } from "../characters";
 
 export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log" | "ads") => void }) {
   const { data, update, month, today } = useTracker();
@@ -45,7 +46,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
     const willBeDone = !item.done;
     update((d) => void (d.todos[today].find((x) => x.id === id)!.done = willBeDone));
     if (willBeDone && list.length > 1 && list.filter((x) => x.done).length === list.length - 1) {
-      celebrate({ title: "All quests cleared", sub: `+${list.length * QUEST_XP} XP today. Legendary.`, icon: "🏅" });
+      celebrate({ kicker: "Daily quests cleared", title: `+${list.length * QUEST_XP} XP`, sub: "Every quest done today. Legendary.", icon: "🏅", sfx: "SUGOI!" });
     }
   };
 
@@ -90,28 +91,36 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
 
       <div className="grid lg:grid-cols-5 gap-4">
         <div className="lg:col-span-3 space-y-4">
-          <Card title="Mission briefing" icon="◈">
-            <p className="text-xl leading-snug font-bold text-accent glow-text-cyan mb-4">{advice.headline}</p>
-            <ul className="space-y-2.5 mb-4">
-              {advice.points.map((p) => (
-                <li key={p} className="flex gap-2.5 text-[0.95rem]">
-                  <span className="text-hero mt-0.5">▸</span>
-                  <span>{p}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="text-sm italic text-muted">&ldquo;{advice.inspiration}&rdquo;</p>
+          <Card title="Mission briefing" icon="📣">
+            <div className="flex flex-col sm:flex-row gap-5 sm:gap-6 items-start">
+              <div className="shrink-0 text-center">
+                <Kit size={104} talking className="bob" />
+                <div className="font-display text-lg tracking-wide text-gold -mt-1">KIT</div>
+              </div>
+              <div className="bubble flex-1 p-4 sm:p-5">
+                <p className="font-display text-2xl sm:text-[1.7rem] leading-tight tracking-wide text-[#15132b] mb-3">{advice.headline}</p>
+                <ul className="space-y-2.5">
+                  {advice.points.map((p) => (
+                    <li key={p} className="flex gap-2.5 text-[1.02rem] leading-snug font-bold text-[#2a2748]">
+                      <span className="text-[#e0306f] font-display text-xl leading-none mt-0.5">★</span>
+                      <span>{p}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-4 text-base font-extrabold italic text-[#6a3fb5]">&ldquo;{advice.inspiration}&rdquo;</p>
+              </div>
+            </div>
           </Card>
-          <Card glow="gold" title="Power verse" icon="✝">
-            <blockquote>
-              <p className="text-lg leading-relaxed font-semibold">&ldquo;{advice.verse.text}&rdquo;</p>
-              <footer className="font-display text-xs text-gold mt-3 glow-text-gold">{advice.verse.ref} · KJV</footer>
+          <Card glow="gold" title="Power verse" icon="✨">
+            <blockquote className="relative">
+              <p className="relative text-xl sm:text-[1.35rem] leading-relaxed font-extrabold">&ldquo;{advice.verse.text}&rdquo;</p>
+              <footer className="mt-3"><span className="font-display text-xl tracking-wide text-gold">— {advice.verse.ref} (KJV)</span></footer>
             </blockquote>
           </Card>
         </div>
 
         <Card
-          title={`Daily quests · ${questDone}/${todos?.length ?? 0}`}
+          title={`Daily quests ${questDone}/${todos?.length ?? 0}`}
           icon="📜"
           glow="hero"
           className="lg:col-span-2"
@@ -127,12 +136,12 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
           </div>
           <ul className="space-y-1.5">
             {(todos ?? []).map((t) => (
-              <li key={t.id} className={`flex items-start gap-3 group px-2 py-1.5 rounded-[3px] transition ${t.done ? "bg-good/5" : "hover:bg-white/[0.03]"}`}>
+              <li key={t.id} className={`flex items-start gap-3 group px-2.5 py-2 rounded-[10px] border-2 transition ${t.done ? "bg-good/10 border-good/40" : "border-transparent hover:bg-white/[0.04]"}`}>
                 <input type="checkbox" className="mt-0.5" checked={t.done} onChange={() => toggle(t.id)} aria-label={t.text} />
-                <span className={`text-[0.95rem] flex-1 leading-snug ${t.done ? "line-through text-muted" : ""}`}>{t.text}</span>
-                <span className={`font-display text-[0.62rem] mt-1 ${t.done ? "text-good" : "text-gold"}`}>+{QUEST_XP}</span>
+                <span className={`text-[1.02rem] flex-1 leading-snug font-bold ${t.done ? "line-through text-muted" : ""}`}>{t.text}</span>
+                <span className={`font-display text-lg leading-none mt-0.5 ${t.done ? "text-good" : "text-gold"}`}>+{QUEST_XP}XP</span>
                 <button
-                  className="text-xs text-muted opacity-0 group-hover:opacity-100"
+                  className="text-sm text-muted opacity-0 group-hover:opacity-100"
                   onClick={() => update((d) => void (d.todos[today] = d.todos[today].filter((x) => x.id !== t.id)))}
                   aria-label="Remove"
                 >
@@ -159,16 +168,19 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
       <div className="grid lg:grid-cols-2 gap-4">
         <Card title="Bosses to defeat" icon="⚔" glow="hero" actions={<Btn onClick={() => goTo("pipeline")}>All deals</Btn>}>
           {bosses.length === 0 ? (
-            <p className="text-muted">No open deals. Time to hunt for new ones.</p>
+            <p className="text-lg text-muted">No open deals. Time to hunt for new ones.</p>
           ) : (
             <ul className="space-y-4">
               {bosses.map((d) => (
                 <li key={d.id}>
-                  <div className="flex justify-between items-baseline mb-1.5">
-                    <span className="font-semibold">{d.name}</span>
-                    <span className="font-display text-sm text-bad">{peso(d.value)} HP</span>
+                  <div className="flex justify-between items-center gap-3 mb-2">
+                    <span className="flex items-center gap-2 text-lg font-extrabold">
+                      <span className="text-2xl" aria-hidden>👹</span>
+                      {d.name}
+                    </span>
+                    <span className="font-display text-xl tracking-wide text-bad">{peso(d.value)} HP</span>
                   </div>
-                  <Bar pct={1} tone="bad" thin />
+                  <Bar pct={1} tone="bad" />
                 </li>
               ))}
             </ul>
@@ -181,10 +193,10 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
               <div
                 key={b.id}
                 title={`${b.name}: ${b.desc}`}
-                className={`relative text-center px-1.5 py-2.5 rounded-[3px] border ${b.unlocked ? "border-gold/60 bg-gold/10 pulse-gold" : "border-line bg-white/[0.02] opacity-45 grayscale"}`}
+                className={`relative text-center px-1.5 py-3 rounded-[10px] border-[3px] border-outline ${b.unlocked ? "bg-gold text-outline shadow-[3px_3px_0_#0b0a14] pulse-gold" : "bg-card-2 opacity-55"}`}
               >
-                <div className="text-2xl leading-none">{b.unlocked ? b.icon : "🔒"}</div>
-                <div className="text-[0.68rem] font-bold uppercase tracking-wide mt-1.5 leading-tight">{b.name}</div>
+                <div className="text-3xl leading-none">{b.unlocked ? b.icon : "🔒"}</div>
+                <div className="font-display text-base tracking-wide mt-1.5 leading-tight">{b.name}</div>
               </div>
             ))}
           </div>
@@ -200,7 +212,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
           <Stat label="Ad spend" value={peso(wk.adSpend)} hint={wk.leads ? `${peso(wk.adSpend / wk.leads)} per lead` : undefined} />
         </div>
         {wk.days === 0 && (
-          <p className="text-sm text-muted mt-3">
+          <p className="text-base text-muted mt-4 flex items-center gap-2">
             <Badge tone="hero">Tip</Badge> Check in daily to build your streak and sharpen the briefing.
           </p>
         )}

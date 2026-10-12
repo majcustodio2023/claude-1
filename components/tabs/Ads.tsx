@@ -137,7 +137,7 @@ function AccountRow({ account }: { account: AdAccount }) {
     <div className="border border-line bg-card-2/50 rounded-[3px] p-3 space-y-2">
       <div className="flex items-center gap-2 flex-wrap">
         <span className="font-medium">{account.label}</span>
-        <span className="text-xs text-muted">{account.owner} · {account.accountId}</span>
+        <span className="text-sm text-muted">{account.owner} · {account.accountId}</span>
         {account.hasToken ? <Badge tone="good">Token saved</Badge> : <Badge tone="warn">No token</Badge>}
         <div className="flex-1" />
         {account.hasToken && <Btn onClick={loadCampaigns} disabled={busy}>Choose campaigns</Btn>}
@@ -165,10 +165,10 @@ function AccountRow({ account }: { account: AdAccount }) {
         <Btn kind="primary" disabled={busy || !token.trim()}>Save token</Btn>
         {account.hasToken && <Btn type="button" onClick={() => saveToken(null)} disabled={busy}>Remove token</Btn>}
       </form>
-      {msg && <p className="text-xs text-muted">{msg}</p>}
+      {msg && <p className="text-sm text-muted">{msg}</p>}
       {campaigns && (
         <div className="border-t border-line pt-2">
-          <p className="text-xs text-muted mb-2">Tick the campaigns to track. Only these are read.</p>
+          <p className="text-sm text-muted mb-2">Tick the campaigns to track. Only these are read.</p>
           <ul className="space-y-1 max-h-72 overflow-y-auto">
             {campaigns.map((c) => (
               <li key={c.id}>
@@ -222,9 +222,9 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
     <div className="border border-line bg-card-2/50 rounded-[3px] p-3 space-y-3">
       <div className="flex items-center gap-2 flex-wrap">
         <span className="font-medium">{tracked.name}</span>
-        <span className="text-xs text-muted">{account?.label}</span>
+        <span className="text-sm text-muted">{account?.label}</span>
         <div className="flex-1" />
-        <div className="flex rounded-[3px] border border-line overflow-hidden text-xs">
+        <div className="flex rounded-[3px] border border-line overflow-hidden text-sm">
           {(["view", "manage"] as const).map((mode) => (
             <button key={mode} onClick={() => set({ mode })} className={`px-2 py-1 ${tracked.mode === mode ? "bg-accent text-[#031018]" : ""}`}>
               {mode === "view" ? "View only" : "Manage"}
@@ -232,9 +232,9 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
           ))}
         </div>
         <Btn kind="primary" onClick={load} disabled={busy}>{busy ? "Loading…" : result ? "Refresh" : "Analyze"}</Btn>
-        <button className="text-muted text-xs" onClick={() => update((d) => void (d.trackedCampaigns = d.trackedCampaigns.filter((x) => x.id !== tracked.id)))}>✕</button>
+        <button className="text-muted text-sm" onClick={() => update((d) => void (d.trackedCampaigns = d.trackedCampaigns.filter((x) => x.id !== tracked.id)))}>✕</button>
       </div>
-      <div className="flex gap-3 flex-wrap text-xs text-muted items-center">
+      <div className="flex gap-3 flex-wrap text-sm text-muted items-center">
         <label className="flex items-center gap-1">
           Target cost per result <NumInput className="w-24" value={tracked.targetCpl} placeholder={String(data.settings.targetCpl)} onChange={(v) => set({ targetCpl: v })} />
         </label>
@@ -271,14 +271,14 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
                   {s.action &&
                     (tracked.mode === "manage" ? (
                       applied[key] ? (
-                        <span className="text-xs text-muted">{applied[key]}</span>
+                        <span className="text-sm text-muted">{applied[key]}</span>
                       ) : (
                         <Btn onClick={() => apply(key, s.action!)}>
                           {s.action.type === "pause" ? "Pause ad" : `Budget → ${peso(s.action.newDailyBudget!)}/day`}
                         </Btn>
                       )
                     ) : (
-                      <span className="text-xs text-muted">Switch to Manage to apply</span>
+                      <span className="text-sm text-muted">Switch to Manage to apply</span>
                     ))}
                 </div>
               );
@@ -288,7 +288,7 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
             <details>
               <summary className="text-sm cursor-pointer">Ads in this campaign ({result.ads.length})</summary>
               <div className="overflow-x-auto mt-2">
-                <table className="w-full text-xs">
+                <table className="w-full text-sm">
                   <thead className="text-muted text-left">
                     <tr>
                       <th className="py-1 pr-2">Ad</th>
@@ -317,7 +317,7 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
               </div>
             </details>
           )}
-          <p className="text-xs text-muted">Updated {new Date(result.fetchedAt).toLocaleString("en-PH")}</p>
+          <p className="text-sm text-muted">Updated {new Date(result.fetchedAt).toLocaleString("en-PH")}</p>
         </>
       )}
     </div>

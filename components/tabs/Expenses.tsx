@@ -29,7 +29,7 @@ export default function Expenses() {
             const applies = expenseAppliesTo(e, month);
             return (
               <div key={e.id} className={`grid grid-cols-2 md:grid-cols-12 gap-2 items-center border-b border-line pb-2 ${applies ? "" : "opacity-50"}`}>
-                <label className="flex items-center gap-2 md:col-span-1 text-xs">
+                <label className="flex items-center gap-2 md:col-span-1 text-sm">
                   <input
                     type="checkbox"
                     disabled={!applies}
@@ -43,20 +43,20 @@ export default function Expenses() {
                 <select className="md:col-span-1" value={e.category} onChange={(ev) => setLine(e.id, { category: ev.target.value as ExpenseLine["category"] })}>
                   {LINE_CATS.map((c) => <option key={c}>{c}</option>)}
                 </select>
-                <div className="md:col-span-3 flex items-center gap-1 text-xs text-muted col-span-2">
+                <div className="md:col-span-3 flex items-center gap-1 text-sm text-muted col-span-2">
                   <input type="month" className="w-full" value={e.startMonth ?? ""} onChange={(ev) => setLine(e.id, { startMonth: ev.target.value || undefined })} title="Starts" />
                   to
                   <input type="month" className="w-full" value={e.endMonth ?? ""} onChange={(ev) => setLine(e.id, { endMonth: ev.target.value || undefined })} title="Ends" />
                 </div>
                 <div className="md:col-span-1 flex justify-end gap-2">
                   {!applies && <Badge>Not this month</Badge>}
-                  <button className="text-muted text-xs" onClick={() => confirm(`Remove ${e.name}?`) && update((d) => void (d.expenses = d.expenses.filter((x) => x.id !== e.id)))}>✕</button>
+                  <button className="text-muted text-sm" onClick={() => confirm(`Remove ${e.name}?`) && update((d) => void (d.expenses = d.expenses.filter((x) => x.id !== e.id)))}>✕</button>
                 </div>
               </div>
             );
           })}
         </div>
-        <p className="text-xs text-muted mt-3">
+        <p className="text-sm text-muted mt-3">
           The &ldquo;stay afloat&rdquo; target is the total of the expenses that apply this month ({peso(s.fixedExpenses)}). Leave the start and end months blank for expenses that never stop.
         </p>
       </Card>
@@ -89,7 +89,7 @@ export default function Expenses() {
                 <span className="flex-1">{e.label}</span>
                 <Badge>{e.category}</Badge>
                 <span className="tabular-nums font-medium">{peso(e.amount)}</span>
-                <button className="text-muted text-xs" onClick={() => update((d) => void (d.adHocExpenses = d.adHocExpenses.filter((x) => x.id !== e.id)))}>✕</button>
+                <button className="text-muted text-sm" onClick={() => update((d) => void (d.adHocExpenses = d.adHocExpenses.filter((x) => x.id !== e.id)))}>✕</button>
               </li>
             ))}
           </ul>

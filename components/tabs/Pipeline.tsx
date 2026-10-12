@@ -79,6 +79,7 @@ function DealCard({ deal }: { deal: Deal }) {
       title: `+${peso(amount)} collected`,
       sub: defeated ? `${deal.name} is fully paid.` : `${deal.name}: ${peso(balance - amount)} HP left`,
       icon: defeated ? "🐉" : "💥",
+      sfx: defeated ? "BOSS DOWN!" : "WHAM!",
     });
   };
   const hp = deal.stage === "lost" ? 0 : deal.value ? balance / deal.value : 0;
@@ -86,7 +87,7 @@ function DealCard({ deal }: { deal: Deal }) {
   return (
     <div className={`border rounded-[3px] p-3.5 space-y-3 ${deal.stage === "won" && balance === 0 ? "border-gold/50 bg-gold/5" : "border-line bg-card-2/50"}`}>
       <div>
-        <div className="flex justify-between text-[0.7rem] uppercase tracking-[0.12em] mb-1">
+        <div className="flex justify-between text-sm uppercase tracking-[0.12em] mb-1">
           <span className="text-muted">{deal.stage === "won" && balance === 0 ? "Defeated" : deal.stage === "lost" ? "Escaped" : "Boss HP"}</span>
           <span className={`font-display ${balance === 0 ? "text-gold" : "text-bad"}`}>{peso(balance)} / {peso(deal.value)}</span>
         </div>
@@ -109,7 +110,7 @@ function DealCard({ deal }: { deal: Deal }) {
         </label>
       </div>
       {deal.payments.length > 0 && (
-        <ul className="text-xs space-y-1">
+        <ul className="text-sm space-y-1">
           {deal.payments.map((p) => (
             <li key={p.id} className="flex gap-2">
               <span className="text-muted w-20">{p.date}</span>
@@ -120,7 +121,7 @@ function DealCard({ deal }: { deal: Deal }) {
           ))}
         </ul>
       )}
-      <TextInput className="w-full text-xs" value={deal.notes} onChange={(v) => set({ notes: v })} placeholder="Notes" />
+      <TextInput className="w-full text-sm" value={deal.notes} onChange={(v) => set({ notes: v })} placeholder="Notes" />
       <div className="flex gap-2 flex-wrap">
         {balance > 0 && deal.stage !== "lost" && (
           <Btn kind="hero" onClick={() => addPayment(balance, today, paid ? "Balance" : "Full payment")}>

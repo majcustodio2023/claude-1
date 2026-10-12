@@ -50,7 +50,7 @@ export default function Income() {
                     <span className="font-medium">{st.name}</span>
                     {r.isCollected ? <Badge tone="good">Collected {peso(r.collected)}</Badge> : <Badge tone="warn">Expected</Badge>}
                   </div>
-                  <div className="text-xs text-muted mt-1">
+                  <div className="text-sm text-muted mt-1">
                     {st.kind === "percent_floor"
                       ? `${Math.round((st.percent ?? 0) * 100)}% of revenue, minimum ${peso(st.floor ?? 0)}`
                       : st.kind === "fixed"
@@ -60,19 +60,19 @@ export default function Income() {
                   </div>
                 </div>
                 {st.kind === "percent_floor" && (
-                  <label className="text-xs text-muted flex flex-col gap-1">
+                  <label className="text-sm text-muted flex flex-col gap-1">
                     Their revenue this month
                     <NumInput className="w-36" value={r.month?.revenueBase} onChange={(v) => setSM(st.id, { revenueBase: v })} placeholder="₱0" />
                   </label>
                 )}
                 {st.kind === "variable" && (
-                  <label className="text-xs text-muted flex flex-col gap-1">
+                  <label className="text-sm text-muted flex flex-col gap-1">
                     Actual sales this month
                     <NumInput className="w-36" value={r.month?.actual} onChange={(v) => setSM(st.id, { actual: v })} placeholder={String(st.amount)} />
                   </label>
                 )}
                 <div className="text-right md:w-32">
-                  <div className="text-xs text-muted">Due this month</div>
+                  <div className="text-sm text-muted">Due this month</div>
                   <div className="font-semibold tabular-nums">{peso(r.expected)}</div>
                 </div>
                 <div className="flex gap-2 items-center">
@@ -87,7 +87,7 @@ export default function Income() {
                       onClick={() => {
                         const amt = expectedForStream(st, r.month);
                         setSM(st.id, { collected: amt, collectedOn: collectDate });
-                        celebrate({ kicker: "Loot collected", title: `+${peso(amt)}`, sub: st.name, icon: "💰" });
+                        celebrate({ kicker: "Loot collected", title: `+${peso(amt)}`, sub: st.name, icon: "💰", sfx: "KA-CHING!" });
                       }}
                     >
                       Mark collected
@@ -109,11 +109,11 @@ export default function Income() {
           <div className="space-y-3">
             {data.streams.map((st) => (
               <div key={st.id} className="grid grid-cols-2 md:grid-cols-7 gap-2 items-end border-b border-line pb-3">
-                <label className="text-xs text-muted flex flex-col gap-1 col-span-2">
+                <label className="text-sm text-muted flex flex-col gap-1 col-span-2">
                   Name
                   <TextInput value={st.name} onChange={(v) => setStream(st.id, { name: v })} />
                 </label>
-                <label className="text-xs text-muted flex flex-col gap-1">
+                <label className="text-sm text-muted flex flex-col gap-1">
                   Type
                   <select value={st.kind} onChange={(e) => setStream(st.id, { kind: e.target.value as StreamKind })}>
                     {Object.entries(KIND_LABEL).map(([k, l]) => (
@@ -123,30 +123,30 @@ export default function Income() {
                 </label>
                 {st.kind === "percent_floor" ? (
                   <>
-                    <label className="text-xs text-muted flex flex-col gap-1">
+                    <label className="text-sm text-muted flex flex-col gap-1">
                       Percent
                       <NumInput value={st.percent != null ? Math.round(st.percent * 1000) / 10 : undefined} onChange={(v) => setStream(st.id, { percent: (v ?? 0) / 100 })} />
                     </label>
-                    <label className="text-xs text-muted flex flex-col gap-1">
+                    <label className="text-sm text-muted flex flex-col gap-1">
                       Minimum
                       <NumInput value={st.floor} onChange={(v) => setStream(st.id, { floor: v ?? 0, amount: v ?? 0 })} />
                     </label>
                   </>
                 ) : (
-                  <label className="text-xs text-muted flex flex-col gap-1 col-span-2">
+                  <label className="text-sm text-muted flex flex-col gap-1 col-span-2">
                     {st.kind === "fixed" ? "Monthly fee" : "Monthly estimate"}
                     <NumInput value={st.amount} onChange={(v) => setStream(st.id, { amount: v ?? 0 })} />
                   </label>
                 )}
-                <label className="text-xs text-muted flex flex-col gap-1">
+                <label className="text-sm text-muted flex flex-col gap-1">
                   Servicing cost
                   <NumInput value={st.directCost} onChange={(v) => setStream(st.id, { directCost: v })} />
                 </label>
                 <div className="flex gap-2 col-span-2 md:col-span-7">
-                  <label className="text-xs flex items-center gap-1">
+                  <label className="text-sm flex items-center gap-1">
                     <input type="checkbox" checked={st.active} onChange={(e) => setStream(st.id, { active: e.target.checked })} /> Active
                   </label>
-                  <TextInput className="flex-1 text-xs" value={st.notes} onChange={(v) => setStream(st.id, { notes: v })} placeholder="Notes" />
+                  <TextInput className="flex-1 text-sm" value={st.notes} onChange={(v) => setStream(st.id, { notes: v })} placeholder="Notes" />
                   <Btn kind="danger" onClick={() => confirm(`Remove ${st.name}?`) && update((d) => void (d.streams = d.streams.filter((x) => x.id !== st.id)))}>
                     Remove
                   </Btn>
@@ -181,7 +181,7 @@ export default function Income() {
                 <span className="text-muted w-24">{o.date}</span>
                 <span className="flex-1">{o.label}</span>
                 <span className="tabular-nums font-medium">{peso(o.amount)}</span>
-                <button className="text-muted text-xs" onClick={() => update((d) => void (d.oneTime = d.oneTime.filter((x) => x.id !== o.id)))}>✕</button>
+                <button className="text-muted text-sm" onClick={() => update((d) => void (d.oneTime = d.oneTime.filter((x) => x.id !== o.id)))}>✕</button>
               </li>
             ))}
           </ul>

@@ -26,15 +26,15 @@ export default function Team() {
                 <TextInput className="md:col-span-2" value={m.role} onChange={(v) => set(m.id, { role: v })} placeholder="Role" />
                 <NumInput value={m.monthlyCost} onChange={(v) => set(m.id, { monthlyCost: v ?? 0 })} />
                 <div className="flex items-center justify-end gap-3">
-                  <label className="text-xs flex items-center gap-1">
+                  <label className="text-sm flex items-center gap-1">
                     <input type="checkbox" checked={m.active} onChange={(e) => set(m.id, { active: e.target.checked })} /> Active
                   </label>
-                  <button className="text-muted text-xs" onClick={() => confirm(`Remove ${m.name}?`) && update((d) => void (d.team = d.team.filter((x) => x.id !== m.id)))}>✕</button>
+                  <button className="text-muted text-sm" onClick={() => confirm(`Remove ${m.name}?`) && update((d) => void (d.team = d.team.filter((x) => x.id !== m.id)))}>✕</button>
                 </div>
               </div>
-              <TextInput className="w-full text-xs" value={m.notes} onChange={(v) => set(m.id, { notes: v })} placeholder="Notes" />
+              <TextInput className="w-full text-sm" value={m.notes} onChange={(v) => set(m.id, { notes: v })} placeholder="Notes" />
               {open.length > 0 && (
-                <div className="text-xs text-muted">
+                <div className="text-sm text-muted">
                   {open.length} open tasks: {open.slice(0, 4).map((t) => t.title).join(" · ")}
                   {open.length > 4 && " …"}
                 </div>
@@ -43,7 +43,7 @@ export default function Team() {
           );
         })}
       </div>
-      <p className="text-xs text-muted mt-3">Tasks are matched to people by the owner field on the Tasks tab (for example &ldquo;VA&rdquo;).</p>
+      <p className="text-sm text-muted mt-3">Tasks are matched to people by the owner field on the Tasks tab (for example &ldquo;VA&rdquo;).</p>
     </Card>
   );
 }

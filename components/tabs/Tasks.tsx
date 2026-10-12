@@ -65,31 +65,31 @@ export default function Tasks() {
           const list = all.filter((t) => (owner === "all" || t.owner === owner) && !(hideDone && t.done));
           return (
             <Card key={q} glow={q === "do" ? "hero" : q === "schedule" ? "cyan" : q === "delegate" ? "good" : "gold"} title={`${label} · ${all.filter((t) => t.done).length}/${all.length}`}>
-              <p className="text-xs text-muted -mt-2 mb-3">{desc}</p>
+              <p className="text-sm text-muted -mt-2 mb-3">{desc}</p>
               <ul className="space-y-2">
                 {list.map((t) => (
                   <li key={t.id} className="flex items-start gap-2 group">
                     <input type="checkbox" className="mt-1" checked={t.done} onChange={() => set(t.id, { done: !t.done, doneOn: !t.done ? today : undefined })} />
                     <div className="flex-1 min-w-0">
                       <div className={`text-sm ${t.done ? "line-through text-muted" : ""}`}>{t.title}</div>
-                      <div className="text-xs text-muted flex gap-2 flex-wrap items-center">
+                      <div className="text-sm text-muted flex gap-2 flex-wrap items-center">
                         <span>{t.owner}</span>
                         {t.due && <span>· {t.due}</span>}
                         <input
                           type="date"
-                          className="!py-0 !px-1 text-xs"
+                          className="!py-0 !px-1 text-sm"
                           value={t.dueDate ?? ""}
                           onChange={(e) => set(t.id, { dueDate: e.target.value || undefined })}
                           title="Due date"
                         />
                         {t.dueDate && !t.done && t.dueDate < today && <span className="text-bad">overdue</span>}
                       </div>
-                      {t.details && <div className="text-xs text-muted mt-1">{t.details}</div>}
+                      {t.details && <div className="text-sm text-muted mt-1">{t.details}</div>}
                     </div>
-                    <select className="text-xs !py-0 opacity-0 group-hover:opacity-100" value={t.quadrant} onChange={(e) => set(t.id, { quadrant: e.target.value as Quadrant })} aria-label="Move">
+                    <select className="text-sm !py-0 opacity-0 group-hover:opacity-100" value={t.quadrant} onChange={(e) => set(t.id, { quadrant: e.target.value as Quadrant })} aria-label="Move">
                       {QUADS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                     </select>
-                    <button className="text-muted text-xs opacity-0 group-hover:opacity-100" onClick={() => update((d) => void (d.tasks = d.tasks.filter((x) => x.id !== t.id)))}>✕</button>
+                    <button className="text-muted text-sm opacity-0 group-hover:opacity-100" onClick={() => update((d) => void (d.tasks = d.tasks.filter((x) => x.id !== t.id)))}>✕</button>
                   </li>
                 ))}
               </ul>
