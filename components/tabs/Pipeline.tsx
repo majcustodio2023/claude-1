@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { dealBalance, dealPaid, uid } from "@/lib/finance";
+import { dealBalance, dealPaid, defaultAccountId, uid } from "@/lib/finance";
 import type { Deal, DealStage } from "@/lib/types";
 import { useTracker } from "../App";
-import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate, money } from "../ui";
+import { Bar, Btn, Card, NumInput, TextInput, celebrate, money } from "../ui";
+import { AccountSelect, CollectForm, accountName, settle, type Collection } from "../Money";
 
 const STAGES: [DealStage, string][] = [
   ["lead", "Lead"],
@@ -36,7 +37,7 @@ export default function Pipeline() {
                 name: form.name,
                 value: form.value!,
                 stage: form.kind === "lead" ? "lead" : "won",
-                payments: form.kind === "paid" ? [{ id: uid("pay"), date: today, amount: form.value! }] : [],
+                payments: form.kind === "paid" ? [{ id: uid("pay"), date: today, amount: form.value!, accountId: defaultAccountId(d) }] : [],
                 createdAt: today,
               }),
             );
@@ -75,23 +76,27 @@ function Section({ title, deals }: { title: string; deals: Deal[] }) {
 }
 
 function DealCard({ deal }: { deal: Deal }) {
-  const { update, today } = useTracker();
-  const [pay, setPay] = useState({ amount: undefined as number | undefined, date: today, note: "" });
-  const [showPay, setShowPay] = useState(false);
+  const { data, update, today } = useTracker();
+  const [collecting, setCollecting] = useState<"full" | "deposit" | null>(null);
   const paid = dealPaid(deal);
   const balance = dealBalance(deal);
   const set = (patch: Partial<Deal>) => update((d) => void Object.assign(d.deals.find((x) => x.id === deal.id)!, patch));
-  const addPayment = (amount: number, date: string, note?: string) => {
+  const addPayment = ({ amount, date, note, accountId, alreadyCounted }: Collection) => {
+    const id = uid("pay");
     update((d) => {
       const x = d.deals.find((y) => y.id === deal.id)!;
-      x.payments.push({ id: uid("pay"), amount, date, note });
+      x.payments.push({ id, amount, date, note, ...(accountId && { accountId }) });
       if (x.stage !== "won") x.stage = "won";
+      if (accountId) d.settings.lastAccountId = accountId;
+      if (alreadyCounted) settle(d, `pay:${id}`);
     });
+    setCollecting(null);
+    const where = accountId ? ` → ${accountName(data, accountId)}` : "";
     const defeated = amount >= balance;
     celebrate({
       kicker: defeated ? "Boss defeated" : "Critical hit",
       title: `+${money(amount)} collected`,
-      sub: defeated ? `${deal.name} is fully paid.` : `${deal.name}: ${money(balance - amount)} HP left`,
+      sub: (defeated ? `${deal.name} is fully paid.` : `${deal.name}: ${money(balance - amount)} HP left`) + where,
       icon: defeated ? "🐉" : "💥",
       sfx: defeated ? "BOSS DOWN!" : "WHAM!",
     });
@@ -129,6 +134,7 @@ function DealCard({ deal }: { deal: Deal }) {
             <li key={p.id} className="flex gap-2">
               <span className="text-muted w-20">{p.date}</span>
               <span className="flex-1">{p.note || "Payment"}</span>
+              <AccountSelect className="text-sm py-0.5" value={p.accountId} label="Account it went into" onChange={(id) => update((d) => void (d.deals.find((x) => x.id === deal.id)!.payments.find((y) => y.id === p.id)!.accountId = id))} />
               <span className="tabular-nums">{money(p.amount)}</span>
               <button className="text-muted" onClick={() => update((d) => void (d.deals.find((x) => x.id === deal.id)!.payments = deal.payments.filter((y) => y.id !== p.id)))}>✕</button>
             </li>
@@ -136,33 +142,27 @@ function DealCard({ deal }: { deal: Deal }) {
         </ul>
       )}
       <TextInput className="w-full text-sm" value={deal.notes} onChange={(v) => set({ notes: v })} placeholder="Notes" />
-      <div className="flex gap-2 flex-wrap">
-        {balance > 0 && deal.stage !== "lost" && (
-          <Btn kind="hero" onClick={() => addPayment(balance, today, paid ? "Balance" : "Full payment")}>
-            {paid ? `Finish it · collect ${money(balance)}` : `Closed & collected ${money(balance)}`}
+      {collecting ? (
+        <CollectForm
+          amount={collecting === "full" ? balance : undefined}
+          date={today}
+          withNote={collecting === "deposit"}
+          cta={collecting === "full" ? "Collect" : "Record"}
+          onCancel={() => setCollecting(null)}
+          onCollect={(c) => addPayment({ ...c, note: c.note ?? (collecting === "full" ? (paid ? "Balance" : "Full payment") : "Deposit") })}
+        />
+      ) : (
+        <div className="flex gap-2 flex-wrap">
+          {balance > 0 && deal.stage !== "lost" && (
+            <Btn kind="hero" onClick={() => setCollecting("full")}>
+              {paid ? `Finish it · collect ${money(balance)}` : `Closed & collected ${money(balance)}`}
+            </Btn>
+          )}
+          {deal.stage !== "lost" && balance > 0 && <Btn onClick={() => setCollecting("deposit")}>Record deposit</Btn>}
+          <Btn kind="danger" onClick={() => confirm(`Delete ${deal.name}?`) && update((d) => void (d.deals = d.deals.filter((x) => x.id !== deal.id)))}>
+            Delete
           </Btn>
-        )}
-        {deal.stage !== "lost" && <Btn onClick={() => setShowPay(!showPay)}>Record deposit</Btn>}
-        <Btn kind="danger" onClick={() => confirm(`Delete ${deal.name}?`) && update((d) => void (d.deals = d.deals.filter((x) => x.id !== deal.id)))}>
-          Delete
-        </Btn>
-      </div>
-      {showPay && (
-        <form
-          className="flex flex-wrap gap-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!pay.amount) return;
-            addPayment(pay.amount, pay.date, pay.note || "Deposit");
-            setPay({ amount: undefined, date: today, note: "" });
-            setShowPay(false);
-          }}
-        >
-          <NumInput className="w-28" placeholder="Amount" value={pay.amount} onChange={(v) => setPay({ ...pay, amount: v })} />
-          <input type="date" value={pay.date} onChange={(e) => setPay({ ...pay, date: e.target.value })} />
-          <input className="flex-1 min-w-24" placeholder="Note" value={pay.note} onChange={(e) => setPay({ ...pay, note: e.target.value })} />
-          <Btn kind="primary">Save</Btn>
-        </form>
+        </div>
       )}
     </div>
   );

@@ -5,6 +5,7 @@ import { expectedForStream, monthOf, summarize, uid } from "@/lib/finance";
 import type { IncomeStream, StreamKind, StreamMonth } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Btn, Card, NumInput, TextInput, celebrate, money } from "../ui";
+import { AccountSelect, CollectForm, accountName, settle } from "../Money";
 
 const KIND_LABEL: Record<StreamKind, string> = {
   fixed: "Fixed monthly fee",
@@ -16,6 +17,7 @@ export default function Income() {
   const { data, update, month, today } = useTracker();
   const s = useMemo(() => summarize(data, month), [data, month]);
   const [editing, setEditing] = useState(false);
+  const [collecting, setCollecting] = useState<string | null>(null);
 
   const setSM = (streamId: string, patch: Partial<StreamMonth>) =>
     update((d) => {
@@ -27,6 +29,16 @@ export default function Income() {
 
   const setStream = (id: string, patch: Partial<IncomeStream>) =>
     update((d) => void Object.assign(d.streams.find((x) => x.id === id)!, patch));
+
+  // A stream that has paid before is archived instead of deleted, so past months keep their numbers.
+  const removeStream = (st: IncomeStream) => {
+    const paidBefore = Object.values(data.streamMonths).some((m) => m[st.id]?.collected != null);
+    if (paidBefore) {
+      if (confirm(`${st.name} has payment history. Archive it? It stops showing as expected income, and past months keep what it paid.`)) setStream(st.id, { active: false });
+      return;
+    }
+    if (confirm(`Remove ${st.name}?`)) update((d) => void (d.streams = d.streams.filter((x) => x.id !== st.id)));
+  };
 
   const collectDate = monthOf(today) === month ? today : `${month}-01`;
 
@@ -42,11 +54,12 @@ export default function Income() {
             const st = r.stream;
             const margin = st.directCost ? r.expected - st.directCost : null;
             return (
-              <div key={st.id} className={`border rounded-[3px] p-3.5 flex ${r.isCollected ? "border-good/40 bg-good/5" : "border-line bg-card-2/50"} flex-col md:flex-row md:items-center gap-3`}>
+              <div key={st.id} className={`border rounded-[3px] p-3.5 flex ${r.isCollected ? "border-good/40 bg-good/5" : "border-line bg-card-2/50"} flex-col md:flex-row md:flex-wrap md:items-center gap-3`}>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium">{st.name}</span>
-                    {r.isCollected ? <Badge tone="good">Collected {money(r.collected)}</Badge> : <Badge tone="warn">Expected</Badge>}
+                    {r.isCollected ? <Badge tone="good">Collected {money(r.collected)}{accountName(data, r.month?.accountId) ? ` · in ${accountName(data, r.month?.accountId)}` : ""}</Badge> : <Badge tone="warn">Expected</Badge>}
+                    {!st.active && <Badge>Archived</Badge>}
                   </div>
                   <div className="text-sm text-muted mt-1">
                     {st.kind === "percent_floor"
@@ -73,25 +86,40 @@ export default function Income() {
                   <div className="text-sm text-muted">Due this month</div>
                   <div className="font-semibold tabular-nums">{money(r.expected)}</div>
                 </div>
-                <div className="flex gap-2 items-center">
+                <div className="flex gap-2 items-center flex-wrap">
                   {r.isCollected ? (
                     <>
                       <NumInput className="w-28" value={r.collected} onChange={(v) => setSM(st.id, { collected: v ?? 0 })} />
-                      <Btn onClick={() => setSM(st.id, { collected: undefined, collectedOn: undefined })}>Undo</Btn>
+                      <AccountSelect value={r.month?.accountId} onChange={(id) => setSM(st.id, { accountId: id })} label="Account it went into" />
+                      <Btn onClick={() => setSM(st.id, { collected: undefined, collectedOn: undefined, accountId: undefined })}>Undo</Btn>
                     </>
                   ) : (
-                    <Btn
-                      kind="primary"
-                      onClick={() => {
-                        const amt = expectedForStream(st, r.month);
-                        setSM(st.id, { collected: amt, collectedOn: collectDate });
-                        celebrate({ kicker: "Loot collected", title: `+${money(amt)}`, sub: st.name, icon: "💰", sfx: "KA-CHING!" });
-                      }}
-                    >
-                      Mark collected
-                    </Btn>
+                    collecting !== st.id && (
+                      <Btn kind="primary" onClick={() => setCollecting(st.id)}>
+                        Mark collected
+                      </Btn>
+                    )
                   )}
                 </div>
+                {collecting === st.id && !r.isCollected && (
+                  <CollectForm
+                    amount={expectedForStream(st, r.month)}
+                    date={collectDate}
+                    cta="Collect"
+                    onCancel={() => setCollecting(null)}
+                    onCollect={(c) => {
+                      update((d) => {
+                        d.streamMonths[month] ??= {};
+                        d.streamMonths[month][st.id] = { ...(d.streamMonths[month][st.id] ?? {}), collected: c.amount, collectedOn: c.date, ...(c.accountId && { accountId: c.accountId }) };
+                        if (c.accountId) d.settings.lastAccountId = c.accountId;
+                        if (c.alreadyCounted) settle(d, `stream:${month}:${st.id}`);
+                      });
+                      setCollecting(null);
+                      const where = c.accountId ? accountName(data, c.accountId) : undefined;
+                      celebrate({ kicker: "Loot collected", title: `+${money(c.amount)}`, sub: where ? `${st.name} → ${where}` : st.name, icon: "💰", sfx: "KA-CHING!" });
+                    }}
+                  />
+                )}
               </div>
             );
           })}
@@ -145,7 +173,7 @@ export default function Income() {
                     <input type="checkbox" checked={st.active} onChange={(e) => setStream(st.id, { active: e.target.checked })} /> Active
                   </label>
                   <TextInput className="flex-1 text-sm" value={st.notes} onChange={(v) => setStream(st.id, { notes: v })} placeholder="Notes" />
-                  <Btn kind="danger" onClick={() => confirm(`Remove ${st.name}?`) && update((d) => void (d.streams = d.streams.filter((x) => x.id !== st.id)))}>
+                  <Btn kind="danger" onClick={() => removeStream(st)}>
                     Remove
                   </Btn>
                 </div>

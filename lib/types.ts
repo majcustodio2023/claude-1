@@ -27,6 +27,8 @@ export interface StreamMonth {
   /** Amount actually received; set when marked collected. */
   collected?: number;
   collectedOn?: string;
+  /** Cash account the money went into. Blank = the first account. */
+  accountId?: string;
 }
 
 export type DealStage = "lead" | "proposal" | "negotiating" | "won" | "lost";
@@ -36,6 +38,8 @@ export interface Payment {
   date: string; // YYYY-MM-DD
   amount: number;
   note?: string;
+  /** Cash account the money went into. Blank = the first account. */
+  accountId?: string;
 }
 
 export interface Deal {
@@ -74,6 +78,26 @@ export interface AdHocExpense {
   label: string;
   amount: number;
   category: "ads" | "software" | "payroll" | "household" | "other";
+  /** Cash account it was paid from. Blank = the first account. */
+  accountId?: string;
+}
+
+/** Money moved between two of your own accounts (e.g. payment gateway to bank). */
+export interface Transfer {
+  id: string;
+  date: string;
+  from: string;
+  to: string;
+  amount: number;
+  note?: string;
+}
+
+/** Where money sits: a bank, e-wallet, payment gateway, cash box… */
+export interface CashAccount {
+  id: string;
+  name: string;
+  /** Balance on cashAsOf */
+  balance: number;
 }
 
 export interface DailyLog {
@@ -202,7 +226,13 @@ export interface Settings {
   /** Every bank balance check-in, newest last. predicted = what the app expected that day. */
   cashHistory?: { date: string; balance: number; predicted?: number }[];
   /** Where the money sits (bank, GCash, Maya…), as of cashAsOf. cashBalance is their total. */
-  cashAccounts?: { id: string; name: string; balance: number }[];
+  cashAccounts?: CashAccount[];
+  /** Money moves dated on cashAsOf that the balance entered that day already includes. */
+  cashSettled?: string[];
+  /** Account picked last time money came in or went out, used as the next default. */
+  lastAccountId?: string;
+  /** Account picked last time a bill or expense was paid. */
+  lastPayAccountId?: string;
   /** Months of expenses to keep as a safety buffer (default 3). */
   cashBufferMonths?: number;
 }
@@ -216,6 +246,10 @@ export interface TrackerData {
   oneTime: OneTimeIncome[];
   expenses: ExpenseLine[];
   expensePaid: Record<string, Record<string, boolean>>; // month -> expenseId -> paid
+  /** When and from which account each monthly bill was paid: month -> expenseId -> details */
+  expensePaidFrom?: Record<string, Record<string, { date: string; accountId?: string }>>;
+  /** Moves between your own accounts */
+  transfers?: Transfer[];
   adHocExpenses: AdHocExpense[];
   logs: Record<string, DailyLog>; // date -> log
   team: TeamMember[];
