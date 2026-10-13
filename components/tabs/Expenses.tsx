@@ -2,15 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { addMonths, billPaid, defaultAccountId, expenseAppliesTo, locale, moneyHistory, monthOf, parseAmount, summarize, uid } from "@/lib/finance";
-import type { AdHocExpense, BillPayment, ExpenseLine, SubItem } from "@/lib/types";
+import type { BillPayment, ExpenseLine, SubItem } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate, money } from "../ui";
 import { AccountSelect, accountName } from "../Money";
 import { SubItems } from "../SubItems";
+import ManualSpending from "../ManualSpending";
 import { paySub, setSubs, subDone, subPaid, subRows, subsTotal, unpaySub } from "@/lib/subs";
 
 const LINE_CATS: ExpenseLine["category"][] = ["household", "payroll", "client", "software", "debt", "other"];
-const ADHOC_CATS: AdHocExpense["category"][] = ["ads", "software", "payroll", "household", "fun", "other"];
 const monthLabel = (m: string, style: "long" | "short" = "long") => new Date(m + "-01T00:00:00").toLocaleDateString(locale(), { month: style, year: "numeric" });
 
 export default function Expenses() {
@@ -69,7 +69,7 @@ export default function Expenses() {
         )}
       </Card>
 
-      <OtherSpending />
+      <ManualSpending />
       <History />
     </div>
   );
@@ -258,69 +258,6 @@ function OptionalMonth({ value, onChange, empty }: { value?: string; onChange: (
         </option>
       ))}
     </select>
-  );
-}
-
-function OtherSpending() {
-  const { data, update, month, today } = useTracker();
-  const s = useMemo(() => summarize(data, month), [data, month]);
-  const [form, setForm] = useState({ label: "", amount: undefined as number | undefined, date: today, category: "ads" as AdHocExpense["category"], accountId: defaultAccountId(data, "out") });
-  const adHoc = data.adHocExpenses.filter((e) => monthOf(e.date) === month).sort((a, b) => a.date.localeCompare(b.date));
-
-  return (
-    <Card
-      icon="💸"
-      title={`Other spending · ${money(s.adHocExpenses)}`}
-      help={
-        <ul>
-          <li>For money out that isn&apos;t a regular monthly bill: ad spend, a one-off purchase, a late salary.</li>
-          <li>Pick the account it came out of. It&apos;s taken off that account in the War chest.</li>
-          <li>Meta ad spend can be added here automatically with &ldquo;Sync spend to expenses&rdquo; in Ad Command.</li>
-        </ul>
-      }
-    >
-      <form
-        className="flex flex-wrap gap-2 mb-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (!form.label || !form.amount) return;
-          update((d) => {
-            d.adHocExpenses.push({ id: uid("adhoc"), label: form.label, amount: form.amount!, date: form.date, category: form.category, ...(form.accountId && { accountId: form.accountId }) });
-            if (form.accountId) d.settings.lastPayAccountId = form.accountId;
-          });
-          setForm({ ...form, label: "", amount: undefined });
-        }}
-      >
-        <input className="flex-1 min-w-40" placeholder="Ad spend, tools, one-off bills…" value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} />
-        <NumInput className="w-32" placeholder="Amount" value={form.amount} onChange={(v) => setForm({ ...form, amount: v })} />
-        <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value as AdHocExpense["category"] })}>
-          {ADHOC_CATS.map((c) => (
-            <option key={c}>{c}</option>
-          ))}
-        </select>
-        <input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
-        <AccountSelect value={form.accountId} onChange={(id) => setForm({ ...form, accountId: id })} label="Paid from" />
-        <Btn kind="primary">Add</Btn>
-      </form>
-      {adHoc.length === 0 ? (
-        <p className="text-base text-muted">Nothing this month.</p>
-      ) : (
-        <ul className="divide-y divide-line">
-          {adHoc.map((e) => (
-            <li key={e.id} className="flex items-center gap-3 py-2 text-base flex-wrap">
-              <span className="text-muted w-24">{e.date}</span>
-              <span className="flex-1 min-w-32">{e.label}</span>
-              <Badge>{e.category}</Badge>
-              <AccountSelect className="text-sm py-0.5" value={e.accountId} label="Paid from" onChange={(id) => update((d) => void (d.adHocExpenses.find((x) => x.id === e.id)!.accountId = id))} />
-              <span className="tabular-nums font-bold">{money(e.amount)}</span>
-              <button className="text-muted text-sm" onClick={() => update((d) => void (d.adHocExpenses = d.adHocExpenses.filter((x) => x.id !== e.id)))} aria-label="Remove">
-                ✕
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </Card>
   );
 }
 

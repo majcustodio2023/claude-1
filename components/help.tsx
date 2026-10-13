@@ -116,7 +116,7 @@ export const HELP = {
   campaigns: (
     <ul>
       <li>Pick the campaigns to watch. View only = suggestions. Manage = one-click changes. Autopilot = changes applied daily.</li>
-      <li>&ldquo;Sync spend to expenses&rdquo; records each campaign&apos;s spend for the month under Other spending.</li>
+      <li>&ldquo;Sync spend to expenses&rdquo; records each campaign&apos;s spend for the month under Manual spending.</li>
       <li>&ldquo;Share results&rdquo; copies a read-only link to that campaign: live results, what needs doing, and the changes made. Send it to your ads expert or client. It updates by itself every time they open it, and they can&apos;t change anything. &ldquo;Turn off link&rdquo; stops it working.</li>
     </ul>
   ),
@@ -174,6 +174,14 @@ export const HELP = {
       <li>It never goes above the cash you hold beyond your safety buffer and unpaid bills, so it&apos;s safe even in a slow month.</li>
       <li>Bought something? Press &ldquo;I spent on fun&rdquo; and it comes out of the account you pick. Not spending it? Press &ldquo;I&apos;m saving it instead&rdquo;.</li>
       <li>Past months show what was safe, what you spent, and whether you spent it, saved it or went over.</li>
+    </ul>
+  ),
+  manualSpending: (
+    <ul>
+      <li>For money you spend by hand that isn&apos;t a monthly bill: groceries, a tool, gas, a one-off purchase, a late salary.</li>
+      <li>Type what it was for, how much, and pick the account it came out of. It&apos;s taken off that account in the War chest straight away.</li>
+      <li>The type (Ads, Household, Fun…) is used for the &ldquo;where the money went&rdquo; chart in Expenses. Fun spending also counts against your fun money.</li>
+      <li>Picked the wrong account? Change it on the entry in the Expenses tab. Made a mistake? Press ✕ to remove it and the money goes back.</li>
     </ul>
   ),
   settings: (
