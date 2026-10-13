@@ -1,4 +1,4 @@
-import type { BillPayment, CashAccount, Deal, ExpenseLine, IncomeStream, StreamMonth, TrackerData } from "./types";
+import type { BillPayment, CashAccount, Deal, ExpenseLine, IncomeStream, StreamMonth, SubItem, TrackerData } from "./types";
 
 export const monthOf = (date: string) => date.slice(0, 7);
 
@@ -55,6 +55,22 @@ export function expectedForStream(s: IncomeStream, m: StreamMonth | undefined): 
     case "variable":
       return m?.actual ?? s.amount;
   }
+}
+
+export const REST_ID = "rest";
+
+/** The parts of a bill or income to tick off: the named ones, plus "Everything else" when the total is bigger. */
+export function subRows(total: number, subs: SubItem[] | undefined): SubItem[] {
+  if (!subs?.length) return [];
+  const listed = subs.reduce((a, s) => a + s.amount, 0);
+  return total > listed ? [...subs, { id: REST_ID, name: "Everything else", amount: total - listed }] : subs;
+}
+
+/** Collected so far counts, but an income broken into parts is only done when every part is in. */
+function streamDone(s: IncomeStream, m: StreamMonth | undefined): boolean {
+  if (m?.collected == null) return false;
+  if (!m.subs || !s.subs?.length) return true;
+  return subRows(expectedForStream(s, m), s.subs).every((sub) => m.subs![sub.id] != null);
 }
 
 export function expenseAppliesTo(e: ExpenseLine, month: string): boolean {
@@ -130,12 +146,12 @@ export function summarize(data: TrackerData, month: string): MonthSummary {
     .filter((s) => s.active || sm[s.id]?.collected != null)
     .map((s) => {
       const m = sm[s.id];
-      const isCollected = m?.collected != null;
+      const isCollected = streamDone(s, m);
       return { stream: s, month: m, expected: expectedForStream(s, m), collected: m?.collected ?? 0, isCollected };
     });
 
   const recurringCollected = streams.reduce((a, r) => a + r.collected, 0);
-  const recurringPending = streams.filter((r) => !r.isCollected).reduce((a, r) => a + r.expected, 0);
+  const recurringPending = streams.filter((r) => !r.isCollected).reduce((a, r) => a + Math.max(r.expected - r.collected, 0), 0);
 
   const dealCollected = data.deals
     .flatMap((d) => d.payments)

@@ -9,6 +9,7 @@ import { clientTaskKey, hasChest } from "@/lib/loot";
 import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate } from "../ui";
 import { HELP } from "../help";
 import { StreamTerms } from "../StreamSettings";
+import { incomePartlyCollected } from "@/lib/subs";
 
 const STATUS: Record<ClientTask["status"], { label: string; cls: string }> = {
   todo: { label: "To do", cls: "btn-ghost" },
@@ -433,7 +434,11 @@ function ClientMoneyPanel({ client: c }: { client: Client }) {
         )}
         <span className="text-base ml-auto">
           {kind === "recurring" ? (
-            m.collected ? <span className="text-good font-bold">Collected {money(m.collected)} ✓</span> : stream ? <span className="text-muted">Not collected for {monthName(month)} yet · mark it in Income</span> : null
+            m.collected && stream && incomePartlyCollected(data, month, stream) ? (
+              <span className="text-gold font-bold">{money(m.collected)} of its parts collected · tick the rest in Income</span>
+            ) : m.collected ? (
+              <span className="text-good font-bold">Collected {money(m.collected)} ✓</span>
+            ) : stream ? <span className="text-muted">Not collected for {monthName(month)} yet · mark it in Income</span> : null
           ) : deal ? (
             <span>
               <span className="text-good font-bold">{money(m.collected)} collected</span>

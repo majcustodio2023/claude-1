@@ -2,13 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { clientForDeal, clientForStream, makeClientFromStream } from "@/lib/clients";
-import { dealBalance, dealPaid, expectedForStream, monthOf, parseAmount, summarize, uid, type StreamRow } from "@/lib/finance";
-import type { Deal, IncomeStream, StreamMonth } from "@/lib/types";
+import { dealBalance, dealPaid, defaultAccountId, expectedForStream, monthOf, parseAmount, summarize, uid, type StreamRow } from "@/lib/finance";
+import type { Deal, IncomeStream, StreamMonth, SubItem } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Btn, Card, NumInput, Stat, celebrate, money } from "../ui";
 import { AccountSelect, CollectForm, accountName, settle } from "../Money";
 import { StreamTerms, termsText } from "../StreamSettings";
 import { HELP } from "../help";
+import { SubItems } from "../SubItems";
+import { collectSub, incomeSubRows, uncollectSub } from "@/lib/subs";
 
 type Go = (tab: "clients" | "pipeline") => void;
 
@@ -22,7 +24,7 @@ export default function Income({ goTo }: { goTo: Go }) {
   const projects = data.deals.filter(
     (d) => d.stage !== "lost" && (projectIds.has(d.id) || (d.stage === "won" && (dealBalance(d) > 0 || d.payments.some((p) => monthOf(p.date) === month)))),
   );
-  const sum = (rows: StreamRow[], k: "collected" | "pending") => rows.reduce((a, r) => a + (k === "collected" ? r.collected : r.isCollected ? 0 : r.expected), 0);
+  const sum = (rows: StreamRow[], k: "collected" | "pending") => rows.reduce((a, r) => a + (k === "collected" ? r.collected : r.isCollected ? 0 : Math.max(r.expected - r.collected, 0)), 0);
 
   return (
     <div className="space-y-4">
@@ -88,6 +90,21 @@ function IncomeRow({ row: r, goTo }: { row: StreamRow; goTo: Go }) {
       d.streamMonths[month][st.id] = cur;
     });
   const setStream = (patch: Partial<IncomeStream>) => update((d) => void Object.assign(d.streams.find((x) => x.id === st.id)!, patch));
+  const parts = incomeSubRows(data, month, st);
+  const partly = parts.length > 0 && !r.isCollected && r.collected > 0;
+  const toggleSub = (sub: SubItem, done: boolean) => {
+    if (done) {
+      if (!r.month?.subs?.[sub.id]) return alert(`${st.name} was collected all at once. Press Undo to change it.`);
+      update((d) => void uncollectSub(d, month, st.id, sub.id));
+      return;
+    }
+    const accountId = r.month?.accountId ?? defaultAccountId(data, "in");
+    update((d) => {
+      collectSub(d, month, st.id, sub.id, collectDate, accountId);
+      if (accountId) d.settings.lastAccountId = accountId;
+    });
+    if (parts.filter((p) => !p.done).length === 1) celebrate({ kicker: "Loot collected", title: `+${money(r.expected)}`, sub: `${st.name} · every part in`, icon: "💰", sfx: "KA-CHING!" });
+  };
 
   // Income that has paid before is archived instead of deleted, so past months keep their numbers.
   const remove = () => {
@@ -103,7 +120,11 @@ function IncomeRow({ row: r, goTo }: { row: StreamRow; goTo: Go }) {
         <div className="flex-1 min-w-48">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-lg font-bold">{client?.name ?? st.name}</span>
-            {r.isCollected ? (
+            {partly ? (
+              <Badge tone="gold">
+                {money(r.collected)} of {money(r.expected)} in
+              </Badge>
+            ) : r.isCollected ? (
               <Badge tone="good">
                 Collected {money(r.collected)}
                 {accountName(data, r.month?.accountId) ? ` · in ${accountName(data, r.month?.accountId)}` : ""}
@@ -133,16 +154,16 @@ function IncomeRow({ row: r, goTo }: { row: StreamRow; goTo: Go }) {
           <div className="font-display text-2xl tracking-wide">{money(r.expected)}</div>
         </div>
         <div className="flex gap-2 items-center flex-wrap">
-          {r.isCollected ? (
+          {r.isCollected || partly ? (
             <>
-              <NumInput className="w-28" value={r.collected} onChange={(v) => setSM({ collected: v ?? 0 })} />
+              {!r.month?.subs && <NumInput className="w-28" value={r.collected} onChange={(v) => setSM({ collected: v ?? 0 })} />}
               <AccountSelect value={r.month?.accountId} onChange={(id) => setSM({ accountId: id })} label="Account it went into" />
-              <Btn onClick={() => setSM({ collected: undefined, collectedOn: undefined, accountId: undefined })}>Undo</Btn>
+              <Btn onClick={() => setSM({ collected: undefined, collectedOn: undefined, accountId: undefined, subs: undefined })}>Undo</Btn>
             </>
           ) : (
             !collecting && (
               <Btn kind="primary" onClick={() => setCollecting(true)}>
-                Mark collected
+                {parts.length ? "Collect all" : "Mark collected"}
               </Btn>
             )
           )}
@@ -157,6 +178,8 @@ function IncomeRow({ row: r, goTo }: { row: StreamRow; goTo: Go }) {
           )}
         </div>
       </div>
+
+      {parts.length > 0 && <SubItems rows={parts} subs={st.subs} onToggle={toggleSub} verb="collected" />}
 
       {collecting && !r.isCollected && (
         <CollectForm

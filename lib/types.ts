@@ -16,6 +16,15 @@ export interface IncomeStream {
   directCost?: number;
   notes?: string;
   active: boolean;
+  /** Optional breakdown into smaller parts, each collected on its own. */
+  subs?: SubItem[];
+}
+
+/** One named part of a bill or income (e.g. Household → maid). Ticked off on its own each month. */
+export interface SubItem {
+  id: string;
+  name: string;
+  amount: number;
 }
 
 /** What happened with one stream in one month. */
@@ -29,6 +38,8 @@ export interface StreamMonth {
   collectedOn?: string;
   /** Cash account the money went into. Blank = the first account. */
   accountId?: string;
+  /** Parts collected so far (subId -> amount and day). collected is their total. */
+  subs?: Record<string, { amount: number; date: string }>;
 }
 
 export type DealStage = "lead" | "proposal" | "negotiating" | "won" | "lost";
@@ -73,6 +84,8 @@ export interface ExpenseLine {
   /** Pay to a team member for work on a client */
   clientId?: string;
   memberId?: string;
+  /** Optional breakdown into smaller parts, each paid on its own. */
+  subs?: SubItem[];
 }
 
 export interface AdHocExpense {
@@ -94,6 +107,8 @@ export interface BillPayment {
   at: string;
   amount: number;
   accountId?: string;
+  /** The sub-item this pays, when the bill is broken down. */
+  subId?: string;
 }
 
 /** Money moved between two of your own accounts (e.g. payment gateway to bank). */
