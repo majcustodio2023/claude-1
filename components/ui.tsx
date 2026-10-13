@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import { money } from "@/lib/finance";
 import { Hero, SfxBurst } from "./characters";
 
 type Glow = "cyan" | "hero" | "gold" | "good";
@@ -50,8 +51,8 @@ export function Meter({ label, icon, value, target, sub, tone }: { label: string
         <span className={`comic-num text-4xl ${TONE_TEXT[t]}`}>{Math.round(pct * 100)}%</span>
       </div>
       <div className="flex items-baseline gap-2 flex-wrap">
-        <span className="comic-num text-5xl leading-none">{peso(value)}</span>
-        <span className="text-lg text-muted font-bold">of {peso(target)}</span>
+        <span className="comic-num text-5xl leading-none">{money(value)}</span>
+        <span className="text-lg text-muted font-bold">of {money(target)}</span>
       </div>
       <Bar pct={pct} tone={t} />
       {sub && <div className="text-base text-muted font-bold">{sub}</div>}
@@ -80,7 +81,7 @@ export function NumInput({ value, onChange, className = "", placeholder }: { val
   const [text, setText] = useState(value == null ? "" : String(value));
   useEffect(() => setText(value == null ? "" : String(value)), [value]);
   const commit = () => {
-    const clean = text.replace(/[₱,\s]/g, "");
+    const clean = text.replace(/[^\d.-]/g, "");
     if (clean === "") return onChange(undefined);
     const n = Number(clean);
     if (!Number.isNaN(n)) onChange(n);
@@ -128,9 +129,7 @@ export function Badge({ tone = "muted", children }: { tone?: "good" | "warn" | "
   return <span className={`inline-block font-display text-[0.95rem] leading-none tracking-wide border-2 border-outline rounded-md px-2 pt-1 pb-0.5 shadow-[2px_2px_0_var(--color-outline)] ${t}`}>{children}</span>;
 }
 
-export function peso(n: number): string {
-  return "₱" + Math.round(n).toLocaleString("en-PH");
-}
+export { money };
 
 // ---------- celebrations ----------
 

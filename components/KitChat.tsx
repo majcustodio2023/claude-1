@@ -97,7 +97,7 @@ export default function KitChat() {
     if (!R) return;
     if (listening) return recRef.current?.stop();
     const rec = new R();
-    rec.lang = "en-PH";
+    rec.lang = data.settings.locale || navigator.language;
     rec.interimResults = false;
     rec.onresult = (e) => send(e.results[0][0].transcript);
     rec.onend = () => setListening(false);

@@ -1,6 +1,6 @@
 import "server-only";
 import { describeAction, planAutopilot } from "./autopilot";
-import { uid } from "./finance";
+import { configureLocale, uid } from "./finance";
 import { analyze, fetchCampaignInsights, graphGet, graphPost, toMetrics, type SuggestedAction } from "./meta";
 import { appendAutopilotLog, getData, getToken } from "./store";
 import type { AdAccount, AutopilotEntry, TrackedCampaign, TrackerData } from "./types";
@@ -28,7 +28,7 @@ export async function applyAction(tracked: TrackedCampaign, token: string, actio
   if (action.type === "pause") {
     await graphPost(action.targetId, { status: "PAUSED" }, token);
   } else if (action.type === "budget" && action.newDailyBudget && action.newDailyBudget > 0) {
-    // Meta takes budgets in the currency's smallest unit (centavos for PHP).
+    // Meta takes budgets in the currency's smallest unit (e.g. cents).
     await graphPost(action.targetId, { daily_budget: String(Math.round(action.newDailyBudget * 100)) }, token);
   } else {
     throw new Error("Unknown action");
@@ -40,6 +40,7 @@ const LOG_LIMIT = 200;
 /** Runs Autopilot on every campaign set to "autopilot" and records what happened. */
 export async function runAutopilot(now = new Date()): Promise<AutopilotEntry[]> {
   const data = await getData();
+  configureLocale(data.settings);
   const log = data.autopilotLog ?? [];
   const entries: AutopilotEntry[] = [];
   const at = now.toISOString();

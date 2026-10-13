@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { KIT_SYSTEM, KIT_TOOLS, kitContext, toAction, type KitAction } from "@/lib/kit";
+import { configureLocale } from "@/lib/finance";
+import { KIT_TOOLS, kitContext, kitSystem, toAction, type KitAction } from "@/lib/kit";
 import { getAnthropicKey, getData } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +19,8 @@ export async function POST(req: Request) {
   if (!key) return NextResponse.json({ error: "Kit needs a Claude API key first." }, { status: 400 });
 
   const data = await getData();
-  const system = `${KIT_SYSTEM}\n\nStatus report (live from the tracker):\n${kitContext(data, today)}`;
+  configureLocale(data.settings);
+  const system = `${kitSystem(data.settings)}\n\nStatus report (live from the tracker):\n${kitContext(data, today)}`;
   const convo: Msg[] = messages.slice(-20).map((m) => ({ role: m.role, content: m.text }));
   while (convo.length && convo[0].role !== "user") convo.shift();
 

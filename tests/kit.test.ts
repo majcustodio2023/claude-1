@@ -1,14 +1,14 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { kitContext, toAction } from "../lib/kit";
-import { seedData } from "../lib/seed";
+import { sampleData as seedData } from "./fixture";
 
 test("Kit's status report carries the real numbers", () => {
   const d = seedData();
   const ctx = kitContext(d, "2026-10-13");
   assert.match(ctx, /money made ₱38,766 of ₱250,000/);
   assert.match(ctx, /Cash on hand ≈ ₱181,766/);
-  assert.match(ctx, /Interior/i);
+  assert.match(ctx, /Big funnel build/);
   d.briefing = { date: "2026-10-13", headline: "Close the webinar deal", points: ["Call them"] };
   assert.match(kitContext(d, "2026-10-13"), /Current briefing: "Close the webinar deal"/);
 });

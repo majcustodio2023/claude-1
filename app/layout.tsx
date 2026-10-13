@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Agency Tracker",
-  description: "Money, pipeline, team and ads for Maj's agency.",
+  description: "Money, pipeline, team and ads for your agency, gamified.",
   icons: { icon: "/icon.svg" },
 };
 

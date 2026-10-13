@@ -140,7 +140,7 @@ export interface TrackedCampaign {
   resultAction?: string;
   targetCpl?: number;
   targetRoas?: number;
-  /** Autopilot never raises a daily budget above this (pesos). Without it, Autopilot only cuts. */
+  /** Autopilot never raises a daily budget above this (in the account currency). Without it, Autopilot only cuts. */
   maxDailyBudget?: number;
 }
 
@@ -175,6 +175,19 @@ export interface AutopilotEntry {
 }
 
 export interface Settings {
+  /** Shown on the hero card and used by Kit. */
+  playerName?: string;
+  businessName?: string;
+  /** A sentence or two about the business, so Kit's advice fits it. */
+  businessDescription?: string;
+  /** Number and date format, e.g. "en-US", "en-PH", "en-GB". Blank = the device's. */
+  locale?: string;
+  /** IANA time zone, e.g. "Asia/Manila". Blank = the device's. */
+  timeZone?: string;
+  /** Show a daily Bible verse on HQ and let Kit use scripture (default off). */
+  dailyVerse?: boolean;
+  /** Quick prompts in the Creatives tab: [label, prompt]. */
+  creativePrompts?: [string, string][];
   monthlyGoal: number;
   /** When set, overrides the sum of expense lines as the "stay afloat" number */
   expenseTargetOverride?: number;

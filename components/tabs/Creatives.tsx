@@ -5,12 +5,12 @@ import type { Creative } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Btn, Card } from "../ui";
 
-const PROMPTS: [string, string][] = [
-  ["AACIO SaaS", "Bright, modern ad image: a Filipino small business owner smiling at a laptop dashboard showing leads coming in, clean office, bold space at the top for a headline, photorealistic, 4:5"],
-  ["Interior design", "Luxury Filipino condo living room, warm natural light, modern tropical interior design, wide angle, magazine-quality photo, 4:5"],
-  ["Webinar", "Confident Filipino coach on a stage presenting to an online audience, ring light glow, energetic, space for a 'FREE WEBINAR' headline, 4:5"],
-  ["Online course", "Young Filipino professional learning on a tablet at a café, course progress bar on screen, hopeful mood, photorealistic, 4:5"],
-  ["Ecom", "Product-style flat lay of a best-selling item on a clean pastel background, studio lighting, scroll-stopping, 1:1"],
+// Starter quick prompts; each business edits its own list (saved in Settings).
+export const DEFAULT_PROMPTS: [string, string][] = [
+  ["Happy customer", "Bright, modern ad image: a small business owner smiling at a laptop dashboard showing new leads coming in, clean office, space at the top for a headline, photorealistic, 4:5"],
+  ["Product hero", "Product-style shot of the hero product on a clean pastel background, studio lighting, scroll-stopping, 1:1"],
+  ["Webinar", "Confident coach on a stage presenting to an online audience, ring light glow, energetic, space for a 'FREE WEBINAR' headline, 4:5"],
+  ["Before / after", "Split-screen before and after: messy, stressed workspace on the left, calm organized success on the right, bold contrast, 4:5"],
 ];
 
 async function post<T>(url: string, body: unknown): Promise<T> {
@@ -81,6 +81,9 @@ function Generate({ hasKey, setHasKey, run, images }: { hasKey: boolean; setHasK
   const [key, setKey] = useState("");
   const [keyMsg, setKeyMsg] = useState("");
   const [prompt, setPrompt] = useState("");
+  const { data, update } = useTracker();
+  const presets = data.settings.creativePrompts ?? DEFAULT_PROMPTS;
+  const setPresets = (list: [string, string][]) => update((d) => void (d.settings.creativePrompts = list));
   const [busy, setBusy] = useState(false);
 
   const saveKey = async (value: string | null) => {
@@ -122,12 +125,26 @@ function Generate({ hasKey, setHasKey, run, images }: { hasKey: boolean; setHasK
         </div>
       ) : (
         <div className="space-y-3">
-          <div className="flex flex-wrap gap-2">
-            {PROMPTS.map(([label, p]) => (
-              <Btn key={label} onClick={() => setPrompt(p)}>
-                {label}
-              </Btn>
+          <div className="flex flex-wrap gap-2 items-center">
+            {presets.map(([label, p], i) => (
+              <span key={label + i} className="inline-flex items-center">
+                <Btn onClick={() => setPrompt(p)}>{label}</Btn>
+                <button className="text-muted text-base px-1.5" aria-label={`Remove ${label}`} onClick={() => setPresets(presets.filter((_, j) => j !== i))}>
+                  ✕
+                </button>
+              </span>
             ))}
+            {prompt.trim() && (
+              <button
+                className="text-base underline text-muted"
+                onClick={() => {
+                  const label = window.prompt("Name this quick prompt");
+                  if (label?.trim()) setPresets([...presets, [label.trim(), prompt.trim()]]);
+                }}
+              >
+                + Save as quick prompt
+              </button>
+            )}
           </div>
           <textarea className="w-full min-h-28 text-lg" placeholder="Describe the ad image you want…" value={prompt} onChange={(e) => setPrompt(e.target.value)} />
           <div className="flex flex-wrap items-center gap-3">

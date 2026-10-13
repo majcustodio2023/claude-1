@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { dailyAdvice, generateTodos } from "../lib/advice";
 import { cashForecast, cashHealth, cashPosition, expectedForStream, recordBalance, summarize } from "../lib/finance";
-import { seedData } from "../lib/seed";
+import { sampleData as seedData } from "./fixture";
 
 test("Local Ecom Hero pays 15% or the ₱25k floor, whichever is higher", () => {
   const leh = seedData().streams.find((s) => s.id === "leh")!;
@@ -45,8 +45,8 @@ test("advice and to-dos are produced from the data", () => {
   assert.match(a.headline, /expenses|Expenses/);
   assert.ok(a.verse.text.length > 10);
   const todos = generateTodos(d, "2026-10-12");
-  assert.ok(todos.some((t) => t.text.includes("Interior design funnel")));
-  assert.ok(todos.some((t) => t.text.includes("Opsified")));
+  assert.ok(todos.some((t) => t.text.includes("Big funnel build")));
+  assert.ok(todos.some((t) => t.text.includes("Retainer client A")));
 });
 
 test("cash on hand starts from the bank balance and follows money in and out", () => {
@@ -103,4 +103,12 @@ test("old one-time income becomes closed deals: paid ones keep the payment, the 
   const s = summarize(m, "2026-10");
   assert.equal(s.wonUnpaid, 30000);
   assert.equal(s.dealCollected, 5000);
+});
+
+test("money follows the currency and locale in settings", async () => {
+  const { configureLocale, money } = await import("../lib/finance");
+  configureLocale({ currency: "USD", locale: "en-US" });
+  assert.equal(money(1234.4), "$1,234");
+  configureLocale({ currency: "PHP", locale: "en-PH" });
+  assert.equal(money(30000), "₱30,000");
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { monthOf, summarize, todayISO } from "@/lib/finance";
+import { configureLocale, locale, monthOf, summarize, todayISO } from "@/lib/finance";
 import { GEAR, achievements, levelFor, logStreak, questStats, rankFor } from "@/lib/game";
 import type { TrackerData } from "@/lib/types";
 import Today from "./tabs/Today";
@@ -14,7 +14,7 @@ import Team from "./tabs/Team";
 import Ads from "./tabs/Ads";
 import Creatives from "./tabs/Creatives";
 import SettingsTab from "./tabs/Settings";
-import { Bar, Celebrations, celebrate, peso } from "./ui";
+import { Bar, Celebrations, celebrate, money } from "./ui";
 import { Hero } from "./characters";
 import MonthPicker from "./MonthPicker";
 
@@ -66,6 +66,7 @@ export default function App() {
     if (res.status === 401) return void (window.location.href = "/login");
     const json = await res.json();
     if (!res.ok) return setError(json.error ?? "Could not load data");
+    configureLocale(json.data.settings);
     latest.current = json.data;
     setData(json.data);
     setPersistent(json.persistent);
@@ -99,6 +100,7 @@ export default function App() {
     [flush],
   );
 
+  if (data) configureLocale(data.settings);
   if (error) return <div className="p-6 text-bad">{error}</div>;
   if (!data) return <div className="min-h-screen grid place-content-center font-display text-3xl tracking-wide">Loading…</div>;
 
@@ -175,15 +177,15 @@ function PlayerCard({ data, month, today, saving }: { data: TrackerData; month: 
         </div>
         <div className="flex-1 min-w-60 pb-4">
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="comic-num text-5xl sm:text-6xl leading-none text-ink">MAJ</h1>
+            <h1 className="comic-num text-5xl sm:text-6xl leading-none text-ink uppercase">{data.settings.playerName || "Hero"}</h1>
             <span className={`font-display text-xl tracking-wide px-3 pt-1 pb-0.5 border-[3px] border-outline rounded-md text-outline shadow-[3px_3px_0_#0b0a14] rotate-[2deg] ${rankBg}`}>{rank.name}</span>
           </div>
           <p className="text-lg text-muted font-bold mt-1">{rank.tagline}</p>
           <div className="mt-3 space-y-1.5 max-w-xl">
             <Bar pct={lvl.pct} tone="hero" />
             <div className="flex justify-between text-base font-bold">
-              <span className="text-muted">XP {peso(lvl.into)} / {peso(lvl.step)}</span>
-              <span className="text-hero">{lvl.level >= 11 ? "Goal smashed!" : `${peso(lvl.toNext)} to LVL ${lvl.level + 1}`}</span>
+              <span className="text-muted">XP {money(lvl.into)} / {money(lvl.step)}</span>
+              <span className="text-hero">{lvl.level >= 11 ? "Goal smashed!" : `${money(lvl.toNext)} to LVL ${lvl.level + 1}`}</span>
             </div>
           </div>
         </div>
@@ -194,7 +196,7 @@ function PlayerCard({ data, month, today, saving }: { data: TrackerData; month: 
         </div>
       </div>
       <div className="relative flex justify-between gap-3 flex-wrap text-sm font-extrabold uppercase tracking-wide bg-outline/70 border-t-[3px] border-outline px-4 sm:px-6 py-2 text-muted">
-        <span>{new Date(today + "T00:00:00").toLocaleDateString("en-PH", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}</span>
+        <span>{new Date(today + "T00:00:00").toLocaleDateString(locale(), { weekday: "long", month: "long", day: "numeric", year: "numeric" })}</span>
         <span className={saving === "error" ? "text-bad" : "text-good"}>{saving === "saving" ? "Saving…" : saving === "saved" ? "Saved ✓" : saving === "error" ? "Save failed" : "Ready"}</span>
       </div>
     </header>

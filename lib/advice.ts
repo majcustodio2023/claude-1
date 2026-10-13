@@ -1,4 +1,4 @@
-import { daysLeftInMonth, dealBalance, monthOf, peso, summarize, uid, weekLogs } from "./finance";
+import { daysLeftInMonth, dealBalance, monthOf, money, summarize, uid, weekLogs } from "./finance";
 import type { TodoItem, TrackerData } from "./types";
 
 // Public-domain King James Version text.
@@ -75,33 +75,33 @@ export function dailyAdvice(data: TrackerData, today: string): DailyAdvice {
   let headline: string;
 
   if (s.moneyMade >= s.goal) {
-    headline = `You've hit the ${peso(s.goal)} goal this month. Protect the cash and build reserves.`;
+    headline = `You've hit the ${money(s.goal)} goal this month. Protect the cash and build reserves.`;
     theme = "stewardship";
   } else if (s.moneyMade >= s.expenseTarget) {
-    headline = `Expenses are covered. ${peso(s.gapToGoal)} to go to reach ${peso(s.goal)}.`;
+    headline = `Expenses are covered. ${money(s.gapToGoal)} to go to reach ${money(s.goal)}.`;
     theme = "diligence";
   } else if (s.projected >= s.expenseTarget) {
-    headline = `Expenses will be covered once ${peso(s.recurringPending)} in retainers lands. Chase collections today.`;
+    headline = `Expenses will be covered once ${money(s.recurringPending)} in retainers lands. Chase collections today.`;
     theme = "stewardship";
   } else {
     const perDay = s.gapToExpenses / Math.max(daysLeft, 1);
-    headline = `${peso(s.gapToExpenses)} still needed to cover expenses, about ${peso(perDay)} a day for ${daysLeft} days. Closing is the priority.`;
+    headline = `${money(s.gapToExpenses)} still needed to cover expenses, about ${money(perDay)} a day for ${daysLeft} days. Closing is the priority.`;
     theme = daysLeft < 10 ? "courage" : "provision";
   }
 
   const pending = s.streams.filter((r) => !r.isCollected);
   if (pending.length) {
-    points.push(`Collect: ${pending.map((r) => `${r.stream.name} (${peso(r.expected)})`).join(", ")} not marked collected yet.`);
+    points.push(`Collect: ${pending.map((r) => `${r.stream.name} (${money(r.expected)})`).join(", ")} not marked collected yet.`);
   }
 
   const open = data.deals.filter((d) => d.stage !== "won" && d.stage !== "lost").sort((a, b) => b.value - a.value);
   if (open.length) {
     const top = open[0];
-    points.push(`Biggest open deal: ${top.name} at ${peso(top.value)}. Move it one step forward today (call, proposal, or deposit ask).`);
+    points.push(`Biggest open deal: ${top.name} at ${money(top.value)}. Move it one step forward today (call, proposal, or deposit ask).`);
   }
   const wonUnpaid = data.deals.filter((d) => d.stage === "won" && dealBalance(d) > 0);
   if (wonUnpaid.length) {
-    points.push(`Closed but not fully paid: ${wonUnpaid.map((d) => `${d.name} (${peso(dealBalance(d))} left)`).join(", ")}. Invoice and follow up.`);
+    points.push(`Closed but not fully paid: ${wonUnpaid.map((d) => `${d.name} (${money(dealBalance(d))} left)`).join(", ")}. Invoice and follow up.`);
   }
 
   if (wk.days > 0) {
@@ -114,7 +114,7 @@ export function dailyAdvice(data: TrackerData, today: string): DailyAdvice {
     if (wk.adSpend > 0 && wk.leads > 0) {
       const cpl = wk.adSpend / wk.leads;
       if (cpl > data.settings.targetCpl * 1.3) {
-        points.push(`This week's cost per lead is ${peso(cpl)}, above your ${peso(data.settings.targetCpl)} target. Check the Ads tab before adding budget.`);
+        points.push(`This week's cost per lead is ${money(cpl)}, above your ${money(data.settings.targetCpl)} target. Check the Ads tab before adding budget.`);
       }
     }
   } else {
@@ -125,7 +125,7 @@ export function dailyAdvice(data: TrackerData, today: string): DailyAdvice {
   if (doFirst.length) points.push(`${doFirst.length} "Do first" tasks still open. Start with: ${doFirst[0].title}.`);
 
   if (s.adSpend > 0 && s.moneyMade < s.expenseTarget && s.adSpend > s.expenseTarget * 0.15) {
-    points.push(`Ad spend this month is ${peso(s.adSpend)} while expenses aren't covered yet. Keep budgets on proven campaigns only.`);
+    points.push(`Ad spend this month is ${money(s.adSpend)} while expenses aren't covered yet. Keep budgets on proven campaigns only.`);
     theme = "stewardship";
   }
 
@@ -150,7 +150,7 @@ export function generateTodos(data: TrackerData, today: string): TodoItem[] {
   const day = Number(today.slice(8, 10));
 
   for (const r of s.streams) {
-    if (!r.isCollected && day >= 5) items.push(`Follow up payment: ${r.stream.name} (${peso(r.expected)})`);
+    if (!r.isCollected && day >= 5) items.push(`Follow up payment: ${r.stream.name} (${money(r.expected)})`);
     if (r.stream.kind === "percent_floor" && r.month?.revenueBase == null) items.push(`Get ${r.stream.name}'s revenue figure for the month`);
   }
 
@@ -158,11 +158,11 @@ export function generateTodos(data: TrackerData, today: string): TodoItem[] {
     .filter((d) => d.stage !== "won" && d.stage !== "lost")
     .sort((a, b) => b.value - a.value)
     .slice(0, 3)
-    .forEach((d) => items.push(`Advance ${d.name} (${peso(d.value)}): next step with the client`));
+    .forEach((d) => items.push(`Advance ${d.name} (${money(d.value)}): next step with the client`));
 
   data.deals
     .filter((d) => d.stage === "won" && dealBalance(d) > 0)
-    .forEach((d) => items.push(`Collect balance on ${d.name} (${peso(dealBalance(d))})`));
+    .forEach((d) => items.push(`Collect balance on ${d.name} (${money(dealBalance(d))})`));
 
   data.tasks
     .filter((t) => !t.done && (t.quadrant === "do" || (t.dueDate && t.dueDate <= today)))

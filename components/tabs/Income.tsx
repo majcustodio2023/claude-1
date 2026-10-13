@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { expectedForStream, monthOf, summarize, uid } from "@/lib/finance";
 import type { IncomeStream, StreamKind, StreamMonth } from "@/lib/types";
 import { useTracker } from "../App";
-import { Badge, Btn, Card, NumInput, TextInput, celebrate, peso } from "../ui";
+import { Badge, Btn, Card, NumInput, TextInput, celebrate, money } from "../ui";
 
 const KIND_LABEL: Record<StreamKind, string> = {
   fixed: "Fixed monthly fee",
@@ -46,21 +46,21 @@ export default function Income() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium">{st.name}</span>
-                    {r.isCollected ? <Badge tone="good">Collected {peso(r.collected)}</Badge> : <Badge tone="warn">Expected</Badge>}
+                    {r.isCollected ? <Badge tone="good">Collected {money(r.collected)}</Badge> : <Badge tone="warn">Expected</Badge>}
                   </div>
                   <div className="text-sm text-muted mt-1">
                     {st.kind === "percent_floor"
-                      ? `${Math.round((st.percent ?? 0) * 100)}% of revenue, minimum ${peso(st.floor ?? 0)}`
+                      ? `${Math.round((st.percent ?? 0) * 100)}% of revenue, minimum ${money(st.floor ?? 0)}`
                       : st.kind === "fixed"
-                        ? `${peso(st.amount)} per month`
-                        : `Estimate ${peso(st.amount)} per month`}
-                    {margin != null && ` · ${peso(margin)} after ${peso(st.directCost!)} servicing cost`}
+                        ? `${money(st.amount)} per month`
+                        : `Estimate ${money(st.amount)} per month`}
+                    {margin != null && ` · ${money(margin)} after ${money(st.directCost!)} servicing cost`}
                   </div>
                 </div>
                 {st.kind === "percent_floor" && (
                   <label className="text-sm text-muted flex flex-col gap-1">
                     Their revenue this month
-                    <NumInput className="w-36" value={r.month?.revenueBase} onChange={(v) => setSM(st.id, { revenueBase: v })} placeholder="₱0" />
+                    <NumInput className="w-36" value={r.month?.revenueBase} onChange={(v) => setSM(st.id, { revenueBase: v })} placeholder="0" />
                   </label>
                 )}
                 {st.kind === "variable" && (
@@ -71,7 +71,7 @@ export default function Income() {
                 )}
                 <div className="text-right md:w-32">
                   <div className="text-sm text-muted">Due this month</div>
-                  <div className="font-semibold tabular-nums">{peso(r.expected)}</div>
+                  <div className="font-semibold tabular-nums">{money(r.expected)}</div>
                 </div>
                 <div className="flex gap-2 items-center">
                   {r.isCollected ? (
@@ -85,7 +85,7 @@ export default function Income() {
                       onClick={() => {
                         const amt = expectedForStream(st, r.month);
                         setSM(st.id, { collected: amt, collectedOn: collectDate });
-                        celebrate({ kicker: "Loot collected", title: `+${peso(amt)}`, sub: st.name, icon: "💰", sfx: "KA-CHING!" });
+                        celebrate({ kicker: "Loot collected", title: `+${money(amt)}`, sub: st.name, icon: "💰", sfx: "KA-CHING!" });
                       }}
                     >
                       Mark collected
@@ -97,8 +97,8 @@ export default function Income() {
           })}
         </div>
         <div className="flex justify-between text-sm mt-4 pt-3 border-t border-line">
-          <span>Collected {peso(s.recurringCollected)}</span>
-          <span className="text-muted">Still expected {peso(s.recurringPending)}</span>
+          <span>Collected {money(s.recurringCollected)}</span>
+          <span className="text-muted">Still expected {money(s.recurringPending)}</span>
         </div>
       </Card>
 
