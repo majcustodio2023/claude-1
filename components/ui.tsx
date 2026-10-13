@@ -218,3 +218,31 @@ export function Celebrations() {
     </div>
   );
 }
+
+// ---------- toasts (small rewards like coins) ----------
+
+export function toast(text: string) {
+  window.dispatchEvent(new CustomEvent<string>("tracker:toast", { detail: text }));
+}
+
+export function Toasts() {
+  const [list, setList] = useState<{ id: number; text: string }[]>([]);
+  useEffect(() => {
+    const on = (e: Event) => {
+      const id = Date.now() + Math.random();
+      setList((l) => [...l.slice(-3), { id, text: (e as CustomEvent<string>).detail }]);
+      setTimeout(() => setList((l) => l.filter((x) => x.id !== id)), 3200);
+    };
+    window.addEventListener("tracker:toast", on);
+    return () => window.removeEventListener("tracker:toast", on);
+  }, []);
+  return (
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 pointer-events-none w-[min(92vw,420px)]" role="status">
+      {list.map((t) => (
+        <div key={t.id} className="sfx-in bg-gold text-outline font-display text-xl tracking-wide border-[3px] border-outline rounded-[10px] px-4 py-2 shadow-[4px_4px_0_#0b0a14] text-center">
+          {t.text}
+        </div>
+      ))}
+    </div>
+  );
+}

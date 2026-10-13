@@ -4,6 +4,7 @@ import { useState } from "react";
 import { uid } from "@/lib/finance";
 import type { Quadrant, Task } from "@/lib/types";
 import { useTracker } from "../App";
+import { hasChest, taskKey } from "@/lib/loot";
 import { Btn, Card } from "../ui";
 import { HELP } from "../help";
 
@@ -76,7 +77,10 @@ export default function Tasks() {
                   <li key={t.id} className="flex items-start gap-2 group">
                     <input type="checkbox" className="mt-1" checked={t.done} onChange={() => set(t.id, { done: !t.done, doneOn: !t.done ? today : undefined })} />
                     <div className="flex-1 min-w-0">
-                      <div className={`text-sm ${t.done ? "line-through text-muted" : ""}`}>{t.title}</div>
+                      <div className={`text-sm ${t.done ? "line-through text-muted" : ""}`}>
+                        {t.title}
+                        {!t.done && hasChest(taskKey(t.id)) && <span className="ml-1.5" title="Loot chest: finish this for a random item">🎁</span>}
+                      </div>
                       <div className="text-sm text-muted flex gap-2 flex-wrap items-center">
                         <span>{t.owner}</span>
                         {t.due && <span>· {t.due}</span>}

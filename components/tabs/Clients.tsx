@@ -5,6 +5,7 @@ import { ME, archiveClient, clientKind, clientMoney, clientStats, createClient, 
 import { addMonths, billPaid, expenseAppliesTo, locale, money, monthOf, parseAmount, uid } from "@/lib/finance";
 import type { Client, ClientTask } from "@/lib/types";
 import { useTracker } from "../App";
+import { clientTaskKey, hasChest } from "@/lib/loot";
 import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate } from "../ui";
 import { HELP } from "../help";
 import { StreamTerms } from "../StreamSettings";
@@ -306,7 +307,10 @@ function TaskRow({ task: t }: { task: ClientTask }) {
           {editing ? (
             <TextInput className="w-full" value={t.title} onChange={(v) => set({ title: v })} />
           ) : (
-            <div className={`text-[1.05rem] font-bold leading-snug ${t.status === "done" ? "line-through text-muted" : ""}`}>{t.title}</div>
+            <div className={`text-[1.05rem] font-bold leading-snug ${t.status === "done" ? "line-through text-muted" : ""}`}>
+              {t.title}
+              {t.status !== "done" && hasChest(clientTaskKey(t.id)) && <span className="ml-1.5" title="Loot chest: finish this for a random item">🎁</span>}
+            </div>
           )}
           <div className="flex flex-wrap items-center gap-1.5 mt-1 text-sm">
             {t.assignees.length === 0 && <span className="text-muted">Unassigned</span>}

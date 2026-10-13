@@ -8,6 +8,8 @@ import { useTracker } from "../App";
 import { Badge, Bar, Btn, Card, Meter, NumInput, Stat, celebrate, money } from "../ui";
 import { Kit } from "../characters";
 import WarChest from "../WarChest";
+import FunMoney from "../FunMoney";
+import { REWARD, hasChest, questKey } from "@/lib/loot";
 import { CURRENCIES } from "./Settings";
 import KitChat from "../KitChat";
 import { HELP } from "../help";
@@ -97,6 +99,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
       </div>
 
       <WarChest />
+      <FunMoney />
 
       <div className="grid lg:grid-cols-5 gap-4">
         <div className="lg:col-span-3 space-y-4 min-w-0">
@@ -161,7 +164,8 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
               <li key={t.id} className={`flex items-start gap-3 group px-2.5 py-2 rounded-[10px] border-2 transition ${t.done ? "bg-good/10 border-good/40" : "border-transparent hover:bg-white/[0.04]"}`}>
                 <input type="checkbox" className="mt-0.5" checked={t.done} onChange={() => toggle(t.id)} aria-label={t.text} />
                 <span className={`text-[1.02rem] flex-1 leading-snug font-bold ${t.done ? "line-through text-muted" : ""}`}>{t.text}</span>
-                <span className={`font-display text-lg leading-none mt-0.5 ${t.done ? "text-good" : "text-gold"}`}>+{QUEST_XP}XP</span>
+                {hasChest(questKey(today, t.id)) && !t.done && <span title="Loot chest: finish this for a random item" aria-label="Loot chest">🎁</span>}
+                <span className={`font-display text-lg leading-none mt-0.5 whitespace-nowrap ${t.done ? "text-good" : "text-gold"}`}>+{REWARD.quest}🪙</span>
                 <button
                   className="text-sm text-muted opacity-0 group-hover:opacity-100"
                   onClick={() => update((d) => void (d.todos[today] = d.todos[today].filter((x) => x.id !== t.id)))}
