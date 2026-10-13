@@ -4,6 +4,10 @@ import type { Settings } from "@/lib/types";
 import { useTracker } from "../App";
 import { Btn, Card, NumInput, TextInput } from "../ui";
 import { HELP } from "../help";
+import LookSettings from "../LookSettings";
+import { Glyph, Icon } from "../icons";
+import { PERSONAS } from "@/lib/personas";
+import { DEFAULT_FUN_PERCENT } from "@/lib/fun";
 
 export const CURRENCIES = ["USD", "PHP", "EUR", "GBP", "AUD", "CAD", "SGD", "NZD", "INR", "AED", "MYR", "IDR", "THB", "VND", "JPY", "HKD", "ZAR", "MXN", "BRL"];
 const LOCALES: [string, string][] = [["", "Device default"], ["en-US", "English (US)"], ["en-GB", "English (UK)"], ["en-PH", "English (Philippines)"], ["en-AU", "English (Australia)"], ["en-CA", "English (Canada)"], ["en-IN", "English (India)"], ["en-SG", "English (Singapore)"], ["es-ES", "Español"], ["fr-FR", "Français"], ["de-DE", "Deutsch"], ["pt-BR", "Português (Brasil)"]];
@@ -22,6 +26,26 @@ export default function SettingsTab() {
 
   return (
     <div className="space-y-4">
+      <nav className="hud p-3 flex gap-2 flex-wrap" aria-label="Settings sections">
+        {[
+          ["look", "palette", "Look & layout"],
+          ["profile", "user", "Profile"],
+          ["targets", "target", "Targets"],
+          ["money", "income", "Money"],
+          ["kit", "fox", "Kit"],
+          ["connections", "link", "Connections"],
+          ["data", "gear", "Data"],
+        ].map(([id, icon, label]) => (
+          <a key={id} href={`#set-${id}`} onClick={(e) => (e.preventDefault(), document.getElementById(`set-${id}`)?.scrollIntoView({ behavior: "smooth" }))} className="btn btn-ghost flex items-center gap-2">
+            <Icon name={icon} size={20} />
+            {label}
+          </a>
+        ))}
+      </nav>
+      <div id="set-look" className="scroll-mt-4">
+        <LookSettings />
+      </div>
+      <div id="set-profile" className="scroll-mt-4" />
       <Card icon="🦸" title="Profile & business" help={HELP.settings}>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <label className="text-sm text-muted flex flex-col gap-1">
@@ -62,6 +86,7 @@ export default function SettingsTab() {
           </label>
         </div>
       </Card>
+      <div id="set-targets" className="scroll-mt-4" />
       <Card icon="🎯" title="Targets">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <label className="text-sm text-muted flex flex-col gap-1">
@@ -82,6 +107,66 @@ export default function SettingsTab() {
           </label>
         </div>
       </Card>
+      <div id="set-money" className="scroll-mt-4" />
+      <Card icon="💰" title="Money">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <label className="text-sm text-muted flex flex-col gap-1">
+            Fun money: share of what&apos;s spare each month (%)
+            <NumInput value={data.settings.funPercent ?? DEFAULT_FUN_PERCENT} onChange={(v) => set({ funPercent: Math.min(Math.max(v ?? DEFAULT_FUN_PERCENT, 0), 100) })} />
+          </label>
+          <label className="text-sm text-muted flex flex-col gap-1">
+            Safety buffer (months of bills to keep)
+            <select value={data.settings.cashBufferMonths ?? 3} onChange={(e) => set({ cashBufferMonths: Number(e.target.value) })}>
+              {[0, 1, 2, 3, 4, 5, 6, 9, 12].map((n) => (
+                <option key={n} value={n}>
+                  {n === 0 ? "No buffer" : `${n} month${n > 1 ? "s" : ""}`}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <p className="text-sm text-muted mt-2">Your accounts (bank, e-wallets) and their balances are managed in the War chest on HQ.</p>
+      </Card>
+
+      <div id="set-kit" className="scroll-mt-4" />
+      <Card icon="🦊" title="Kit, your sidekick">
+        <div className="text-base text-muted mb-2">Personality (changes how Kit talks, sounds and looks)</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+          {[...PERSONAS, { id: "custom", name: "Your own", emoji: "✎", tagline: "Describe it yourself in Kit's chat on HQ" }].map((p) => {
+            const on = (data.settings.kitPersona ?? "kit") === p.id;
+            return (
+              <button key={p.id} type="button" aria-pressed={on} onClick={() => set({ kitPersona: p.id })} className={`text-left rounded-[10px] p-2.5 border-[3px] flex gap-2.5 items-start ${on ? "border-gold bg-gold/10" : "border-line bg-card-2/60"}`}>
+                <Glyph value={p.emoji} size={26} className="text-accent mt-0.5" />
+                <span>
+                  <span className="block font-extrabold">{p.name}</span>
+                  <span className="block text-sm text-muted leading-snug">{p.tagline}</span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </Card>
+
+      <div id="set-connections" className="scroll-mt-4" />
+      <Card icon="🔗" title="Connections">
+        <ul className="space-y-2 text-base">
+          {[
+            ["Kit chat (Claude)", data.integrations?.kit, "Paste the key in Kit's chat on HQ."],
+            ["Kit's real voice (OpenAI)", data.integrations?.voice, "Open \"Make the voice real\" in Kit's chat on HQ."],
+            ["Creatives (Higgsfield)", data.integrations?.higgsfield, "Add the key in the Creatives tab."],
+            [`Meta ad accounts (${data.adAccounts.length})`, data.adAccounts.some((a) => a.hasToken), "Connect them in Ad Command."],
+          ].map(([name, on, how]) => (
+            <li key={name as string} className="flex items-center gap-3 flex-wrap">
+              <span className={`w-3 h-3 rounded-full ${on ? "bg-good" : "bg-line"}`} />
+              <span className="font-bold">{name}</span>
+              <span className={on ? "text-good" : "text-muted"}>{on ? "Connected" : `Not set up · ${how}`}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="text-sm text-muted mt-2">Keys are typed straight into the app and kept encrypted on the server; they never show again.</p>
+      </Card>
+
+      <div id="set-data" className="scroll-mt-4" />
       <Card icon="⚙" title="Data">
         <div className="flex gap-2 flex-wrap">
           <Btn onClick={exportJson}>Download backup (JSON)</Btn>

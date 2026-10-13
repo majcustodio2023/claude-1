@@ -7,6 +7,7 @@ import { useTracker } from "../App";
 import { hasChest, taskKey } from "@/lib/loot";
 import { Btn, Card } from "../ui";
 import { HELP } from "../help";
+import { Icon } from "../icons";
 
 const QUADS: [Quadrant, string, string][] = [
   ["do", "Do first", "Urgent + important. Handle personally or supervise now."],
@@ -79,7 +80,7 @@ export default function Tasks() {
                     <div className="flex-1 min-w-0">
                       <div className={`text-sm ${t.done ? "line-through text-muted" : ""}`}>
                         {t.title}
-                        {!t.done && hasChest(taskKey(t.id)) && <span className="ml-1.5" title="Loot chest: finish this for a random item">🎁</span>}
+                        {!t.done && hasChest(taskKey(t.id)) && <span className="ml-1.5" title="Loot chest: finish this for a random item"><Icon name="gift" size={20} /></span>}
                       </div>
                       <div className="text-sm text-muted flex gap-2 flex-wrap items-center">
                         <span>{t.owner}</span>

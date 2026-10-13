@@ -1,3 +1,4 @@
+import { Icon } from "./icons";
 // "How this works" text for each section's ? button. Kept in one place so it's easy to edit.
 
 export const HELP = {
@@ -21,7 +22,7 @@ export const HELP = {
   quests: (
     <ul>
       <li>Today&apos;s to-do list. Some are suggested from your numbers; add your own too.</li>
-      <li>Each quest done earns coins. 🎁 means a loot chest: finish it for a random item. Unfinished ones can be carried over to the next day.</li>
+      <li>Each quest done earns coins. <Icon name="gift" size={20} /> means a loot chest: finish it for a random item. Unfinished ones can be carried over to the next day.</li>
     </ul>
   ),
   bosses: (
@@ -63,7 +64,7 @@ export const HELP = {
     <ul>
       <li>Money that doesn&apos;t come from a client, like product, course or SaaS sales.</li>
       <li>&ldquo;Changes every month&rdquo; means you type what actually came in each month (&ldquo;Actual this month&rdquo;). Until you do, the usual amount is used as the estimate.</li>
-      <li>If one of these is really a client, open ⚙ and press &ldquo;This is a client&rdquo;.</li>
+      <li>If one of these is really a client, open <Icon name="gear" size={20} /> and press &ldquo;This is a client&rdquo;.</li>
     </ul>
   ),
   newDeal: (
@@ -89,7 +90,7 @@ export const HELP = {
       <li>Everyone you work for, one card each. A client is either a monthly retainer or a one-time project. Its money shows in Income; its work shows here.</li>
       <li>Type a task, pick who&apos;s doing it (tap several names if they&apos;re working on it together), and add a due date if there is one. Tap the status to move it: To do → Doing → Done.</li>
       <li>Team pay: what you pay a team member for this client. It becomes a bill in Expenses, and the card shows your profit after team pay.</li>
-      <li>⚙ → Archive when you stop working with a client: the retainer and monthly team pay stop, and history stays. Delete is for mistakes: it removes the client, its tasks and anything not yet paid.</li>
+      <li><Icon name="gear" size={20} /> → Archive when you stop working with a client: the retainer and monthly team pay stop, and history stays. Delete is for mistakes: it removes the client, its tasks and anything not yet paid.</li>
       <li>&ldquo;Show tasks for&rdquo; filters to one person and lists their open tasks across all clients.</li>
     </ul>
   ),
@@ -145,7 +146,7 @@ export const HELP = {
   ),
   hero: (
     <ul>
-      <li>Your hero, your way: pick skin, hair, eye and suit colours (🎨 for any colour).</li>
+      <li>Your hero, your way: pick skin, hair, eye and suit colours (<Icon name="palette" size={20} /> for any colour).</li>
       <li>Coins come from finishing quests, missions and client tasks, paying bills in full, and beating bosses. Your coins are shown at the top of the screen.</li>
       <li>The gear you earn from achievements stays for good. Untick &ldquo;Show achievement gear&rdquo; to hide it.</li>
     </ul>
@@ -165,7 +166,7 @@ export const HELP = {
   shop: (
     <ul>
       <li>Six items at a time, with new stock every 3 days. Buying equips the item straight away.</li>
-      <li>Legendary items are loot only: look for 🎁 tasks and get rank S in boss fights.</li>
+      <li>Legendary items are loot only: look for <Icon name="gift" size={20} /> tasks and get rank S in boss fights.</li>
     </ul>
   ),
   fun: (
@@ -182,6 +183,14 @@ export const HELP = {
       <li>Type what it was for, how much, and pick the account it came out of. It&apos;s taken off that account in the War chest straight away.</li>
       <li>The type (Ads, Household, Fun…) is used for the &ldquo;where the money went&rdquo; chart in Expenses. Fun spending also counts against your fun money.</li>
       <li>Picked the wrong account? Change it on the entry in the Expenses tab. Made a mistake? Press ✕ to remove it and the money goes back.</li>
+    </ul>
+  ),
+  look: (
+    <ul>
+      <li>Pick a ready-made look, or mix your own: a color theme, a design style, a layout, text size and header.</li>
+      <li>Design style changes shapes, borders, fonts and effects. Layout moves the menu to the top, the side or a bottom dock.</li>
+      <li>Changes apply straight away and are saved with your data, so every device you sign in on looks the same.</li>
+      <li>Prefer things still? Set Motion to &ldquo;Still&rdquo; to stop the animations.</li>
     </ul>
   ),
   settings: (

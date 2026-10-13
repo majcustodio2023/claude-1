@@ -9,6 +9,7 @@ import { AccountSelect, accountName } from "../Money";
 import { SubItems } from "../SubItems";
 import ManualSpending from "../ManualSpending";
 import { paySub, setSubs, subDone, subPaid, subRows, subsTotal, unpaySub } from "@/lib/subs";
+import { Icon } from "../icons";
 
 const LINE_CATS: ExpenseLine["category"][] = ["household", "payroll", "client", "software", "debt", "other"];
 const monthLabel = (m: string, style: "long" | "short" = "long") => new Date(m + "-01T00:00:00").toLocaleDateString(locale(), { month: style, year: "numeric" });
@@ -30,7 +31,7 @@ export default function Expenses() {
             <li>Each bill has a monthly amount: what you expect to pay every month (rent, salaries, software…). Together they are your &ldquo;stay afloat&rdquo; number on HQ.</li>
             <li>When you pay, type what you paid and press Pay. Paid part of it? Enter that part; the rest stays as &ldquo;left to pay&rdquo;.</li>
             <li>Each payment is saved with the day you paid, the time you recorded it, and the account it came out of. It&apos;s taken off that account in the War chest.</li>
-            <li>A bill that only runs for some months (like a loan)? Open ⚙ and set when it starts and ends.</li>
+            <li>A bill that only runs for some months (like a loan)? Open <Icon name="gear" size={20} /> and set when it starts and ends.</li>
             <li>Made a mistake? Press ✕ on a payment to remove it.</li>
             <li>A bill made of smaller costs (Household → maid, groceries, electricity)? Press &ldquo;Break into parts&rdquo; and add each one with its amount. Tick a part when you pay it and the bill fills up as you go. Whatever the parts don&apos;t cover shows as &ldquo;Everything else&rdquo;.</li>
           </ul>
@@ -147,7 +148,7 @@ function BillRow({ bill: e }: { bill: ExpenseLine }) {
         </label>
         {applies ? status : <Badge>Not due this month</Badge>}
         <button className="btn btn-ghost px-3" onClick={() => setSettings(!settings)} aria-expanded={settings} title="Bill settings">
-          ⚙
+          <Icon name="gear" size={20} />
         </button>
       </div>
 

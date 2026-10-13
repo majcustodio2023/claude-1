@@ -9,6 +9,7 @@ import { useTracker } from "../App";
 import { HERO_DEFAULTS, Hero, KIT_LOOKS, Kit } from "../characters";
 import { Badge, Btn, Card, toast } from "../ui";
 import { HELP } from "../help";
+import { Glyph, Icon } from "../icons";
 
 const SKINS = ["#ffe6d1", "#ffd9b8", "#f1c27d", "#d9a066", "#a86b3c", "#7a4a26", "#4b2e1a"];
 const HAIR_COLORS = ["#2a2f7a", "#16131f", "#e8e8f0", "#ffd23f", "#ff8a1f", "#d62839", "#ff8fc0", "#7b2cbf", "#2ec4b6", "#4caf50"];
@@ -52,7 +53,7 @@ export default function HeroTab() {
       <Card title={`Hero locker · ${game?.coins ?? 0} 🪙`} icon="🦸" glow="hero" help={HELP.hero}>
         <div className="grid md:grid-cols-[minmax(0,260px)_1fr] gap-6 items-start">
           <div className="text-center">
-            <div className="bg-card-2 border-[3px] border-outline rounded-[14px] p-3 shadow-[4px_4px_0_#0b0a14] inline-block">
+            <div className="bg-card-2 border-[3px] border-outline rounded-[14px] p-3 shadow-[4px_4px_0_var(--color-outline)] inline-block">
               <Hero size={230} mood="ready" attacking={pose} gear={gear} className="bob max-w-full h-auto" />
             </div>
             <div className="mt-3 flex justify-center gap-2">
@@ -88,7 +89,7 @@ export default function HeroTab() {
 
       <Card title="Your items" icon="🎒" help={HELP.inventory}>
         {!game?.owned.length ? (
-          <p className="text-lg text-muted">No items yet. Buy some in the shop below, or find loot in 🎁 tasks and boss fights.</p>
+          <p className="text-lg text-muted">No items yet. Buy some in the shop below, or find loot in <Icon name="gift" size={20} /> tasks and boss fights.</p>
         ) : (
           <div className="space-y-3">
             {SLOTS.map((slot) => {
@@ -118,7 +119,7 @@ export default function HeroTab() {
             const owned = game?.owned.includes(i.id);
             const short = (game?.coins ?? 0) < i.price;
             return (
-              <div key={i.id} className="bg-card-2 border-[3px] border-outline rounded-[12px] p-2.5 text-center shadow-[3px_3px_0_#0b0a14]" style={{ borderColor: RARITY[i.rarity].color }}>
+              <div key={i.id} className="bg-card-2 border-[3px] border-outline rounded-[12px] p-2.5 text-center shadow-[3px_3px_0_var(--color-outline)]" style={{ borderColor: RARITY[i.rarity].color }}>
                 <div className="flex justify-center h-[135px] items-center">
                   {isKitSlot(i.slot) ? (
                     <Kit size={115} items={[...equipped.filter((e) => itemById(e)?.slot !== i.slot), i.id]} />
@@ -135,7 +136,7 @@ export default function HeroTab() {
                     <Badge tone="good">Owned</Badge>
                   ) : (
                     <Btn kind={short ? "ghost" : "primary"} disabled={short} onClick={() => buy(i)}>
-                      {i.price} 🪙
+                      {i.price} <Icon name="coin" size={20} />
                     </Btn>
                   )}
                 </div>
@@ -154,7 +155,7 @@ export default function HeroTab() {
             <li>Client task done: +{REWARD.clientTask}</li>
             <li>Bill paid in full: +{REWARD.bill}</li>
             <li>Boss defeated (deal fully paid): mini game, 60 to 400 coins, plus loot</li>
-            <li>🎁 on a task = guaranteed loot when you finish it. Other tasks sometimes drop a surprise too.</li>
+            <li><Icon name="gift" size={20} /> on a task = guaranteed loot when you finish it. Other tasks sometimes drop a surprise too.</li>
           </ul>
         </Card>
         <Card title="Loot log" icon="📜">
@@ -171,11 +172,11 @@ export default function HeroTab() {
                       {item && (
                         <span className="font-extrabold" style={{ color: RARITY[item.rarity].color }}>
                           {" "}
-                          · 🎁 {item.name}
+                          · <Icon name="gift" size={20} /> {item.name}
                         </span>
                       )}
                     </span>
-                    {l.coins ? <span className={`font-display tracking-wide shrink-0 ${l.coins > 0 ? "text-gold" : "text-muted"}`}>{l.coins > 0 ? "+" : ""}{l.coins} 🪙</span> : null}
+                    {l.coins ? <span className={`font-display tracking-wide shrink-0 ${l.coins > 0 ? "text-gold" : "text-muted"}`}>{l.coins > 0 ? "+" : ""}{l.coins} <Icon name="coin" size={20} /></span> : null}
                   </li>
                 );
               })}
@@ -203,7 +204,7 @@ function KitLocker() {
     <Card title="Kit's locker" icon="🦊" glow="gold" help={HELP.kitLocker}>
       <div className="grid md:grid-cols-[minmax(0,260px)_1fr] gap-6 items-start">
         <div className="text-center">
-          <div className="bg-card-2 border-[3px] border-outline rounded-[14px] p-3 shadow-[4px_4px_0_#0b0a14] inline-block">
+          <div className="bg-card-2 border-[3px] border-outline rounded-[14px] p-3 shadow-[4px_4px_0_var(--color-outline)] inline-block">
             <Kit size={200} talking className="bob max-w-full h-auto" />
           </div>
         </div>
@@ -213,7 +214,7 @@ function KitLocker() {
             <div className="flex gap-2 flex-wrap">
               {PERSONAS.map((p) => (
                 <button key={p.id} className={`btn ${persona === p.id ? "btn-primary" : "btn-ghost"} px-3`} onClick={() => update((d) => void (d.settings.kitPersona = p.id))}>
-                  {p.emoji} {p.name}
+                  <Glyph value={p.emoji} size={20} /> {p.name}
                 </button>
               ))}
             </div>
@@ -243,12 +244,12 @@ function Swatches({ label, value, options, onPick }: { label: string; value: str
             key={c}
             aria-label={`${label} ${c}`}
             onClick={() => onPick(c)}
-            className={`w-9 h-9 rounded-full border-[3px] ${value === c ? "border-white scale-110" : "border-outline"} shadow-[2px_2px_0_#0b0a14]`}
+            className={`w-9 h-9 rounded-full border-[3px] ${value === c ? "border-white scale-110" : "border-outline"} shadow-[2px_2px_0_var(--color-outline)]`}
             style={{ background: c }}
           />
         ))}
         <label className="w-9 h-9 rounded-full border-[3px] border-outline grid place-content-center cursor-pointer text-sm font-extrabold overflow-hidden relative" title="Pick any colour">
-          🎨
+          <Icon name="palette" size={20} />
           <input type="color" value={value} onChange={(e) => onPick(e.target.value)} className="absolute inset-0 opacity-0 cursor-pointer" />
         </label>
       </div>

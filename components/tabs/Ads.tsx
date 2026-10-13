@@ -7,6 +7,7 @@ import type { AdAccount, AutopilotEntry, TrackedCampaign } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Btn, Card, NumInput, Stat, TextInput, money } from "../ui";
 import { HELP } from "../help";
+import { Icon } from "../icons";
 
 const PRESETS: [DatePreset, string][] = [
   ["today", "Today"],
@@ -358,7 +359,7 @@ function ShareLink({ tracked }: { tracked: TrackedCampaign }) {
   return (
     <span className="flex items-center gap-2">
       <Btn onClick={copy} disabled={busy} title="A read-only page with this campaign's live results, suggestions and changes. Anyone with the link can see it.">
-        🔗 {tracked.shareToken ? "Copy share link" : "Share results"}
+        <Icon name="link" size={20} /> {tracked.shareToken ? "Copy share link" : "Share results"}
       </Btn>
       {tracked.shareToken && (
         <button

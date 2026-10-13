@@ -22,6 +22,8 @@ import { Hero, HeroStyleContext, KitStyleContext } from "./characters";
 import { claimRewards, pendingRewards } from "@/lib/loot";
 import { RARITY } from "@/lib/items";
 import MonthPicker from "./MonthPicker";
+import { Icon, WithIcons, type IconName } from "./icons";
+import { applyLook, resolveLook } from "@/lib/appearance";
 
 type Updater = (draft: TrackerData) => void;
 
@@ -42,19 +44,19 @@ export const useTracker = () => {
 };
 
 const TABS = [
-  ["today", "HQ", "🏠"],
-  ["hero", "Hero & Shop", "🛒"],
-  ["income", "Income", "💰"],
-  ["pipeline", "Boss Deals", "⚔️"],
-  ["expenses", "Expenses", "🧾"],
-  ["log", "Check-in", "📝"],
-  ["clients", "Clients", "🗂️"],
-  ["tasks", "Missions", "🎯"],
-  ["team", "Squad", "🦸"],
-  ["ads", "Ad Command", "📡"],
-  ["creatives", "Creatives", "🎨"],
-  ["settings", "Settings", "⚙️"],
-] as const;
+  ["today", "HQ", "home"],
+  ["hero", "Hero & Shop", "shop"],
+  ["income", "Income", "income"],
+  ["pipeline", "Boss Deals", "swords"],
+  ["expenses", "Expenses", "receipt"],
+  ["log", "Check-in", "checkin"],
+  ["clients", "Clients", "clients"],
+  ["tasks", "Missions", "target"],
+  ["team", "Squad", "squad"],
+  ["ads", "Ad Command", "radar"],
+  ["creatives", "Creatives", "palette"],
+  ["settings", "Settings", "gear"],
+] as const satisfies readonly (readonly [string, string, IconName])[];
 type TabId = (typeof TABS)[number][0];
 
 export default function App() {
@@ -107,10 +109,14 @@ export default function App() {
     [flush],
   );
 
+  const lookKey = JSON.stringify(data?.settings.appearance ?? {});
+  useEffect(() => applyLook(JSON.parse(lookKey)), [lookKey]);
+
   if (data) configureLocale(data.settings);
   if (error) return <div className="p-6 text-bad">{error}</div>;
   if (!data) return <div className="min-h-screen grid place-content-center font-display text-3xl tracking-wide">Loading…</div>;
 
+  const look = resolveLook(data.settings.appearance);
   const go = (id: TabId) => {
     setTab(id);
     history.replaceState(null, "", `#${id}`);
@@ -120,10 +126,14 @@ export default function App() {
     <TrackerCtx.Provider value={{ data, update, reload, month, setMonth, today }}>
      <HeroStyleContext.Provider value={{ look: data.game?.look, items: Object.values(data.game?.equipped ?? {}).filter((x): x is string => Boolean(x)) }}>
      <KitStyleContext.Provider value={{ persona: data.settings.kitPersona, fur: data.game?.kitLook?.fur, eyes: data.game?.kitLook?.eyes, items: Object.values(data.game?.equipped ?? {}).filter((x): x is string => Boolean(x)) }}>
-      <div className="max-w-6xl mx-auto px-4 pb-20">
-        <PlayerCard data={data} month={month} today={today} saving={saving} />
-        <div className="flex items-center justify-end gap-3 mb-4">
-          <span className="text-base font-extrabold text-muted">Viewing month</span>
+      <div className={`${look.width === "wide" || look.layout === "sidebar" ? "max-w-[1500px]" : "max-w-6xl"} mx-auto px-4 ${look.layout === "dock" ? "pb-32" : "pb-20"}`}>
+        {look.header === "slim" ? (
+          <SlimHeader data={data} month={month} today={today} saving={saving} onSettings={() => go("settings")} />
+        ) : (
+          <PlayerCard data={data} month={month} today={today} saving={saving} onSettings={() => go("settings")} />
+        )}
+        <div className="flex items-center justify-end gap-x-3 gap-y-2 mb-4 flex-wrap">
+          <span className="text-base font-extrabold text-muted max-sm:hidden">Viewing month</span>
           <MonthPicker value={month} onChange={setMonth} current={monthOf(today)} />
         </div>
         {!persistent && (
@@ -131,18 +141,28 @@ export default function App() {
             No database is connected, so changes won&apos;t survive a redeploy. Set the Supabase variables described in the README.
           </div>
         )}
-        <nav className="flex gap-2.5 overflow-x-auto pt-1 pb-4 mb-5 -mx-4 px-4">
-          {TABS.map(([id, label, icon]) => (
-            <button
-              key={id}
-              onClick={() => go(id)}
-              className={`btn whitespace-nowrap ${tab === id ? "btn-primary -rotate-2" : "btn-ghost"}`}
-            >
-              <span className="mr-1.5">{icon}</span>
-              {label}
-            </button>
-          ))}
-        </nav>
+        <div className={look.layout === "sidebar" ? "lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-6 lg:items-start" : ""}>
+        {look.layout === "sidebar" && (
+          <nav className="hidden lg:flex flex-col gap-2 sticky top-4 hud p-3" aria-label="Sections">
+            {TABS.map(([id, label, icon]) => (
+              <button key={id} onClick={() => go(id)} className={`btn text-left flex items-center gap-2.5 ${tab === id ? "btn-primary" : "btn-ghost"}`} aria-current={tab === id ? "page" : undefined}>
+                <Icon name={icon} size={22} />
+                {label}
+              </button>
+            ))}
+          </nav>
+        )}
+        <div className="min-w-0">
+        {look.layout !== "dock" && (
+          <nav className={`flex gap-2.5 overflow-x-auto pt-1 pb-4 mb-5 -mx-4 px-4 ${look.layout === "sidebar" ? "lg:hidden" : ""}`} aria-label="Sections">
+            {TABS.map(([id, label, icon]) => (
+              <button key={id} onClick={() => go(id)} className={`btn whitespace-nowrap flex items-center gap-2 ${tab === id ? "btn-primary -rotate-2" : "btn-ghost"}`} aria-current={tab === id ? "page" : undefined}>
+                <Icon name={icon} size={20} />
+                {label}
+              </button>
+            ))}
+          </nav>
+        )}
         {tab === "today" && <Today goTo={go} />}
         {tab === "income" && <Income goTo={go} />}
         {tab === "pipeline" && <Pipeline />}
@@ -155,7 +175,26 @@ export default function App() {
         {tab === "creatives" && <Creatives />}
         {tab === "settings" && <SettingsTab />}
         {tab === "hero" && <HeroTab />}
+        </div>
+        </div>
       </div>
+      {look.layout === "dock" && (
+        <nav className="fixed bottom-0 inset-x-0 z-40 bg-card/95 backdrop-blur border-t-[3px] border-outline" aria-label="Sections">
+          <div className="max-w-6xl mx-auto flex gap-1 overflow-x-auto px-2 py-2">
+            {TABS.map(([id, label, icon]) => (
+              <button
+                key={id}
+                onClick={() => go(id)}
+                aria-current={tab === id ? "page" : undefined}
+                className={`flex flex-col items-center gap-1 min-w-[4.6rem] px-2 py-1.5 rounded-[10px] text-xs font-extrabold whitespace-nowrap ${tab === id ? "bg-gold text-outline" : "text-muted hover:text-ink"}`}
+              >
+                <Icon name={icon} size={24} />
+                {label}
+              </button>
+            ))}
+          </div>
+        </nav>
+      )}
       <Celebrations />
       <Toasts />
       <AchievementWatcher data={data} month={month} today={today} />
@@ -166,7 +205,48 @@ export default function App() {
   );
 }
 
-function PlayerCard({ data, month, today, saving }: { data: TrackerData; month: string; today: string; saving: string }) {
+function SettingsButton({ onClick, className = "" }: { onClick: () => void; className?: string }) {
+  return (
+    <button type="button" onClick={onClick} className={`btn btn-ghost flex items-center gap-2 ${className}`} title="Settings: look, theme, profile and more" aria-label="Settings">
+      <Icon name="gear" size={22} />
+      <span className="max-sm:hidden">Settings</span>
+    </button>
+  );
+}
+
+function SaveState({ saving }: { saving: string }) {
+  return <span className={saving === "error" ? "text-bad" : "text-good"}>{saving === "saving" ? "Saving…" : saving === "saved" ? "Saved ✓" : saving === "error" ? "Save failed" : "Ready"}</span>;
+}
+
+/** A one-line header: small hero, name, level and coins, for layouts that want the room. */
+function SlimHeader({ data, month, today, saving, onSettings }: { data: TrackerData; month: string; today: string; saving: string; onSettings: () => void }) {
+  const s = summarize(data, month);
+  const lvl = levelFor(s.moneyMade, s.goal);
+  const rank = rankFor(s);
+  const streak = logStreak(data, today);
+  return (
+    <header className="hud mt-4 mb-4 px-3 sm:px-4 py-2.5 flex items-center gap-3 sm:gap-4">
+      <Hero mood="ready" size={64} className="shrink-0 -my-1 max-sm:w-12 max-sm:h-auto" />
+      <div className="min-w-0 flex-1">
+        <div className="flex items-baseline gap-x-2 flex-wrap">
+          <span className="font-display text-2xl sm:text-3xl tracking-wide leading-none truncate max-w-full">{data.settings.playerName || "Hero"}</span>
+          <span className="text-sm font-extrabold uppercase text-gold whitespace-nowrap">LVL {lvl.level} · {rank.name}</span>
+        </div>
+        <div className="mt-1.5 flex items-center gap-3">
+          <div className="flex-1 max-w-md">
+            <Bar pct={lvl.pct} tone="hero" thin />
+          </div>
+          <span className="flex items-center gap-1 text-base font-extrabold" title="Check-in streak"><Icon name="flame" size={18} className="text-warn" />{streak}</span>
+          <span className="flex items-center gap-1 text-base font-extrabold" title="Coins"><Icon name="coin" size={18} className="text-gold" />{data.game?.coins ?? 0}</span>
+          <span className="text-sm font-extrabold max-md:hidden"><SaveState saving={saving} /></span>
+        </div>
+      </div>
+      <SettingsButton onClick={onSettings} />
+    </header>
+  );
+}
+
+function PlayerCard({ data, month, today, saving, onSettings }: { data: TrackerData; month: string; today: string; saving: string; onSettings: () => void }) {
   const s = summarize(data, month);
   const lvl = levelFor(s.moneyMade, s.goal);
   const rank = rankFor(s);
@@ -180,11 +260,14 @@ function PlayerCard({ data, month, today, saving }: { data: TrackerData; month: 
       <span className="sparkle" style={{ left: "8%", top: "16%" }} />
       <span className="sparkle" style={{ left: "30%", top: "70%", animationDelay: "0.6s" }} />
       <span className="sparkle" style={{ right: "6%", top: "12%", animationDelay: "1.1s" }} />
+      <div className="absolute top-3 right-3 z-10">
+        <SettingsButton onClick={onSettings} />
+      </div>
       <div className="relative flex items-end gap-3 sm:gap-6 flex-wrap px-4 sm:px-6 pt-4">
         <div className="relative shrink-0 -mb-1">
-          <Hero mood={mood} size={196} gear={Object.keys(data.heroGear ?? {})} className="bob drop-shadow-[5px_5px_0_#0b0a14] max-sm:w-[136px] max-sm:h-auto" />
+          <Hero mood={mood} size={196} gear={Object.keys(data.heroGear ?? {})} className="bob drop-shadow-[5px_5px_0_var(--color-outline)] max-sm:w-[136px] max-sm:h-auto" />
           <div className="absolute top-1 -left-3 rotate-[-10deg]">
-            <div className="bg-gold text-outline border-[3px] border-outline rounded-full w-16 h-16 grid place-content-center text-center shadow-[3px_3px_0_#0b0a14]">
+            <div className="bg-gold text-outline border-[3px] border-outline rounded-full w-16 h-16 grid place-content-center text-center shadow-[3px_3px_0_var(--color-outline)]">
               <div className="font-display text-sm leading-none">LVL</div>
               <div className="font-display text-3xl leading-none">{lvl.level}</div>
             </div>
@@ -193,7 +276,7 @@ function PlayerCard({ data, month, today, saving }: { data: TrackerData; month: 
         <div className="flex-1 min-w-60 pb-4">
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="comic-num text-5xl sm:text-6xl leading-none text-ink uppercase">{data.settings.playerName || "Hero"}</h1>
-            <span className={`font-display text-xl tracking-wide px-3 pt-1 pb-0.5 border-[3px] border-outline rounded-md text-outline shadow-[3px_3px_0_#0b0a14] rotate-[2deg] ${rankBg}`}>{rank.name}</span>
+            <span className={`font-display text-xl tracking-wide px-3 pt-1 pb-0.5 border-[3px] border-outline rounded-md text-outline shadow-[3px_3px_0_var(--color-outline)] rotate-[2deg] ${rankBg}`}>{rank.name}</span>
           </div>
           <p className="text-lg text-muted font-bold mt-1">{rank.tagline}</p>
           <div className="mt-3 space-y-1.5 max-w-xl">
@@ -210,9 +293,9 @@ function PlayerCard({ data, month, today, saving }: { data: TrackerData; month: 
           <HeaderChip label="Coins" value={`${data.game?.coins ?? 0} 🪙`} />
         </div>
       </div>
-      <div className="relative flex justify-between gap-3 flex-wrap text-sm font-extrabold uppercase tracking-wide bg-outline/70 border-t-[3px] border-outline px-4 sm:px-6 py-2 text-muted">
+      <div className="relative flex justify-between gap-3 flex-wrap text-sm font-extrabold uppercase tracking-wide bg-card-2 border-t-[3px] border-outline px-4 sm:px-6 py-2 text-muted">
         <span>{new Date(today + "T00:00:00").toLocaleDateString(locale(), { weekday: "long", month: "long", day: "numeric", year: "numeric" })}</span>
-        <span className={saving === "error" ? "text-bad" : "text-good"}>{saving === "saving" ? "Saving…" : saving === "saved" ? "Saved ✓" : saving === "error" ? "Save failed" : "Ready"}</span>
+        <SaveState saving={saving} />
       </div>
     </header>
   );
@@ -220,9 +303,9 @@ function PlayerCard({ data, month, today, saving }: { data: TrackerData; month: 
 
 function HeaderChip({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-card-2 border-[3px] border-outline rounded-[10px] px-3 py-2 text-center min-w-24 shadow-[3px_3px_0_#0b0a14]">
+    <div className="bg-card-2 border-[3px] border-outline rounded-[10px] px-3 py-2 text-center min-w-24 shadow-[3px_3px_0_var(--color-outline)]">
       <div className="text-sm font-extrabold uppercase text-muted">{label}</div>
-      <div className="font-display text-2xl tracking-wide">{value}</div>
+      <div className="font-display text-2xl tracking-wide flex items-center justify-center gap-1"><WithIcons text={value} size={22} /></div>
     </div>
   );
 }

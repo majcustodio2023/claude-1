@@ -7,6 +7,7 @@ import { AccountSelect } from "./Money";
 import { useTracker } from "./App";
 import { Badge, Bar, Btn, Card, Stat } from "./ui";
 import { HELP } from "./help";
+import { Glyph, Icon } from "./icons";
 
 const monthName = (m: string) => new Date(m + "-01T00:00:00").toLocaleDateString(locale(), { month: "short", year: "numeric" });
 
@@ -33,7 +34,7 @@ export default function WarChest() {
             <Btn onClick={() => (setMoving((v) => !v), setEditing(false))}>{moving ? "Close" : "⇄ Move money"}</Btn>
           )}
           <Btn kind="primary" onClick={() => (setEditing((v) => !v), setMoving(false))}>
-            {editing ? "Close" : "🏦 Update balances"}
+            {editing ? "Close" : <><Icon name="bank" size={20} className="mr-1.5" />Update balances</>}
           </Btn>
         </div>
       }
@@ -47,8 +48,8 @@ export default function WarChest() {
         <div className="space-y-5">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {cash.accounts.map((a) => (
-              <div key={a.id} className={`bg-card-2 border-[3px] rounded-[10px] p-3 shadow-[3px_3px_0_#0b0a14] ${a.now < 0 ? "border-bad" : "border-outline"}`}>
-                <div className="text-sm font-extrabold uppercase text-muted truncate">🏦 {a.name}</div>
+              <div key={a.id} className={`bg-card-2 border-[3px] rounded-[10px] p-3 shadow-[3px_3px_0_var(--color-outline)] ${a.now < 0 ? "border-bad" : "border-outline"}`}>
+                <div className="text-sm font-extrabold uppercase text-muted truncate"><Icon name="bank" size={20} /> {a.name}</div>
                 <div className={`font-display text-3xl tracking-wide ${a.now < 0 ? "text-bad" : "text-gold"}`}>{money(a.now)}</div>
                 <div className="text-base text-muted">
                   {a.inflow || a.outflow ? `+${money(a.inflow)} in · −${money(a.outflow)} out since ${cash.asOf}` : `As of ${cash.asOf}`}
@@ -70,7 +71,7 @@ export default function WarChest() {
 
           <div>
             <div className="flex justify-between flex-wrap gap-2 text-lg font-bold mb-1.5">
-              <span>🛡️ Safety buffer: {health.bufferMonths} months of bills</span>
+              <span><Icon name="shield" size={20} /> Safety buffer: {health.bufferMonths} months of bills</span>
               <span className={cash.now >= health.bufferTarget ? "text-good" : "text-gold"}>
                 {money(Math.max(cash.now, 0))} / {money(health.bufferTarget)}
               </span>
@@ -86,7 +87,7 @@ export default function WarChest() {
             <div className="font-display text-xl tracking-wide mb-2">Next {forecast.length} months</div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {forecast.map((f, i) => (
-                <div key={f.month} className={`bg-card-2 border-[3px] rounded-[10px] p-3 shadow-[3px_3px_0_#0b0a14] ${f.end < 0 ? "border-bad" : "border-outline"}`}>
+                <div key={f.month} className={`bg-card-2 border-[3px] rounded-[10px] p-3 shadow-[3px_3px_0_var(--color-outline)] ${f.end < 0 ? "border-bad" : "border-outline"}`}>
                   <div className="text-sm font-extrabold uppercase text-muted">{monthName(f.month)}{i === 0 && " (now)"}</div>
                   <div className={`font-display text-2xl tracking-wide ${f.end < 0 ? "text-bad" : f.end < health.burn ? "text-gold" : "text-good"}`}>{money(f.end)}</div>
                   <div className="text-base text-muted">+{money(f.income)} in · −{money(f.bills)} bills</div>
@@ -297,7 +298,7 @@ function Moves({ moves, asOf }: { moves: (CashFlow & { account: string })[]; asO
         {shown.map((f) => (
           <li key={f.key} className="flex items-center gap-2 py-1.5 flex-wrap">
             <span className="text-muted w-24 shrink-0">{f.date}</span>
-            <span aria-hidden>{KIND_ICON[f.kind]}</span>
+            <Glyph value={KIND_ICON[f.kind]} size={20} />
             <span className="flex-1 min-w-32 font-semibold">{f.label}</span>
             {movable(f.key) ? (
               <AccountSelect className="text-sm py-0.5" value={f.account} label={f.amount > 0 ? "Went into" : "Paid from"} onChange={(id) => update((d) => moveTo(d, f.key, id, f.date))} />

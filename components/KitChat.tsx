@@ -8,6 +8,7 @@ import type { KitMessage } from "@/lib/types";
 import { useTracker } from "./App";
 import { Btn } from "./ui";
 import { Kit } from "./characters";
+import { Glyph, Icon } from "./icons";
 
 const KEEP = 30;
 
@@ -158,7 +159,7 @@ export default function KitChat() {
           >
             {PERSONAS.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.emoji} {p.name}
+                {p.name}
               </option>
             ))}
             <option value={CUSTOM_PERSONA}>✍️ Your own</option>
@@ -169,14 +170,15 @@ export default function KitChat() {
             </button>
           )}
           <button className={`btn ${voice ? "btn-primary" : "btn-ghost"} px-3`} onClick={toggleVoice} title="Kit reads replies out loud" aria-pressed={voice}>
-            {voice ? "🔊 Voice on" : "🔈 Voice off"}
+            <Icon name={voice ? "speaker" : "mute"} size={20} className="mr-1.5" />
+            {voice ? "Voice on" : "Voice off"}
           </button>
           <button className="text-base text-muted underline" onClick={() => setVoiceSetup(!voiceSetup)}>
             {aiVoice ? "Voice settings" : "Make the voice real"}
           </button>
         </div>
       </div>
-      {personaId !== CUSTOM_PERSONA && <p className="text-base text-muted -mt-1 mb-3">{persona.emoji} {persona.tagline}</p>}
+      {personaId !== CUSTOM_PERSONA && <p className="text-base text-muted -mt-1 mb-3 flex items-center gap-1.5"><Glyph value={persona.emoji} size={20} /> {persona.tagline}</p>}
       {personaId === CUSTOM_PERSONA && (
         <label className="block text-base text-muted mb-3">
           Describe Kit&apos;s personality (e.g. &ldquo;a sarcastic pirate who calls money doubloons&rdquo;)
@@ -194,7 +196,7 @@ export default function KitChat() {
               </div>
               {m.role === "assistant" && (
                 <button className="shrink-0 text-xl" title="Play this reply" aria-label="Play this reply" onClick={() => speak(m.text, persona, aiVoice, setError)}>
-                  🔊
+                  <Icon name="speaker" size={20} />
                 </button>
               )}
             </div>
@@ -214,7 +216,7 @@ export default function KitChat() {
         <input className="flex-1 min-w-0 text-lg" placeholder={chat.length ? "Reply to Kit…" : "Ask Kit anything, or say “rewrite my briefing for today”"} value={text} onChange={(e) => setText(e.target.value)} />
         {canListen && (
           <button type="button" className={`btn ${listening ? "btn-hero animate-pulse" : "btn-ghost"} px-3`} onClick={listen} aria-label={listening ? "Stop listening" : "Talk"} title="Talk to Kit">
-            🎤
+            <Icon name="mic" size={20} />
           </button>
         )}
         <Btn kind="primary" disabled={busy || !text.trim()}>Send</Btn>
