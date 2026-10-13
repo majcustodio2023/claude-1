@@ -210,6 +210,8 @@ export interface TrackedCampaign {
   targetRoas?: number;
   /** Autopilot never raises a daily budget above this (in the account currency). Without it, Autopilot only cuts. */
   maxDailyBudget?: number;
+  /** Secret for the read-only share page (/share/<token>). Set and cleared by the server only. */
+  shareToken?: string;
 }
 
 export interface Creative {
