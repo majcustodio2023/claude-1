@@ -325,6 +325,55 @@ function AccountRow({ account }: { account: AdAccount }) {
 
 const TONE = { good: "good", info: "accent", warn: "warn", bad: "bad" } as const;
 
+/** Copies a read-only link to this campaign's live results, for an ads expert or client. */
+function ShareLink({ tracked }: { tracked: TrackedCampaign }) {
+  const { update } = useTracker();
+  const [msg, setMsg] = useState("");
+  const [busy, setBusy] = useState(false);
+  const url = (t: string) => `${location.origin}/share/${t}`;
+  const call = async (on: boolean) => {
+    setBusy(true);
+    const res = await fetch("/api/meta/share", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tracked: tracked.id, on }) });
+    const json = await res.json();
+    setBusy(false);
+    if (!res.ok) return setMsg(json.error), null;
+    // Keep this tab in step with the server, which owns the link.
+    update((d) => {
+      const t = d.trackedCampaigns.find((x) => x.id === tracked.id);
+      if (t) t.shareToken = json.token ?? undefined;
+    });
+    return json.token as string | null;
+  };
+  const copy = async () => {
+    const token = tracked.shareToken ?? (await call(true));
+    if (!token) return;
+    try {
+      await navigator.clipboard.writeText(url(token));
+      setMsg("Link copied");
+    } catch {
+      prompt("Copy this link:", url(token));
+    }
+    setTimeout(() => setMsg(""), 2500);
+  };
+  return (
+    <span className="flex items-center gap-2">
+      <Btn onClick={copy} disabled={busy} title="A read-only page with this campaign's live results, suggestions and changes. Anyone with the link can see it.">
+        🔗 {tracked.shareToken ? "Copy share link" : "Share results"}
+      </Btn>
+      {tracked.shareToken && (
+        <button
+          className="text-sm underline text-muted"
+          disabled={busy}
+          onClick={() => confirm("Turn off this link? Anyone you sent it to won't be able to open it any more.") && call(false).then(() => setMsg("Link turned off"))}
+        >
+          Turn off link
+        </button>
+      )}
+      {msg && <span className="text-sm text-good">{msg}</span>}
+    </span>
+  );
+}
+
 function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCampaign; preset: DatePreset; result?: InsightResult; onResult: (r: InsightResult) => void }) {
   const { data, update } = useTracker();
   const [busy, setBusy] = useState(false);
@@ -375,6 +424,7 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
             </button>
           ))}
         </div>
+        <ShareLink tracked={tracked} />
         <Btn kind="primary" onClick={load} disabled={busy}>{busy ? "Loading…" : result ? "Refresh" : "Analyze"}</Btn>
         <button className="text-muted text-sm" onClick={() => update((d) => void (d.trackedCampaigns = d.trackedCampaigns.filter((x) => x.id !== tracked.id)))}>✕</button>
       </div>

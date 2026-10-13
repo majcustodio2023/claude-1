@@ -105,6 +105,11 @@ export async function saveData(data: TrackerData): Promise<TrackerData> {
     data: {
       ...rest,
       adAccounts: data.adAccounts.map(({ hasToken: _h, ...a }) => a),
+      // Share links are made and revoked by the server; keep its copy.
+      trackedCampaigns: data.trackedCampaigns.map(({ shareToken: _s, ...t }) => {
+        const token = doc.data.trackedCampaigns.find((x) => x.id === t.id)?.shareToken;
+        return token ? { ...t, shareToken: token } : t;
+      }),
       // The server owns the Autopilot log and creatives; a browser tab with older data mustn't overwrite them.
       autopilotLog: doc.data.autopilotLog,
       creatives: doc.data.creatives,
@@ -114,6 +119,17 @@ export async function saveData(data: TrackerData): Promise<TrackerData> {
   };
   await writeDoc(next);
   return withTokenFlags(next);
+}
+
+/** Creates (or with null, revokes) the read-only share link for a tracked campaign. Returns the token. */
+export async function setShareToken(trackedId: string, on: boolean): Promise<string | null> {
+  const doc = await loadDoc();
+  const t = doc.data.trackedCampaigns.find((x) => x.id === trackedId);
+  if (!t) throw new Error("Campaign is not being tracked");
+  if (on) t.shareToken ??= randomBytes(24).toString("base64url");
+  else delete t.shareToken;
+  await writeDoc(doc);
+  return t.shareToken ?? null;
 }
 
 export async function appendAutopilotLog(entries: AutopilotEntry[], limit = 200): Promise<void> {

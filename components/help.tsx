@@ -115,6 +115,7 @@ export const HELP = {
     <ul>
       <li>Pick the campaigns to watch. View only = suggestions. Manage = one-click changes. Autopilot = changes applied daily.</li>
       <li>&ldquo;Sync spend to expenses&rdquo; records each campaign&apos;s spend for the month under Other spending.</li>
+      <li>&ldquo;Share results&rdquo; copies a read-only link to that campaign: live results, what needs doing, and the changes made. Send it to your ads expert or client. It updates by itself every time they open it, and they can&apos;t change anything. &ldquo;Turn off link&rdquo; stops it working.</li>
     </ul>
   ),
   autopilot: (
