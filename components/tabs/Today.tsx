@@ -14,6 +14,7 @@ import { REWARD, hasChest, questKey } from "@/lib/loot";
 import { CURRENCIES } from "./Settings";
 import KitChat from "../KitChat";
 import { HELP } from "../help";
+import { Glyph, Icon } from "../icons";
 
 export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log" | "ads" | "expenses") => void }) {
   const { data, update, month, today } = useTracker();
@@ -65,7 +66,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
   return (
     <div className="space-y-5">
       {!data.settings.playerName && <SetupCard />}
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card glow="cyan">
           <Meter
             label="Shield · expenses covered"
@@ -103,7 +104,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
       <ManualSpending compact goTo={() => goTo("expenses")} />
       <FunMoney />
 
-      <div className="grid lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         <div className="lg:col-span-3 space-y-4 min-w-0">
           <Card
             title="Mission briefing"
@@ -166,8 +167,8 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
               <li key={t.id} className={`flex items-start gap-3 group px-2.5 py-2 rounded-[10px] border-2 transition ${t.done ? "bg-good/10 border-good/40" : "border-transparent hover:bg-white/[0.04]"}`}>
                 <input type="checkbox" className="mt-0.5" checked={t.done} onChange={() => toggle(t.id)} aria-label={t.text} />
                 <span className={`text-[1.02rem] flex-1 leading-snug font-bold ${t.done ? "line-through text-muted" : ""}`}>{t.text}</span>
-                {hasChest(questKey(today, t.id)) && !t.done && <span title="Loot chest: finish this for a random item" aria-label="Loot chest">🎁</span>}
-                <span className={`font-display text-lg leading-none mt-0.5 whitespace-nowrap ${t.done ? "text-good" : "text-gold"}`}>+{REWARD.quest}🪙</span>
+                {hasChest(questKey(today, t.id)) && !t.done && <span title="Loot chest: finish this for a random item" aria-label="Loot chest"><Icon name="gift" size={20} /></span>}
+                <span className={`font-display text-lg leading-none mt-0.5 whitespace-nowrap ${t.done ? "text-good" : "text-gold"}`}>+{REWARD.quest}<Icon name="coin" size={20} /></span>
                 <button
                   className="text-sm text-muted opacity-0 group-hover:opacity-100"
                   onClick={() => update((d) => void (d.todos[today] = d.todos[today].filter((x) => x.id !== t.id)))}
@@ -193,7 +194,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
         </Card>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card help={HELP.bosses} title="Bosses to defeat" icon="⚔" glow="hero" actions={<Btn onClick={() => goTo("pipeline")}>All deals</Btn>}>
           {bosses.length === 0 ? (
             <p className="text-lg text-muted">No open deals. Time to hunt for new ones.</p>
@@ -203,7 +204,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
                 <li key={d.id}>
                   <div className="flex justify-between items-center gap-3 mb-2">
                     <span className="flex items-center gap-2 text-lg font-extrabold">
-                      <span className="text-2xl" aria-hidden>👹</span>
+                      <span className="text-2xl" aria-hidden><Icon name="demon" size={20} /></span>
                       {d.name}
                     </span>
                     <span className="font-display text-xl tracking-wide text-bad">{money(d.value)} HP</span>
@@ -221,10 +222,10 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
               <div
                 key={b.id}
                 title={`${b.name}: ${b.desc}${GEAR[b.id] ? ` · Unlocks ${GEAR[b.id].name} for your hero` : ""}`}
-                className={`relative text-center px-1.5 py-3 rounded-[10px] border-[3px] border-outline ${b.unlocked ? "bg-gold text-outline shadow-[3px_3px_0_#0b0a14] pulse-gold" : "bg-card-2 opacity-55"}`}
+                className={`relative min-w-0 text-center px-1.5 py-3 rounded-[10px] border-[3px] border-outline ${b.unlocked ? "bg-gold text-outline shadow-[3px_3px_0_var(--color-outline)] pulse-gold" : "bg-card-2 opacity-55"}`}
               >
-                <div className="text-3xl leading-none">{b.unlocked ? b.icon : "🔒"}</div>
-                <div className="font-display text-base tracking-wide mt-1.5 leading-tight">{b.name}</div>
+                <div className="text-3xl leading-none flex justify-center"><Glyph value={b.unlocked ? b.icon : "lock"} size={34} /></div>
+                <div className="font-display text-base tracking-wide mt-1.5 leading-tight [overflow-wrap:anywhere] hyphens-auto">{b.name}</div>
                 {GEAR[b.id] && <div className={`text-xs font-extrabold mt-1 ${b.unlocked || data.heroGear?.[b.id] ? "" : "text-muted"}`}>{data.heroGear?.[b.id] ? "✓ " : "+ "}{GEAR[b.id].name}</div>}
               </div>
             ))}

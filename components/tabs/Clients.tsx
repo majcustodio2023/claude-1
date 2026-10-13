@@ -10,6 +10,7 @@ import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate } from "../ui";
 import { HELP } from "../help";
 import { StreamTerms } from "../StreamSettings";
 import { incomePartlyCollected } from "@/lib/subs";
+import { Icon } from "../icons";
 
 const STATUS: Record<ClientTask["status"], { label: string; cls: string }> = {
   todo: { label: "To do", cls: "btn-ghost" },
@@ -110,7 +111,7 @@ function MyPlate({ personId }: { personId: string }) {
         {personName(data, personId)}&apos;s open tasks · {tasks.length}
       </div>
       {tasks.length === 0 ? (
-        <p className="text-base text-muted">Nothing open. 🎉</p>
+        <p className="text-base text-muted">Nothing open. <Icon name="party" size={20} /></p>
       ) : (
         <ul className="space-y-1 text-base">
           {tasks.map((t) => (
@@ -150,7 +151,7 @@ function ClientCard({ client: c, who }: { client: Client; who: string }) {
           {st.overdue > 0 && <Badge tone="bad">{st.overdue} overdue</Badge>}
           <Badge tone={st.open ? "warn" : "good"}>{st.open ? `${st.open} open` : "All clear"}</Badge>
           <button className="btn btn-ghost px-3" onClick={() => setSettings(!settings)} aria-expanded={settings} title="Client settings">
-            ⚙
+            <Icon name="gear" size={20} />
           </button>
         </>
       }
@@ -310,7 +311,7 @@ function TaskRow({ task: t }: { task: ClientTask }) {
           ) : (
             <div className={`text-[1.05rem] font-bold leading-snug ${t.status === "done" ? "line-through text-muted" : ""}`}>
               {t.title}
-              {t.status !== "done" && hasChest(clientTaskKey(t.id)) && <span className="ml-1.5" title="Loot chest: finish this for a random item">🎁</span>}
+              {t.status !== "done" && hasChest(clientTaskKey(t.id)) && <span className="ml-1.5" title="Loot chest: finish this for a random item"><Icon name="gift" size={20} /></span>}
             </div>
           )}
           <div className="flex flex-wrap items-center gap-1.5 mt-1 text-sm">
@@ -392,8 +393,8 @@ function ClientMoneyPanel({ client: c }: { client: Client }) {
     return (
       <div className="mb-4 flex flex-wrap items-center gap-2 text-base">
         <span className="font-bold">How does this client pay?</span>
-        <Btn kind="soft" onClick={() => choose("recurring")}>💰 Monthly retainer</Btn>
-        <Btn kind="soft" onClick={() => choose("project")}>🐉 One-time project</Btn>
+        <Btn kind="soft" onClick={() => choose("recurring")}><Icon name="income" size={20} /> Monthly retainer</Btn>
+        <Btn kind="soft" onClick={() => choose("project")}><Icon name="dragon" size={20} /> One-time project</Btn>
       </div>
     );
   }

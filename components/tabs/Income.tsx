@@ -11,6 +11,7 @@ import { StreamTerms, termsText } from "../StreamSettings";
 import { HELP } from "../help";
 import { SubItems } from "../SubItems";
 import { collectSub, incomeSubRows, uncollectSub } from "@/lib/subs";
+import { Icon } from "../icons";
 
 type Go = (tab: "clients" | "pipeline") => void;
 
@@ -173,7 +174,7 @@ function IncomeRow({ row: r, goTo }: { row: StreamRow; goTo: Go }) {
             </button>
           ) : (
             <button className="btn btn-ghost px-3" onClick={() => setSettings(!settings)} aria-expanded={settings} title="Change the amount or how it's paid">
-              ⚙
+              <Icon name="gear" size={20} />
             </button>
           )}
         </div>

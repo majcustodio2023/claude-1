@@ -1,3 +1,4 @@
+import type { Appearance } from "./appearance";
 // Shape of the single document that holds all tracker data.
 
 export type StreamKind = "fixed" | "percent_floor" | "variable";
@@ -301,6 +302,8 @@ export interface Settings {
   kitPersonaCustom?: string;
   /** Share of the month's spare money that's safe to spend on fun (percent, default 20). */
   funPercent?: number;
+  /** Theme, design style, layout and text size (see lib/appearance.ts). */
+  appearance?: Appearance;
 }
 
 /** How the hero looks. Every field has a default, so older data needs nothing. */

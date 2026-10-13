@@ -8,6 +8,7 @@ import { clientForDeal, makeClientFromDeal, renameClient } from "@/lib/clients";
 import { Bar, Btn, Card, NumInput, TextInput, celebrate, money } from "../ui";
 import { AccountSelect, CollectForm, accountName, settle, type Collection } from "../Money";
 import { HELP } from "../help";
+import { Icon } from "../icons";
 
 const STAGES: [DealStage, string][] = [
   ["lead", "Lead"],
@@ -124,7 +125,7 @@ export function DealCard({ deal }: { deal: Deal }) {
         </select>
       </div>
       {client ? (
-        <div className="text-sm text-muted">🗂️ Client project: tasks and team pay are in the Clients tab.</div>
+        <div className="text-sm text-muted"><Icon name="clients" size={20} /> Client project: tasks and team pay are in the Clients tab.</div>
       ) : (
         deal.stage === "won" && (
           <button className="text-sm underline text-muted" onClick={() => update((d) => makeClientFromDeal(d, deal.id, today))}>

@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { money } from "@/lib/finance";
 import { Hero, SfxBurst } from "./characters";
+import { Glyph, WithIcons } from "./icons";
 
 type Glow = "cyan" | "hero" | "gold" | "good";
 const GLOW_CLASS: Record<Glow, string> = { cyan: "", hero: "hud-hero", gold: "hud-gold", good: "hud-good" };
@@ -17,7 +18,7 @@ export function Card({ title, icon, actions, children, className = "", glow = "c
           <div className="flex items-center gap-2">
             {title && (
               <h2 className={`caption ${CAPTION_CLASS[glow]}`}>
-                {icon && <span aria-hidden>{icon}</span>}
+                {icon && <Glyph value={icon} />}
                 {title}
               </h2>
             )}
@@ -40,7 +41,7 @@ function HelpButton({ open, onClick }: { open: boolean; onClick: () => void }) {
       aria-expanded={open}
       aria-label={open ? "Hide help" : "How this works"}
       title="How this works"
-      className={`shrink-0 w-9 h-9 rounded-full border-[3px] border-outline font-display text-xl leading-none shadow-[2px_2px_0_#0b0a14] ${open ? "bg-gold text-outline" : "bg-card-2 text-gold hover:bg-gold hover:text-outline"}`}
+      className={`shrink-0 w-9 h-9 rounded-full border-[3px] border-outline font-display text-xl leading-none shadow-[2px_2px_0_var(--color-outline)] ${open ? "bg-gold text-outline" : "bg-card-2 text-gold hover:bg-gold hover:text-outline"}`}
     >
       ?
     </button>
@@ -50,7 +51,7 @@ function HelpButton({ open, onClick }: { open: boolean; onClick: () => void }) {
 /** "How this works" box opened by a section's ? button. Pass a list of short steps or tips. */
 function HelpPanel({ children, onClose }: { children: ReactNode; onClose: () => void }) {
   return (
-    <div className="mb-4 p-4 relative bg-[#fff8ec] text-[#2a2748] border-[3px] border-outline rounded-[18px] shadow-[4px_4px_0_#0b0a14]" role="note">
+    <div className="mb-4 p-4 relative bg-[#fff8ec] text-[#2a2748] border-[3px] border-outline rounded-[18px] shadow-[4px_4px_0_var(--color-outline)]" role="note">
       <button type="button" className="absolute top-2 right-3 text-xl font-bold text-[#6a3fb5]" onClick={onClose} aria-label="Close help">
         ✕
       </button>
@@ -78,7 +79,7 @@ export function Meter({ label, icon, value, target, sub, tone }: { label: string
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2">
         <span className="font-display text-2xl tracking-wide flex items-center gap-2">
-          {icon && <span aria-hidden>{icon}</span>}
+          {icon && <Glyph value={icon} size={22} />}
           {label}
         </span>
         <span className={`comic-num text-4xl ${TONE_TEXT[t]}`}>{Math.round(pct * 100)}%</span>
@@ -95,9 +96,9 @@ export function Meter({ label, icon, value, target, sub, tone }: { label: string
 
 export function Stat({ label, value, hint, tone }: { label: string; value: ReactNode; hint?: ReactNode; tone?: BarTone }) {
   return (
-    <div className="relative bg-card-2 border-[3px] border-outline rounded-[10px] p-3.5 shadow-[4px_4px_0_var(--color-outline)]">
+    <div className="relative min-w-0 bg-card-2 border-[3px] border-outline rounded-[10px] p-3.5 shadow-[4px_4px_0_var(--color-outline)]">
       <div className="text-sm text-muted font-extrabold uppercase tracking-wide">{label}</div>
-      <div className={`comic-num text-3xl mt-1 ${tone ? TONE_TEXT[tone] : "text-ink"}`}>{value}</div>
+      <div className={`comic-num text-2xl sm:text-3xl mt-1 [overflow-wrap:anywhere] ${tone ? TONE_TEXT[tone] : "text-ink"}`}>{value}</div>
       {hint && <div className="text-sm text-muted mt-0.5">{hint}</div>}
     </div>
   );
@@ -203,13 +204,13 @@ export function Celebrations() {
       <div className="impact-lines absolute inset-[-20%]" />
       <div className="sfx-in absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,560px)]">
         <div className="relative flex items-end justify-center">
-          <Hero mood="hype" size={150} className="bob -mr-6 relative z-10 drop-shadow-[6px_6px_0_#0b0a14]" />
+          <Hero mood="hype" size={150} className="bob -mr-6 relative z-10 drop-shadow-[6px_6px_0_var(--color-outline)]" />
           <SfxBurst text={current.sfx ?? "POW!"} className="w-56 sm:w-64 -mb-2" />
         </div>
         <div className="hud hud-gold -mt-3 mx-auto max-w-md px-5 py-4 text-center !animate-none">
           <div className="caption mb-2">{current.kicker ?? "Achievement unlocked"}</div>
           <div className="font-display text-3xl tracking-wide">
-            <span className="mr-2">{current.icon ?? "🏆"}</span>
+            <span className="mr-2"><Glyph value={current.icon ?? "trophy"} size={30} /></span>
             {current.title}
           </div>
           {current.sub && <div className="text-base text-muted font-bold mt-1">{current.sub}</div>}
@@ -239,8 +240,8 @@ export function Toasts() {
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 pointer-events-none w-[min(92vw,420px)]" role="status">
       {list.map((t) => (
-        <div key={t.id} className="sfx-in bg-gold text-outline font-display text-xl tracking-wide border-[3px] border-outline rounded-[10px] px-4 py-2 shadow-[4px_4px_0_#0b0a14] text-center">
-          {t.text}
+        <div key={t.id} className="sfx-in bg-gold text-outline font-display text-xl tracking-wide border-[3px] border-outline rounded-[10px] px-4 py-2 shadow-[4px_4px_0_var(--color-outline)] text-center">
+          <WithIcons text={t.text} />
         </div>
       ))}
     </div>

@@ -2,6 +2,7 @@
 
 import { locale } from "@/lib/finance";
 import { useEffect, useRef, useState } from "react";
+import { Icon } from "./icons";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const label = (m: string) => new Date(m + "-01T00:00:00").toLocaleDateString(locale(), { month: "long", year: "numeric" });
@@ -36,11 +37,11 @@ export default function MonthPicker({ value, onChange, current }: { value: strin
     <div className="relative flex items-center gap-1.5" ref={ref}>
       <button className="btn btn-ghost px-3" onClick={() => shift(-1)} aria-label="Previous month">◀</button>
       <button className="btn btn-primary min-w-48" onClick={() => setOpen((v) => !v)} aria-haspopup="dialog" aria-expanded={open}>
-        📅 {label(value)}
+        <Icon name="calendar" size={20} /> {label(value)}
       </button>
       <button className="btn btn-ghost px-3" onClick={() => shift(1)} aria-label="Next month">▶</button>
       {open && (
-        <div role="dialog" aria-label="Pick a month" className="absolute right-0 top-full mt-2 z-40 w-72 bg-card border-[3px] border-outline rounded-[12px] p-3 shadow-[5px_5px_0_#0b0a14]">
+        <div role="dialog" aria-label="Pick a month" className="absolute right-0 top-full mt-2 z-40 w-72 bg-card border-[3px] border-outline rounded-[12px] p-3 shadow-[5px_5px_0_var(--color-outline)]">
           <div className="flex items-center justify-between mb-3">
             <button className="btn btn-ghost px-3" onClick={() => setYear(year - 1)} aria-label="Previous year">◀</button>
             <span className="font-display text-2xl tracking-wide">{year}</span>

@@ -235,7 +235,7 @@ function Tile({ c, onDelete, onChange, setError }: { c: Creative; onDelete: () =
   };
 
   return (
-    <div className="bg-card-2 border-[3px] border-outline rounded-[12px] overflow-hidden shadow-[4px_4px_0_#0b0a14] flex flex-col">
+    <div className="bg-card-2 border-[3px] border-outline rounded-[12px] overflow-hidden shadow-[4px_4px_0_var(--color-outline)] flex flex-col">
       <div className="aspect-[4/5] bg-outline grid place-content-center">
         {c.status === "generating" && <div className="font-display text-2xl tracking-wide animate-pulse">Generating…</div>}
         {c.status === "failed" && <div className="p-4 text-lg text-bad font-bold text-center">{c.error ?? "Failed"}</div>}

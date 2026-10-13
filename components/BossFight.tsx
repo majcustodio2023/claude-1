@@ -6,6 +6,7 @@ import { RARITY } from "@/lib/items";
 import { useTracker } from "./App";
 import { Hero } from "./characters";
 import { Bar, Btn, money } from "./ui";
+import { Icon } from "./icons";
 
 // Boss-defeat mini game. A deal was fully paid in real life; now land the final blow.
 // Tap ATTACK when the marker is in the gold zone for a critical hit. Faster K.O. = better rank = more loot.
@@ -128,7 +129,7 @@ export default function BossFight({ dealId, onClose }: { dealId: string; onClose
 
         <div className="relative flex items-end justify-between mt-4 min-h-[240px] select-none">
           <div key={`h${hit}`} className={hit ? "hero-lunge" : ""}>
-            <Hero mood={phase === "done" ? "hype" : "focus"} attacking={phase === "fight" || phase === "ko"} size={170} gear={Object.keys(data.heroGear ?? {})} className="drop-shadow-[5px_5px_0_#0b0a14] max-sm:w-[120px] max-sm:h-auto" />
+            <Hero mood={phase === "done" ? "hype" : "focus"} attacking={phase === "fight" || phase === "ko"} size={170} gear={Object.keys(data.heroGear ?? {})} className="drop-shadow-[5px_5px_0_var(--color-outline)] max-sm:w-[120px] max-sm:h-auto" />
           </div>
           <button
             type="button"
@@ -166,17 +167,17 @@ export default function BossFight({ dealId, onClose }: { dealId: string; onClose
               <div className="absolute inset-y-0 bg-gold/80" style={{ left: `${(zone - ZONE / 2) * 100}%`, width: `${ZONE * 100}%` }} />
               <div className="absolute inset-y-0 w-2 -ml-1 bg-white border-x-2 border-outline" style={{ left: `${pos * 100}%` }} />
             </div>
-            <button type="button" onClick={attack} className="btn btn-hero w-full text-3xl py-4">⚔️ ATTACK</button>
+            <button type="button" onClick={attack} className="btn btn-hero w-full text-3xl py-4"><Icon name="swords" size={20} /> ATTACK</button>
           </div>
         )}
 
         {phase === "done" && reward && (
           <div className="hud hud-gold p-5 mt-4 text-center space-y-2">
             <div className="font-display text-5xl text-gold tracking-wide">RANK {rank}</div>
-            <div className="font-display text-3xl tracking-wide">+{reward.coins} 🪙</div>
+            <div className="font-display text-3xl tracking-wide">+{reward.coins} <Icon name="coin" size={20} /></div>
             {reward.item ? (
               <div className="text-xl font-extrabold">
-                🎁 Loot: <span style={{ color: RARITY[reward.item.rarity].color }}>{reward.item.name}</span> <span className="text-muted">({RARITY[reward.item.rarity].label})</span>
+                <Icon name="gift" size={20} /> Loot: <span style={{ color: RARITY[reward.item.rarity].color }}>{reward.item.name}</span> <span className="text-muted">({RARITY[reward.item.rarity].label})</span>
                 <div className="flex justify-center mt-2">
                   <Hero size={120} items={[reward.item.id]} gear={[]} />
                 </div>
