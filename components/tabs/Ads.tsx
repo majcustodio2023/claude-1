@@ -43,6 +43,7 @@ export default function Ads() {
           Add each Meta ad account (yours and your team members&apos;). Each needs an access token with <code>ads_read</code> (and <code>ads_management</code> if you want the app to make changes).
           Tokens are encrypted on the server and never shown again.
         </p>
+        <ConnectGuide />
         <div className="space-y-3 mb-4">
           {data.adAccounts.map((a) => (
             <AccountRow key={a.id} account={a} />
@@ -53,7 +54,7 @@ export default function Ads() {
           onSubmit={(e) => {
             e.preventDefault();
             if (!form.label || !form.accountId) return;
-            update((d) => void d.adAccounts.push({ id: uid("acct"), label: form.label, owner: form.owner || "Me", accountId: form.accountId.trim() }));
+            update((d) => void d.adAccounts.push({ id: uid("acct"), label: form.label, owner: form.owner || "Me", accountId: form.accountId.replace(/\D/g, "") }));
             setForm({ label: "", owner: "", accountId: "" });
           }}
         >
@@ -99,6 +100,41 @@ export default function Ads() {
 
       {(data.trackedCampaigns.some((t) => t.mode === "autopilot") || (data.autopilotLog?.length ?? 0) > 0) && <AutopilotCard />}
     </div>
+  );
+}
+
+function ConnectGuide() {
+  return (
+    <details className="mb-4 bg-card-2 border-[3px] border-outline rounded-[10px] p-4 text-lg">
+      <summary className="cursor-pointer font-display text-xl tracking-wide">How to connect an ad account (step by step)</summary>
+      <div className="mt-3 space-y-4">
+        <div>
+          <p className="font-extrabold">1. Find the ad account ID</p>
+          <p>Open Ads Manager and pick the account. The ID is the number after <code>act=</code> in the address bar. You can paste it with or without <code>act_</code>.</p>
+        </div>
+        <div>
+          <p className="font-extrabold">2. Get a token (pick one)</p>
+          <p className="mt-1"><span className="font-bold text-gold">Quick, lasts about 60 days:</span> works for every ad account your Facebook profile can open, in any business portfolio, so you can paste the same token on each account.</p>
+          <ol className="list-decimal ml-6 space-y-1">
+            <li>Go to developers.facebook.com, open My Apps and create an app (type: Business) if you don&apos;t have one.</li>
+            <li>Open Tools → Graph API Explorer, choose your app, then &quot;Get User Access Token&quot;.</li>
+            <li>Tick <code>ads_read</code> and <code>ads_management</code>, then Generate Access Token and approve.</li>
+            <li>Click the ⓘ next to the token → Open in Access Token Tool → Extend Access Token. Copy the long one.</li>
+          </ol>
+          <p className="mt-2"><span className="font-bold text-good">Best, never expires:</span> do this once in each business portfolio.</p>
+          <ol className="list-decimal ml-6 space-y-1">
+            <li>Business Settings → Users → System users → Add (role: Admin).</li>
+            <li>Assign assets → Ad accounts → pick the accounts → turn on &quot;Manage campaigns&quot;.</li>
+            <li>Generate new token → pick your app → tick <code>ads_read</code> and <code>ads_management</code>, set expiry to Never → copy it.</li>
+          </ol>
+          <p className="mt-2">Want one token for all portfolios? Have the other portfolios share their ad accounts with yours as a partner, then assign them to your system user. Teammate&apos;s account in their own portfolio? Have them add you as a person on the ad account (then your token covers it), or have them make a system user token and paste it here themselves.</p>
+        </div>
+        <div>
+          <p className="font-extrabold">3. Add it here</p>
+          <p>Fill in the form below and click Add account, paste the token on the account&apos;s row, then click Choose campaigns and tick the ones to track. New campaigns start as View only.</p>
+        </div>
+      </div>
+    </details>
   );
 }
 
