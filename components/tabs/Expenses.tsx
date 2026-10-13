@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { addMonths, billPaid, defaultAccountId, expenseAppliesTo, locale, moneyHistory, monthOf, parseAmount, summarize, uid } from "@/lib/finance";
-import type { AdHocExpense, BillPayment, ExpenseLine } from "@/lib/types";
+import type { AdHocExpense, BillPayment, ExpenseLine, SubItem } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate, money } from "../ui";
 import { AccountSelect, accountName } from "../Money";
+import { SubItems } from "../SubItems";
+import { paySub, setSubs, subDone, subPaid, subRows, subsTotal, unpaySub } from "@/lib/subs";
 
 const LINE_CATS: ExpenseLine["category"][] = ["household", "payroll", "client", "software", "debt", "other"];
 const ADHOC_CATS: AdHocExpense["category"][] = ["ads", "software", "payroll", "household", "fun", "other"];
@@ -30,6 +32,7 @@ export default function Expenses() {
             <li>Each payment is saved with the day you paid, the time you recorded it, and the account it came out of. It&apos;s taken off that account in the War chest.</li>
             <li>A bill that only runs for some months (like a loan)? Open ⚙ and set when it starts and ends.</li>
             <li>Made a mistake? Press ✕ on a payment to remove it.</li>
+            <li>A bill made of smaller costs (Household → maid, groceries, electricity)? Press &ldquo;Break into parts&rdquo; and add each one with its amount. Tick a part when you pay it and the bill fills up as you go. Whatever the parts don&apos;t cover shows as &ldquo;Everything else&rdquo;.</li>
           </ul>
         }
         actions={
@@ -93,6 +96,26 @@ function BillRow({ bill: e }: { bill: ExpenseLine }) {
   const [accountId, setAccountId] = useState(defaultAccountId(data, "out"));
   const [settings, setSettings] = useState(false);
   const setLine = (patch: Partial<ExpenseLine>) => update((d) => void Object.assign(d.expenses.find((x) => x.id === e.id)!, patch));
+  const listed = subsTotal(e.subs);
+  const subList = subRows(e.amount, e.subs).map((sub) => {
+    const part = subPaid(data, month, e, sub.id);
+    const done = subDone(data, month, e, sub);
+    return { sub, done, note: !done && part > 0 ? `${money(part)} paid` : undefined };
+  });
+  const subName = (id?: string) => (id ? subList.find((r) => r.sub.id === id)?.sub.name : undefined);
+  const toggleSub = (sub: SubItem, done: boolean) => {
+    if (done) {
+      if (!pays.some((p) => p.subId === sub.id)) return alert(`${sub.name} was paid as part of a full payment for ${e.name}. Remove that payment below to undo it.`);
+      update((d) => void unpaySub(d, month, e.id, sub.id));
+      return;
+    }
+    const owed = sub.amount - subPaid(data, month, e, sub.id);
+    update((d) => {
+      paySub(d, month, e.id, sub.id, date, accountId);
+      if (accountId) d.settings.lastPayAccountId = accountId;
+    });
+    if (paid + owed >= e.amount && e.amount > 0) celebrate({ kicker: "Bill cleared", title: e.name, sub: `${money(e.amount)} paid for ${monthLabel(month, "short")}`, icon: "🧾", sfx: "DONE!" });
+  };
 
   const pay = (amount: number) => {
     if (amount <= 0) return;
@@ -120,7 +143,7 @@ function BillRow({ bill: e }: { bill: ExpenseLine }) {
         <TextInput className="flex-1 min-w-40 text-lg font-bold" value={e.name} onChange={(v) => setLine({ name: v })} />
         <label className="flex items-center gap-2 text-base text-muted">
           Monthly amount
-          <NumInput className="w-32" value={e.amount} onChange={(v) => setLine({ amount: v ?? 0 })} />
+          <NumInput className="w-32" value={e.amount} onChange={(v) => setLine({ amount: Math.max(v ?? 0, listed) })} />
         </label>
         {applies ? status : <Badge>Not due this month</Badge>}
         <button className="btn btn-ghost px-3" onClick={() => setSettings(!settings)} aria-expanded={settings} title="Bill settings">
@@ -152,6 +175,16 @@ function BillRow({ bill: e }: { bill: ExpenseLine }) {
         </div>
       )}
 
+      {(applies || !!e.subs?.length) && (
+        <SubItems
+          rows={subList}
+          subs={e.subs}
+          onToggle={applies ? toggleSub : undefined}
+          onEdit={(subs) => update((d) => setSubs(d.expenses.find((x) => x.id === e.id)!, subs))}
+          addLabel="+ Break into parts (e.g. maid, groceries)"
+        />
+      )}
+
       {(applies || pays.length > 0) && (
         <>
           <div>
@@ -169,6 +202,7 @@ function BillRow({ bill: e }: { bill: ExpenseLine }) {
               {pays.map((p) => (
                 <li key={p.id} className="flex items-center gap-2 flex-wrap">
                   <span className="font-bold tabular-nums w-28">−{money(p.amount)}</span>
+                  {subName(p.subId) && <Badge>{subName(p.subId)}</Badge>}
                   <span className="text-muted">
                     paid {p.date}
                     {accountName(data, p.accountId) ? ` from ${accountName(data, p.accountId)}` : ""}
