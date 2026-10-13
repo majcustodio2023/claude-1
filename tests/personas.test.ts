@@ -25,3 +25,10 @@ test("Kit's replies lose *actions* and narration but keep **bold**", async () =>
   assert.equal(stripActions("Fine. *sighs* Pay the VA."), "Fine. Pay the VA.");
   assert.doesNotMatch(kitSystem(sampleData().settings), /Bible reference is welcome/);
 });
+
+test("each personality has its own AI voice and acting notes", async () => {
+  const { personaVoice } = await import("../lib/personas");
+  assert.equal(new Set(PERSONAS.map((p) => p.voice)).size, PERSONAS.length);
+  assert.match(personaVoice("shadow", undefined).acting, /menacing/);
+  assert.match(personaVoice(CUSTOM_PERSONA, "a pirate").acting, /pirate/);
+});

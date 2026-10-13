@@ -12,7 +12,7 @@ import type { AutopilotEntry, Creative, TrackerData } from "./types";
 
 interface StoredDoc {
   data: TrackerData;
-  secrets?: { tokens?: Record<string, string>; higgsfield?: string; anthropic?: string };
+  secrets?: { tokens?: Record<string, string>; higgsfield?: string; anthropic?: string; openai?: string };
 }
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -87,7 +87,11 @@ function withTokenFlags(doc: StoredDoc): TrackerData {
   return {
     ...doc.data,
     adAccounts: doc.data.adAccounts.map((a) => ({ ...a, hasToken: Boolean(tokens[a.id]) })),
-    integrations: { higgsfield: Boolean(doc.secrets?.higgsfield), kit: Boolean(process.env.ANTHROPIC_API_KEY || doc.secrets?.anthropic) },
+    integrations: {
+      higgsfield: Boolean(doc.secrets?.higgsfield),
+      kit: Boolean(process.env.ANTHROPIC_API_KEY || doc.secrets?.anthropic),
+      voice: Boolean(process.env.OPENAI_API_KEY || doc.secrets?.openai),
+    },
   };
 }
 
@@ -205,4 +209,18 @@ export async function getAnthropicKey(): Promise<string | null> {
   if (process.env.ANTHROPIC_API_KEY) return process.env.ANTHROPIC_API_KEY;
   const doc = await loadDoc();
   return doc.secrets?.anthropic ? decrypt(doc.secrets.anthropic) : null;
+}
+
+export async function setOpenAIKey(key: string | null): Promise<void> {
+  const doc = await loadDoc();
+  const secrets = { ...doc.secrets };
+  if (key) secrets.openai = encrypt(key.trim());
+  else delete secrets.openai;
+  await writeDoc({ ...doc, secrets });
+}
+
+export async function getOpenAIKey(): Promise<string | null> {
+  if (process.env.OPENAI_API_KEY) return process.env.OPENAI_API_KEY;
+  const doc = await loadDoc();
+  return doc.secrets?.openai ? decrypt(doc.secrets.openai) : null;
 }
