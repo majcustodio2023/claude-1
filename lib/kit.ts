@@ -5,6 +5,7 @@ import { dailyAdvice } from "./advice";
 import { cashForecast, configureLocale, cashHealth, cashPosition, dealBalance, locale, money, monthOf, summarize, weekLogs } from "./finance";
 import { achievements, levelFor, logStreak, rankFor } from "./game";
 import type { Settings, TrackerData } from "./types";
+import { ME, isOverdue, openTasksFor, personName } from "./clients";
 
 const p = money;
 
@@ -35,6 +36,13 @@ export function kitContext(data: TrackerData, today: string): string {
   lines.push(`This week: ${wk.leads} leads, ${wk.bookedCalls} booked calls, ${wk.showUps} show-ups, ${wk.closes} closes, ${p(wk.adSpend)} ad spend.`);
   const doFirst = data.tasks.filter((t) => t.quadrant === "do" && !t.done).slice(0, 8);
   if (doFirst.length) lines.push(`Open "do first" tasks: ${doFirst.map((t) => t.title).join("; ")}.`);
+  const clientWork = (data.clientTasks ?? []).filter((t) => t.status !== "done" && !data.clients?.find((c) => c.id === t.clientId)?.archived);
+  if (clientWork.length) {
+    const byClient = (data.clients ?? []).map((c) => [c, clientWork.filter((t) => t.clientId === c.id)] as const).filter(([, ts]) => ts.length);
+    lines.push(`Open client tasks: ${byClient.map(([c, ts]) => `${c.name}: ${ts.slice(0, 8).map((t) => `${t.title} (${t.assignees.map((a) => personName(data, a)).join(" + ") || "unassigned"}${isOverdue(t, today) ? ", OVERDUE" : t.dueDate ? `, due ${t.dueDate}` : ""})`).join("; ")}`).join(" | ")}.`);
+    const mine = openTasksFor(data, ME, today);
+    if (mine.length) lines.push(`Client tasks on the owner's own plate: ${mine.length}.`);
+  }
   const quests = data.todos[today] ?? [];
   if (quests.length) lines.push(`Today's quests: ${quests.map((q) => `${q.done ? "[x]" : "[ ]"} ${q.text}`).join("; ")}.`);
   if (data.trackedCampaigns.length) lines.push(`Tracked Meta campaigns: ${data.trackedCampaigns.map((t) => `${t.name} (${t.mode})`).join("; ")}.`);

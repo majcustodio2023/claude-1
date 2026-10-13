@@ -1,13 +1,15 @@
 "use client";
 
 import { uid } from "@/lib/finance";
+import { isOverdue, openTasksFor } from "@/lib/clients";
 import type { TeamMember } from "@/lib/types";
 import { useTracker } from "../App";
 import { Btn, Card, NumInput, TextInput, money } from "../ui";
 import { HELP } from "../help";
 
 export default function Team() {
-  const { data, update } = useTracker();
+  const { data, update, today } = useTracker();
+  const clientName = (id: string) => data.clients?.find((c) => c.id === id)?.name ?? "";
   const set = (id: string, patch: Partial<TeamMember>) => update((d) => void Object.assign(d.team.find((x) => x.id === id)!, patch));
   const total = data.team.filter((m) => m.active).reduce((a, m) => a + m.monthlyCost, 0);
 
@@ -20,6 +22,7 @@ export default function Team() {
     >
       <div className="space-y-4">
         {data.team.map((m) => {
+          const clientWork = openTasksFor(data, m.id, today);
           const open = data.tasks.filter((t) => !t.done && t.owner.toLowerCase().includes(m.name.split(/[ /]/)[0].toLowerCase()));
           return (
             <div key={m.id} className="border border-line bg-card-2/50 rounded-[3px] p-3 space-y-2">
@@ -35,6 +38,13 @@ export default function Team() {
                 </div>
               </div>
               <TextInput className="w-full text-sm" value={m.notes} onChange={(v) => set(m.id, { notes: v })} placeholder="Notes" />
+              {clientWork.length > 0 && (
+                <div className="text-base">
+                  <span className="font-bold">{clientWork.length} open client task{clientWork.length > 1 ? "s" : ""}</span>
+                  {clientWork.some((t) => isOverdue(t, today)) && <span className="text-bad font-bold"> · {clientWork.filter((t) => isOverdue(t, today)).length} overdue</span>}
+                  <span className="text-muted">: {clientWork.slice(0, 4).map((t) => `${clientName(t.clientId)}: ${t.title}`).join(" · ")}{clientWork.length > 4 && " …"}</span>
+                </div>
+              )}
               {open.length > 0 && (
                 <div className="text-sm text-muted">
                   {open.length} open tasks: {open.slice(0, 4).map((t) => t.title).join(" · ")}

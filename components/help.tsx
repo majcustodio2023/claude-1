@@ -68,6 +68,15 @@ export const HELP = {
       <li>Ad spend here is a quick count. If you also add ad spend in Expenses (or sync it from Meta), that month uses the Expenses number so it isn&apos;t counted twice.</li>
     </ul>
   ),
+  clients: (
+    <ul>
+      <li>One card per client with the tasks still to do for them. Add clients by name, or tap one of your income clients to add it.</li>
+      <li>Type a task, pick who&apos;s doing it (tap several names if they&apos;re working on it together), and add a due date if there is one.</li>
+      <li>Tap a task&apos;s status to move it along: To do → Doing → Done. Tap ✎ to change who, the due date, or add details.</li>
+      <li>&ldquo;Show tasks for&rdquo; filters everything to one person and lists their open tasks across all clients.</li>
+      <li>Squad members come from the Squad tab. A client that ended can be archived from its ⚙.</li>
+    </ul>
+  ),
   tasks: (
     <ul>
       <li>Your plan sorted by urgency and importance: do first, schedule, delegate, drop.</li>
@@ -77,6 +86,7 @@ export const HELP = {
   team: (
     <ul>
       <li>The people on your team, their role and monthly cost.</li>
+      <li>Everyone here can be given client tasks in the Clients tab. Their open client tasks show on their card.</li>
       <li>This list is for reference. To track paying them, add their pay as a bill in Expenses.</li>
     </ul>
   ),

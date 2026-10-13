@@ -10,6 +10,7 @@ import Pipeline from "./tabs/Pipeline";
 import Expenses from "./tabs/Expenses";
 import Log from "./tabs/Log";
 import Tasks from "./tabs/Tasks";
+import Clients from "./tabs/Clients";
 import Team from "./tabs/Team";
 import Ads from "./tabs/Ads";
 import Creatives from "./tabs/Creatives";
@@ -42,6 +43,7 @@ const TABS = [
   ["pipeline", "Boss Deals", "⚔️"],
   ["expenses", "Expenses", "🧾"],
   ["log", "Check-in", "📝"],
+  ["clients", "Clients", "🗂️"],
   ["tasks", "Missions", "🎯"],
   ["team", "Squad", "🦸"],
   ["ads", "Ad Command", "📡"],
@@ -139,6 +141,7 @@ export default function App() {
         {tab === "pipeline" && <Pipeline />}
         {tab === "expenses" && <Expenses />}
         {tab === "log" && <Log />}
+        {tab === "clients" && <Clients />}
         {tab === "tasks" && <Tasks />}
         {tab === "team" && <Team />}
         {tab === "ads" && <Ads />}
