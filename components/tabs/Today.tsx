@@ -9,12 +9,13 @@ import { Badge, Bar, Btn, Card, Meter, NumInput, Stat, celebrate, money } from "
 import { Kit } from "../characters";
 import WarChest from "../WarChest";
 import FunMoney from "../FunMoney";
+import ManualSpending from "../ManualSpending";
 import { REWARD, hasChest, questKey } from "@/lib/loot";
 import { CURRENCIES } from "./Settings";
 import KitChat from "../KitChat";
 import { HELP } from "../help";
 
-export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log" | "ads") => void }) {
+export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log" | "ads" | "expenses") => void }) {
   const { data, update, month, today } = useTracker();
   const s = useMemo(() => summarize(data, month), [data, month]);
   const auto = useMemo(() => dailyAdvice(data, today), [data, today]);
@@ -95,10 +96,11 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
         <Stat label="Bosses in the field" value={money(s.openPipeline)} hint="Not closed yet" tone="hero" />
         <Stat label="Ad spend" value={money(s.adSpend)} />
         <Stat label="Monthly bills" value={money(s.fixedExpenses)} hint={`${money(s.expensesPaid)} paid · ${money(s.billsLeft)} left`} />
-        <Stat label="Extra spending" value={money(s.adHocExpenses)} tone={s.adHocExpenses ? "bad" : undefined} />
+        <Stat label="Manual spending" value={money(s.adHocExpenses)} tone={s.adHocExpenses ? "bad" : undefined} />
       </div>
 
       <WarChest />
+      <ManualSpending compact goTo={() => goTo("expenses")} />
       <FunMoney />
 
       <div className="grid lg:grid-cols-5 gap-4">
