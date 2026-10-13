@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { uid } from "@/lib/finance";
+import { locale, uid } from "@/lib/finance";
 import type { AdRow, CampaignInfo, DatePreset, Metrics, Suggestion, SuggestedAction } from "@/lib/meta";
 import type { AdAccount, AutopilotEntry, TrackedCampaign } from "@/lib/types";
 import { useTracker } from "../App";
-import { Badge, Btn, Card, NumInput, Stat, TextInput, peso } from "../ui";
+import { Badge, Btn, Card, NumInput, Stat, TextInput, money } from "../ui";
 
 const PRESETS: [DatePreset, string][] = [
   ["today", "Today"],
@@ -58,7 +58,7 @@ export default function Ads() {
             setForm({ label: "", owner: "", accountId: "" });
           }}
         >
-          <input className="flex-1 min-w-36" placeholder="Name (e.g. AACIO main)" value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} />
+          <input className="flex-1 min-w-36" placeholder="Name (e.g. Main account)" value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} />
           <input className="w-32" placeholder="Owner" value={form.owner} onChange={(e) => setForm({ ...form, owner: e.target.value })} />
           <input className="w-44" placeholder="Ad account ID (act_…)" value={form.accountId} onChange={(e) => setForm({ ...form, accountId: e.target.value })} />
           <Btn kind="primary">Add account</Btn>
@@ -84,9 +84,9 @@ export default function Ads() {
           <>
             {loaded.length > 0 && (
               <div className="grid grid-cols-3 gap-3 mb-4">
-                <Stat label="Spend (loaded campaigns)" value={peso(totalSpend)} />
+                <Stat label="Spend (loaded campaigns)" value={money(totalSpend)} />
                 <Stat label="Results" value={totalResults} />
-                <Stat label="Blended cost per result" value={totalResults ? peso(totalSpend / totalResults) : "–"} />
+                <Stat label="Blended cost per result" value={totalResults ? money(totalSpend / totalResults) : "–"} />
               </div>
             )}
             <div className="space-y-4">
@@ -165,7 +165,7 @@ function SyncSpend() {
     });
     const total = ok.reduce((a, r) => a + r.amount!, 0);
     const failed = rows.filter((r) => r.error);
-    setMsg(`${peso(total)} recorded as ${month} ad spend${failed.length ? ` · ${failed.length} failed: ${failed[0].error}` : ""}`);
+    setMsg(`${money(total)} recorded as ${month} ad spend${failed.length ? ` · ${failed.length} failed: ${failed[0].error}` : ""}`);
   };
 
   return (
@@ -219,7 +219,7 @@ function AutopilotCard() {
               <div className="flex-1">
                 <div className="font-medium">{e.action}</div>
                 <div className="text-muted">
-                  {e.campaign} · {new Date(e.at).toLocaleString("en-PH")}
+                  {e.campaign} · {new Date(e.at).toLocaleString(locale())}
                   {e.note ? ` · ${e.note}` : ""}
                 </div>
               </div>
@@ -342,7 +342,7 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
   };
 
   const apply = async (key: string, action: SuggestedAction) => {
-    const what = action.type === "pause" ? `Pause "${action.targetName}"` : `Set daily budget of "${action.targetName}" to ${peso(action.newDailyBudget!)}`;
+    const what = action.type === "pause" ? `Pause "${action.targetName}"` : `Set daily budget of "${action.targetName}" to ${money(action.newDailyBudget!)}`;
     if (!confirm(`${what} in Meta now?`)) return;
     setApplied((x) => ({ ...x, [key]: "Applying…" }));
     const res = await fetch("/api/meta/action", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tracked: tracked.id, action }) });
@@ -395,12 +395,12 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
       {m && result && (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
-            <Stat label="Spend" value={peso(m.spend)} />
+            <Stat label="Spend" value={money(m.spend)} />
             <Stat label="Results" value={m.results} hint={m.resultType} />
-            <Stat label="Cost / result" value={m.cpl != null ? peso(m.cpl) : "–"} />
+            <Stat label="Cost / result" value={m.cpl != null ? money(m.cpl) : "–"} />
             <Stat label="ROAS" value={m.roas != null ? `${m.roas.toFixed(2)}x` : "–"} />
-            <Stat label="Link CTR" value={`${m.ctr.toFixed(2)}%`} hint={`${m.linkClicks} clicks · CPC ${peso(m.cpc)}`} />
-            <Stat label="CPM" value={peso(m.cpm)} hint={`Freq ${m.frequency.toFixed(1)}`} />
+            <Stat label="Link CTR" value={`${m.ctr.toFixed(2)}%`} hint={`${m.linkClicks} clicks · CPC ${money(m.cpc)}`} />
+            <Stat label="CPM" value={money(m.cpm)} hint={`Freq ${m.frequency.toFixed(1)}`} />
             <Stat label="3s video views" value={m.videoViews3s.toLocaleString()} hint={m.hookRate != null ? `Hook ${m.hookRate.toFixed(0)}%` : undefined} />
             <Stat label="ThruPlays" value={m.thruplays.toLocaleString()} hint={m.holdRate != null ? `Hold ${m.holdRate.toFixed(0)}%` : undefined} />
           </div>
@@ -420,7 +420,7 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
                         <span className="text-sm text-muted">{applied[key]}</span>
                       ) : (
                         <Btn onClick={() => apply(key, s.action!)}>
-                          {s.action.type === "pause" ? "Pause ad" : `Budget → ${peso(s.action.newDailyBudget!)}/day`}
+                          {s.action.type === "pause" ? "Pause ad" : `Budget → ${money(s.action.newDailyBudget!)}/day`}
                         </Btn>
                       )
                     ) : (
@@ -450,9 +450,9 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
                     {[...result.ads].sort((a, b) => b.m.spend - a.m.spend).map((a) => (
                       <tr key={a.id}>
                         <td className="py-1 pr-2 max-w-64 truncate">{a.name}</td>
-                        <td className="pr-2 tabular-nums">{peso(a.m.spend)}</td>
+                        <td className="pr-2 tabular-nums">{money(a.m.spend)}</td>
                         <td className="pr-2 tabular-nums">{a.m.results}</td>
-                        <td className="pr-2 tabular-nums">{a.m.cpl != null ? peso(a.m.cpl) : "–"}</td>
+                        <td className="pr-2 tabular-nums">{a.m.cpl != null ? money(a.m.cpl) : "–"}</td>
                         <td className="pr-2 tabular-nums">{a.m.ctr.toFixed(2)}%</td>
                         <td className="pr-2 tabular-nums">{a.m.hookRate != null ? `${a.m.hookRate.toFixed(0)}%` : "–"}</td>
                         <td className="tabular-nums">{a.m.holdRate != null ? `${a.m.holdRate.toFixed(0)}%` : "–"}</td>
@@ -463,7 +463,7 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
               </div>
             </details>
           )}
-          <p className="text-sm text-muted">Updated {new Date(result.fetchedAt).toLocaleString("en-PH")}</p>
+          <p className="text-sm text-muted">Updated {new Date(result.fetchedAt).toLocaleString(locale())}</p>
         </>
       )}
     </div>

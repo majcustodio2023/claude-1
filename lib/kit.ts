@@ -1,15 +1,16 @@
-// Kit's chat brain: a snapshot of where Maj stands, and the actions Kit may take.
+// Kit's chat brain: a snapshot of where the owner stands, and the actions Kit may take.
 // Pure, so it's unit-tested; the API call lives in app/api/kit/route.ts.
 
 import { dailyAdvice } from "./advice";
-import { cashForecast, cashHealth, cashPosition, dealBalance, monthOf, summarize, weekLogs } from "./finance";
+import { cashForecast, configureLocale, cashHealth, cashPosition, dealBalance, locale, money, monthOf, summarize, weekLogs } from "./finance";
 import { achievements, levelFor, logStreak, rankFor } from "./game";
-import type { TrackerData } from "./types";
+import type { Settings, TrackerData } from "./types";
 
-const p = (n: number) => "₱" + Math.round(n).toLocaleString("en-PH");
+const p = money;
 
 /** Plain-text status report Kit reads before answering. */
 export function kitContext(data: TrackerData, today: string): string {
+  configureLocale(data.settings);
   const month = monthOf(today);
   const s = summarize(data, month);
   const lvl = levelFor(s.moneyMade, s.goal);
@@ -18,7 +19,7 @@ export function kitContext(data: TrackerData, today: string): string {
   const wk = weekLogs(data, today);
   const briefing = data.briefing?.date === today ? data.briefing : dailyAdvice(data, today);
   const lines = [
-    `Today: ${today} (${new Date(today + "T00:00:00").toLocaleDateString("en-PH", { weekday: "long" })}).`,
+    `Today: ${today} (${new Date(today + "T00:00:00").toLocaleDateString(locale(), { weekday: "long" })}).`,
     `Level ${lvl.level}, rank ${rankFor(s).name}, check-in streak ${logStreak(data, today)} days.`,
     `This month: money made ${p(s.moneyMade)} of ${p(s.goal)} goal; expenses to cover ${p(s.expenseTarget)} (${Math.round(s.pctExpenses * 100)}% covered).`,
     `Retainers: ${s.streams.map((r) => `${r.stream.name} ${r.isCollected ? `collected ${p(r.collected)}` : `due ${p(r.expected)}`}`).join("; ")}.`,
@@ -42,10 +43,21 @@ export function kitContext(data: TrackerData, today: string): string {
   return lines.join("\n");
 }
 
-export const KIT_SYSTEM = `You are Kit, a fox-spirit sidekick in Maj's gamified agency tracker (comic-book anime style). Maj runs a Filipino digital agency (AACIO SaaS, ad management, funnels) and is working to cover ₱140k monthly expenses and reach ₱250k monthly revenue.
-Talk like an upbeat, sharp anime sidekick: warm, direct, a little playful, never cheesy. Maj is a Christian; an encouraging Bible reference is welcome when it fits, never preachy.
-Keep replies short (2-5 sentences, or a few bullets) and lead with the most useful thing. Use the status report for real numbers; don't invent figures. Money is in pesos (₱).
-You can act: use set_briefing to rewrite today's mission briefing when Maj asks or when the plan changes in the chat, and add_quest to add to today's quests. Say briefly what you changed.`;
+/** Kit's instructions, built from the owner's settings. */
+export function kitSystem(settings: Settings): string {
+  const who = settings.playerName || "the owner";
+  const biz = settings.businessName ? `${settings.businessName}` : "their business";
+  const lines = [
+    `You are Kit, a fox-spirit sidekick in a gamified business tracker (comic-book anime style). You're talking with ${who}, who runs ${biz}.`,
+    settings.businessDescription ? `About the business: ${settings.businessDescription}` : "",
+    `Their targets: cover monthly expenses first, then reach the ${money(settings.monthlyGoal)} monthly revenue goal.`,
+    "Talk like an upbeat, sharp anime sidekick: warm, direct, a little playful, never cheesy.",
+    settings.dailyVerse ? "They value faith; an encouraging Bible reference is welcome when it fits, never preachy." : "",
+    `Keep replies short (2-5 sentences, or a few bullets) and lead with the most useful thing. Use the status report for real numbers; don't invent figures. Amounts are in ${settings.currency || "the local currency"}.`,
+    `You can act: use set_briefing to rewrite today's mission briefing when ${who} asks or when the plan changes in the chat, and add_quest to add to today's quests. Say briefly what you changed.`,
+  ];
+  return lines.filter(Boolean).join("\n");
+}
 
 export const KIT_TOOLS = [
   {

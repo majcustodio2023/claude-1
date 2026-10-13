@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { expenseAppliesTo, monthOf, summarize, uid } from "@/lib/finance";
 import type { AdHocExpense, ExpenseLine } from "@/lib/types";
 import { useTracker } from "../App";
-import { Badge, Btn, Card, NumInput, TextInput, peso } from "../ui";
+import { Badge, Btn, Card, NumInput, TextInput, money } from "../ui";
 
 const LINE_CATS: ExpenseLine["category"][] = ["household", "payroll", "client", "software", "debt", "other"];
 const ADHOC_CATS: AdHocExpense["category"][] = ["ads", "software", "payroll", "household", "other"];
@@ -21,7 +21,7 @@ export default function Expenses() {
     <div className="space-y-4">
       <Card
         icon="▼"
-        title={`Monthly upkeep · ${month} · ${peso(s.fixedExpenses)}`}
+        title={`Monthly upkeep · ${month} · ${money(s.fixedExpenses)}`}
         actions={<Btn kind="soft" onClick={() => update((d) => void d.expenses.push({ id: uid("exp"), name: "New expense", amount: 0, category: "other", active: true }))}>Add expense</Btn>}
       >
         <div className="space-y-2">
@@ -57,11 +57,11 @@ export default function Expenses() {
           })}
         </div>
         <p className="text-sm text-muted mt-3">
-          The &ldquo;stay afloat&rdquo; target is the total of the expenses that apply this month ({peso(s.fixedExpenses)}). Leave the start and end months blank for expenses that never stop.
+          The &ldquo;stay afloat&rdquo; target is the total of the expenses that apply this month ({money(s.fixedExpenses)}). Leave the start and end months blank for expenses that never stop.
         </p>
       </Card>
 
-      <Card icon="▼" title={`Other spending · ${month} · ${peso(s.adHocExpenses)}`}>
+      <Card icon="▼" title={`Other spending · ${month} · ${money(s.adHocExpenses)}`}>
         <form
           className="flex flex-wrap gap-2 mb-3"
           onSubmit={(e) => {
@@ -88,7 +88,7 @@ export default function Expenses() {
                 <span className="text-muted w-24">{e.date}</span>
                 <span className="flex-1">{e.label}</span>
                 <Badge>{e.category}</Badge>
-                <span className="tabular-nums font-medium">{peso(e.amount)}</span>
+                <span className="tabular-nums font-medium">{money(e.amount)}</span>
                 <button className="text-muted text-sm" onClick={() => update((d) => void (d.adHocExpenses = d.adHocExpenses.filter((x) => x.id !== e.id)))}>✕</button>
               </li>
             ))}

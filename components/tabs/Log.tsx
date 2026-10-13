@@ -3,14 +3,14 @@
 import { useState } from "react";
 import type { DailyLog } from "@/lib/types";
 import { useTracker } from "../App";
-import { Card, NumInput, peso } from "../ui";
+import { Card, NumInput, money } from "../ui";
 
 const NUM_FIELDS: [keyof DailyLog, string][] = [
   ["leads", "Leads"],
   ["bookedCalls", "Booked calls"],
   ["showUps", "Show-ups"],
   ["closes", "Closes"],
-  ["adSpend", "Ad spend (₱)"],
+  ["adSpend", "Ad spend"],
 ];
 
 export default function Log() {
@@ -80,8 +80,8 @@ export default function Log() {
                     <td className="pr-3 tabular-nums">{l.bookedCalls ?? "–"}</td>
                     <td className="pr-3 tabular-nums">{l.showUps ?? "–"}</td>
                     <td className="pr-3 tabular-nums">{l.closes ?? "–"}</td>
-                    <td className="pr-3 tabular-nums">{l.adSpend != null ? peso(l.adSpend) : "–"}</td>
-                    <td className="pr-3 tabular-nums">{l.adSpend && l.leads ? peso(l.adSpend / l.leads) : "–"}</td>
+                    <td className="pr-3 tabular-nums">{l.adSpend != null ? money(l.adSpend) : "–"}</td>
+                    <td className="pr-3 tabular-nums">{l.adSpend && l.leads ? money(l.adSpend / l.leads) : "–"}</td>
                     <td className="text-sm text-muted truncate max-w-64">{[l.wins, l.blockers].filter(Boolean).join(" · ")}</td>
                   </tr>
                 ))}

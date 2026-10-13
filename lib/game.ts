@@ -18,6 +18,7 @@ export interface Rank {
 }
 
 export function rankFor(s: MonthSummary): Rank {
+  if (s.moneyMade <= 0) return { name: "Rising Hero", tagline: "Every collection powers you up.", tone: "warn" };
   if (s.moneyMade >= s.goal * 1.2) return { name: "Legend", tagline: "Beyond the goal. Build the war chest.", tone: "gold" };
   if (s.moneyMade >= s.goal) return { name: "Champion", tagline: "Monthly goal conquered.", tone: "gold" };
   if (s.moneyMade >= s.expenseTarget) return { name: "Guardian", tagline: "Shields full. Push for the goal.", tone: "good" };
@@ -57,7 +58,7 @@ export interface Achievement {
 
 export function achievements(data: TrackerData, s: MonthSummary, today: string): Achievement[] {
   const won = data.deals.filter((d) => d.stage === "won");
-  const bigWin = won.some((d) => d.value >= 200000 && dealPaid(d) > 0);
+  const bigWin = won.some((d) => d.value >= s.goal * 0.8 && dealPaid(d) > 0);
   const quests = questStats(data, today);
   const streak = logStreak(data, today);
   const tasksDone = data.tasks.filter((t) => t.done).length;
@@ -66,15 +67,15 @@ export function achievements(data: TrackerData, s: MonthSummary, today: string):
   const thisMonthPaid = won.some((d) => d.payments.some((p) => monthOf(p.date) === s.month));
   return [
     { id: "first-blood", name: "First Blood", desc: "Collect payment on a closed deal", icon: "⚔", unlocked: won.some((d) => dealPaid(d) > 0) },
-    { id: "giant-slayer", name: "Giant Slayer", desc: "Collect on a ₱200k+ deal", icon: "🐉", unlocked: bigWin },
-    { id: "shields-up", name: "Shields Up", desc: "Cover the month's expenses", icon: "🛡", unlocked: s.moneyMade >= s.expenseTarget },
-    { id: "goal-crusher", name: "Goal Crusher", desc: `Hit the monthly goal`, icon: "🏆", unlocked: s.moneyMade >= s.goal },
+    { id: "giant-slayer", name: "Giant Slayer", desc: "Collect on a deal worth 80%+ of your monthly goal", icon: "🐉", unlocked: bigWin },
+    { id: "shields-up", name: "Shields Up", desc: "Cover the month's expenses", icon: "🛡", unlocked: s.expenseTarget > 0 && s.moneyMade >= s.expenseTarget },
+    { id: "goal-crusher", name: "Goal Crusher", desc: `Hit the monthly goal`, icon: "🏆", unlocked: s.goal > 0 && s.moneyMade >= s.goal },
     { id: "full-house", name: "Full House", desc: "Every retainer collected this month", icon: "💎", unlocked: allRetainers },
     { id: "closer", name: "Closer", desc: "Collect a deal payment this month", icon: "🤝", unlocked: thisMonthPaid },
     { id: "on-fire", name: "On Fire", desc: "3-day check-in streak", icon: "🔥", unlocked: streak >= 3 },
     { id: "unstoppable", name: "Unstoppable", desc: "7-day check-in streak", icon: "⚡", unlocked: streak >= 7 },
     { id: "quest-master", name: "Quest Master", desc: "Finish 25 daily quests", icon: "📜", unlocked: quests.lifetime >= 25 },
-    { id: "first-strike", name: "First Strike", desc: `Clear every "Do first" task`, icon: "🎯", unlocked: doFirstOpen === 0 },
+    { id: "first-strike", name: "First Strike", desc: `Clear every "Do first" task`, icon: "🎯", unlocked: doFirstOpen === 0 && data.tasks.some((t) => t.quadrant === "do" && t.done) },
     { id: "strategist", name: "Strategist", desc: "Complete 10 plan tasks", icon: "🧠", unlocked: tasksDone >= 10 },
     { id: "ad-commander", name: "Ad Commander", desc: "Track a Meta campaign", icon: "📡", unlocked: data.trackedCampaigns.length > 0 },
   ];

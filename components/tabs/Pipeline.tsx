@@ -4,7 +4,7 @@ import { useState } from "react";
 import { dealBalance, dealPaid, uid } from "@/lib/finance";
 import type { Deal, DealStage } from "@/lib/types";
 import { useTracker } from "../App";
-import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate, peso } from "../ui";
+import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate, money } from "../ui";
 
 const STAGES: [DealStage, string][] = [
   ["lead", "Lead"],
@@ -54,8 +54,8 @@ export default function Pipeline() {
         </form>
       </Card>
 
-      <Section title={`Bosses in the field · ${peso(open.reduce((a, d) => a + d.value, 0))}`} deals={open} />
-      <Section title={`Closed · ${peso(won.reduce((a, d) => a + dealPaid(d), 0))} collected, ${peso(won.reduce((a, d) => a + dealBalance(d), 0))} to collect`} deals={won} />
+      <Section title={`Bosses in the field · ${money(open.reduce((a, d) => a + d.value, 0))}`} deals={open} />
+      <Section title={`Closed · ${money(won.reduce((a, d) => a + dealPaid(d), 0))} collected, ${money(won.reduce((a, d) => a + dealBalance(d), 0))} to collect`} deals={won} />
       {lost.length > 0 && <Section title="Lost" deals={lost} />}
     </div>
   );
@@ -90,8 +90,8 @@ function DealCard({ deal }: { deal: Deal }) {
     const defeated = amount >= balance;
     celebrate({
       kicker: defeated ? "Boss defeated" : "Critical hit",
-      title: `+${peso(amount)} collected`,
-      sub: defeated ? `${deal.name} is fully paid.` : `${deal.name}: ${peso(balance - amount)} HP left`,
+      title: `+${money(amount)} collected`,
+      sub: defeated ? `${deal.name} is fully paid.` : `${deal.name}: ${money(balance - amount)} HP left`,
       icon: defeated ? "🐉" : "💥",
       sfx: defeated ? "BOSS DOWN!" : "WHAM!",
     });
@@ -103,7 +103,7 @@ function DealCard({ deal }: { deal: Deal }) {
       <div>
         <div className="flex justify-between text-sm uppercase tracking-[0.12em] mb-1">
           <span className="text-muted">{deal.stage === "won" && balance === 0 ? "Defeated" : deal.stage === "lost" ? "Escaped" : "Boss HP"}</span>
-          <span className={`font-display ${balance === 0 ? "text-gold" : "text-bad"}`}>{peso(balance)} / {peso(deal.value)}</span>
+          <span className={`font-display ${balance === 0 ? "text-gold" : "text-bad"}`}>{money(balance)} / {money(deal.value)}</span>
         </div>
         <Bar pct={hp} tone={balance === 0 ? "gold" : "bad"} thin />
       </div>
@@ -129,7 +129,7 @@ function DealCard({ deal }: { deal: Deal }) {
             <li key={p.id} className="flex gap-2">
               <span className="text-muted w-20">{p.date}</span>
               <span className="flex-1">{p.note || "Payment"}</span>
-              <span className="tabular-nums">{peso(p.amount)}</span>
+              <span className="tabular-nums">{money(p.amount)}</span>
               <button className="text-muted" onClick={() => update((d) => void (d.deals.find((x) => x.id === deal.id)!.payments = deal.payments.filter((y) => y.id !== p.id)))}>✕</button>
             </li>
           ))}
@@ -139,7 +139,7 @@ function DealCard({ deal }: { deal: Deal }) {
       <div className="flex gap-2 flex-wrap">
         {balance > 0 && deal.stage !== "lost" && (
           <Btn kind="hero" onClick={() => addPayment(balance, today, paid ? "Balance" : "Full payment")}>
-            {paid ? `Finish it · collect ${peso(balance)}` : `Closed & collected ${peso(balance)}`}
+            {paid ? `Finish it · collect ${money(balance)}` : `Closed & collected ${money(balance)}`}
           </Btn>
         )}
         {deal.stage !== "lost" && <Btn onClick={() => setShowPay(!showPay)}>Record deposit</Btn>}

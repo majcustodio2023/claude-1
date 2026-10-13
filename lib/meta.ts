@@ -1,3 +1,4 @@
+import { locale, money } from "./finance";
 // Meta Marketing API helpers and the rules that turn ad metrics into suggestions.
 
 export const GRAPH = `https://graph.facebook.com/${process.env.META_API_VERSION ?? "v23.0"}`;
@@ -186,7 +187,7 @@ export interface AdRow {
   m: Metrics;
 }
 
-const fmt = (n: number) => "₱" + Math.round(n).toLocaleString("en-PH");
+const fmt = money;
 
 export function analyze(
   m: Metrics,

@@ -5,9 +5,10 @@ import { dailyAdvice, generateTodos } from "@/lib/advice";
 import { daysLeftInMonth, monthOf, summarize, uid, weekLogs } from "@/lib/finance";
 import { GEAR, QUEST_XP, achievements } from "@/lib/game";
 import { useTracker } from "../App";
-import { Badge, Bar, Btn, Card, Meter, NumInput, Stat, celebrate, peso } from "../ui";
+import { Badge, Bar, Btn, Card, Meter, NumInput, Stat, celebrate, money } from "../ui";
 import { Kit } from "../characters";
 import WarChest from "../WarChest";
+import { CURRENCIES } from "./Settings";
 import KitChat from "../KitChat";
 
 export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log" | "ads") => void }) {
@@ -59,6 +60,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
 
   return (
     <div className="space-y-5">
+      {!data.settings.playerName && <SetupCard />}
       <div className="grid md:grid-cols-2 gap-4">
         <Card glow="cyan">
           <Meter
@@ -67,7 +69,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
             tone="cyan"
             value={s.moneyMade}
             target={s.expenseTarget}
-            sub={s.gapToExpenses > 0 ? `${peso(s.gapToExpenses)} more to fully charge your shield` : "Shield at full power. Expenses are covered."}
+            sub={!s.expenseTarget ? "Add your monthly expenses in the Expenses tab to set your shield." : s.gapToExpenses > 0 ? `${money(s.gapToExpenses)} more to fully charge your shield` : "Shield at full power. Expenses are covered."}
           />
         </Card>
         <Card glow="hero">
@@ -77,20 +79,20 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
             tone="hero"
             value={s.moneyMade}
             target={s.goal}
-            sub={s.gapToGoal > 0 ? `${peso(s.gapToGoal)} to the goal${isCurrent ? ` · ${daysLeftInMonth(today)} days left` : ""}` : "Goal conquered this month."}
+            sub={s.gapToGoal > 0 ? `${money(s.gapToGoal)} to the goal${isCurrent ? ` · ${daysLeftInMonth(today)} days left` : ""}` : "Goal conquered this month."}
           />
         </Card>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Stat label="Collected this month" value={peso(s.moneyMade)} hint={`Retainers ${peso(s.recurringCollected)} · deals ${peso(s.dealCollected)}`} tone="good" />
-        <Stat label="Retainers to collect" value={peso(s.recurringPending)} hint={`of ${peso(s.recurringCollected + s.recurringPending)} retainers this month`} tone="cyan" />
-        <Stat label="Deals to collect" value={peso(s.wonUnpaid)} hint="Closed, waiting for payment" tone="gold" />
-        <Stat label="Month total if all lands" value={peso(s.projected)} hint="Collected + everything still owed" />
-        <Stat label="Bosses in the field" value={peso(s.openPipeline)} hint="Not closed yet" tone="hero" />
-        <Stat label="Ad spend" value={peso(s.adSpend)} />
-        <Stat label="Monthly upkeep" value={peso(s.fixedExpenses)} hint={`${peso(s.expensesPaid)} marked paid`} />
-        <Stat label="Extra spending" value={peso(s.adHocExpenses)} tone={s.adHocExpenses ? "bad" : undefined} />
+        <Stat label="Collected this month" value={money(s.moneyMade)} hint={`Retainers ${money(s.recurringCollected)} · deals ${money(s.dealCollected)}`} tone="good" />
+        <Stat label="Retainers to collect" value={money(s.recurringPending)} hint={`of ${money(s.recurringCollected + s.recurringPending)} retainers this month`} tone="cyan" />
+        <Stat label="Deals to collect" value={money(s.wonUnpaid)} hint="Closed, waiting for payment" tone="gold" />
+        <Stat label="Month total if all lands" value={money(s.projected)} hint="Collected + everything still owed" />
+        <Stat label="Bosses in the field" value={money(s.openPipeline)} hint="Not closed yet" tone="hero" />
+        <Stat label="Ad spend" value={money(s.adSpend)} />
+        <Stat label="Monthly upkeep" value={money(s.fixedExpenses)} hint={`${money(s.expensesPaid)} marked paid`} />
+        <Stat label="Extra spending" value={money(s.adHocExpenses)} tone={s.adHocExpenses ? "bad" : undefined} />
       </div>
 
       <WarChest />
@@ -128,12 +130,12 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
             </div>
             <KitChat />
           </Card>
-          <Card glow="gold" title="Power verse" icon="✨">
+          {data.settings.dailyVerse && <Card glow="gold" title="Power verse" icon="✨">
             <blockquote className="relative">
               <p className="relative text-xl sm:text-[1.35rem] leading-relaxed font-extrabold">&ldquo;{advice.verse.text}&rdquo;</p>
               <footer className="mt-3"><span className="font-display text-xl tracking-wide text-gold">— {advice.verse.ref} (KJV)</span></footer>
             </blockquote>
-          </Card>
+          </Card>}
         </div>
 
         <Card
@@ -195,7 +197,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
                       <span className="text-2xl" aria-hidden>👹</span>
                       {d.name}
                     </span>
-                    <span className="font-display text-xl tracking-wide text-bad">{peso(d.value)} HP</span>
+                    <span className="font-display text-xl tracking-wide text-bad">{money(d.value)} HP</span>
                   </div>
                   <Bar pct={1} tone="bad" />
                 </li>
@@ -227,7 +229,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
           <Stat label="Booked calls" value={wk.bookedCalls} hint={wk.leads ? `${Math.round((wk.bookedCalls / wk.leads) * 100)}% of leads` : undefined} />
           <Stat label="Show-ups" value={wk.showUps} hint={wk.bookedCalls ? `${Math.round((wk.showUps / wk.bookedCalls) * 100)}% show rate` : undefined} />
           <Stat label="Closes" value={wk.closes} tone="gold" />
-          <Stat label="Ad spend" value={peso(wk.adSpend)} hint={wk.leads ? `${peso(wk.adSpend / wk.leads)} per lead` : undefined} />
+          <Stat label="Ad spend" value={money(wk.adSpend)} hint={wk.leads ? `${money(wk.adSpend / wk.leads)} per lead` : undefined} />
         </div>
         {wk.days === 0 && (
           <p className="text-base text-muted mt-4 flex items-center gap-2">
@@ -236,5 +238,60 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
         )}
       </Card>
     </div>
+  );
+}
+
+/** First-run setup: who's playing, the business, currency and goal. Everything stays editable in Settings. */
+function SetupCard() {
+  const { data, update } = useTracker();
+  const guessTz = typeof Intl !== "undefined" ? Intl.DateTimeFormat().resolvedOptions().timeZone : "";
+  const [f, setF] = useState({
+    playerName: "",
+    businessName: data.settings.businessName ?? "",
+    currency: data.settings.currency || "USD",
+    monthlyGoal: data.settings.monthlyGoal ? String(data.settings.monthlyGoal) : "",
+  });
+  return (
+    <Card title="Set up your HQ" icon="🚀" glow="hero">
+      <p className="text-lg mb-3">Tell Kit who you are. You can change all of this later in Settings.</p>
+      <form
+        className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!f.playerName.trim()) return;
+          update((d) =>
+            void Object.assign(d.settings, {
+              playerName: f.playerName.trim(),
+              businessName: f.businessName.trim() || undefined,
+              currency: f.currency.trim().toUpperCase() || "USD",
+              monthlyGoal: Number(f.monthlyGoal.replace(/[^\d.]/g, "")) || d.settings.monthlyGoal,
+              timeZone: d.settings.timeZone || guessTz || undefined,
+            }),
+          );
+        }}
+      >
+        <label className="flex flex-col gap-1 text-base text-muted">
+          Your name (hero name)
+          <input value={f.playerName} onChange={(e) => setF({ ...f, playerName: e.target.value })} placeholder="e.g. Alex" required />
+        </label>
+        <label className="flex flex-col gap-1 text-base text-muted">
+          Business name
+          <input value={f.businessName} onChange={(e) => setF({ ...f, businessName: e.target.value })} placeholder="e.g. Bright Ads Co." />
+        </label>
+        <label className="flex flex-col gap-1 text-base text-muted">
+          Currency
+          <select value={f.currency} onChange={(e) => setF({ ...f, currency: e.target.value })}>
+            {CURRENCIES.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-base text-muted">
+          Monthly revenue goal
+          <input inputMode="decimal" value={f.monthlyGoal} onChange={(e) => setF({ ...f, monthlyGoal: e.target.value })} placeholder="e.g. 20000" />
+        </label>
+        <Btn kind="primary" className="sm:col-span-2 lg:col-span-4">Start my game</Btn>
+      </form>
+    </Card>
   );
 }

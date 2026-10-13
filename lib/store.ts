@@ -51,18 +51,21 @@ async function writeDoc(doc: StoredDoc): Promise<void> {
   await fs.writeFile(LOCAL_FILE, JSON.stringify(doc, null, 2));
 }
 
-// Version 2 added the bank balance. Data saved before that gets the Oct 11
-// balance from Maj's plan once; it's editable on HQ.
-// Version 3 folded one-time income into deals, so one-offs show as collected or
-// still to collect. The seeded ₱30k one-time payment hadn't actually come in.
+// Older saved data is upgraded once on load:
+// v3 folded one-time income into deals, so one-offs show as collected or still to collect.
+// v4 made the app generic: settings now hold the name, currency, locale and verse toggle.
+// Installs from before v4 used pesos, Manila time and showed the daily verse, so they keep that.
 function migrate(doc: StoredDoc): StoredDoc {
   let data = doc.data;
-  if ((data.version ?? 1) < 2) {
-    const settings = { ...data.settings };
-    if (settings.cashBalance == null) Object.assign(settings, { cashBalance: 165000, cashAsOf: "2026-10-11" });
-    data = { ...data, version: 2, settings };
+  if ((data.version ?? 1) < 3) data = { ...foldOneTimeIntoDeals(data), version: 3 };
+  if (data.version < 4) {
+    const s = data.settings;
+    data = {
+      ...data,
+      version: 4,
+      settings: { ...s, currency: s.currency || "PHP", locale: s.locale ?? "en-PH", timeZone: s.timeZone ?? "Asia/Manila", dailyVerse: s.dailyVerse ?? true },
+    };
   }
-  if (data.version < 3) data = { ...foldOneTimeIntoDeals(data), version: 3 };
   return data === doc.data ? doc : { ...doc, data };
 }
 

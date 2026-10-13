@@ -2,14 +2,41 @@ import type { Deal, ExpenseLine, IncomeStream, StreamMonth, TrackerData } from "
 
 export const monthOf = (date: string) => date.slice(0, 7);
 
-export function todayISO(now = new Date()): string {
-  // Manila time, so "today" matches Maj's day rather than UTC.
-  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Manila" }).format(now);
+// Currency, number format and time zone come from Settings. The app calls
+// configureLocale() with the saved settings before rendering or reporting.
+let fmt: { currency: string; locale?: string; timeZone?: string } = { currency: "USD" };
+let moneyFormat: Intl.NumberFormat | null = null;
+
+export function configureLocale(s: { currency?: string; locale?: string; timeZone?: string }) {
+  const next = { currency: s.currency || "USD", locale: s.locale || undefined, timeZone: s.timeZone || undefined };
+  if (next.currency === fmt.currency && next.locale === fmt.locale && next.timeZone === fmt.timeZone && moneyFormat) return;
+  fmt = next;
+  try {
+    moneyFormat = new Intl.NumberFormat(fmt.locale, { style: "currency", currency: fmt.currency, minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  } catch {
+    moneyFormat = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
 }
 
-export function peso(n: number): string {
-  return "₱" + Math.round(n).toLocaleString("en-PH");
+export const locale = () => fmt.locale;
+
+/** "Today" in the business's time zone (or the device's), as YYYY-MM-DD. */
+export function todayISO(now = new Date()): string {
+  try {
+    return new Intl.DateTimeFormat("en-CA", { timeZone: fmt.timeZone }).format(now);
+  } catch {
+    return new Intl.DateTimeFormat("en-CA").format(now);
+  }
 }
+
+/** Formats an amount in the business's currency, rounded to whole units. */
+export function money(n: number): string {
+  if (!moneyFormat) configureLocale(fmt);
+  return moneyFormat!.format(Math.round(n));
+}
+
+/** Reads a typed amount, ignoring currency symbols, commas and spaces. */
+export const parseAmount = (t: string) => Number(t.replace(/[^\d.-]/g, ""));
 
 export function uid(prefix = "id"): string {
   return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
@@ -279,7 +306,7 @@ export function recordBalance(data: TrackerData, balance: number, date: string):
   };
 }
 
-/** Turns one-time income entries into closed deals: paid ones keep their payment, the seeded ₱30k becomes "to collect". */
+/** Turns one-time income entries into closed deals with their payment. The original starter entry (ot-1) was never actually collected, so it stays "to collect". */
 export function foldOneTimeIntoDeals(data: TrackerData): TrackerData {
   if (!data.oneTime?.length) return data;
   const deals = data.oneTime.map((o) => ({

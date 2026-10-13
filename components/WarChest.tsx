@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { cashForecast, cashHealth, cashPosition, recordBalance, uid } from "@/lib/finance";
+import { cashForecast, cashHealth, cashPosition, locale, money, parseAmount, recordBalance, uid } from "@/lib/finance";
 import { useTracker } from "./App";
-import { Badge, Bar, Btn, Card, Stat, peso } from "./ui";
+import { Badge, Bar, Btn, Card, Stat } from "./ui";
 
-const monthName = (m: string) => new Date(m + "-01T00:00:00").toLocaleDateString("en-PH", { month: "short", year: "numeric" });
+const monthName = (m: string) => new Date(m + "-01T00:00:00").toLocaleDateString(locale(), { month: "short", year: "numeric" });
 
 export default function WarChest() {
   const { data, update, today } = useTracker();
@@ -37,27 +37,27 @@ export default function WarChest() {
       ) : (
         <div className="space-y-5">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <Stat label="Cash on hand now" value={peso(cash.now)} hint={`${peso(cash.start)} on ${cash.asOf} + ${peso(cash.inflow)} in − ${peso(cash.outflow)} out`} tone={cash.now >= 0 ? "gold" : "bad"} />
+            <Stat label="Cash on hand now" value={money(cash.now)} hint={`${money(cash.start)} on ${cash.asOf} + ${money(cash.inflow)} in − ${money(cash.outflow)} out`} tone={cash.now >= 0 ? "gold" : "bad"} />
             <Stat
               label="Runway"
               value={health.runwayMonths == null ? "–" : `${health.runwayMonths.toFixed(1)} mo`}
-              hint={`If income stopped today (bills ${peso(health.burn)}/mo)`}
+              hint={`If income stopped today (bills ${money(health.burn)}/mo)`}
               tone={health.runwayMonths == null ? undefined : health.runwayMonths >= health.bufferMonths ? "good" : health.runwayMonths >= 1 ? "gold" : "bad"}
             />
-            <Stat label="Projected month-end" value={peso(cash.monthEnd)} hint="Now + retainers due − bills left" tone={cash.monthEnd >= 0 ? "good" : "bad"} />
-            <Stat label="Bills left this month" value={peso(cash.unpaidThisMonth)} hint={`${peso(cash.incomingThisMonth)} retainers still coming`} tone={cash.unpaidThisMonth ? "bad" : undefined} />
+            <Stat label="Projected month-end" value={money(cash.monthEnd)} hint="Now + retainers due − bills left" tone={cash.monthEnd >= 0 ? "good" : "bad"} />
+            <Stat label="Bills left this month" value={money(cash.unpaidThisMonth)} hint={`${money(cash.incomingThisMonth)} retainers still coming`} tone={cash.unpaidThisMonth ? "bad" : undefined} />
           </div>
 
           <div>
             <div className="flex justify-between flex-wrap gap-2 text-lg font-bold mb-1.5">
               <span>🛡️ Safety buffer: {health.bufferMonths} months of bills</span>
               <span className={cash.now >= health.bufferTarget ? "text-good" : "text-gold"}>
-                {peso(Math.max(cash.now, 0))} / {peso(health.bufferTarget)}
+                {money(Math.max(cash.now, 0))} / {money(health.bufferTarget)}
               </span>
             </div>
             <Bar pct={health.bufferTarget ? Math.max(cash.now, 0) / health.bufferTarget : 0} tone={cash.now >= health.bufferTarget ? "good" : "gold"} />
             <p className="text-base text-muted mt-1">
-              {cash.now >= health.bufferTarget ? "Buffer full. Extra cash can go to growth." : `${peso(health.bufferTarget - Math.max(cash.now, 0))} more to a full buffer.`}{" "}
+              {cash.now >= health.bufferTarget ? "Buffer full. Extra cash can go to growth." : `${money(health.bufferTarget - Math.max(cash.now, 0))} more to a full buffer.`}{" "}
               <BufferPicker />
             </p>
           </div>
@@ -68,8 +68,8 @@ export default function WarChest() {
               {forecast.map((f, i) => (
                 <div key={f.month} className={`bg-card-2 border-[3px] rounded-[10px] p-3 shadow-[3px_3px_0_#0b0a14] ${f.end < 0 ? "border-bad" : "border-outline"}`}>
                   <div className="text-sm font-extrabold uppercase text-muted">{monthName(f.month)}{i === 0 && " (now)"}</div>
-                  <div className={`font-display text-2xl tracking-wide ${f.end < 0 ? "text-bad" : f.end < health.burn ? "text-gold" : "text-good"}`}>{peso(f.end)}</div>
-                  <div className="text-base text-muted">+{peso(f.income)} in · −{peso(f.bills)} bills</div>
+                  <div className={`font-display text-2xl tracking-wide ${f.end < 0 ? "text-bad" : f.end < health.burn ? "text-gold" : "text-good"}`}>{money(f.end)}</div>
+                  <div className="text-base text-muted">+{money(f.income)} in · −{money(f.bills)} bills</div>
                 </div>
               ))}
             </div>
@@ -108,7 +108,7 @@ function BalanceForm({ onDone }: { onDone: () => void }) {
     : [{ id: uid("cash"), name: "Bank", balance: data.settings.cashBalance ?? 0 }];
   const [rows, setRows] = useState(initial.map((a) => ({ ...a, text: a.balance ? String(a.balance) : "" })));
   const [date, setDate] = useState(today);
-  const num = (t: string) => Number(t.replace(/[₱,\s]/g, "")) || 0;
+  const num = (t: string) => parseAmount(t) || 0;
   const total = rows.reduce((a, r) => a + num(r.text), 0);
 
   const save = () => {
@@ -135,7 +135,7 @@ function BalanceForm({ onDone }: { onDone: () => void }) {
             inputMode="decimal"
             className="flex-1 min-w-0 text-xl tabular-nums"
             value={r.text}
-            placeholder="₱ amount"
+            placeholder="Amount"
             autoFocus={i === 0}
             onChange={(e) => setRows(rows.map((x, j) => (j === i ? { ...x, text: e.target.value } : x)))}
             aria-label={`${r.name} balance`}
@@ -157,7 +157,7 @@ function BalanceForm({ onDone }: { onDone: () => void }) {
         </label>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-        <div className="font-display text-2xl tracking-wide">Total {peso(total)}</div>
+        <div className="font-display text-2xl tracking-wide">Total {money(total)}</div>
         <Btn kind="primary">Save balance</Btn>
       </div>
     </form>
@@ -198,10 +198,10 @@ function History() {
             return (
               <li key={h.date} className="flex justify-between gap-2 flex-wrap">
                 <span className="text-muted">{h.date}</span>
-                <span className="font-bold tabular-nums">{peso(h.balance)}</span>
+                <span className="font-bold tabular-nums">{money(h.balance)}</span>
                 {gap != null && Math.abs(gap) >= 500 && (
                   <span className={gap < 0 ? "text-bad" : "text-good"} title="Difference from what the app expected">
-                    {gap < 0 ? `${peso(-gap)} untracked spending` : `${peso(gap)} untracked income`}
+                    {gap < 0 ? `${money(-gap)} untracked spending` : `${money(gap)} untracked income`}
                   </span>
                 )}
               </li>

@@ -1,9 +1,10 @@
 "use client";
 
+import { locale } from "@/lib/finance";
 import { useEffect, useRef, useState } from "react";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const label = (m: string) => new Date(m + "-01T00:00:00").toLocaleDateString("en-PH", { month: "long", year: "numeric" });
+const label = (m: string) => new Date(m + "-01T00:00:00").toLocaleDateString(locale(), { month: "long", year: "numeric" });
 
 /** Button that opens a pop-up calendar of months (some browsers show type="month" as plain text). */
 export default function MonthPicker({ value, onChange, current }: { value: string; onChange: (m: string) => void; current: string }) {
