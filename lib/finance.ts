@@ -35,6 +35,23 @@ export function money(n: number): string {
   return moneyFormat!.format(Math.round(n));
 }
 
+const otherFormats = new Map<string, Intl.NumberFormat>();
+
+/** Formats an amount in a given currency (e.g. an ad account's), falling back to the business's. */
+export function moneyIn(n: number, currency?: string): string {
+  if (!currency || currency === fmt.currency) return money(n);
+  let f = otherFormats.get(currency);
+  if (!f) {
+    try {
+      f = new Intl.NumberFormat(fmt.locale, { style: "currency", currency, minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    } catch {
+      return money(n);
+    }
+    otherFormats.set(currency, f);
+  }
+  return f.format(Math.round(n));
+}
+
 /** Reads a typed amount, ignoring currency symbols, commas and spaces. */
 export const parseAmount = (t: string) => Number(t.replace(/[^\d.-]/g, ""));
 

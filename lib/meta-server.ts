@@ -55,7 +55,7 @@ export async function runAutopilot(now = new Date()): Promise<AutopilotEntry[]> 
       const suggestions = analyze(metrics, ads, raw.adsets, raw.info, {
         cpl: tracked.targetCpl ?? data.settings.targetCpl,
         roas: tracked.targetRoas ?? data.settings.targetRoas,
-      });
+      }, raw.currency);
       const plan = planAutopilot(suggestions, ads, { maxDailyBudget: tracked.maxDailyBudget, log, now: now.getTime() });
 
       for (const action of plan.apply) {

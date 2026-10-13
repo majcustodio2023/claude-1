@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { configureLocale, locale, money } from "@/lib/finance";
+import { configureLocale, locale, moneyIn } from "@/lib/finance";
 import { analyze, fetchCampaignInsights, toMetrics, type AdRow, type DatePreset, type Metrics, type Suggestion } from "@/lib/meta";
 import { resolveTracked } from "@/lib/meta-server";
 import { getData } from "@/lib/store";
@@ -41,6 +41,7 @@ export default async function SharedCampaign({ params, searchParams }: { params:
   configureLocale(data.settings);
 
   let report: { metrics: Metrics; ads: AdRow[]; suggestions: Suggestion[] } | null = null;
+  let currency: string | undefined;
   let error = "";
   try {
     const { token: metaToken } = await resolveTracked(tracked.id);
@@ -50,8 +51,9 @@ export default async function SharedCampaign({ params, searchParams }: { params:
     const suggestions = analyze(metrics, ads, raw.adsets, raw.info, {
       cpl: tracked.targetCpl ?? data.settings.targetCpl,
       roas: tracked.targetRoas ?? data.settings.targetRoas,
-    });
+    }, raw.currency);
     report = { metrics, ads, suggestions };
+    currency = raw.currency;
   } catch (e) {
     error = (e as Error).message;
   }
@@ -59,6 +61,7 @@ export default async function SharedCampaign({ params, searchParams }: { params:
   const log = (data.autopilotLog ?? []).filter((e) => e.trackedId === tracked.id).slice(0, 20);
   const when = (iso: string) => new Date(iso).toLocaleString(locale(), { timeZone: data.settings.timeZone || undefined, dateStyle: "medium", timeStyle: "short" });
   const m = report?.metrics;
+  const money = (n: number) => moneyIn(n, currency);
   const cplTarget = tracked.targetCpl ?? data.settings.targetCpl;
 
   return (
