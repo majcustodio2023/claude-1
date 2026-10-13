@@ -3,6 +3,7 @@ import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { foldOneTimeIntoDeals, upgradeBillPayments } from "./finance";
+import { upgradeTeamPay } from "./clients";
 import { seedData } from "./seed";
 import type { AutopilotEntry, Creative, TrackerData } from "./types";
 
@@ -56,6 +57,7 @@ async function writeDoc(doc: StoredDoc): Promise<void> {
 // v4 made the app generic: settings now hold the name, currency, locale and verse toggle.
 // Installs from before v4 used pesos, Manila time and showed the daily verse, so they keep that.
 // v5 turned bills ticked as paid into dated payments (bills can now be paid in parts).
+// v6 moved team base pay onto a payroll bill (linking an existing matching bill) so it's counted once.
 function migrate(doc: StoredDoc): StoredDoc {
   let data = doc.data;
   if ((data.version ?? 1) < 3) data = { ...foldOneTimeIntoDeals(data), version: 3 };
@@ -68,6 +70,7 @@ function migrate(doc: StoredDoc): StoredDoc {
     };
   }
   if (data.version < 5) data = { ...upgradeBillPayments(data), version: 5 };
+  if (data.version < 6) data = { ...upgradeTeamPay(data), version: 6 };
   return data === doc.data ? doc : { ...doc, data };
 }
 

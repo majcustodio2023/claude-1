@@ -1,7 +1,7 @@
 // Client work: who's doing what for which client. Pure helpers so they're unit-tested.
 
-import { dealBalance, dealPaid, expectedForStream, expenseAppliesTo } from "./finance";
-import type { Client, ClientTask, TrackerData } from "./types";
+import { addMonths, dealBalance, dealPaid, expectedForStream, expenseAppliesTo, uid } from "./finance";
+import type { Client, ClientTask, DealStage, StreamKind, TrackerData } from "./types";
 
 /** Assignee id for the owner (Settings player name). Other assignees are team member ids. */
 export const ME = "me";
@@ -79,4 +79,156 @@ export function clientMoney(data: TrackerData, c: Client, month: string): Client
   const income = stream?.active ? expectedForStream(stream, sm) : 0;
   const teamCost = lines.filter((e) => expenseAppliesTo(e, month)).reduce((a, e) => a + e.amount, 0);
   return { kind, income, collected: sm?.collected ?? 0, toCollect: 0, teamCost, profit: income - teamCost };
+}
+
+// ---- One client, one record ----
+// A client owns its money records: a retainer client has one income stream,
+// a project client has one deal. These helpers keep them in step. They change
+// the draft passed in (the app's update() callback).
+
+const hasCollections = (d: TrackerData, streamId: string) => Object.values(d.streamMonths).some((m) => m[streamId]?.collected != null);
+const hasBillPayments = (d: TrackerData, expenseId: string) => Object.values(d.billPayments ?? {}).some((m) => m[expenseId]?.length);
+
+export interface NewClient {
+  name: string;
+  kind?: "recurring" | "project";
+  /** Monthly fee (retainer) or price (project) */
+  amount?: number;
+  streamKind?: StreamKind;
+  percent?: number;
+  stage?: DealStage;
+}
+
+/** Adds a client with its income stream (retainer) or deal (project). Returns the client id. */
+export function createClient(d: TrackerData, c: NewClient, today: string): string {
+  const id = uid("client");
+  const client: Client = { id, name: c.name, createdAt: today, ...(c.kind && { kind: c.kind }) };
+  if (c.kind === "recurring") {
+    const streamId = uid("stream");
+    const kind = c.streamKind ?? "fixed";
+    d.streams.push({ id: streamId, name: c.name, kind, amount: c.amount ?? 0, active: true, ...(kind === "percent_floor" && { percent: c.percent ?? 0, floor: c.amount ?? 0 }) });
+    client.streamId = streamId;
+  }
+  if (c.kind === "project") {
+    const dealId = uid("deal");
+    d.deals.push({ id: dealId, name: c.name, value: c.amount ?? 0, stage: c.stage ?? "won", payments: [], createdAt: today });
+    client.dealId = dealId;
+  }
+  d.clients = [...(d.clients ?? []), client];
+  return id;
+}
+
+/** Renames a client and its linked income stream and deal, so they never drift apart. */
+export function renameClient(d: TrackerData, clientId: string, name: string) {
+  const c = d.clients?.find((x) => x.id === clientId);
+  if (!c) return;
+  c.name = name;
+  const s = d.streams.find((x) => x.id === c.streamId);
+  if (s) s.name = name;
+  const deal = d.deals.find((x) => x.id === c.dealId);
+  if (deal) deal.name = name;
+}
+
+/** The client a stream or deal belongs to, if any. */
+export const clientForStream = (data: TrackerData, streamId: string) => data.clients?.find((c) => c.streamId === streamId);
+export const clientForDeal = (data: TrackerData, dealId: string) => data.clients?.find((c) => c.dealId === dealId);
+
+/** Turns an income stream into a client (the stream becomes that client's retainer). */
+export function makeClientFromStream(d: TrackerData, streamId: string, today: string) {
+  const s = d.streams.find((x) => x.id === streamId);
+  if (!s) return;
+  const existing = clientForStream(d, streamId);
+  if (existing) return existing.id;
+  const id = uid("client");
+  d.clients = [...(d.clients ?? []), { id, name: s.name, kind: "recurring", streamId, createdAt: today }];
+  return id;
+}
+
+/** Turns a deal into a project client, for tracking its tasks and team pay. */
+export function makeClientFromDeal(d: TrackerData, dealId: string, today: string) {
+  const deal = d.deals.find((x) => x.id === dealId);
+  if (!deal || clientForDeal(d, dealId)) return;
+  d.clients = [...(d.clients ?? []), { id: uid("client"), name: deal.name, kind: "project", dealId, createdAt: today }];
+}
+
+/**
+ * Archiving a client stops its retainer (no longer expected each month) and
+ * ends its monthly team pay. Past payments stay in history. Unarchiving
+ * restarts the retainer.
+ */
+export function archiveClient(d: TrackerData, clientId: string, archived: boolean, month: string) {
+  const c = d.clients?.find((x) => x.id === clientId);
+  if (!c) return;
+  c.archived = archived || undefined;
+  const s = d.streams.find((x) => x.id === c.streamId);
+  if (s) s.active = !archived;
+  if (archived) {
+    for (const e of d.expenses.filter((x) => x.clientId === clientId && expenseAppliesTo(x, month) && !x.endMonth)) {
+      const prev = addMonths(month, -1);
+      if (!e.startMonth || e.startMonth <= prev) e.endMonth = prev;
+      else e.active = false;
+    }
+  }
+}
+
+/**
+ * Deleting a client removes it with its tasks. Money records with nothing
+ * paid are removed too; ones with payments are kept (archived) so past
+ * months don't change.
+ */
+export function deleteClient(d: TrackerData, clientId: string) {
+  const c = d.clients?.find((x) => x.id === clientId);
+  if (!c) return;
+  d.clientTasks = (d.clientTasks ?? []).filter((t) => t.clientId !== clientId);
+  for (const e of d.expenses.filter((x) => x.clientId === clientId)) {
+    if (hasBillPayments(d, e.id)) {
+      e.active = false;
+      delete e.clientId;
+    }
+  }
+  d.expenses = d.expenses.filter((x) => x.clientId !== clientId);
+  if (c.streamId) {
+    if (hasCollections(d, c.streamId)) d.streams.find((s) => s.id === c.streamId)!.active = false;
+    else d.streams = d.streams.filter((s) => s.id !== c.streamId);
+  }
+  if (c.dealId) {
+    const deal = d.deals.find((x) => x.id === c.dealId);
+    if (deal && !deal.payments.length) d.deals = d.deals.filter((x) => x.id !== c.dealId);
+  }
+  d.clients = d.clients!.filter((x) => x.id !== clientId);
+}
+
+/** What deleting a client would keep, in plain words, for the confirm box. */
+export function deleteClientSummary(data: TrackerData, clientId: string): string {
+  const c = data.clients?.find((x) => x.id === clientId);
+  if (!c) return "";
+  const tasks = (data.clientTasks ?? []).filter((t) => t.clientId === clientId).length;
+  const kept: string[] = [];
+  if (c.streamId && hasCollections(data, c.streamId)) kept.push("retainer payments already collected");
+  const deal = data.deals.find((x) => x.id === c.dealId);
+  if (deal?.payments.length) kept.push("project payments already collected");
+  if (data.expenses.some((e) => e.clientId === clientId && hasBillPayments(data, e.id))) kept.push("team pay already paid");
+  return `Delete ${c.name}${tasks ? ` and its ${tasks} task${tasks > 1 ? "s" : ""}` : ""}?${kept.length ? ` Your history keeps the ${kept.join(", ")}.` : ""} To just stop working with them, use Archive instead.`;
+}
+
+// ---- Team pay ----
+
+/** A member's regular pay (a bill not tied to a client). */
+export const basePayLine = (data: TrackerData, memberId: string) => data.expenses.find((e) => e.memberId === memberId && !e.clientId && e.active);
+
+/**
+ * Older data kept team pay as a number on the member, often also typed as a
+ * bill. Links each member to the matching payroll bill (same amount), or
+ * creates one, so pay is counted once.
+ */
+export function upgradeTeamPay(data: TrackerData): TrackerData {
+  const team = data.team.filter((m) => m.monthlyCost > 0 && !data.expenses.some((e) => e.memberId === m.id));
+  if (!team.length) return data;
+  const expenses = data.expenses.map((e) => ({ ...e }));
+  for (const m of team) {
+    const match = expenses.find((e) => !e.memberId && !e.clientId && e.category === "payroll" && e.amount === m.monthlyCost && e.active);
+    if (match) match.memberId = m.id;
+    else expenses.push({ id: uid("exp"), name: `${m.name} pay`, amount: m.monthlyCost, category: "payroll", active: m.active, memberId: m.id });
+  }
+  return { ...data, expenses };
 }

@@ -43,11 +43,25 @@ export const HELP = {
   ),
   income: (
     <ul>
-      <li>Your regular clients (retainers). Each shows what&apos;s due this month.</li>
-      <li>When the money arrives, press &ldquo;Mark collected&rdquo;, check the amount and pick the account it went into.</li>
-      <li>% of revenue clients: type their revenue for the month and the amount due updates.</li>
-      <li>&ldquo;Edit streams&rdquo; to add clients, change fees, or archive a client that ended.</li>
-      <li>One-off projects go in Boss Deals instead.</li>
+      <li>Income shows all the money coming in: from your clients (retainers and projects) and other income.</li>
+      <li>Client money is set up and edited in the Clients tab. It shows here, marked &ldquo;From Clients&rdquo;, so you can see it next to everything else and mark it collected. It&apos;s the same record, not a copy.</li>
+      <li>When a payment arrives, press &ldquo;Mark collected&rdquo;, check the amount and pick the account it went into.</li>
+      <li>% of revenue clients: type their revenue for the month here and the amount due updates.</li>
+      <li>To change a fee or stop a client, use Edit in Clients.</li>
+    </ul>
+  ),
+  projects: (
+    <ul>
+      <li>One-off jobs with a set price. Set them up in Clients as a &ldquo;One-time project&rdquo; client. Closed deals from Boss Deals show here too.</li>
+      <li>Paid in parts? Use &ldquo;Record deposit&rdquo; for each payment. Fully paid? Press collect and pick the account.</li>
+      <li>Prospects you haven&apos;t closed yet live in Boss Deals.</li>
+    </ul>
+  ),
+  otherIncome: (
+    <ul>
+      <li>Money that doesn&apos;t come from a client, like product, course or SaaS sales.</li>
+      <li>&ldquo;Changes every month&rdquo; means you type what actually came in each month (&ldquo;Actual this month&rdquo;). Until you do, the usual amount is used as the estimate.</li>
+      <li>If one of these is really a client, open ⚙ and press &ldquo;This is a client&rdquo;.</li>
     </ul>
   ),
   newDeal: (
@@ -70,26 +84,25 @@ export const HELP = {
   ),
   clients: (
     <ul>
-      <li>One card per client with the tasks still to do for them. Add clients by name, or tap one of your income clients to add it.</li>
-      <li>Type a task, pick who&apos;s doing it (tap several names if they&apos;re working on it together), and add a due date if there is one.</li>
-      <li>Tap a task&apos;s status to move it along: To do → Doing → Done. Tap ✎ to change who, the due date, or add details.</li>
-      <li>&ldquo;Show tasks for&rdquo; filters everything to one person and lists their open tasks across all clients.</li>
-      <li>Money: say whether the client pays a monthly retainer or a one-time project, and type the fee or price. It appears in Income or Boss Deals, where you mark it collected.</li>
-      <li>Team pay: add what you pay a team member for this client (monthly for a retainer, once for a project). It becomes a bill in Expenses, and the card shows your profit after team pay.</li>
-      <li>Squad members come from the Squad tab. A client that ended can be archived from its ⚙.</li>
+      <li>Everyone you work for, one card each. A client is either a monthly retainer or a one-time project. Its money shows in Income; its work shows here.</li>
+      <li>Type a task, pick who&apos;s doing it (tap several names if they&apos;re working on it together), and add a due date if there is one. Tap the status to move it: To do → Doing → Done.</li>
+      <li>Team pay: what you pay a team member for this client. It becomes a bill in Expenses, and the card shows your profit after team pay.</li>
+      <li>⚙ → Archive when you stop working with a client: the retainer and monthly team pay stop, and history stays. Delete is for mistakes: it removes the client, its tasks and anything not yet paid.</li>
+      <li>&ldquo;Show tasks for&rdquo; filters to one person and lists their open tasks across all clients.</li>
     </ul>
   ),
   tasks: (
     <ul>
+      <li>Your business-wide plan: things that aren&apos;t for a specific client. Client work goes in the Clients tab.</li>
       <li>Your plan sorted by urgency and importance: do first, schedule, delegate, drop.</li>
       <li>Tick tasks off as you finish them. The owner field links tasks to people in Squad.</li>
     </ul>
   ),
   team: (
     <ul>
-      <li>The people on your team, their role and monthly cost.</li>
-      <li>Everyone here can be given client tasks in the Clients tab. Their open client tasks show on their card.</li>
-      <li>This list is for reference. To track paying them, add their pay as a bill in Expenses.</li>
+      <li>The people on your team. Anyone here can be given client tasks and client pay.</li>
+      <li>Base pay is their regular monthly pay. It&apos;s a bill in Expenses, so it counts once and you mark it paid there.</li>
+      <li>Client pay (set on each client card) is added on top and listed on their card.</li>
     </ul>
   ),
   adAccounts: (

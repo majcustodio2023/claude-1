@@ -4,6 +4,7 @@ import { useState } from "react";
 import { dealBalance, dealPaid, defaultAccountId, uid } from "@/lib/finance";
 import type { Deal, DealStage } from "@/lib/types";
 import { useTracker } from "../App";
+import { clientForDeal, makeClientFromDeal, renameClient } from "@/lib/clients";
 import { Bar, Btn, Card, NumInput, TextInput, celebrate, money } from "../ui";
 import { AccountSelect, CollectForm, accountName, settle, type Collection } from "../Money";
 import { HELP } from "../help";
@@ -76,7 +77,7 @@ function Section({ title, deals }: { title: string; deals: Deal[] }) {
   );
 }
 
-function DealCard({ deal }: { deal: Deal }) {
+export function DealCard({ deal }: { deal: Deal }) {
   const { data, update, today } = useTracker();
   const [collecting, setCollecting] = useState<"full" | "deposit" | null>(null);
   const paid = dealPaid(deal);
@@ -103,6 +104,7 @@ function DealCard({ deal }: { deal: Deal }) {
     });
   };
   const hp = deal.stage === "lost" ? 0 : deal.value ? balance / deal.value : 0;
+  const client = clientForDeal(data, deal.id);
 
   return (
     <div className={`border rounded-[3px] p-3.5 space-y-3 ${deal.stage === "won" && balance === 0 ? "border-gold/50 bg-gold/5" : "border-line bg-card-2/50"}`}>
@@ -114,13 +116,22 @@ function DealCard({ deal }: { deal: Deal }) {
         <Bar pct={hp} tone={balance === 0 ? "gold" : "bad"} thin />
       </div>
       <div className="flex items-start gap-2">
-        <TextInput className="flex-1 font-medium" value={deal.name} onChange={(v) => set({ name: v })} />
+        <TextInput className="flex-1 font-medium" value={deal.name} onChange={(v) => (client ? update((d) => renameClient(d, client.id, v)) : set({ name: v }))} />
         <select value={deal.stage} onChange={(e) => set({ stage: e.target.value as DealStage })}>
           {STAGES.map(([v, l]) => (
             <option key={v} value={v}>{l}</option>
           ))}
         </select>
       </div>
+      {client ? (
+        <div className="text-sm text-muted">🗂️ Client project: tasks and team pay are in the Clients tab.</div>
+      ) : (
+        deal.stage === "won" && (
+          <button className="text-sm underline text-muted" onClick={() => update((d) => makeClientFromDeal(d, deal.id, today))}>
+            + Track as a client (tasks, team pay)
+          </button>
+        )
+      )}
       <div className="flex items-center gap-3 flex-wrap text-sm">
         <label className="flex items-center gap-1 text-muted">
           Value <NumInput className="w-32" value={deal.value} onChange={(v) => set({ value: v ?? 0 })} />
@@ -160,7 +171,12 @@ function DealCard({ deal }: { deal: Deal }) {
             </Btn>
           )}
           {deal.stage !== "lost" && balance > 0 && <Btn onClick={() => setCollecting("deposit")}>Record deposit</Btn>}
-          <Btn kind="danger" onClick={() => confirm(`Delete ${deal.name}?`) && update((d) => void (d.deals = d.deals.filter((x) => x.id !== deal.id)))}>
+          <Btn kind="danger" onClick={() => confirm(client ? `Delete this project deal? ${client.name} stays in Clients (delete it there to remove everything).` : `Delete ${deal.name}?`) &&
+              update((d) => {
+                d.deals = d.deals.filter((x) => x.id !== deal.id);
+                const c = d.clients?.find((x) => x.dealId === deal.id);
+                if (c) delete c.dealId;
+              })}>
             Delete
           </Btn>
         </div>
