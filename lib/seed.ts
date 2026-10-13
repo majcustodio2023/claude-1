@@ -79,7 +79,7 @@ function seedTasks(): Task[] {
 export function seedData(): TrackerData {
   const created = "2026-10-12";
   return {
-    version: 2,
+    version: 3,
     settings: { monthlyGoal: 250000, targetCpl: 500, targetRoas: 2, currency: "PHP", cashBalance: 165000, cashAsOf: "2026-10-11" },
     streams: [
       {
@@ -102,6 +102,7 @@ export function seedData(): TrackerData {
       "2026-10": { aacio: { actual: 38766, collected: 38766, collectedOn: "2026-10-11" } },
     },
     deals: [
+      { id: "deal-ot-1", name: "One-time client payment", value: 30000, stage: "won", expectedClose: "2026-10-11", payments: [], createdAt: created },
       { id: "lms", name: "LMS project", value: 135000, stage: "negotiating", payments: [], createdAt: created },
       { id: "webinar", name: "Webinar funnel project", value: 80000, stage: "negotiating", payments: [], createdAt: created },
       {
@@ -109,7 +110,7 @@ export function seedData(): TrackerData {
         notes: "The Oct 11 plan listed this as ₱240,000; using ₱230,000 per Maj. Edit if it changes.",
       },
     ],
-    oneTime: [{ id: "ot-1", date: "2026-10-11", label: "One-time client payment", amount: 30000 }],
+    oneTime: [],
     expenses: [
       { id: "household", name: "Household expenses", amount: 65500, category: "household", active: true },
       { id: "salary", name: "Employee salary", amount: 27000, category: "payroll", active: true },

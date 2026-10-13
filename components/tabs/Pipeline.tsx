@@ -16,7 +16,7 @@ const STAGES: [DealStage, string][] = [
 
 export default function Pipeline() {
   const { data, update, today } = useTracker();
-  const [form, setForm] = useState({ name: "", value: undefined as number | undefined });
+  const [form, setForm] = useState({ name: "", value: undefined as number | undefined, kind: "lead" as "lead" | "due" | "paid" });
 
   const open = data.deals.filter((d) => d.stage !== "won" && d.stage !== "lost");
   const won = data.deals.filter((d) => d.stage === "won");
@@ -30,18 +30,32 @@ export default function Pipeline() {
           onSubmit={(e) => {
             e.preventDefault();
             if (!form.name || !form.value) return;
-            update((d) => void d.deals.push({ id: uid("deal"), name: form.name, value: form.value!, stage: "lead", payments: [], createdAt: today }));
-            setForm({ name: "", value: undefined });
+            update((d) =>
+              void d.deals.push({
+                id: uid("deal"),
+                name: form.name,
+                value: form.value!,
+                stage: form.kind === "lead" ? "lead" : "won",
+                payments: form.kind === "paid" ? [{ id: uid("pay"), date: today, amount: form.value! }] : [],
+                createdAt: today,
+              }),
+            );
+            setForm({ name: "", value: undefined, kind: form.kind });
           }}
         >
           <input className="flex-1 min-w-48" placeholder="Project or client" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          <NumInput className="w-36" placeholder="Deal value" value={form.value} onChange={(v) => setForm({ ...form, value: v })} />
-          <Btn kind="primary">Add deal</Btn>
+          <NumInput className="w-36" placeholder="Amount" value={form.value} onChange={(v) => setForm({ ...form, value: v })} />
+          <select value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value as typeof form.kind })} aria-label="Status">
+            <option value="lead">Still a lead</option>
+            <option value="due">Closed, to collect</option>
+            <option value="paid">Already collected</option>
+          </select>
+          <Btn kind="primary">Add</Btn>
         </form>
       </Card>
 
       <Section title={`Bosses in the field · ${peso(open.reduce((a, d) => a + d.value, 0))}`} deals={open} />
-      <Section title={`Defeated · ${peso(won.reduce((a, d) => a + dealPaid(d), 0))} collected, ${peso(won.reduce((a, d) => a + dealBalance(d), 0))} to collect`} deals={won} />
+      <Section title={`Closed · ${peso(won.reduce((a, d) => a + dealPaid(d), 0))} collected, ${peso(won.reduce((a, d) => a + dealBalance(d), 0))} to collect`} deals={won} />
       {lost.length > 0 && <Section title="Lost" deals={lost} />}
     </div>
   );

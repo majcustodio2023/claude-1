@@ -92,6 +92,7 @@ export function summarize(data: TrackerData, month: string): MonthSummary {
   const oneTimeCollected = data.oneTime.filter((o) => monthOf(o.date) === month).reduce((a, o) => a + o.amount, 0);
 
   const moneyMade = recurringCollected + dealCollected + oneTimeCollected;
+  const wonUnpaid = data.deals.filter((d) => d.stage === "won").reduce((a, d) => a + dealBalance(d), 0);
 
   const lines = data.expenses.filter((e) => expenseAppliesTo(e, month));
   const fixedExpenses = lines.reduce((a, e) => a + e.amount, 0);
@@ -117,7 +118,7 @@ export function summarize(data: TrackerData, month: string): MonthSummary {
     dealCollected,
     oneTimeCollected,
     moneyMade,
-    projected: moneyMade + recurringPending,
+    projected: moneyMade + recurringPending + wonUnpaid,
     fixedExpenses,
     expenseTarget,
     adHocExpenses,
@@ -130,7 +131,7 @@ export function summarize(data: TrackerData, month: string): MonthSummary {
     gapToExpenses: Math.max(expenseTarget - moneyMade, 0),
     gapToGoal: Math.max(goal - moneyMade, 0),
     openPipeline: open.reduce((a, d) => a + d.value, 0),
-    wonUnpaid: data.deals.filter((d) => d.stage === "won").reduce((a, d) => a + dealBalance(d), 0),
+    wonUnpaid,
   };
 }
 
@@ -203,7 +204,8 @@ export function cashPosition(data: TrackerData, today: string): CashPosition {
   let fixedOut = 0;
   for (const [m, paid] of Object.entries(data.expensePaid)) {
     if (m < monthOf(asOf) || m > thisMonth) continue;
-    fixedOut += sum(data.expenses.filter((e) => paid[e.id] && expenseAppliesTo(e, m)).map((e) => e.amount));
+    const before = m === monthOf(asOf) ? new Set(data.settings.cashPaidAtAsOf ?? []) : null;
+    fixedOut += sum(data.expenses.filter((e) => paid[e.id] && !before?.has(e.id) && expenseAppliesTo(e, m)).map((e) => e.amount));
   }
   const outflow = adHocOut + logAdOut + fixedOut;
   const now = start + inflow - outflow;
@@ -212,4 +214,82 @@ export function cashPosition(data: TrackerData, today: string): CashPosition {
   const paidNow = data.expensePaid[thisMonth] ?? {};
   const unpaidThisMonth = sum(data.expenses.filter((e) => expenseAppliesTo(e, thisMonth) && !paidNow[e.id]).map((e) => e.amount));
   return { set: true, asOf, start, inflow, outflow, now, incomingThisMonth: s.recurringPending, unpaidThisMonth, monthEnd: now + s.recurringPending - unpaidThisMonth };
+}
+
+export function addMonths(month: string, n: number): string {
+  const [y, m] = month.split("-").map(Number);
+  const d = new Date(Date.UTC(y, m - 1 + n, 1));
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+}
+
+export interface ForecastMonth {
+  month: string;
+  start: number;
+  income: number;
+  bills: number;
+  end: number;
+}
+
+/**
+ * Cash month by month: this month from today's position, later months from the
+ * recurring income expected and the expense lines that apply. Open deals and
+ * one-off spending aren't guessed.
+ */
+export function cashForecast(data: TrackerData, today: string, months = 4): ForecastMonth[] {
+  const cash = cashPosition(data, today);
+  if (!cash.set) return [];
+  const first = monthOf(today);
+  const out: ForecastMonth[] = [{ month: first, start: cash.now, income: cash.incomingThisMonth, bills: cash.unpaidThisMonth, end: cash.monthEnd }];
+  for (let i = 1; i < months; i++) {
+    const month = addMonths(first, i);
+    const s = summarize(data, month);
+    const start = out[i - 1].end;
+    const income = s.recurringCollected + s.recurringPending;
+    const bills = s.fixedExpenses;
+    out.push({ month, start, income, bills, end: start + income - bills });
+  }
+  return out;
+}
+
+/** How long cash on hand lasts with no new income, and the safety buffer target. */
+export function cashHealth(data: TrackerData, today: string) {
+  const cash = cashPosition(data, today);
+  const burn = summarize(data, monthOf(today)).fixedExpenses;
+  const bufferMonths = data.settings.cashBufferMonths ?? 3;
+  const daysSinceUpdate = cash.set ? Math.round((Date.parse(today) - Date.parse(cash.asOf!)) / 86400000) : null;
+  return {
+    burn,
+    runwayMonths: burn > 0 ? Math.max(cash.now, 0) / burn : null,
+    bufferTarget: burn * bufferMonths,
+    bufferMonths,
+    daysSinceUpdate,
+  };
+}
+
+/** Settings changes for a new bank balance check-in. */
+export function recordBalance(data: TrackerData, balance: number, date: string): Partial<TrackerData["settings"]> {
+  const before = cashPosition(data, date);
+  const entry = { date, balance, ...(before.set && { predicted: Math.round(before.now) }) };
+  const history = (data.settings.cashHistory ?? []).filter((h) => h.date !== date);
+  return {
+    cashBalance: balance,
+    cashAsOf: date,
+    cashPaidAtAsOf: Object.entries(data.expensePaid[monthOf(date)] ?? {}).filter(([, v]) => v).map(([k]) => k),
+    cashHistory: [...history, entry].sort((a, b) => a.date.localeCompare(b.date)).slice(-60),
+  };
+}
+
+/** Turns one-time income entries into closed deals: paid ones keep their payment, the seeded ₱30k becomes "to collect". */
+export function foldOneTimeIntoDeals(data: TrackerData): TrackerData {
+  if (!data.oneTime?.length) return data;
+  const deals = data.oneTime.map((o) => ({
+    id: `deal-${o.id}`,
+    name: o.label,
+    value: o.amount,
+    stage: "won" as const,
+    expectedClose: o.date,
+    payments: o.id === "ot-1" ? [] : [{ id: `pay-${o.id}`, date: o.date, amount: o.amount }],
+    createdAt: o.date,
+  }));
+  return { ...data, deals: [...data.deals, ...deals], oneTime: [] };
 }

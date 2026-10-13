@@ -2,15 +2,16 @@ import "server-only";
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { foldOneTimeIntoDeals } from "./finance";
 import { seedData } from "./seed";
-import type { AutopilotEntry, TrackerData } from "./types";
+import type { AutopilotEntry, Creative, TrackerData } from "./types";
 
 // The whole tracker lives in one JSON document. Meta tokens are kept beside it,
 // encrypted, and are never sent to the browser.
 
 interface StoredDoc {
   data: TrackerData;
-  secrets?: { tokens?: Record<string, string> };
+  secrets?: { tokens?: Record<string, string>; higgsfield?: string; anthropic?: string };
 }
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -52,13 +53,17 @@ async function writeDoc(doc: StoredDoc): Promise<void> {
 
 // Version 2 added the bank balance. Data saved before that gets the Oct 11
 // balance from Maj's plan once; it's editable on HQ.
+// Version 3 folded one-time income into deals, so one-offs show as collected or
+// still to collect. The seeded ₱30k one-time payment hadn't actually come in.
 function migrate(doc: StoredDoc): StoredDoc {
-  if ((doc.data.version ?? 1) < 2) {
-    const settings = { ...doc.data.settings };
+  let data = doc.data;
+  if ((data.version ?? 1) < 2) {
+    const settings = { ...data.settings };
     if (settings.cashBalance == null) Object.assign(settings, { cashBalance: 165000, cashAsOf: "2026-10-11" });
-    return { ...doc, data: { ...doc.data, version: 2, settings } };
+    data = { ...data, version: 2, settings };
   }
-  return doc;
+  if (data.version < 3) data = { ...foldOneTimeIntoDeals(data), version: 3 };
+  return data === doc.data ? doc : { ...doc, data };
 }
 
 async function loadDoc(): Promise<StoredDoc> {
@@ -71,7 +76,11 @@ async function loadDoc(): Promise<StoredDoc> {
 
 function withTokenFlags(doc: StoredDoc): TrackerData {
   const tokens = doc.secrets?.tokens ?? {};
-  return { ...doc.data, adAccounts: doc.data.adAccounts.map((a) => ({ ...a, hasToken: Boolean(tokens[a.id]) })) };
+  return {
+    ...doc.data,
+    adAccounts: doc.data.adAccounts.map((a) => ({ ...a, hasToken: Boolean(tokens[a.id]) })),
+    integrations: { higgsfield: Boolean(doc.secrets?.higgsfield), kit: Boolean(process.env.ANTHROPIC_API_KEY || doc.secrets?.anthropic) },
+  };
 }
 
 export async function getData(): Promise<TrackerData> {
@@ -83,15 +92,17 @@ export async function saveData(data: TrackerData): Promise<TrackerData> {
   const tokens = { ...(doc.secrets?.tokens ?? {}) };
   // Drop tokens for ad accounts that were removed.
   for (const id of Object.keys(tokens)) if (!data.adAccounts.some((a) => a.id === id)) delete tokens[id];
+  const { integrations: _i, ...rest } = data;
   const next: StoredDoc = {
     data: {
-      ...data,
+      ...rest,
       adAccounts: data.adAccounts.map(({ hasToken: _h, ...a }) => a),
-      // The server owns the Autopilot log; a browser tab with older data mustn't overwrite it.
+      // The server owns the Autopilot log and creatives; a browser tab with older data mustn't overwrite them.
       autopilotLog: doc.data.autopilotLog,
+      creatives: doc.data.creatives,
       updatedAt: new Date().toISOString(),
     },
-    secrets: { tokens },
+    secrets: { ...doc.secrets, tokens },
   };
   await writeDoc(next);
   return withTokenFlags(next);
@@ -126,11 +137,48 @@ export async function setToken(adAccountRef: string, token: string | null): Prom
   const tokens = { ...(doc.secrets?.tokens ?? {}) };
   if (token) tokens[adAccountRef] = encrypt(token.trim());
   else delete tokens[adAccountRef];
-  await writeDoc({ ...doc, secrets: { tokens } });
+  await writeDoc({ ...doc, secrets: { ...doc.secrets, tokens } });
 }
 
 export async function getToken(adAccountRef: string): Promise<string | null> {
   const doc = await loadDoc();
   const blob = doc.secrets?.tokens?.[adAccountRef];
   return blob ? decrypt(blob) : null;
+}
+
+/** Higgsfield API key, stored as "keyId:secret", encrypted like the Meta tokens. */
+export async function setHiggsfieldKey(key: string | null): Promise<void> {
+  const doc = await loadDoc();
+  const secrets = { ...doc.secrets };
+  if (key) secrets.higgsfield = encrypt(key.trim());
+  else delete secrets.higgsfield;
+  await writeDoc({ ...doc, secrets });
+}
+
+export async function getHiggsfieldKey(): Promise<string | null> {
+  const doc = await loadDoc();
+  return doc.secrets?.higgsfield ? decrypt(doc.secrets.higgsfield) : null;
+}
+
+/** Applies a change to the creatives list on the server's copy of the data. */
+export async function updateCreatives(fn: (list: Creative[]) => Creative[]): Promise<Creative[]> {
+  const doc = await loadDoc();
+  const creatives = fn([...(doc.data.creatives ?? [])]);
+  await writeDoc({ ...doc, data: { ...doc.data, creatives } });
+  return creatives;
+}
+
+/** Claude API key for Kit chat: the ANTHROPIC_API_KEY env var, else one saved in the app (encrypted). */
+export async function setAnthropicKey(key: string | null): Promise<void> {
+  const doc = await loadDoc();
+  const secrets = { ...doc.secrets };
+  if (key) secrets.anthropic = encrypt(key.trim());
+  else delete secrets.anthropic;
+  await writeDoc({ ...doc, secrets });
+}
+
+export async function getAnthropicKey(): Promise<string | null> {
+  if (process.env.ANTHROPIC_API_KEY) return process.env.ANTHROPIC_API_KEY;
+  const doc = await loadDoc();
+  return doc.secrets?.anthropic ? decrypt(doc.secrets.anthropic) : null;
 }
