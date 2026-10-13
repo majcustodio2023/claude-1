@@ -134,11 +134,27 @@ export interface TrackedCampaign {
   adAccountRef: string; // AdAccount.id
   campaignId: string;
   name: string;
-  mode: "view" | "manage";
+  /** view: suggestions only. manage: one-click changes. autopilot: changes applied daily on their own. */
+  mode: "view" | "manage" | "autopilot";
   /** Action type counted as a result, e.g. "lead". Defaults to lead detection. */
   resultAction?: string;
   targetCpl?: number;
   targetRoas?: number;
+  /** Autopilot never raises a daily budget above this (pesos). Without it, Autopilot only cuts. */
+  maxDailyBudget?: number;
+}
+
+export interface AutopilotEntry {
+  id: string;
+  at: string; // ISO time
+  trackedId: string;
+  campaign: string;
+  type: "pause" | "budget" | "run";
+  targetId?: string;
+  /** What Autopilot did or wanted to do, in plain words */
+  action: string;
+  status: "done" | "skipped" | "error";
+  note?: string;
 }
 
 export interface Settings {
@@ -166,5 +182,6 @@ export interface TrackerData {
   todos: Record<string, TodoItem[]>; // date -> items
   adAccounts: AdAccount[];
   trackedCampaigns: TrackedCampaign[];
+  autopilotLog?: AutopilotEntry[];
   updatedAt?: string;
 }

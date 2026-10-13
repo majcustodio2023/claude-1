@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { uid } from "@/lib/finance";
 import type { AdRow, CampaignInfo, DatePreset, Metrics, Suggestion, SuggestedAction } from "@/lib/meta";
-import type { AdAccount, TrackedCampaign } from "@/lib/types";
+import type { AdAccount, AutopilotEntry, TrackedCampaign } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Btn, Card, NumInput, Stat, TextInput, peso } from "../ui";
 
@@ -93,7 +93,64 @@ export default function Ads() {
           </>
         )}
       </Card>
+
+      {(data.trackedCampaigns.some((t) => t.mode === "autopilot") || (data.autopilotLog?.length ?? 0) > 0) && <AutopilotCard />}
     </div>
+  );
+}
+
+const STATUS_TONE = { done: "good", skipped: "muted", error: "bad" } as const;
+
+function AutopilotCard() {
+  const { data, reload } = useTracker();
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+  const log: AutopilotEntry[] = data.autopilotLog ?? [];
+  const on = data.trackedCampaigns.filter((t) => t.mode === "autopilot");
+
+  const runNow = async () => {
+    if (!confirm(`Run Autopilot now on ${on.length} campaign${on.length === 1 ? "" : "s"}? It may pause ads or change budgets in Meta.`)) return;
+    setBusy(true);
+    setMsg("");
+    const res = await fetch("/api/autopilot", { method: "POST" });
+    const json = await res.json();
+    setBusy(false);
+    if (!res.ok) return setMsg(json.error);
+    setMsg(`Done. ${json.entries.filter((e: AutopilotEntry) => e.status === "done").length} change(s) made.`);
+    await reload();
+  };
+
+  return (
+    <Card
+      icon="🤖"
+      title="Autopilot"
+      actions={on.length > 0 && <Btn kind="primary" onClick={runNow} disabled={busy}>{busy ? "Running…" : "Run now"}</Btn>}
+    >
+      <p className="text-sm text-muted mb-3">
+        Runs every morning at 9:00 on campaigns set to Autopilot, using the last 7 days. It pauses ads that spend without results (up to 3 a run, never the best one),
+        cuts budget when cost per result is far over target, and raises it 20% when results beat target, never above the max daily budget you set.
+        Budgets change at most once every 3 days.
+      </p>
+      {msg && <p className="text-sm mb-2">{msg}</p>}
+      {log.length === 0 ? (
+        <p className="text-sm text-muted">Nothing has run yet.</p>
+      ) : (
+        <ul className="space-y-2 max-h-96 overflow-y-auto">
+          {log.slice(0, 30).map((e) => (
+            <li key={e.id} className="flex gap-3 items-start text-sm">
+              <Badge tone={STATUS_TONE[e.status]}>{e.status}</Badge>
+              <div className="flex-1">
+                <div className="font-medium">{e.action}</div>
+                <div className="text-muted">
+                  {e.campaign} · {new Date(e.at).toLocaleString("en-PH")}
+                  {e.note ? ` · ${e.note}` : ""}
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
   );
 }
 
@@ -225,9 +282,16 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
         <span className="text-sm text-muted">{account?.label}</span>
         <div className="flex-1" />
         <div className="flex rounded-[3px] border border-line overflow-hidden text-sm">
-          {(["view", "manage"] as const).map((mode) => (
-            <button key={mode} onClick={() => set({ mode })} className={`px-2 py-1 ${tracked.mode === mode ? "bg-accent text-[#031018]" : ""}`}>
-              {mode === "view" ? "View only" : "Manage"}
+          {(["view", "manage", "autopilot"] as const).map((mode) => (
+            <button
+              key={mode}
+              onClick={() => {
+                if (mode === "autopilot" && tracked.mode !== "autopilot" && !confirm("Autopilot will pause losing ads and change this campaign's budget once a day without asking you first. Turn it on?")) return;
+                set({ mode });
+              }}
+              className={`px-2 py-1 ${tracked.mode === mode ? "bg-accent text-[#031018]" : ""}`}
+            >
+              {mode === "view" ? "View only" : mode === "manage" ? "Manage" : "Autopilot"}
             </button>
           ))}
         </div>
@@ -241,6 +305,11 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
         <label className="flex items-center gap-1">
           Target ROAS <NumInput className="w-16" value={tracked.targetRoas} placeholder={String(data.settings.targetRoas)} onChange={(v) => set({ targetRoas: v })} />
         </label>
+        {tracked.mode === "autopilot" && (
+          <label className="flex items-center gap-1">
+            Max daily budget <NumInput className="w-24" value={tracked.maxDailyBudget} placeholder="none" onChange={(v) => set({ maxDailyBudget: v })} />
+          </label>
+        )}
         <label className="flex items-center gap-1">
           Result event <TextInput className="w-48" value={tracked.resultAction} placeholder="auto (leads)" onChange={(v) => set({ resultAction: v || undefined })} />
         </label>
@@ -269,7 +338,7 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
                     <div className="text-muted">{s.detail}</div>
                   </div>
                   {s.action &&
-                    (tracked.mode === "manage" ? (
+                    (tracked.mode !== "view" ? (
                       applied[key] ? (
                         <span className="text-sm text-muted">{applied[key]}</span>
                       ) : (

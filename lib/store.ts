@@ -3,7 +3,7 @@ import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { seedData } from "./seed";
-import type { TrackerData } from "./types";
+import type { AutopilotEntry, TrackerData } from "./types";
 
 // The whole tracker lives in one JSON document. Meta tokens are kept beside it,
 // encrypted, and are never sent to the browser.
@@ -73,11 +73,23 @@ export async function saveData(data: TrackerData): Promise<TrackerData> {
   // Drop tokens for ad accounts that were removed.
   for (const id of Object.keys(tokens)) if (!data.adAccounts.some((a) => a.id === id)) delete tokens[id];
   const next: StoredDoc = {
-    data: { ...data, adAccounts: data.adAccounts.map(({ hasToken: _h, ...a }) => a), updatedAt: new Date().toISOString() },
+    data: {
+      ...data,
+      adAccounts: data.adAccounts.map(({ hasToken: _h, ...a }) => a),
+      // The server owns the Autopilot log; a browser tab with older data mustn't overwrite it.
+      autopilotLog: doc.data.autopilotLog,
+      updatedAt: new Date().toISOString(),
+    },
     secrets: { tokens },
   };
   await writeDoc(next);
   return withTokenFlags(next);
+}
+
+export async function appendAutopilotLog(entries: AutopilotEntry[], limit = 200): Promise<void> {
+  const doc = await loadDoc();
+  const autopilotLog = [...entries, ...(doc.data.autopilotLog ?? [])].slice(0, limit);
+  await writeDoc({ ...doc, data: { ...doc.data, autopilotLog } });
 }
 
 function cryptoKey(): Buffer {
