@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { DATE_PRESETS, analyze, fetchCampaignInsights, toMetrics, type DatePreset } from "@/lib/meta";
-import { resolveTracked } from "@/lib/meta-server";
 import { configureLocale } from "@/lib/finance";
+import { DATE_PRESETS, type DatePreset } from "@/lib/meta";
+import { campaignReport, resolveTracked } from "@/lib/meta-server";
 
 export const dynamic = "force-dynamic";
 
@@ -12,20 +12,8 @@ export async function GET(req: Request) {
   try {
     const { data, tracked, token } = await resolveTracked(params.get("tracked") ?? "");
     configureLocale(data.settings);
-    const raw = await fetchCampaignInsights(tracked.campaignId, token, preset);
-    const metrics = toMetrics(raw.campaign, tracked.resultAction);
-    const ads = raw.ads.map((a) => ({
-      id: a.ad_id!,
-      name: a.ad_name ?? a.ad_id!,
-      adsetId: a.adset_id,
-      adsetName: a.adset_name,
-      m: toMetrics(a, tracked.resultAction),
-    }));
-    const suggestions = analyze(metrics, ads, raw.adsets, raw.info, {
-      cpl: tracked.targetCpl ?? data.settings.targetCpl,
-      roas: tracked.targetRoas ?? data.settings.targetRoas,
-    }, raw.currency);
-    return NextResponse.json({ campaign: raw.info, currency: raw.currency, metrics, ads, suggestions, fetchedAt: new Date().toISOString() });
+    const report = await campaignReport(tracked, data, token, preset);
+    return NextResponse.json({ ...report, fetchedAt: new Date().toISOString() });
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 502 });
   }

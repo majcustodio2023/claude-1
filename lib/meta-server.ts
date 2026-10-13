@@ -1,7 +1,7 @@
 import "server-only";
 import { describeAction, planAutopilot } from "./autopilot";
 import { configureLocale, uid } from "./finance";
-import { analyze, fetchCampaignInsights, graphGet, graphPost, toMetrics, type SuggestedAction } from "./meta";
+import { actId, analyzeReport, buildReport, fetchCampaignInsights, graphGet, graphPost, minorFactor, type CampaignReport, type DatePreset, type Suggestion, type SuggestedAction } from "./meta";
 import { appendAutopilotLog, getData, getToken } from "./store";
 import type { AdAccount, AutopilotEntry, TrackedCampaign, TrackerData } from "./types";
 
@@ -16,8 +16,23 @@ export async function resolveTracked(trackedId: string): Promise<{ data: Tracker
   return { data, tracked, account, token };
 }
 
+export function targetsFor(tracked: TrackedCampaign, data: TrackerData) {
+  return {
+    cpl: tracked.targetCpl ?? data.settings.targetCpl,
+    roas: tracked.targetRoas ?? data.settings.targetRoas,
+    scaleStep: tracked.scaleStep,
+    killAt: tracked.killAt,
+  };
+}
+
+/** Fetches and analyzes one tracked campaign. */
+export async function campaignReport(tracked: TrackedCampaign, data: TrackerData, token: string, preset: DatePreset): Promise<CampaignReport & { suggestions: Suggestion[] }> {
+  const report = buildReport(await fetchCampaignInsights(tracked.campaignId, token, preset), tracked.resultAction);
+  return { ...report, suggestions: analyzeReport(report, targetsFor(tracked, data)) };
+}
+
 /** Sends one change to Meta, after checking it belongs to the tracked campaign. */
-export async function applyAction(tracked: TrackedCampaign, token: string, action: SuggestedAction): Promise<void> {
+export async function applyAction(tracked: TrackedCampaign, account: AdAccount, token: string, action: SuggestedAction): Promise<void> {
   if (action.level !== "campaign") {
     const obj = await graphGet<{ campaign_id?: string }>(`${action.targetId}?fields=campaign_id`, token);
     if (obj.campaign_id !== tracked.campaignId) throw new Error("That object isn't part of this campaign");
@@ -25,11 +40,13 @@ export async function applyAction(tracked: TrackedCampaign, token: string, actio
     throw new Error("That campaign isn't the tracked one");
   }
 
-  if (action.type === "pause") {
-    await graphPost(action.targetId, { status: "PAUSED" }, token);
+  if (action.type === "pause" || action.type === "resume") {
+    await graphPost(action.targetId, { status: action.type === "pause" ? "PAUSED" : "ACTIVE" }, token);
   } else if (action.type === "budget" && action.newDailyBudget && action.newDailyBudget > 0) {
-    // Meta takes budgets in the currency's smallest unit (e.g. cents).
-    await graphPost(action.targetId, { daily_budget: String(Math.round(action.newDailyBudget * 100)) }, token);
+    // Meta takes budgets in the currency's smallest unit (centavos, cents). Ask Meta for the
+    // account's currency rather than trusting the request.
+    const { currency } = await graphGet<{ currency: string }>(`${actId(account.accountId)}?fields=currency`, token);
+    await graphPost(action.targetId, { daily_budget: String(Math.round(action.newDailyBudget * minorFactor(currency))) }, token);
   } else {
     throw new Error("Unknown action");
   }
@@ -48,20 +65,14 @@ export async function runAutopilot(now = new Date()): Promise<AutopilotEntry[]> 
   for (const tracked of data.trackedCampaigns.filter((t) => t.mode === "autopilot")) {
     const base = { at, trackedId: tracked.id, campaign: tracked.name };
     try {
-      const { token } = await resolveTracked(tracked.id);
-      const raw = await fetchCampaignInsights(tracked.campaignId, token, "last_7d");
-      const metrics = toMetrics(raw.campaign, tracked.resultAction);
-      const ads = raw.ads.map((a) => ({ id: a.ad_id!, name: a.ad_name ?? a.ad_id!, adsetId: a.adset_id, adsetName: a.adset_name, m: toMetrics(a, tracked.resultAction) }));
-      const suggestions = analyze(metrics, ads, raw.adsets, raw.info, {
-        cpl: tracked.targetCpl ?? data.settings.targetCpl,
-        roas: tracked.targetRoas ?? data.settings.targetRoas,
-      }, raw.currency);
+      const { token, account } = await resolveTracked(tracked.id);
+      const { suggestions, ads } = await campaignReport(tracked, data, token, "last_7d");
       const plan = planAutopilot(suggestions, ads, { maxDailyBudget: tracked.maxDailyBudget, log, now: now.getTime() });
 
       for (const action of plan.apply) {
         const entry: AutopilotEntry = { ...base, id: uid("ap"), type: action.type, targetId: action.targetId, action: describeAction(action), status: "done" };
         try {
-          await applyAction(tracked, token, action);
+          await applyAction(tracked, account, token, action);
         } catch (e) {
           entry.status = "error";
           entry.note = (e as Error).message;

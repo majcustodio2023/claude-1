@@ -226,6 +226,10 @@ export interface TrackedCampaign {
   targetRoas?: number;
   /** Autopilot never raises a daily budget above this (in the account currency). Without it, Autopilot only cuts. */
   maxDailyBudget?: number;
+  /** % a budget is raised or cut by in suggestions and Autopilot (default 20). */
+  scaleStep?: number;
+  /** An ad is a pause candidate after spending this many times the target cost per result with no results (default 1.5). */
+  killAt?: number;
   /** Secret for the read-only share page (/share/<token>). Set and cleared by the server only. */
   shareToken?: string;
 }
@@ -252,8 +256,10 @@ export interface AutopilotEntry {
   at: string; // ISO time
   trackedId: string;
   campaign: string;
-  type: "pause" | "budget" | "run";
+  type: "pause" | "resume" | "budget" | "run";
   targetId?: string;
+  /** who made the change: Autopilot (default) or you, from the Manage panel */
+  by?: "autopilot" | "you";
   /** What Autopilot did or wanted to do, in plain words */
   action: string;
   status: "done" | "skipped" | "error";
