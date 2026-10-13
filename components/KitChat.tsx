@@ -19,20 +19,44 @@ const getRecognizer = (): (new () => Recognizer) | null => {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
 };
 
-function speak(text: string, persona: Persona) {
+/** Browser voice, used when no AI voice is set up. Picks the most natural-sounding English voice available. */
+function speakInBrowser(text: string, persona: Persona) {
   if (typeof window === "undefined" || !window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text.replace(/[*_#`]/g, ""));
+  const u = new SpeechSynthesisUtterance(stripActions(text).replace(/[*_#`]/g, ""));
   u.rate = persona.rate;
   u.pitch = persona.pitch;
-  const voice = window.speechSynthesis.getVoices().find((v) => /en[-_](PH|US|GB)/i.test(v.lang) && /female|samantha|zira|google/i.test(v.name));
+  const english = window.speechSynthesis.getVoices().filter((v) => /^en/i.test(v.lang));
+  const voice = english.find((v) => /natural|neural|online|premium|enhanced/i.test(v.name)) ?? english.find((v) => /google|samantha|aria|jenny/i.test(v.name)) ?? english[0];
   if (voice) u.voice = voice;
   window.speechSynthesis.speak(u);
+}
+
+let current: HTMLAudioElement | null = null;
+
+/** Kit's real voice (AI text-to-speech acted in the personality); falls back to the browser voice. */
+async function speak(text: string, persona: Persona, aiVoice: boolean, onError: (msg: string) => void) {
+  current?.pause();
+  window.speechSynthesis?.cancel();
+  if (!aiVoice) return speakInBrowser(text, persona);
+  try {
+    const res = await fetch("/api/kit/voice", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+    if (!res.ok) throw new Error((await res.json().catch(() => null))?.error ?? "Voice failed");
+    const url = URL.createObjectURL(await res.blob());
+    current = new Audio(url);
+    current.onended = () => URL.revokeObjectURL(url);
+    await current.play();
+  } catch (e) {
+    onError(`${(e as Error).message}. Using the browser voice instead.`);
+    speakInBrowser(text, persona);
+  }
 }
 
 export default function KitChat() {
   const { data, update, today } = useTracker();
   const [hasKey, setHasKey] = useState(Boolean(data.integrations?.kit));
+  const [aiVoice, setAiVoice] = useState(Boolean(data.integrations?.voice));
+  const [voiceSetup, setVoiceSetup] = useState(false);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -56,7 +80,10 @@ export default function KitChat() {
   const toggleVoice = () => {
     const next = !voice;
     setVoice(next);
-    if (!next) window.speechSynthesis?.cancel();
+    if (!next) {
+      window.speechSynthesis?.cancel();
+      current?.pause();
+    }
     try {
       localStorage.setItem("kit:voice", next ? "1" : "0");
     } catch {}
@@ -90,7 +117,7 @@ export default function KitChat() {
       const reply: KitMessage = { role: "assistant", text: json.reply || "Done!", at: new Date().toISOString() };
       update((d) => void (d.kitChat = [...(d.kitChat ?? []), reply].slice(-KEEP)));
       if (json.actions?.length) apply(json.actions);
-      if (voice) speak(reply.text, persona);
+      if (voice) speak(reply.text, persona, aiVoice, setError);
     } catch (e) {
       setError((e as Error).message);
     }
@@ -144,6 +171,9 @@ export default function KitChat() {
           <button className={`btn ${voice ? "btn-primary" : "btn-ghost"} px-3`} onClick={toggleVoice} title="Kit reads replies out loud" aria-pressed={voice}>
             {voice ? "🔊 Voice on" : "🔈 Voice off"}
           </button>
+          <button className="text-base text-muted underline" onClick={() => setVoiceSetup(!voiceSetup)}>
+            {aiVoice ? "Voice settings" : "Make the voice real"}
+          </button>
         </div>
       </div>
       {personaId !== CUSTOM_PERSONA && <p className="text-base text-muted -mt-1 mb-3">{persona.emoji} {persona.tagline}</p>}
@@ -153,6 +183,7 @@ export default function KitChat() {
           <CustomPersona value={data.settings.kitPersonaCustom ?? ""} onSave={(v) => update((d) => void (d.settings.kitPersonaCustom = v))} />
         </label>
       )}
+      {voiceSetup && <VoiceSetup hasVoice={aiVoice} onChange={setAiVoice} onTest={() => speak(`${kitName} here. Let's get you paid.`, persona, aiVoice, setError)} />}
       {chat.length > 0 && (
         <div className="max-h-80 overflow-y-auto space-y-2.5 mb-3 pr-1">
           {chat.map((m, i) => (
@@ -161,6 +192,11 @@ export default function KitChat() {
               <div className={`max-w-[85%] whitespace-pre-wrap rounded-[12px] border-[3px] border-outline px-3.5 py-2 text-[1.05rem] leading-snug font-semibold ${m.role === "user" ? "bg-accent text-outline" : "bg-[#fffbea] text-[#15132b]"}`}>
                 {m.role === "assistant" ? stripActions(m.text) : m.text}
               </div>
+              {m.role === "assistant" && (
+                <button className="shrink-0 text-xl" title="Play this reply" aria-label="Play this reply" onClick={() => speak(m.text, persona, aiVoice, setError)}>
+                  🔊
+                </button>
+              )}
             </div>
           ))}
           {busy && <div className="text-lg font-bold text-gold animate-pulse">{kitName} is thinking…</div>}
@@ -183,6 +219,51 @@ export default function KitChat() {
         )}
         <Btn kind="primary" disabled={busy || !text.trim()}>Send</Btn>
       </form>
+    </div>
+  );
+}
+
+function VoiceSetup({ hasVoice, onChange, onTest }: { hasVoice: boolean; onChange: (on: boolean) => void; onTest: () => void }) {
+  const [key, setKey] = useState("");
+  const [msg, setMsg] = useState("");
+  const [busy, setBusy] = useState(false);
+  const save = async (value: string | null) => {
+    setBusy(true);
+    setMsg("");
+    const res = await fetch("/api/kit/voice/key", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: value }) });
+    const json = await res.json();
+    setBusy(false);
+    if (!res.ok) return setMsg(json.error);
+    setKey("");
+    onChange(Boolean(value));
+    setMsg(value ? "Real voice on. Press Test." : "Back to the browser voice.");
+  };
+  return (
+    <div className="mb-3 rounded-[12px] border-[3px] border-outline bg-card-2 p-3 space-y-2">
+      {hasVoice ? (
+        <p className="text-base">Kit speaks with a real AI voice, acted in the personality you pick (Shadow Kit is deep and menacing, Chaos Kit is manic, and so on).</p>
+      ) : (
+        <p className="text-base">
+          The robotic sound is your browser&apos;s built-in voice. For a real voice acted in Kit&apos;s personality, paste an OpenAI API key (platform.openai.com → API keys). It&apos;s encrypted, never shown again, and costs well under a peso per reply.
+        </p>
+      )}
+      <form
+        className="flex flex-wrap gap-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (key.trim()) save(key);
+        }}
+      >
+        {!hasVoice && <input type="password" autoComplete="off" className="flex-1 min-w-48" placeholder="sk-…" value={key} onChange={(e) => setKey(e.target.value)} />}
+        {!hasVoice && <Btn kind="primary" disabled={busy}>{busy ? "Checking…" : "Save key"}</Btn>}
+        <Btn type="button" onClick={onTest}>▶ Test voice</Btn>
+        {hasVoice && (
+          <Btn type="button" disabled={busy} onClick={() => confirm("Remove the voice key and go back to the browser voice?") && save(null)}>
+            Remove key
+          </Btn>
+        )}
+      </form>
+      {msg && <p className="text-base font-bold">{msg}</p>}
     </div>
   );
 }

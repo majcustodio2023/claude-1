@@ -365,7 +365,7 @@ export interface TrackerData {
   /** Ad creatives: AI-generated (Higgsfield) or added by link. Owned by the server. */
   creatives?: Creative[];
   /** Set by the server: which integrations have a saved key (keys never reach the browser). */
-  integrations?: { higgsfield?: boolean; kit?: boolean };
+  integrations?: { higgsfield?: boolean; kit?: boolean; voice?: boolean };
   updatedAt?: string;
 }
 
