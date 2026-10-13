@@ -1,4 +1,4 @@
-import { locale, money } from "./finance";
+import { locale, moneyIn } from "./finance";
 import type { AdRow, SuggestedAction, Suggestion } from "./meta";
 import type { AutopilotEntry } from "./types";
 
@@ -18,7 +18,7 @@ export interface Plan {
 }
 
 export function describeAction(a: SuggestedAction): string {
-  return a.type === "pause" ? `Pause ad "${a.targetName}"` : `Set daily budget of "${a.targetName}" to ${money(a.newDailyBudget ?? 0)}`;
+  return a.type === "pause" ? `Pause ad "${a.targetName}"` : `Set daily budget of "${a.targetName}" to ${moneyIn(a.newDailyBudget ?? 0, a.currency)}`;
 }
 
 export function planAutopilot(
@@ -56,7 +56,7 @@ export function planAutopilot(
     } else if (raising && !opts.maxDailyBudget) {
       plan.skipped.push({ action: budget, reason: "Set a max daily budget to let Autopilot scale up." });
     } else if (raising && budget.newDailyBudget! > opts.maxDailyBudget!) {
-      plan.skipped.push({ action: budget, reason: `Would go above your max daily budget of ${money(opts.maxDailyBudget!)}.` });
+      plan.skipped.push({ action: budget, reason: `Would go above your max daily budget of ${moneyIn(opts.maxDailyBudget!, budget.currency)}.` });
     } else {
       plan.apply.push(budget);
     }

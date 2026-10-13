@@ -1,4 +1,4 @@
-import { locale, money } from "./finance";
+import { locale, moneyIn } from "./finance";
 // Meta Marketing API helpers and the rules that turn ad metrics into suggestions.
 
 export const GRAPH = `https://graph.facebook.com/${process.env.META_API_VERSION ?? "v23.0"}`;
@@ -8,7 +8,7 @@ export type DatePreset = (typeof DATE_PRESETS)[number];
 
 const INSIGHT_FIELDS = [
   "spend", "impressions", "reach", "frequency", "clicks", "inline_link_clicks", "inline_link_click_ctr",
-  "ctr", "cpc", "cpm", "actions", "action_values", "purchase_roas", "video_thruplay_watched_actions",
+  "account_currency", "ctr", "cpc", "cpm", "actions", "action_values", "purchase_roas", "video_thruplay_watched_actions",
   "video_p25_watched_actions", "video_p50_watched_actions", "video_p75_watched_actions", "video_p100_watched_actions",
 ].join(",");
 
@@ -50,6 +50,7 @@ export async function listCampaigns(accountId: string, token: string): Promise<C
 type ActionList = { action_type: string; value: string }[] | undefined;
 
 export interface RawInsight {
+  account_currency?: string;
   ad_id?: string;
   ad_name?: string;
   adset_id?: string;
@@ -88,7 +89,9 @@ export async function fetchCampaignInsights(campaignId: string, token: string, p
     graphGet<{ data: AdSetInfo[] }>(`${campaignId}/adsets?fields=id,name,daily_budget,effective_status&limit=100`, token),
     graphGet<CampaignInfo>(`${campaignId}?fields=id,name,status,effective_status,objective,daily_budget`, token),
   ]);
-  return { campaign: campaign.data[0] ?? {}, ads: ads.data, adsets: adsets.data, info };
+  // Money from Meta is in the ad account's own currency, not the business's.
+  const currency = campaign.data[0]?.account_currency ?? ads.data[0]?.account_currency;
+  return { campaign: campaign.data[0] ?? {}, ads: ads.data, adsets: adsets.data, info, currency };
 }
 
 /** Campaign spend between two dates (inclusive), in the account's currency. */
@@ -169,6 +172,8 @@ export interface SuggestedAction {
   level: "ad" | "adset" | "campaign";
   /** budget actions: new daily budget in major currency units (e.g. pesos) */
   newDailyBudget?: number;
+  /** the ad account's currency code, for showing the budget */
+  currency?: string;
 }
 
 export interface Suggestion {
@@ -186,15 +191,15 @@ export interface AdRow {
   m: Metrics;
 }
 
-const fmt = money;
-
 export function analyze(
   m: Metrics,
   ads: AdRow[],
   adsets: AdSetInfo[],
   campaign: { id: string; name: string; daily_budget?: string },
   targets: { cpl: number; roas: number },
+  currency?: string,
 ): Suggestion[] {
+  const fmt = (n: number) => moneyIn(n, currency);
   const out: Suggestion[] = [];
   const { cpl: targetCpl, roas: targetRoas } = targets;
 
@@ -292,5 +297,6 @@ export function analyze(
     });
   }
 
+  if (currency) for (const s of out) if (s.action) s.action.currency = currency;
   return out;
 }

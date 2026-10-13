@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { locale, uid } from "@/lib/finance";
+import { locale, moneyIn, uid } from "@/lib/finance";
 import type { AdRow, CampaignInfo, DatePreset, Metrics, Suggestion, SuggestedAction } from "@/lib/meta";
 import type { AdAccount, AutopilotEntry, TrackedCampaign } from "@/lib/types";
 import { useTracker } from "../App";
@@ -26,6 +26,7 @@ interface InsightResult {
   ads: AdRow[];
   suggestions: Suggestion[];
   fetchedAt: string;
+  currency?: string;
 }
 
 export default function Ads() {
@@ -37,6 +38,8 @@ export default function Ads() {
   const loaded = Object.values(results);
   const totalSpend = loaded.reduce((a, r) => a + r.metrics.spend, 0);
   const totalResults = loaded.reduce((a, r) => a + r.metrics.results, 0);
+  const currencies = [...new Set(loaded.map((r) => r.currency))];
+  const totalMoney = (n: number) => moneyIn(n, currencies.length === 1 ? currencies[0] : undefined);
 
   return (
     <div className="space-y-4">
@@ -87,9 +90,9 @@ export default function Ads() {
           <>
             {loaded.length > 0 && (
               <div className="grid grid-cols-3 gap-3 mb-4">
-                <Stat label="Spend (loaded campaigns)" value={money(totalSpend)} />
+                <Stat label="Spend (loaded campaigns)" value={totalMoney(totalSpend)} />
                 <Stat label="Results" value={totalResults} />
-                <Stat label="Blended cost per result" value={totalResults ? money(totalSpend / totalResults) : "–"} />
+                <Stat label="Blended cost per result" value={totalResults ? totalMoney(totalSpend / totalResults) : "–"} />
               </div>
             )}
             <div className="space-y-4">
@@ -381,6 +384,8 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
   const [err, setErr] = useState("");
   const [applied, setApplied] = useState<Record<string, string>>({});
   const account = data.adAccounts.find((a) => a.id === tracked.adAccountRef);
+  // Meta reports money in the ad account's currency.
+  const cur = (n: number) => moneyIn(n, result?.currency);
   const set = (patch: Partial<TrackedCampaign>) => update((d) => void Object.assign(d.trackedCampaigns.find((x) => x.id === tracked.id)!, patch));
 
   const load = async () => {
@@ -395,7 +400,7 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
   };
 
   const apply = async (key: string, action: SuggestedAction) => {
-    const what = action.type === "pause" ? `Pause "${action.targetName}"` : `Set daily budget of "${action.targetName}" to ${money(action.newDailyBudget!)}`;
+    const what = action.type === "pause" ? `Pause "${action.targetName}"` : `Set daily budget of "${action.targetName}" to ${cur(action.newDailyBudget!)}`;
     if (!confirm(`${what} in Meta now?`)) return;
     setApplied((x) => ({ ...x, [key]: "Applying…" }));
     const res = await fetch("/api/meta/action", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tracked: tracked.id, action }) });
@@ -449,12 +454,12 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
       {m && result && (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
-            <Stat label="Spend" value={money(m.spend)} />
+            <Stat label="Spend" value={cur(m.spend)} />
             <Stat label="Results" value={m.results} hint={m.resultType} />
-            <Stat label="Cost / result" value={m.cpl != null ? money(m.cpl) : "–"} />
+            <Stat label="Cost / result" value={m.cpl != null ? cur(m.cpl) : "–"} />
             <Stat label="ROAS" value={m.roas != null ? `${m.roas.toFixed(2)}x` : "–"} />
-            <Stat label="Link CTR" value={`${m.ctr.toFixed(2)}%`} hint={`${m.linkClicks} clicks · CPC ${money(m.cpc)}`} />
-            <Stat label="CPM" value={money(m.cpm)} hint={`Freq ${m.frequency.toFixed(1)}`} />
+            <Stat label="Link CTR" value={`${m.ctr.toFixed(2)}%`} hint={`${m.linkClicks} clicks · CPC ${cur(m.cpc)}`} />
+            <Stat label="CPM" value={cur(m.cpm)} hint={`Freq ${m.frequency.toFixed(1)}`} />
             <Stat label="3s video views" value={m.videoViews3s.toLocaleString()} hint={m.hookRate != null ? `Hook ${m.hookRate.toFixed(0)}%` : undefined} />
             <Stat label="ThruPlays" value={m.thruplays.toLocaleString()} hint={m.holdRate != null ? `Hold ${m.holdRate.toFixed(0)}%` : undefined} />
           </div>
@@ -474,7 +479,7 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
                         <span className="text-sm text-muted">{applied[key]}</span>
                       ) : (
                         <Btn onClick={() => apply(key, s.action!)}>
-                          {s.action.type === "pause" ? "Pause ad" : `Budget → ${money(s.action.newDailyBudget!)}/day`}
+                          {s.action.type === "pause" ? "Pause ad" : `Budget → ${cur(s.action.newDailyBudget!)}/day`}
                         </Btn>
                       )
                     ) : (
@@ -504,9 +509,9 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
                     {[...result.ads].sort((a, b) => b.m.spend - a.m.spend).map((a) => (
                       <tr key={a.id}>
                         <td className="py-1 pr-2 max-w-64 truncate">{a.name}</td>
-                        <td className="pr-2 tabular-nums">{money(a.m.spend)}</td>
+                        <td className="pr-2 tabular-nums">{cur(a.m.spend)}</td>
                         <td className="pr-2 tabular-nums">{a.m.results}</td>
-                        <td className="pr-2 tabular-nums">{a.m.cpl != null ? money(a.m.cpl) : "–"}</td>
+                        <td className="pr-2 tabular-nums">{a.m.cpl != null ? cur(a.m.cpl) : "–"}</td>
                         <td className="pr-2 tabular-nums">{a.m.ctr.toFixed(2)}%</td>
                         <td className="pr-2 tabular-nums">{a.m.hookRate != null ? `${a.m.hookRate.toFixed(0)}%` : "–"}</td>
                         <td className="tabular-nums">{a.m.holdRate != null ? `${a.m.holdRate.toFixed(0)}%` : "–"}</td>
