@@ -15,8 +15,12 @@ import Team from "./tabs/Team";
 import Ads from "./tabs/Ads";
 import Creatives from "./tabs/Creatives";
 import SettingsTab from "./tabs/Settings";
-import { Bar, Celebrations, celebrate, money } from "./ui";
-import { Hero } from "./characters";
+import HeroTab from "./tabs/HeroTab";
+import BossFight from "./BossFight";
+import { Bar, Celebrations, Toasts, celebrate, money, toast } from "./ui";
+import { Hero, HeroStyleContext } from "./characters";
+import { claimRewards, pendingRewards } from "@/lib/loot";
+import { RARITY } from "@/lib/items";
 import MonthPicker from "./MonthPicker";
 
 type Updater = (draft: TrackerData) => void;
@@ -39,6 +43,7 @@ export const useTracker = () => {
 
 const TABS = [
   ["today", "HQ", "🏠"],
+  ["hero", "Hero & Shop", "🛒"],
   ["income", "Income", "💰"],
   ["pipeline", "Boss Deals", "⚔️"],
   ["expenses", "Expenses", "🧾"],
@@ -113,6 +118,7 @@ export default function App() {
 
   return (
     <TrackerCtx.Provider value={{ data, update, reload, month, setMonth, today }}>
+     <HeroStyleContext.Provider value={{ look: data.game?.look, items: Object.values(data.game?.equipped ?? {}).filter((x): x is string => Boolean(x)) }}>
       <div className="max-w-6xl mx-auto px-4 pb-20">
         <PlayerCard data={data} month={month} today={today} saving={saving} />
         <div className="flex items-center justify-end gap-3 mb-4">
@@ -147,9 +153,13 @@ export default function App() {
         {tab === "ads" && <Ads />}
         {tab === "creatives" && <Creatives />}
         {tab === "settings" && <SettingsTab />}
+        {tab === "hero" && <HeroTab />}
       </div>
       <Celebrations />
+      <Toasts />
       <AchievementWatcher data={data} month={month} today={today} />
+      <RewardWatcher data={data} today={today} />
+     </HeroStyleContext.Provider>
     </TrackerCtx.Provider>
   );
 }
@@ -195,7 +205,7 @@ function PlayerCard({ data, month, today, saving }: { data: TrackerData; month: 
         <div className="grid grid-cols-3 gap-2.5 w-full lg:w-auto pb-4">
           <HeaderChip label="Streak" value={`${streak} 🔥`} />
           <HeaderChip label="Quests" value={`${q.done}/${q.count}`} />
-          <HeaderChip label="XP" value={`+${q.xp}`} />
+          <HeaderChip label="Coins" value={`${data.game?.coins ?? 0} 🪙`} />
         </div>
       </div>
       <div className="relative flex justify-between gap-3 flex-wrap text-sm font-extrabold uppercase tracking-wide bg-outline/70 border-t-[3px] border-outline px-4 sm:px-6 py-2 text-muted">
@@ -213,6 +223,34 @@ function HeaderChip({ label, value }: { label: string; value: string }) {
       <div className="font-display text-2xl tracking-wide">{value}</div>
     </div>
   );
+}
+
+/** Pays coins and loot for anything newly finished, and starts boss fights for deals just paid off. */
+function RewardWatcher({ data, today }: { data: TrackerData; today: string }) {
+  const { update } = useTracker();
+  const pendingKey = pendingRewards(data).map((p) => p.key).join(",");
+  const boss = data.game?.bossQueue?.find((id) => data.deals.some((d) => d.id === id));
+  useEffect(() => {
+    if (!pendingKey && data.game) return;
+    const draft = structuredClone(data);
+    const first = !draft.game;
+    const events = claimRewards(draft, today);
+    update((d) => void (d.game = draft.game));
+    if (first) toast("+100 🪙 starter coins! Spend them in Hero & Shop");
+    for (const ev of events) {
+      if (ev.item) celebrate({ kicker: ev.chest ? "Loot chest opened" : "Surprise loot drop", title: ev.item.name, sub: `${RARITY[ev.item.rarity].label} item · from "${ev.text}". Equip it in Hero & Shop.`, icon: "🎁", sfx: "LOOT!" });
+      if (ev.coins) toast(`+${ev.coins} 🪙 ${ev.text.length > 34 ? ev.text.slice(0, 32) + "…" : ev.text}`);
+    }
+    // Only when something new is finished.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingKey, Boolean(data.game)]);
+  // The fight stays open until claimed, even though paying out takes it off the queue.
+  const [fighting, setFighting] = useState<string | null>(null);
+  useEffect(() => {
+    if (boss && !fighting) setFighting(boss);
+  }, [boss, fighting]);
+  if (!fighting) return null;
+  return <BossFight key={fighting} dealId={fighting} onClose={() => setFighting(null)} />;
 }
 
 /** Fires a celebration the first time each achievement unlocks on this device. */

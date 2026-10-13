@@ -301,3 +301,18 @@ input[type="date"], input[type="month"] { color-scheme: dark; }
 @keyframes flicker { 0%, 100% { opacity: 0.85; } 50% { opacity: 0.55; } }
 .aura-flicker { animation: flicker 1.4s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .aura-flicker { animation: none; } }
+
+/* Boss fight mini game */
+.boss-hit { animation: boss-hit 260ms ease-out; }
+@keyframes boss-hit {
+  0% { transform: translate(0, 0); filter: brightness(2.2) saturate(0.4); }
+  30% { transform: translate(10px, -4px) rotate(3deg); }
+  60% { transform: translate(-8px, 3px) rotate(-2deg); }
+  100% { transform: translate(0, 0); filter: none; }
+}
+.hero-lunge { animation: hero-lunge 260ms ease-out; }
+@keyframes hero-lunge { 0%, 100% { transform: translateX(0); } 40% { transform: translateX(46px) rotate(4deg); } }
+.dmg-float { animation: dmg-float 800ms ease-out forwards; }
+@keyframes dmg-float { 0% { transform: translate(-50%, 0) scale(0.6); opacity: 0; } 20% { transform: translate(-50%, -10px) scale(1.25); opacity: 1; } 100% { transform: translate(-50%, -70px) scale(1); opacity: 0; } }
+.boss-ko { animation: boss-ko 900ms ease-in forwards; }
+@keyframes boss-ko { 0% { transform: rotate(0) translateY(0); } 30% { transform: rotate(-8deg) translateY(-10px); } 100% { transform: rotate(90deg) translateY(40px); opacity: 0.25; filter: grayscale(1); } }

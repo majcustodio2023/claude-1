@@ -8,7 +8,7 @@ import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate, money } from "..
 import { AccountSelect, accountName } from "../Money";
 
 const LINE_CATS: ExpenseLine["category"][] = ["household", "payroll", "client", "software", "debt", "other"];
-const ADHOC_CATS: AdHocExpense["category"][] = ["ads", "software", "payroll", "household", "other"];
+const ADHOC_CATS: AdHocExpense["category"][] = ["ads", "software", "payroll", "household", "fun", "other"];
 const monthLabel = (m: string, style: "long" | "short" = "long") => new Date(m + "-01T00:00:00").toLocaleDateString(locale(), { month: style, year: "numeric" });
 
 export default function Expenses() {

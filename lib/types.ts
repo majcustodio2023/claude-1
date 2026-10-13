@@ -80,7 +80,7 @@ export interface AdHocExpense {
   date: string;
   label: string;
   amount: number;
-  category: "ads" | "software" | "payroll" | "household" | "other";
+  category: "ads" | "software" | "payroll" | "household" | "fun" | "other";
   /** Cash account it was paid from. Blank = the first account. */
   accountId?: string;
 }
@@ -284,6 +284,45 @@ export interface Settings {
   /** Kit's personality (see lib/personas.ts), and the owner's own description when it's "custom". */
   kitPersona?: string;
   kitPersonaCustom?: string;
+  /** Share of the month's spare money that's safe to spend on fun (percent, default 20). */
+  funPercent?: number;
+}
+
+/** How the hero looks. Every field has a default, so older data needs nothing. */
+export interface HeroLook {
+  skin?: string;
+  hair?: "spiky" | "long" | "mohawk" | "bob";
+  hairColor?: string;
+  eyes?: string;
+  outfit?: string;
+  accent?: string;
+  scarf?: string;
+  /** Show the gear earned from achievements (default on). */
+  achievementGear?: boolean;
+}
+
+export type ItemSlot = "hat" | "face" | "weapon" | "back" | "aura" | "pet";
+
+/** Coins, loot and the hero's wardrobe. */
+export interface GameState {
+  coins: number;
+  /** Reward keys already paid out (e.g. "quest:2026-10-13:id"), so undoing and redoing never pays twice. */
+  claimed: Record<string, string>;
+  owned: string[];
+  equipped: Partial<Record<ItemSlot, string>>;
+  look?: HeroLook;
+  /** Bosses (deals) beaten but not fought yet: the mini game plays for these. */
+  bossQueue?: string[];
+  /** Recent coins and loot, newest first. */
+  log: { at: string; text: string; coins?: number; item?: string }[];
+}
+
+/** One month of fun money: what was safe to spend, and whether it was saved instead. */
+export interface FunMonth {
+  /** Safe amount last worked out for the month (kept so past months stay as they were). */
+  safe: number;
+  /** Chose to save it rather than spend it. */
+  saved?: boolean;
 }
 
 export interface TrackerData {
@@ -311,6 +350,9 @@ export interface TrackerData {
   todos: Record<string, TodoItem[]>; // date -> items
   /** Hero gear earned from achievements: achievement id -> date first unlocked. Gear is kept for good. */
   heroGear?: Record<string, string>;
+  game?: GameState;
+  /** Fun money per month (YYYY-MM). Spending itself is in adHocExpenses with category "fun". */
+  funMonths?: Record<string, FunMonth>;
   /** Kit's briefing as rewritten in chat, for one day. Falls back to the automatic one. */
   briefing?: { date: string; headline: string; points: string[]; inspiration?: string };
   /** Recent chat with Kit (kept short). */

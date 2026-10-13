@@ -21,12 +21,13 @@ export const HELP = {
   quests: (
     <ul>
       <li>Today&apos;s to-do list. Some are suggested from your numbers; add your own too.</li>
-      <li>Each quest done is +XP. Unfinished ones can be carried over to the next day.</li>
+      <li>Each quest done earns coins. 🎁 means a loot chest: finish it for a random item. Unfinished ones can be carried over to the next day.</li>
     </ul>
   ),
   bosses: (
     <ul>
       <li>Your biggest open deals. A boss&apos;s HP is the money still to collect.</li>
+      <li>When a closed deal is fully paid, a boss fight starts: land the final blow for coins and loot.</li>
       <li>Manage them in Boss Deals.</li>
     </ul>
   ),
@@ -140,6 +141,32 @@ export const HELP = {
   ownMedia: (
     <ul>
       <li>Paste a share link to your video or image (Google Drive, Dropbox or a direct link). The app turns it into a direct download link.</li>
+    </ul>
+  ),
+  hero: (
+    <ul>
+      <li>Your hero, your way: pick skin, hair, eye and suit colours (🎨 for any colour).</li>
+      <li>Coins come from finishing quests, missions and client tasks, paying bills in full, and beating bosses. Your coins are shown at the top of the screen.</li>
+      <li>The gear you earn from achievements stays for good. Untick &ldquo;Show achievement gear&rdquo; to hide it.</li>
+    </ul>
+  ),
+  inventory: (
+    <ul>
+      <li>Everything you&apos;ve bought or looted. Tap an item to wear it; one per slot (head, face, weapon, back, aura, pet).</li>
+    </ul>
+  ),
+  shop: (
+    <ul>
+      <li>Six items at a time, with new stock every 3 days. Buying equips the item straight away.</li>
+      <li>Legendary items are loot only: look for 🎁 tasks and get rank S in boss fights.</li>
+    </ul>
+  ),
+  fun: (
+    <ul>
+      <li>The amount you can spend on yourself this month without hurting the business: a share (20% unless you change it) of what&apos;s spare after this month&apos;s bills and spending.</li>
+      <li>It never goes above the cash you hold beyond your safety buffer and unpaid bills, so it&apos;s safe even in a slow month.</li>
+      <li>Bought something? Press &ldquo;I spent on fun&rdquo; and it comes out of the account you pick. Not spending it? Press &ldquo;I&apos;m saving it instead&rdquo;.</li>
+      <li>Past months show what was safe, what you spent, and whether you spent it, saved it or went over.</li>
     </ul>
   ),
   settings: (
