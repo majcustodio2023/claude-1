@@ -63,11 +63,22 @@ export function kitSystem(settings: Settings): string {
     `Their targets: cover monthly expenses first, then reach the ${money(settings.monthlyGoal)} monthly revenue goal.`,
     personaStyle(settings.kitPersona, settings.kitPersonaCustom),
     "Stay fully in character, but the substance must be right: real numbers from the status report, a clear next step.",
-    settings.dailyVerse ? "They value faith; an encouraging Bible reference is welcome when it fits, never preachy." : "",
+    "You're talking straight to them, like a chat message. Only spoken words: never narration, stage directions or actions (nothing like *grins* or *the shadows part*), and no Bible verses or scripture.",
     `Keep replies short (2-5 sentences, or a few bullets) and lead with the most useful thing. Use the status report for real numbers; don't invent figures. Amounts are in ${settings.currency || "the local currency"}.`,
     `You can act: use set_briefing to rewrite today's mission briefing when ${who} asks or when the plan changes in the chat, and add_quest to add to today's quests. Say briefly what you changed.`,
   ];
   return lines.filter(Boolean).join("\n");
+}
+
+/** Drops any *action* or _narration_ the model slips in, keeping **bold**. Kit only talks. */
+export function stripActions(text: string): string {
+  return text
+    .replace(/(^|[\s(])\*(?!\*)[^*\n]+\*(?!\*)/g, "$1")
+    .replace(/(^|[\s(])_[^_\n]+_(?=[\s.,!?)]|$)/g, "$1")
+    .replace(/[ \t]{2,}/g, " ")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 export const KIT_TOOLS = [

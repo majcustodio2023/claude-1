@@ -18,7 +18,7 @@ import SettingsTab from "./tabs/Settings";
 import HeroTab from "./tabs/HeroTab";
 import BossFight from "./BossFight";
 import { Bar, Celebrations, Toasts, celebrate, money, toast } from "./ui";
-import { Hero, HeroStyleContext } from "./characters";
+import { Hero, HeroStyleContext, KitStyleContext } from "./characters";
 import { claimRewards, pendingRewards } from "@/lib/loot";
 import { RARITY } from "@/lib/items";
 import MonthPicker from "./MonthPicker";
@@ -119,6 +119,7 @@ export default function App() {
   return (
     <TrackerCtx.Provider value={{ data, update, reload, month, setMonth, today }}>
      <HeroStyleContext.Provider value={{ look: data.game?.look, items: Object.values(data.game?.equipped ?? {}).filter((x): x is string => Boolean(x)) }}>
+     <KitStyleContext.Provider value={{ persona: data.settings.kitPersona, fur: data.game?.kitLook?.fur, eyes: data.game?.kitLook?.eyes, items: Object.values(data.game?.equipped ?? {}).filter((x): x is string => Boolean(x)) }}>
       <div className="max-w-6xl mx-auto px-4 pb-20">
         <PlayerCard data={data} month={month} today={today} saving={saving} />
         <div className="flex items-center justify-end gap-3 mb-4">
@@ -159,6 +160,7 @@ export default function App() {
       <Toasts />
       <AchievementWatcher data={data} month={month} today={today} />
       <RewardWatcher data={data} today={today} />
+     </KitStyleContext.Provider>
      </HeroStyleContext.Provider>
     </TrackerCtx.Provider>
   );

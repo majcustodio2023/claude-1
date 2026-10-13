@@ -301,7 +301,7 @@ export interface HeroLook {
   achievementGear?: boolean;
 }
 
-export type ItemSlot = "hat" | "face" | "weapon" | "back" | "aura" | "pet";
+export type ItemSlot = "hat" | "face" | "weapon" | "back" | "aura" | "pet" | "kit-head" | "kit-face" | "kit-neck" | "kit-tail";
 
 /** Coins, loot and the hero's wardrobe. */
 export interface GameState {
@@ -311,6 +311,8 @@ export interface GameState {
   owned: string[];
   equipped: Partial<Record<ItemSlot, string>>;
   look?: HeroLook;
+  /** Kit's colours. Blank = the colours of the chosen personality. */
+  kitLook?: { fur?: string; eyes?: string };
   /** Bosses (deals) beaten but not fought yet: the mini game plays for these. */
   bossQueue?: string[];
   /** Recent coins and loot, newest first. */

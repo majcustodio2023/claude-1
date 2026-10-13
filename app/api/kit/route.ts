@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { configureLocale } from "@/lib/finance";
-import { KIT_TOOLS, kitContext, kitSystem, toAction, type KitAction } from "@/lib/kit";
+import { KIT_TOOLS, kitContext, kitSystem, stripActions, toAction, type KitAction } from "@/lib/kit";
 import { getAnthropicKey, getData } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
         }),
       });
     }
-    return NextResponse.json({ reply: reply.trim(), actions });
+    return NextResponse.json({ reply: stripActions(reply), actions });
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 502 });
   }
