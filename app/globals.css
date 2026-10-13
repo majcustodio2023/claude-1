@@ -297,3 +297,7 @@ input[type="date"], input[type="month"] { color-scheme: dark; }
 
 ::-webkit-scrollbar { height: 10px; width: 10px; }
 ::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 6px; }
+
+@keyframes flicker { 0%, 100% { opacity: 0.85; } 50% { opacity: 0.55; } }
+.aura-flicker { animation: flicker 1.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .aura-flicker { animation: none; } }

@@ -184,6 +184,14 @@ export interface Settings {
   /** Bank balance on cashAsOf; cash on hand is worked out from there. */
   cashBalance?: number;
   cashAsOf?: string; // YYYY-MM-DD
+  /** Expense lines already marked paid in cashAsOf's month when the balance was entered (already out of the bank). */
+  cashPaidAtAsOf?: string[];
+  /** Every bank balance check-in, newest last. predicted = what the app expected that day. */
+  cashHistory?: { date: string; balance: number; predicted?: number }[];
+  /** Where the money sits (bank, GCash, Maya…), as of cashAsOf. cashBalance is their total. */
+  cashAccounts?: { id: string; name: string; balance: number }[];
+  /** Months of expenses to keep as a safety buffer (default 3). */
+  cashBufferMonths?: number;
 }
 
 export interface TrackerData {
@@ -200,12 +208,24 @@ export interface TrackerData {
   team: TeamMember[];
   tasks: Task[];
   todos: Record<string, TodoItem[]>; // date -> items
+  /** Hero gear earned from achievements: achievement id -> date first unlocked. Gear is kept for good. */
+  heroGear?: Record<string, string>;
+  /** Kit's briefing as rewritten in chat, for one day. Falls back to the automatic one. */
+  briefing?: { date: string; headline: string; points: string[]; inspiration?: string };
+  /** Recent chat with Kit (kept short). */
+  kitChat?: KitMessage[];
   adAccounts: AdAccount[];
   trackedCampaigns: TrackedCampaign[];
   autopilotLog?: AutopilotEntry[];
   /** Ad creatives: AI-generated (Higgsfield) or added by link. Owned by the server. */
   creatives?: Creative[];
   /** Set by the server: which integrations have a saved key (keys never reach the browser). */
-  integrations?: { higgsfield?: boolean };
+  integrations?: { higgsfield?: boolean; kit?: boolean };
   updatedAt?: string;
+}
+
+export interface KitMessage {
+  role: "user" | "assistant";
+  text: string;
+  at: string;
 }

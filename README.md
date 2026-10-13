@@ -35,3 +35,7 @@ Use a System User token from Meta Business Settings (doesn't expire) with `ads_r
 ## Higgsfield key
 
 Create an API key at cloud.higgsfield.ai and paste it in the Creatives tab as `KEY_ID:KEY_SECRET`. It's encrypted with `APP_SECRET` like the Meta tokens and never returned to the browser. Generations use your Higgsfield credits.
+
+## Kit chat
+
+Kit (the fox on HQ) can chat, using Claude. Paste a Claude API key from console.anthropic.com in the Mission briefing card, or set `ANTHROPIC_API_KEY` in Vercel (`KIT_MODEL` overrides the model). Kit sees a live status report (money, cash, deals, quests, tasks, campaigns) and can rewrite today's briefing or add quests. Replies can be read aloud, and the 🎤 button takes voice input in browsers that support speech recognition (Chrome, Edge, Safari).

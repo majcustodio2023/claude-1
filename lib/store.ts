@@ -10,7 +10,7 @@ import type { AutopilotEntry, Creative, TrackerData } from "./types";
 
 interface StoredDoc {
   data: TrackerData;
-  secrets?: { tokens?: Record<string, string>; higgsfield?: string };
+  secrets?: { tokens?: Record<string, string>; higgsfield?: string; anthropic?: string };
 }
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -74,7 +74,7 @@ function withTokenFlags(doc: StoredDoc): TrackerData {
   return {
     ...doc.data,
     adAccounts: doc.data.adAccounts.map((a) => ({ ...a, hasToken: Boolean(tokens[a.id]) })),
-    integrations: { higgsfield: Boolean(doc.secrets?.higgsfield) },
+    integrations: { higgsfield: Boolean(doc.secrets?.higgsfield), kit: Boolean(process.env.ANTHROPIC_API_KEY || doc.secrets?.anthropic) },
   };
 }
 
@@ -161,4 +161,19 @@ export async function updateCreatives(fn: (list: Creative[]) => Creative[]): Pro
   const creatives = fn([...(doc.data.creatives ?? [])]);
   await writeDoc({ ...doc, data: { ...doc.data, creatives } });
   return creatives;
+}
+
+/** Claude API key for Kit chat: the ANTHROPIC_API_KEY env var, else one saved in the app (encrypted). */
+export async function setAnthropicKey(key: string | null): Promise<void> {
+  const doc = await loadDoc();
+  const secrets = { ...doc.secrets };
+  if (key) secrets.anthropic = encrypt(key.trim());
+  else delete secrets.anthropic;
+  await writeDoc({ ...doc, secrets });
+}
+
+export async function getAnthropicKey(): Promise<string | null> {
+  if (process.env.ANTHROPIC_API_KEY) return process.env.ANTHROPIC_API_KEY;
+  const doc = await loadDoc();
+  return doc.secrets?.anthropic ? decrypt(doc.secrets.anthropic) : null;
 }

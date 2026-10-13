@@ -79,3 +79,19 @@ export function achievements(data: TrackerData, s: MonthSummary, today: string):
     { id: "ad-commander", name: "Ad Commander", desc: "Track a Meta campaign", icon: "📡", unlocked: data.trackedCampaigns.length > 0 },
   ];
 }
+
+/** The gear each achievement adds to the hero, in the order it's drawn. */
+export const GEAR: Record<string, { name: string; desc: string }> = {
+  "on-fire": { name: "Flame aura", desc: "A blazing aura" },
+  "unstoppable": { name: "Storm sparks", desc: "Lightning crackles around you" },
+  "first-blood": { name: "Hero blade", desc: "A sword on your back" },
+  "quest-master": { name: "Quest belt", desc: "Gold-buckled utility belt" },
+  "giant-slayer": { name: "Dragon pauldrons", desc: "Gold dragon-scale shoulder armor" },
+  "full-house": { name: "Core gem", desc: "A diamond in your chest emblem" },
+  "closer": { name: "Golden gauntlets", desc: "Gloves that close deals" },
+  "shields-up": { name: "Hero shield", desc: "A shield on your arm" },
+  "first-strike": { name: "Battle headband", desc: "A red headband" },
+  "strategist": { name: "Tactical visor", desc: "Holo-monocle for planning" },
+  "ad-commander": { name: "Command headset", desc: "Mic to run the ad fleet" },
+  "goal-crusher": { name: "Champion crown", desc: "A golden crown" },
+};

@@ -5,10 +5,12 @@ export type HeroMood = "ready" | "focus" | "hype";
 
 const INK = "#0b0a14";
 
-export function Hero({ mood = "ready", size = 160, className = "" }: { mood?: HeroMood; size?: number; className?: string }) {
+export function Hero({ mood = "ready", size = 160, className = "", gear = [] }: { mood?: HeroMood; size?: number; className?: string; gear?: string[] }) {
   const hype = mood === "hype";
+  const has = (id: string) => gear.includes(id);
   return (
-    <svg viewBox="0 0 200 240" width={size} height={size * 1.2} className={className} role="img" aria-label="Hero mascot">
+    <svg viewBox="-20 -24 240 270" width={size} height={size * 1.125} className={className} role="img" aria-label="Hero mascot">
+      <GearBack has={has} />
       <g stroke={INK} strokeWidth="4" strokeLinejoin="round" strokeLinecap="round">
         {/* scarf tail, waving */}
         <path className="scarf-wave" d="M120,150 C150,140 170,150 192,132 C182,156 170,168 140,166 Z" fill="#ff3b4f" />
@@ -88,6 +90,7 @@ export function Hero({ mood = "ready", size = 160, className = "" }: { mood?: He
           <path d="M90,124 Q100,132 110,124" fill="none" />
         )}
       </g>
+      <GearMid has={has} hype={hype} />
       {/* hair */}
       <g stroke={INK} strokeWidth="4" strokeLinejoin="round">
         <path
@@ -96,7 +99,103 @@ export function Hero({ mood = "ready", size = 160, className = "" }: { mood?: He
         />
         <path d="M84,40 L96,30 L100,44 Z M114,36 L126,30 L120,46 Z" fill="#4fd2ff" stroke="none" />
       </g>
+      <GearTop has={has} />
     </svg>
+  );
+}
+
+// ---------- Gear earned from achievements (see GEAR in lib/game.ts) ----------
+
+type Has = (id: string) => boolean;
+
+function GearBack({ has }: { has: Has }) {
+  return (
+    <>
+      {has("on-fire") && (
+        <g className="aura-flicker" opacity="0.85">
+          <path d="M100,-10 C130,20 170,30 176,90 C186,130 170,170 150,200 L50,200 C30,170 14,130 24,90 C30,30 70,20 100,-10 Z" fill="#ff7a1a" opacity="0.35" />
+          <path d="M100,10 C122,36 154,46 158,96 C164,128 152,160 140,190 L60,190 C48,160 36,128 42,96 C46,46 78,36 100,10 Z" fill="#ffd23f" opacity="0.35" />
+        </g>
+      )}
+      {has("unstoppable") && (
+        <g stroke="#4fd2ff" strokeWidth="5" strokeLinejoin="round" fill="none" className="aura-flicker">
+          <path d="M8,40 L24,62 L12,66 L30,92" />
+          <path d="M192,30 L176,54 L190,58 L170,86" />
+          <path d="M4,150 L22,166 L10,172 L26,194" />
+        </g>
+      )}
+      {has("first-blood") && (
+        <g stroke={INK} strokeWidth="4" strokeLinejoin="round">
+          <path d="M150,48 L178,20 L186,28 L158,56 Z" fill="#dfe6ff" />
+          <path d="M146,46 L160,60" strokeWidth="9" />
+          <path d="M146,46 L160,60" strokeWidth="4" stroke="#ffd23f" />
+          <path d="M152,56 L132,76" strokeWidth="8" />
+        </g>
+      )}
+    </>
+  );
+}
+
+function GearMid({ has, hype }: { has: Has; hype: boolean }) {
+  const hands = hype ? [[58, 199], [151, 98]] : [[62, 201], [138, 201]];
+  return (
+    <g stroke={INK} strokeWidth="3.5" strokeLinejoin="round">
+      {has("quest-master") && (
+        <>
+          <path d="M71,196 L129,196 L128,206 L72,206 Z" fill="#7a4a1f" />
+          <rect x="92" y="192" width="16" height="17" rx="3" fill="#ffd23f" />
+        </>
+      )}
+      {has("full-house") && <path d="M100,168 L110,178 L100,192 L90,178 Z" fill="#7ff3ff" />}
+      {has("giant-slayer") && (
+        <>
+          <path d="M58,150 C62,136 80,132 88,142 L80,162 C70,166 58,162 58,150 Z" fill="#ffd23f" />
+          <path d="M142,150 C138,136 120,132 112,142 L120,162 C130,166 142,162 142,150 Z" fill="#ffd23f" />
+          <path d="M66,146 L74,150 M134,146 L126,150" />
+        </>
+      )}
+      {has("closer") && hands.map(([x, y]) => <circle key={`${x}`} cx={x} cy={y} r="11" fill="#ffd23f" />)}
+      {has("shields-up") && (
+        <g>
+          <path d="M30,170 L60,162 L62,196 C58,212 44,218 36,220 C30,212 26,198 30,170 Z" fill="#4fd2ff" />
+          <path d="M46,176 L52,188 L44,188 L48,204" fill="none" stroke="#fff" strokeWidth="4" />
+        </g>
+      )}
+      {has("first-strike") && (
+        <>
+          <path d="M52,84 C70,74 130,74 148,84 L148,94 C130,86 70,86 52,94 Z" fill="#ff3b4f" />
+          <path d="M148,88 C162,84 172,92 180,86 C176,98 164,100 150,96 Z" fill="#ff3b4f" />
+        </>
+      )}
+      {has("strategist") && (
+        <>
+          <circle cx="118" cy="104" r="17" fill="#4fd2ff" fillOpacity="0.35" stroke="#4fd2ff" strokeWidth="4" />
+          <path d="M135,104 L150,98" stroke="#4fd2ff" strokeWidth="4" />
+        </>
+      )}
+    </g>
+  );
+}
+
+function GearTop({ has }: { has: Has }) {
+  return (
+    <g stroke={INK} strokeWidth="4" strokeLinejoin="round">
+      {has("ad-commander") && (
+        <>
+          <path d="M50,100 C46,56 154,56 150,100" fill="none" strokeWidth="6" />
+          <rect x="40" y="92" width="16" height="24" rx="6" fill="#ff5fae" />
+          <rect x="144" y="92" width="16" height="24" rx="6" fill="#ff5fae" />
+          <path d="M48,116 C50,132 62,136 76,134" fill="none" strokeWidth="4" />
+          <circle cx="78" cy="134" r="5" fill="#ff5fae" />
+        </>
+      )}
+      {has("goal-crusher") && (
+        <g className="pulse-gold">
+          <path d="M70,4 L76,-18 L88,-4 L100,-22 L112,-4 L124,-18 L130,4 Z" fill="#ffd23f" />
+          <circle cx="100" cy="-6" r="4" fill="#ff3b4f" strokeWidth="2.5" />
+        </g>
+      )}
+    </g>
   );
 }
 

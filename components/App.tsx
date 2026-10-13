@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { monthOf, summarize, todayISO } from "@/lib/finance";
-import { achievements, levelFor, logStreak, questStats, rankFor } from "@/lib/game";
+import { GEAR, achievements, levelFor, logStreak, questStats, rankFor } from "@/lib/game";
 import type { TrackerData } from "@/lib/types";
 import Today from "./tabs/Today";
 import Income from "./tabs/Income";
@@ -16,6 +16,7 @@ import Creatives from "./tabs/Creatives";
 import SettingsTab from "./tabs/Settings";
 import { Bar, Celebrations, celebrate, peso } from "./ui";
 import { Hero } from "./characters";
+import MonthPicker from "./MonthPicker";
 
 type Updater = (draft: TrackerData) => void;
 
@@ -112,7 +113,7 @@ export default function App() {
         <PlayerCard data={data} month={month} today={today} saving={saving} />
         <div className="flex items-center justify-end gap-3 mb-4">
           <span className="text-base font-extrabold text-muted">Viewing month</span>
-          <input type="month" value={month} onChange={(e) => e.target.value && setMonth(e.target.value)} aria-label="Month" />
+          <MonthPicker value={month} onChange={setMonth} current={monthOf(today)} />
         </div>
         {!persistent && (
           <div className="mb-5 hud hud-gold text-base p-4">
@@ -164,7 +165,7 @@ function PlayerCard({ data, month, today, saving }: { data: TrackerData; month: 
       <span className="sparkle" style={{ right: "6%", top: "12%", animationDelay: "1.1s" }} />
       <div className="relative flex items-end gap-3 sm:gap-6 flex-wrap px-4 sm:px-6 pt-4">
         <div className="relative shrink-0 -mb-1">
-          <Hero mood={mood} size={168} className="bob drop-shadow-[5px_5px_0_#0b0a14] max-sm:w-[120px] max-sm:h-auto" />
+          <Hero mood={mood} size={196} gear={Object.keys(data.heroGear ?? {})} className="bob drop-shadow-[5px_5px_0_#0b0a14] max-sm:w-[136px] max-sm:h-auto" />
           <div className="absolute top-1 -left-3 rotate-[-10deg]">
             <div className="bg-gold text-outline border-[3px] border-outline rounded-full w-16 h-16 grid place-content-center text-center shadow-[3px_3px_0_#0b0a14]">
               <div className="font-display text-sm leading-none">LVL</div>
@@ -211,8 +212,18 @@ function HeaderChip({ label, value }: { label: string; value: string }) {
 
 /** Fires a celebration the first time each achievement unlocks on this device. */
 function AchievementWatcher({ data, month, today }: { data: TrackerData; month: string; today: string }) {
+  const { update } = useTracker();
   const unlocked = achievements(data, summarize(data, month), today).filter((a) => a.unlocked);
   const key = unlocked.map((a) => a.id).join(",");
+  // Gear is earned the first time an achievement unlocks and kept for good.
+  const newGear = unlocked.filter((a) => GEAR[a.id] && !data.heroGear?.[a.id]).map((a) => a.id).join(",");
+  useEffect(() => {
+    if (!newGear) return;
+    update((d) => {
+      d.heroGear = { ...d.heroGear };
+      for (const id of newGear.split(",")) d.heroGear[id] ??= today;
+    });
+  }, [newGear, today, update]);
   useEffect(() => {
     let seen: string[] | null = null;
     try {
@@ -220,7 +231,7 @@ function AchievementWatcher({ data, month, today }: { data: TrackerData; month: 
     } catch {}
     const ids = key ? key.split(",") : [];
     if (seen) {
-      for (const a of unlocked.filter((x) => !seen!.includes(x.id))) celebrate({ title: a.name, sub: a.desc, icon: a.icon, sfx: "UNLOCKED!" });
+      for (const a of unlocked.filter((x) => !seen!.includes(x.id))) celebrate({ title: a.name, sub: GEAR[a.id] ? `${a.desc} · New gear: ${GEAR[a.id].name}!` : a.desc, icon: a.icon, sfx: "UNLOCKED!" });
     }
     try {
       localStorage.setItem("tracker:achievements", JSON.stringify(Array.from(new Set([...(seen ?? []), ...ids]))));

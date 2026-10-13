@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { dailyAdvice, generateTodos } from "../lib/advice";
-import { cashPosition, expectedForStream, summarize } from "../lib/finance";
+import { cashForecast, cashHealth, cashPosition, expectedForStream, recordBalance, summarize } from "../lib/finance";
 import { seedData } from "../lib/seed";
 
 test("Local Ecom Hero pays 15% or the ₱25k floor, whichever is higher", () => {
@@ -61,4 +61,30 @@ test("cash on hand starts from the bank balance and follows money in and out", (
   // Month-end: + LEH ₱25k floor + ads client ₱18k incoming, − unpaid salary, client costs, GHL.
   assert.equal(c2.monthEnd, c2.now + 25000 + 18000 - (27000 + 22000 + 26000));
   assert.equal(cashPosition({ ...d, settings: { ...d.settings, cashBalance: undefined } }, "2026-10-13").set, false);
+});
+
+test("a mid-month balance update doesn't subtract bills already paid", () => {
+  const d = seedData();
+  d.expensePaid["2026-10"] = { household: true };
+  Object.assign(d.settings, recordBalance(d, 120000, "2026-10-20"));
+  assert.equal(d.settings.cashHistory?.at(-1)?.balance, 120000);
+  assert.ok(d.settings.cashHistory?.at(-1)?.predicted != null);
+  assert.equal(cashPosition(d, "2026-10-20").now, 120000);
+  // Paying the next bill after the update does count.
+  d.expensePaid["2026-10"].salary = true;
+  assert.equal(cashPosition(d, "2026-10-21").now, 120000 - 27000);
+});
+
+test("forecast rolls month-end cash forward with recurring income and bills", () => {
+  const d = seedData();
+  const f = cashForecast(d, "2026-10-13", 3);
+  assert.equal(f.length, 3);
+  assert.equal(f[0].end, cashPosition(d, "2026-10-13").monthEnd);
+  assert.equal(f[1].month, "2026-11");
+  assert.equal(f[1].start, f[0].end);
+  assert.equal(f[1].bills, 160500);
+  assert.equal(f[1].end, f[1].start + f[1].income - 160500);
+  const h = cashHealth(d, "2026-10-13");
+  assert.equal(h.bufferTarget, 140500 * 3);
+  assert.equal(h.daysSinceUpdate, 2);
 });
