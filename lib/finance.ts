@@ -1,4 +1,4 @@
-import type { CashAccount, Deal, ExpenseLine, IncomeStream, StreamMonth, TrackerData } from "./types";
+import type { BillPayment, CashAccount, Deal, ExpenseLine, IncomeStream, StreamMonth, TrackerData } from "./types";
 
 export const monthOf = (date: string) => date.slice(0, 7);
 
@@ -64,6 +64,16 @@ export function expenseAppliesTo(e: ExpenseLine, month: string): boolean {
   return true;
 }
 
+/** Payments toward a bill in a month (older "ticked as paid" data counts as paid in full). */
+export function billPaid(data: TrackerData, month: string, e: ExpenseLine): number {
+  const pays = data.billPayments?.[month]?.[e.id];
+  if (pays?.length) return pays.reduce((a, p) => a + p.amount, 0);
+  return data.expensePaid[month]?.[e.id] ? e.amount : 0;
+}
+
+/** What's still owed on a bill this month. */
+export const billLeft = (data: TrackerData, month: string, e: ExpenseLine) => Math.max(e.amount - billPaid(data, month, e), 0);
+
 export const dealPaid = (d: Deal) => d.payments.reduce((a, p) => a + p.amount, 0);
 export const dealBalance = (d: Deal) => Math.max(d.value - dealPaid(d), 0);
 
@@ -90,6 +100,8 @@ export interface MonthSummary {
   adSpend: number;
   totalSpent: number;
   expensesPaid: number;
+  /** Still owed on this month's bills */
+  billsLeft: number;
   goal: number;
   pctExpenses: number;
   pctGoal: number;
@@ -137,8 +149,9 @@ export function summarize(data: TrackerData, month: string): MonthSummary {
   const lines = data.expenses.filter((e) => expenseAppliesTo(e, month));
   const fixedExpenses = lines.reduce((a, e) => a + e.amount, 0);
   const expenseTarget = data.settings.expenseTargetOverride || fixedExpenses;
-  const paidMap = data.expensePaid[month] ?? {};
-  const expensesPaid = lines.filter((e) => paidMap[e.id]).reduce((a, e) => a + e.amount, 0);
+  // Paid counts every payment made toward this month's bills, including bills that no longer apply.
+  const expensesPaid = data.expenses.reduce((a, e) => a + billPaid(data, month, e), 0);
+  const billsLeft = lines.reduce((a, e) => a + billLeft(data, month, e), 0);
 
   const adHoc = data.adHocExpenses.filter((e) => monthOf(e.date) === month);
   const adHocExpenses = adHoc.reduce((a, e) => a + e.amount, 0);
@@ -163,6 +176,7 @@ export function summarize(data: TrackerData, month: string): MonthSummary {
     adSpend,
     totalSpent: expensesPaid + adHocExpenses + extraAdSpend,
     expensesPaid,
+    billsLeft,
     goal,
     pctExpenses: expenseTarget ? moneyMade / expenseTarget : 0,
     pctGoal: goal ? moneyMade / goal : 0,
@@ -245,9 +259,15 @@ export function cashFlows(data: TrackerData): CashFlow[] {
     if (!logAdSpend(data, m)) continue;
     for (const l of Object.values(data.logs)) if (l.adSpend && monthOf(l.date) === m) flows.push({ key: `log:${l.date}`, date: l.date, amount: -l.adSpend, label: "Ad spend (daily check-in)", kind: "ads" });
   }
+  for (const [m, byBill] of Object.entries(data.billPayments ?? {})) {
+    for (const [id, pays] of Object.entries(byBill)) {
+      const name = data.expenses.find((e) => e.id === id)?.name ?? "Bill";
+      for (const p of pays) flows.push({ key: `billpay:${p.id}`, date: p.date, amount: -p.amount, accountId: p.accountId, label: name, kind: "bill" });
+    }
+  }
   for (const [m, paid] of Object.entries(data.expensePaid)) {
     for (const e of data.expenses) {
-      if (!paid[e.id] || !expenseAppliesTo(e, m)) continue;
+      if (!paid[e.id] || !expenseAppliesTo(e, m) || data.billPayments?.[m]?.[e.id]?.length) continue;
       const rec = data.expensePaidFrom?.[m]?.[e.id];
       // Bills ticked before payment dates were saved: count them on the check-in day of their month, else the 1st.
       const date = rec?.date ?? (asOf && monthOf(asOf) === m ? asOf : `${m}-01`);
@@ -325,8 +345,7 @@ export function cashPosition(data: TrackerData, today: string): CashPosition {
 
   const thisMonth = monthOf(today);
   const s = summarize(data, thisMonth);
-  const paidNow = data.expensePaid[thisMonth] ?? {};
-  const unpaidThisMonth = sum(data.expenses.filter((e) => expenseAppliesTo(e, thisMonth) && !paidNow[e.id]).map((e) => e.amount));
+  const unpaidThisMonth = s.billsLeft;
   return {
     set: true,
     asOf,
@@ -422,4 +441,57 @@ export function foldOneTimeIntoDeals(data: TrackerData): TrackerData {
     createdAt: o.date,
   }));
   return { ...data, deals: [...data.deals, ...deals], oneTime: [] };
+}
+
+/**
+ * Turns older "ticked as paid" bills into payments with a date, so every bill
+ * works the same way. The balance check-in keeps treating them the same.
+ */
+export function upgradeBillPayments(data: TrackerData): TrackerData {
+  const ticked = Object.entries(data.expensePaid ?? {}).filter(([, m]) => Object.values(m).some(Boolean));
+  if (!ticked.length) return data;
+  const asOf = data.settings.cashAsOf;
+  const billPayments: Record<string, Record<string, BillPayment[]>> = structuredClone(data.billPayments ?? {});
+  const settled = new Set(data.settings.cashSettled ?? []);
+  const before = new Set(data.settings.cashPaidAtAsOf ?? []);
+  for (const [m, paid] of ticked) {
+    for (const [id, isPaid] of Object.entries(paid)) {
+      const e = data.expenses.find((x) => x.id === id);
+      if (!isPaid || !e || billPayments[m]?.[id]?.length) continue;
+      const rec = data.expensePaidFrom?.[m]?.[id];
+      const date = rec?.date ?? (asOf && monthOf(asOf) === m ? asOf : `${m}-01`);
+      const pid = `legacy-${m}-${id}`;
+      (billPayments[m] ??= {})[id] = [{ id: pid, date, at: `${date}T00:00:00.000Z`, amount: e.amount, ...(rec?.accountId && { accountId: rec.accountId }) }];
+      if (settled.has(`bill:${m}:${id}`) || (asOf && monthOf(asOf) === m && before.has(id))) settled.add(`billpay:${pid}`);
+    }
+  }
+  return {
+    ...data,
+    billPayments,
+    expensePaid: {},
+    expensePaidFrom: {},
+    settings: { ...data.settings, cashSettled: [...settled].filter((k) => !k.startsWith("bill:")), cashPaidAtAsOf: [] },
+  };
+}
+
+export interface HistoryMonth {
+  month: string;
+  collected: number;
+  billsBudget: number;
+  billsPaid: number;
+  otherSpending: number;
+  /** Collected minus everything paid out */
+  net: number;
+}
+
+/** Month-by-month money in and out, oldest first, ending with `last`. */
+export function moneyHistory(data: TrackerData, last: string, months = 6): HistoryMonth[] {
+  const out: HistoryMonth[] = [];
+  for (let i = months - 1; i >= 0; i--) {
+    const month = addMonths(last, -i);
+    const s = summarize(data, month);
+    const otherSpending = s.totalSpent - s.expensesPaid;
+    out.push({ month, collected: s.moneyMade, billsBudget: s.fixedExpenses, billsPaid: s.expensesPaid, otherSpending, net: s.moneyMade - s.totalSpent });
+  }
+  return out;
 }

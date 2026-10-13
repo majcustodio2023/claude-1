@@ -4,7 +4,7 @@ import type { TrackerData } from "../lib/types";
 export function sampleData(): TrackerData {
   const created = "2026-10-12";
   return {
-    version: 4,
+    version: 5,
     settings: { playerName: "Alex", monthlyGoal: 250000, targetCpl: 500, targetRoas: 2, currency: "PHP", locale: "en-PH", timeZone: "Asia/Manila", dailyVerse: true, cashBalance: 165000, cashAsOf: "2026-10-11" },
     streams: [
       {

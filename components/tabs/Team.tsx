@@ -4,6 +4,7 @@ import { uid } from "@/lib/finance";
 import type { TeamMember } from "@/lib/types";
 import { useTracker } from "../App";
 import { Btn, Card, NumInput, TextInput, money } from "../ui";
+import { HELP } from "../help";
 
 export default function Team() {
   const { data, update } = useTracker();
@@ -13,6 +14,7 @@ export default function Team() {
   return (
     <Card
       icon="⬢"
+      help={HELP.team}
       title={`Squad · ${money(total)} per month`}
       actions={<Btn kind="soft" onClick={() => update((d) => void d.team.push({ id: uid("tm"), name: "New member", role: "", monthlyCost: 0, active: true }))}>Add member</Btn>}
     >

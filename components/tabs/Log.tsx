@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { DailyLog } from "@/lib/types";
 import { useTracker } from "../App";
 import { Card, NumInput, money } from "../ui";
+import { HELP } from "../help";
 
 const NUM_FIELDS: [keyof DailyLog, string][] = [
   ["leads", "Leads"],
@@ -23,7 +24,7 @@ export default function Log() {
 
   return (
     <div className="space-y-4">
-      <Card icon="✦" glow="hero" title="Daily check-in" actions={<input type="date" value={date} onChange={(e) => e.target.value && setDate(e.target.value)} />}>
+      <Card icon="✦" glow="hero" title="Daily check-in" help={HELP.checkin} actions={<input type="date" value={date} onChange={(e) => e.target.value && setDate(e.target.value)} />}>
         <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-3">
           {NUM_FIELDS.map(([k, label]) => (
             <label key={k} className="text-sm text-muted flex flex-col gap-1">

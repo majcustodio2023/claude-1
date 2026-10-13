@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { Creative } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Btn, Card } from "../ui";
+import { HELP } from "../help";
 
 // Starter quick prompts; each business edits its own list (saved in Settings).
 export const DEFAULT_PROMPTS: [string, string][] = [
@@ -62,7 +63,7 @@ export default function Creatives() {
         <Generate hasKey={hasKey} setHasKey={setHasKey} run={run} images={list.filter((c) => c.kind === "image" && c.status === "ready")} />
         <AddLink run={run} />
       </div>
-      <Card icon="🎨" title="Creative vault" glow="hero">
+      <Card icon="🎨" title="Creative vault" glow="hero" help={HELP.creatives}>
         {list.length === 0 ? (
           <p className="text-lg text-muted">Nothing here yet. Generate an image, animate it, or add your own video by link.</p>
         ) : (
@@ -105,7 +106,7 @@ function Generate({ hasKey, setHasKey, run, images }: { hasKey: boolean; setHasK
   };
 
   return (
-    <Card icon="⚡" title="Generate with Higgsfield">
+    <Card icon="⚡" title="Generate with Higgsfield" help={HELP.generate}>
       {!hasKey ? (
         <div className="space-y-3">
           <p className="text-lg">
@@ -172,7 +173,7 @@ function AddLink({ run }: { run: (url: string, body: unknown) => Promise<boolean
   const [url, setUrl] = useState("");
   const [kind, setKind] = useState<"auto" | "image" | "video">("auto");
   return (
-    <Card icon="🎬" title="Add your own video or image">
+    <Card icon="🎬" title="Add your own video or image" help={HELP.ownMedia}>
       <p className="text-lg mb-3">
         Paste a public link to the file: Google Drive (shared as &quot;Anyone with the link&quot;), Dropbox, or a direct .mp4 / .jpg link. Meta downloads it straight from there.
       </p>

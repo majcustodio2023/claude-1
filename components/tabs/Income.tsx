@@ -6,6 +6,7 @@ import type { IncomeStream, StreamKind, StreamMonth } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Btn, Card, NumInput, TextInput, celebrate, money } from "../ui";
 import { AccountSelect, CollectForm, accountName, settle } from "../Money";
+import { HELP } from "../help";
 
 const KIND_LABEL: Record<StreamKind, string> = {
   fixed: "Fixed monthly fee",
@@ -47,6 +48,7 @@ export default function Income() {
       <Card
         icon="◆"
         title={`Recurring income · ${month}`}
+        help={HELP.income}
         actions={<Btn onClick={() => setEditing(!editing)}>{editing ? "Done editing" : "Edit streams"}</Btn>}
       >
         <div className="space-y-3">

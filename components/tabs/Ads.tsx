@@ -6,6 +6,7 @@ import type { AdRow, CampaignInfo, DatePreset, Metrics, Suggestion, SuggestedAct
 import type { AdAccount, AutopilotEntry, TrackedCampaign } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Btn, Card, NumInput, Stat, TextInput, money } from "../ui";
+import { HELP } from "../help";
 
 const PRESETS: [DatePreset, string][] = [
   ["today", "Today"],
@@ -38,7 +39,7 @@ export default function Ads() {
 
   return (
     <div className="space-y-4">
-      <Card icon="◉" title="Ad accounts">
+      <Card icon="◉" title="Ad accounts" help={HELP.adAccounts}>
         <p className="text-sm text-muted mb-3">
           Add each Meta ad account (yours and your team members&apos;). Each needs an access token with <code>ads_read</code> (and <code>ads_management</code> if you want the app to make changes).
           Tokens are encrypted on the server and never shown again.
@@ -69,6 +70,7 @@ export default function Ads() {
         icon="📡"
         glow="hero"
         title="Tracked campaigns"
+        help={HELP.campaigns}
         actions={
           <div className="flex items-center gap-2 flex-wrap">
             {data.trackedCampaigns.length > 0 && <SyncSpend />}
@@ -201,6 +203,7 @@ function AutopilotCard() {
     <Card
       icon="🤖"
       title="Autopilot"
+      help={HELP.autopilot}
       actions={on.length > 0 && <Btn kind="primary" onClick={runNow} disabled={busy}>{busy ? "Running…" : "Run now"}</Btn>}
     >
       <p className="text-sm text-muted mb-3">

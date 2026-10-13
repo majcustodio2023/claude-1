@@ -5,6 +5,7 @@ import { uid } from "@/lib/finance";
 import type { Quadrant, Task } from "@/lib/types";
 import { useTracker } from "../App";
 import { Btn, Card } from "../ui";
+import { HELP } from "../help";
 
 const QUADS: [Quadrant, string, string][] = [
   ["do", "Do first", "Urgent + important. Handle personally or supervise now."],
@@ -25,6 +26,7 @@ export default function Tasks() {
   return (
     <div className="space-y-4">
       <Card
+        help={HELP.tasks}
         icon="◎"
         glow="hero"
         title={`Mission plan · ${done} of ${data.tasks.length} done (${data.tasks.length ? Math.round((done / data.tasks.length) * 100) : 0}%)`}
