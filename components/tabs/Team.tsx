@@ -1,6 +1,6 @@
 "use client";
 
-import { uid } from "@/lib/finance";
+import { expenseAppliesTo, monthOf, uid } from "@/lib/finance";
 import { isOverdue, openTasksFor } from "@/lib/clients";
 import type { TeamMember } from "@/lib/types";
 import { useTracker } from "../App";
@@ -23,6 +23,7 @@ export default function Team() {
       <div className="space-y-4">
         {data.team.map((m) => {
           const clientWork = openTasksFor(data, m.id, today);
+          const pay = data.expenses.filter((e) => e.memberId === m.id && expenseAppliesTo(e, monthOf(today)));
           const open = data.tasks.filter((t) => !t.done && t.owner.toLowerCase().includes(m.name.split(/[ /]/)[0].toLowerCase()));
           return (
             <div key={m.id} className="border border-line bg-card-2/50 rounded-[3px] p-3 space-y-2">
@@ -38,6 +39,12 @@ export default function Team() {
                 </div>
               </div>
               <TextInput className="w-full text-sm" value={m.notes} onChange={(v) => set(m.id, { notes: v })} placeholder="Notes" />
+              {pay.length > 0 && (
+                <div className="text-base">
+                  <span className="font-bold">Client pay this month {money(pay.reduce((a, e) => a + e.amount, 0))}</span>
+                  <span className="text-muted">: {pay.map((e) => `${clientName(e.clientId ?? "") || e.name} ${money(e.amount)}`).join(" · ")}</span>
+                </div>
+              )}
               {clientWork.length > 0 && (
                 <div className="text-base">
                   <span className="font-bold">{clientWork.length} open client task{clientWork.length > 1 ? "s" : ""}</span>

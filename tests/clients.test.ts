@@ -44,3 +44,23 @@ test("Kit sees open client tasks and who has them", () => {
   assert.match(ctx, /Acme: Launch ads \(Alex \+ Sam, OVERDUE\)/);
   assert.doesNotMatch(ctx, /Old work/);
 });
+
+test("client money: retainer per month and project overall, minus team pay", async () => {
+  const { clientMoney } = await import("../lib/clients");
+  const d = withClients();
+  d.clients!.push({ id: "r", name: "Retainer A", kind: "recurring", streamId: "opsified", createdAt: "2026-10-01" });
+  d.clients!.push({ id: "p", name: "Funnel build", kind: "project", dealId: "interior", createdAt: "2026-10-01" });
+  d.expenses.push({ id: "pay1", name: "Sam · Retainer A", amount: 15000, category: "payroll", active: true, clientId: "r", memberId: "va", startMonth: "2026-10" });
+  d.expenses.push({ id: "pay2", name: "Sam · Funnel", amount: 40000, category: "payroll", active: true, clientId: "p", memberId: "va", startMonth: "2026-11", endMonth: "2026-11" });
+  const r = clientMoney(d, d.clients!.find((c) => c.id === "r")!, "2026-10");
+  assert.equal(r.income, 50000);
+  assert.equal(r.teamCost, 15000);
+  assert.equal(r.profit, 35000);
+  // Before the retainer pay started, there's no team cost.
+  assert.equal(clientMoney(d, d.clients!.find((c) => c.id === "r")!, "2026-09").teamCost, 0);
+  const p = clientMoney(d, d.clients!.find((c) => c.id === "p")!, "2026-10");
+  assert.equal(p.income, 230000);
+  assert.equal(p.teamCost, 40000);
+  assert.equal(p.toCollect, 230000);
+  assert.equal(p.profit, 190000);
+});

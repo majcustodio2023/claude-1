@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { ME, clientStats, isOverdue, nextStatus, openTasksFor, people, personName } from "@/lib/clients";
-import { uid } from "@/lib/finance";
+import { ME, clientKind, clientMoney, clientStats, isOverdue, nextStatus, openTasksFor, people, personName, teamPay } from "@/lib/clients";
+import { addMonths, billPaid, expenseAppliesTo, locale, money, monthOf, parseAmount, uid } from "@/lib/finance";
 import type { Client, ClientTask } from "@/lib/types";
 import { useTracker } from "../App";
-import { Badge, Bar, Btn, Card, TextInput, celebrate } from "../ui";
+import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate } from "../ui";
 import { HELP } from "../help";
 
 const STATUS: Record<ClientTask["status"], { label: string; cls: string }> = {
@@ -169,16 +169,39 @@ function ClientCard({ client: c, who }: { client: Client; who: string }) {
             <TextInput className="flex-1" value={c.name} onChange={(v) => set({ name: v })} />
           </label>
           <label className="flex items-center gap-2">
-            <span className="text-muted w-20">Paid via</span>
-            <select value={c.streamId ?? ""} onChange={(e) => set({ streamId: e.target.value || undefined })}>
-              <option value="">Not linked to income</option>
-              {data.streams.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
+            <span className="text-muted w-20">Pays by</span>
+            <select value={clientKind(c) ?? ""} onChange={(e) => set({ kind: (e.target.value || undefined) as Client["kind"] })}>
+              <option value="">Not set</option>
+              <option value="recurring">Monthly retainer</option>
+              <option value="project">One-time project</option>
             </select>
           </label>
+          {clientKind(c) === "recurring" && (
+            <label className="flex items-center gap-2">
+              <span className="text-muted w-20">Income</span>
+              <select value={c.streamId ?? ""} onChange={(e) => set({ streamId: e.target.value || undefined })}>
+                <option value="">Not linked yet</option>
+                {data.streams.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+          {clientKind(c) === "project" && (
+            <label className="flex items-center gap-2">
+              <span className="text-muted w-20">Deal</span>
+              <select value={c.dealId ?? ""} onChange={(e) => set({ dealId: e.target.value || undefined })}>
+                <option value="">Not linked yet</option>
+                {data.deals.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <label className="flex items-center gap-2">
             <span className="text-muted w-20">Notes</span>
             <TextInput className="flex-1" value={c.notes} onChange={(v) => set({ notes: v })} placeholder="Contacts, links, scope…" />
@@ -206,6 +229,8 @@ function ClientCard({ client: c, who }: { client: Client; who: string }) {
           {c.notes}
         </p>
       )}
+      <ClientMoneyPanel client={c} />
+
       {total > 0 && (
         <div className="mb-3">
           <div className="flex justify-between text-base font-bold mb-1">
@@ -361,5 +386,207 @@ function TaskRow({ task: t }: { task: ClientTask }) {
         )}
       </div>
     </li>
+  );
+}
+
+const monthName = (m: string) => new Date(m + "-01T00:00:00").toLocaleDateString(locale(), { month: "short", year: "numeric" });
+
+/** How the client pays, what the team is paid for them, and what's left. */
+function ClientMoneyPanel({ client: c }: { client: Client }) {
+  const { data, update, month, today } = useTracker();
+  const kind = clientKind(c);
+  const m = clientMoney(data, c, month);
+  const stream = data.streams.find((s) => s.id === c.streamId);
+  const deal = data.deals.find((d) => d.id === c.dealId);
+  const setClient = (patch: Partial<Client>) => update((d) => void Object.assign(d.clients!.find((x) => x.id === c.id)!, patch));
+
+  const choose = (k: "recurring" | "project") => setClient({ kind: k });
+  // Typing the fee or price creates the income stream or deal if there isn't one yet, so it shows in Income / Boss Deals.
+  const setFee = (v?: number) =>
+    update((d) => {
+      const cl = d.clients!.find((x) => x.id === c.id)!;
+      const st = d.streams.find((x) => x.id === cl.streamId);
+      if (st) st.amount = v ?? 0;
+      else if (v) {
+        const id = uid("stream");
+        d.streams.push({ id, name: cl.name, kind: "fixed", amount: v, active: true });
+        cl.streamId = id;
+      }
+    });
+  const setPrice = (v?: number) =>
+    update((d) => {
+      const cl = d.clients!.find((x) => x.id === c.id)!;
+      const dl = d.deals.find((x) => x.id === cl.dealId);
+      if (dl) dl.value = v ?? 0;
+      else if (v) {
+        const id = uid("deal");
+        d.deals.push({ id, name: cl.name, value: v, stage: "won", payments: [], createdAt: today });
+        cl.dealId = id;
+      }
+    });
+
+  if (!kind) {
+    return (
+      <div className="mb-4 flex flex-wrap items-center gap-2 text-base">
+        <span className="font-bold">How does this client pay?</span>
+        <Btn kind="soft" onClick={() => choose("recurring")}>💰 Monthly retainer</Btn>
+        <Btn kind="soft" onClick={() => choose("project")}>🐉 One-time project</Btn>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-4 bg-card-2 border-[3px] border-outline rounded-[10px] p-3 space-y-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <Badge tone={kind === "recurring" ? "accent" : "hero"}>{kind === "recurring" ? "Monthly retainer" : "One-time project"}</Badge>
+        {kind === "recurring" ? (
+          stream && stream.kind !== "fixed" ? (
+            <span className="text-base">
+              Due {monthName(month)}: <b>{money(m.income)}</b> <span className="text-muted">(set in Income)</span>
+            </span>
+          ) : (
+            <label className="flex items-center gap-2 text-base font-bold">
+              Monthly fee
+              <NumInput className="w-32" value={stream?.amount} onChange={setFee} placeholder="0" />
+            </label>
+          )
+        ) : (
+          <>
+            <label className="flex items-center gap-2 text-base font-bold">
+              Project price
+              <NumInput className="w-32" value={deal?.value} onChange={setPrice} placeholder="0" />
+            </label>
+            {deal && (
+              <select
+                value={deal.stage === "won" ? "won" : deal.stage === "lost" ? "lost" : "lead"}
+                onChange={(e) => update((d) => void (d.deals.find((x) => x.id === deal.id)!.stage = e.target.value as typeof deal.stage))}
+                aria-label="Project status"
+              >
+                <option value="lead">Not closed yet</option>
+                <option value="won">Closed</option>
+                <option value="lost">Lost</option>
+              </select>
+            )}
+          </>
+        )}
+        <span className="text-base ml-auto">
+          {kind === "recurring" ? (
+            m.collected ? <span className="text-good font-bold">Collected {money(m.collected)} ✓</span> : stream ? <span className="text-muted">Not collected for {monthName(month)} yet (Income tab)</span> : null
+          ) : deal ? (
+            <span>
+              <span className="text-good font-bold">{money(m.collected)} collected</span>
+              {m.toCollect > 0 && <span className="text-muted"> · {money(m.toCollect)} to collect (Boss Deals)</span>}
+            </span>
+          ) : null}
+        </span>
+      </div>
+
+      <TeamPay client={c} kind={kind} />
+
+      {(m.income > 0 || m.teamCost > 0) && (
+        <div className="flex flex-wrap justify-between gap-2 text-lg font-bold border-t-2 border-line pt-2">
+          <span>
+            {kind === "recurring" ? "Per month" : "Whole project"}: {money(m.income)} − {money(m.teamCost)} team
+          </span>
+          <span className={m.profit >= 0 ? "text-good" : "text-bad"}>
+            = {m.profit >= 0 ? "" : "−"}
+            {money(Math.abs(m.profit))} {m.profit >= 0 ? "profit" : "loss"}
+            {m.income > 0 && ` (${Math.round((m.profit / m.income) * 100)}%)`}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Pay to team members for this client. Each one is a bill in Expenses, so paying it comes out of an account. */
+function TeamPay({ client: c, kind }: { client: Client; kind: "recurring" | "project" }) {
+  const { data, update, month, today } = useTracker();
+  const members = data.team.filter((t) => t.active);
+  const [memberId, setMemberId] = useState(members[0]?.id ?? "");
+  const [text, setText] = useState("");
+  const amount = parseAmount(text) || 0;
+  const [payMonth, setPayMonth] = useState(month);
+  const lines = teamPay(data, c.id).filter((e) => (kind === "recurring" ? expenseAppliesTo(e, month) || (e.startMonth ?? "") > month : e.active));
+  const memberName = (id?: string) => data.team.find((t) => t.id === id)?.name ?? "Team member";
+
+  const add = () => {
+    if (!memberId || amount <= 0) return;
+    const name = `${memberName(memberId)} · ${c.name}`;
+    update((d) =>
+      void d.expenses.push({
+        id: uid("exp"),
+        name,
+        amount,
+        category: "payroll",
+        active: true,
+        clientId: c.id,
+        memberId,
+        // A retainer's team pay repeats from this month on; a project's is paid once, in the month picked.
+        ...(kind === "recurring" ? { startMonth: month } : { startMonth: payMonth, endMonth: payMonth }),
+      }),
+    );
+    setText("");
+  };
+  // Pay that's already been paid is ended instead of deleted, so history stays.
+  const stop = (id: string) =>
+    update((d) => {
+      const e = d.expenses.find((x) => x.id === id)!;
+      const paidBefore = Object.keys(d.billPayments ?? {}).some((m) => d.billPayments![m][id]?.length);
+      if (!paidBefore) d.expenses = d.expenses.filter((x) => x.id !== id);
+      else if (kind === "recurring") e.endMonth = addMonths(month, -1) < (e.startMonth ?? "") ? e.startMonth : addMonths(month, -1);
+      else e.active = false;
+    });
+
+  return (
+    <div className="space-y-2">
+      <div className="text-base font-bold">Team pay for this client</div>
+      {lines.length === 0 && <p className="text-base text-muted">Nobody yet. Add what you pay a team member for this {kind === "recurring" ? "client each month" : "project"}.</p>}
+      {lines.map((e) => {
+        const payM = kind === "recurring" ? month : e.startMonth ?? month;
+        const paid = billPaid(data, payM, e);
+        return (
+          <div key={e.id} className="flex flex-wrap items-center gap-2 text-base">
+            <span className="font-bold">{memberName(e.memberId)}</span>
+            <NumInput className="w-28" value={e.amount} onChange={(v) => update((d) => void (d.expenses.find((x) => x.id === e.id)!.amount = v ?? 0))} />
+            <span className="text-muted">{kind === "recurring" ? "/ month" : `once, ${monthName(payM)}`}</span>
+            {paid >= e.amount && e.amount > 0 ? <Badge tone="good">Paid ✓</Badge> : paid > 0 ? <Badge tone="gold">{money(paid)} paid</Badge> : <Badge tone="warn">Not paid{kind === "recurring" ? " this month" : ""}</Badge>}
+            <button className="text-muted ml-auto px-2" title={kind === "recurring" ? "Stop this monthly pay" : "Remove"} onClick={() => confirm(`Stop paying ${memberName(e.memberId)} for ${c.name}?`) && stop(e.id)}>
+              ✕
+            </button>
+          </div>
+        );
+      })}
+      {members.length === 0 ? (
+        <p className="text-base text-muted">Add your team members in the Squad tab first.</p>
+      ) : (
+        <form
+          className="flex flex-wrap items-center gap-2"
+          onSubmit={(ev) => {
+            ev.preventDefault();
+            add();
+          }}
+        >
+          <select value={memberId} onChange={(e) => setMemberId(e.target.value)} aria-label="Team member">
+            {members.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </select>
+          <input inputMode="decimal" className="w-32 tabular-nums" value={text} onChange={(e) => setText(e.target.value)} placeholder={kind === "recurring" ? "Per month" : "Amount"} aria-label="Amount" />
+          {kind === "project" && (
+            <select value={payMonth} onChange={(e) => setPayMonth(e.target.value)} aria-label="Month you pay it">
+              {Array.from({ length: 9 }, (_, i) => addMonths(monthOf(today), i - 2)).map((mm) => (
+                <option key={mm} value={mm}>
+                  Pay in {monthName(mm)}
+                </option>
+              ))}
+            </select>
+          )}
+          <Btn kind="soft">+ Add pay</Btn>
+        </form>
+      )}
+    </div>
   );
 }
