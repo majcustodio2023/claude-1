@@ -74,6 +74,8 @@ export const HELP = {
       <li>Type a task, pick who&apos;s doing it (tap several names if they&apos;re working on it together), and add a due date if there is one.</li>
       <li>Tap a task&apos;s status to move it along: To do → Doing → Done. Tap ✎ to change who, the due date, or add details.</li>
       <li>&ldquo;Show tasks for&rdquo; filters everything to one person and lists their open tasks across all clients.</li>
+      <li>Money: say whether the client pays a monthly retainer or a one-time project, and type the fee or price. It appears in Income or Boss Deals, where you mark it collected.</li>
+      <li>Team pay: add what you pay a team member for this client (monthly for a retainer, once for a project). It becomes a bill in Expenses, and the card shows your profit after team pay.</li>
       <li>Squad members come from the Squad tab. A client that ended can be archived from its ⚙.</li>
     </ul>
   ),

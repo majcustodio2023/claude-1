@@ -70,6 +70,9 @@ export interface ExpenseLine {
   startMonth?: string;
   endMonth?: string;
   active: boolean;
+  /** Pay to a team member for work on a client */
+  clientId?: string;
+  memberId?: string;
 }
 
 export interface AdHocExpense {
@@ -137,8 +140,12 @@ export interface TeamMember {
 export interface Client {
   id: string;
   name: string;
+  /** How they pay: a monthly retainer (an income stream) or a one-time project (a deal). */
+  kind?: "recurring" | "project";
   /** Income stream this client pays through, if any */
   streamId?: string;
+  /** Deal for a one-time project */
+  dealId?: string;
   notes?: string;
   archived?: boolean;
   createdAt: string;
