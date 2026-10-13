@@ -3,6 +3,7 @@
 import type { Settings } from "@/lib/types";
 import { useTracker } from "../App";
 import { Btn, Card, NumInput, TextInput } from "../ui";
+import { HELP } from "../help";
 
 export const CURRENCIES = ["USD", "PHP", "EUR", "GBP", "AUD", "CAD", "SGD", "NZD", "INR", "AED", "MYR", "IDR", "THB", "VND", "JPY", "HKD", "ZAR", "MXN", "BRL"];
 const LOCALES: [string, string][] = [["", "Device default"], ["en-US", "English (US)"], ["en-GB", "English (UK)"], ["en-PH", "English (Philippines)"], ["en-AU", "English (Australia)"], ["en-CA", "English (Canada)"], ["en-IN", "English (India)"], ["en-SG", "English (Singapore)"], ["es-ES", "Español"], ["fr-FR", "Français"], ["de-DE", "Deutsch"], ["pt-BR", "Português (Brasil)"]];
@@ -21,7 +22,7 @@ export default function SettingsTab() {
 
   return (
     <div className="space-y-4">
-      <Card icon="🦸" title="Profile & business">
+      <Card icon="🦸" title="Profile & business" help={HELP.settings}>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <label className="text-sm text-muted flex flex-col gap-1">
             Your name (hero name)

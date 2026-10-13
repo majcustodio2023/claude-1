@@ -10,6 +10,7 @@ import { Kit } from "../characters";
 import WarChest from "../WarChest";
 import { CURRENCIES } from "./Settings";
 import KitChat from "../KitChat";
+import { HELP } from "../help";
 
 export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log" | "ads") => void }) {
   const { data, update, month, today } = useTracker();
@@ -91,7 +92,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
         <Stat label="Month total if all lands" value={money(s.projected)} hint="Collected + everything still owed" />
         <Stat label="Bosses in the field" value={money(s.openPipeline)} hint="Not closed yet" tone="hero" />
         <Stat label="Ad spend" value={money(s.adSpend)} />
-        <Stat label="Monthly upkeep" value={money(s.fixedExpenses)} hint={`${money(s.expensesPaid)} marked paid`} />
+        <Stat label="Monthly bills" value={money(s.fixedExpenses)} hint={`${money(s.expensesPaid)} paid · ${money(s.billsLeft)} left`} />
         <Stat label="Extra spending" value={money(s.adHocExpenses)} tone={s.adHocExpenses ? "bad" : undefined} />
       </div>
 
@@ -101,6 +102,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
         <div className="lg:col-span-3 space-y-4">
           <Card
             title="Mission briefing"
+            help={HELP.briefing}
             icon="📣"
             actions={
               custom && (
@@ -140,6 +142,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
 
         <Card
           title={`Daily quests ${questDone}/${todos?.length ?? 0}`}
+          help={HELP.quests}
           icon="📜"
           glow="hero"
           className="lg:col-span-2"
@@ -185,7 +188,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
       </div>
 
       <div className="grid lg:grid-cols-2 gap-4">
-        <Card title="Bosses to defeat" icon="⚔" glow="hero" actions={<Btn onClick={() => goTo("pipeline")}>All deals</Btn>}>
+        <Card help={HELP.bosses} title="Bosses to defeat" icon="⚔" glow="hero" actions={<Btn onClick={() => goTo("pipeline")}>All deals</Btn>}>
           {bosses.length === 0 ? (
             <p className="text-lg text-muted">No open deals. Time to hunt for new ones.</p>
           ) : (
@@ -206,7 +209,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
           )}
         </Card>
 
-        <Card title={`Achievements · ${unlockedCount}/${badges.length}`} icon="🏆" glow="gold">
+        <Card help={HELP.achievements} title={`Achievements · ${unlockedCount}/${badges.length}`} icon="🏆" glow="gold">
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
             {badges.map((b) => (
               <div
@@ -223,7 +226,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
         </Card>
       </div>
 
-      <Card title="This week's stats" icon="✦" actions={<Btn kind="primary" onClick={() => goTo("log")}>Check in today</Btn>}>
+      <Card help={HELP.week} title="This week's stats" icon="✦" actions={<Btn kind="primary" onClick={() => goTo("log")}>Check in today</Btn>}>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           <Stat label="Leads" value={wk.leads} tone="cyan" />
           <Stat label="Booked calls" value={wk.bookedCalls} hint={wk.leads ? `${Math.round((wk.bookedCalls / wk.leads) * 100)}% of leads` : undefined} />

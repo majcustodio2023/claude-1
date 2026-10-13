@@ -2,7 +2,7 @@ import "server-only";
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { foldOneTimeIntoDeals } from "./finance";
+import { foldOneTimeIntoDeals, upgradeBillPayments } from "./finance";
 import { seedData } from "./seed";
 import type { AutopilotEntry, Creative, TrackerData } from "./types";
 
@@ -55,6 +55,7 @@ async function writeDoc(doc: StoredDoc): Promise<void> {
 // v3 folded one-time income into deals, so one-offs show as collected or still to collect.
 // v4 made the app generic: settings now hold the name, currency, locale and verse toggle.
 // Installs from before v4 used pesos, Manila time and showed the daily verse, so they keep that.
+// v5 turned bills ticked as paid into dated payments (bills can now be paid in parts).
 function migrate(doc: StoredDoc): StoredDoc {
   let data = doc.data;
   if ((data.version ?? 1) < 3) data = { ...foldOneTimeIntoDeals(data), version: 3 };
@@ -66,6 +67,7 @@ function migrate(doc: StoredDoc): StoredDoc {
       settings: { ...s, currency: s.currency || "PHP", locale: s.locale ?? "en-PH", timeZone: s.timeZone ?? "Asia/Manila", dailyVerse: s.dailyVerse ?? true },
     };
   }
+  if (data.version < 5) data = { ...upgradeBillPayments(data), version: 5 };
   return data === doc.data ? doc : { ...doc, data };
 }
 

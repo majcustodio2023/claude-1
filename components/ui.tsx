@@ -8,22 +8,55 @@ type Glow = "cyan" | "hero" | "gold" | "good";
 const GLOW_CLASS: Record<Glow, string> = { cyan: "", hero: "hud-hero", gold: "hud-gold", good: "hud-good" };
 const CAPTION_CLASS: Record<Glow, string> = { cyan: "caption-cyan", hero: "caption-hero", gold: "", good: "caption-good" };
 
-export function Card({ title, icon, actions, children, className = "", glow = "cyan" }: { title?: ReactNode; icon?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string; glow?: Glow }) {
+export function Card({ title, icon, actions, children, className = "", glow = "cyan", help }: { title?: ReactNode; icon?: ReactNode; actions?: ReactNode; children: ReactNode; className?: string; glow?: Glow; help?: ReactNode }) {
+  const [showHelp, setShowHelp] = useState(false);
   return (
     <section className={`hud ${GLOW_CLASS[glow]} p-4 sm:p-5 ${className}`}>
-      {(title || actions) && (
+      {(title || actions || help) && (
         <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
-          {title && (
-            <h2 className={`caption ${CAPTION_CLASS[glow]}`}>
-              {icon && <span aria-hidden>{icon}</span>}
-              {title}
-            </h2>
-          )}
+          <div className="flex items-center gap-2">
+            {title && (
+              <h2 className={`caption ${CAPTION_CLASS[glow]}`}>
+                {icon && <span aria-hidden>{icon}</span>}
+                {title}
+              </h2>
+            )}
+            {help && <HelpButton open={showHelp} onClick={() => setShowHelp((v) => !v)} />}
+          </div>
           {actions && <div className="flex gap-2 flex-wrap items-center">{actions}</div>}
         </div>
       )}
+      {help && showHelp && <HelpPanel onClose={() => setShowHelp(false)}>{help}</HelpPanel>}
       {children}
     </section>
+  );
+}
+
+function HelpButton({ open, onClick }: { open: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-expanded={open}
+      aria-label={open ? "Hide help" : "How this works"}
+      title="How this works"
+      className={`shrink-0 w-9 h-9 rounded-full border-[3px] border-outline font-display text-xl leading-none shadow-[2px_2px_0_#0b0a14] ${open ? "bg-gold text-outline" : "bg-card-2 text-gold hover:bg-gold hover:text-outline"}`}
+    >
+      ?
+    </button>
+  );
+}
+
+/** "How this works" box opened by a section's ? button. Pass a list of short steps or tips. */
+function HelpPanel({ children, onClose }: { children: ReactNode; onClose: () => void }) {
+  return (
+    <div className="mb-4 p-4 relative bg-[#fff8ec] text-[#2a2748] border-[3px] border-outline rounded-[18px] shadow-[4px_4px_0_#0b0a14]" role="note">
+      <button type="button" className="absolute top-2 right-3 text-xl font-bold text-[#6a3fb5]" onClick={onClose} aria-label="Close help">
+        ✕
+      </button>
+      <div className="font-display text-xl tracking-wide text-[#15132b] mb-2">How this works</div>
+      <div className="text-[1.02rem] leading-snug font-bold space-y-1.5 [&_li]:flex [&_li]:gap-2 [&_li]:before:content-['★'] [&_li]:before:text-[#e0306f] pr-6">{children}</div>
+    </div>
   );
 }
 

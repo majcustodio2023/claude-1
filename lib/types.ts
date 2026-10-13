@@ -82,6 +82,17 @@ export interface AdHocExpense {
   accountId?: string;
 }
 
+/** One payment toward a monthly bill. Bills can be paid in parts. */
+export interface BillPayment {
+  id: string;
+  /** Day it was paid (YYYY-MM-DD) */
+  date: string;
+  /** When it was recorded in the app (ISO time) */
+  at: string;
+  amount: number;
+  accountId?: string;
+}
+
 /** Money moved between two of your own accounts (e.g. payment gateway to bank). */
 export interface Transfer {
   id: string;
@@ -245,8 +256,11 @@ export interface TrackerData {
   deals: Deal[];
   oneTime: OneTimeIncome[];
   expenses: ExpenseLine[];
-  expensePaid: Record<string, Record<string, boolean>>; // month -> expenseId -> paid
-  /** When and from which account each monthly bill was paid: month -> expenseId -> details */
+  /** Older data: month -> expenseId -> ticked as paid in full. New payments go in billPayments. */
+  expensePaid: Record<string, Record<string, boolean>>;
+  /** Payments toward each monthly bill: month -> expenseId -> payments. Replaces expensePaid. */
+  billPayments?: Record<string, Record<string, BillPayment[]>>;
+  /** Older data: when and from which account a bill ticked as paid was paid. */
   expensePaidFrom?: Record<string, Record<string, { date: string; accountId?: string }>>;
   /** Moves between your own accounts */
   transfers?: Transfer[];

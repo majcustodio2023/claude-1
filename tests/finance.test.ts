@@ -162,3 +162,39 @@ test("an archived stream still counts in months it paid", () => {
   assert.equal(summarize(d, "2026-10").recurringCollected, before);
   assert.ok(!summarize(d, "2026-11").streams.some((r) => r.stream.id === "opsified"));
 });
+
+test("bills can be paid in parts; each payment comes out of its account on its day", () => {
+  const d = seedData();
+  const household = d.expenses.find((e) => e.id === "household")!;
+  d.billPayments = { "2026-10": { household: [{ id: "b1", date: "2026-10-12", at: "2026-10-12T03:00:00Z", amount: 30000 }] } };
+  const s = summarize(d, "2026-10");
+  assert.equal(s.expensesPaid, 30000);
+  assert.equal(s.billsLeft, s.fixedExpenses - 30000);
+  const c = cashPosition(d, "2026-10-13");
+  assert.equal(c.unpaidThisMonth, s.fixedExpenses - 30000);
+  assert.equal(c.now, 165000 + 38766 - 22000 - 30000);
+  assert.ok(household.amount > 30000);
+});
+
+test("older ticked-as-paid bills become dated payments with the same cash result", async () => {
+  const { upgradeBillPayments } = await import("../lib/finance");
+  const d = seedData();
+  d.expensePaid["2026-10"] = { household: true };
+  Object.assign(d.settings, recordBalance(d, [{ id: "main", name: "Bank", balance: 120000 }], "2026-10-20"));
+  d.expensePaid["2026-10"].salary = true;
+  const before = cashPosition(d, "2026-10-21").now;
+  const up = upgradeBillPayments(d);
+  assert.deepEqual(up.expensePaid, {});
+  assert.equal(up.billPayments!["2026-10"].household[0].amount, 65500);
+  assert.equal(cashPosition(up, "2026-10-21").now, before);
+  assert.equal(summarize(up, "2026-10").expensesPaid, 65500 + 27000);
+});
+
+test("history lists money in and out per month", async () => {
+  const { moneyHistory } = await import("../lib/finance");
+  const d = seedData();
+  const h = moneyHistory(d, "2026-10", 3);
+  assert.deepEqual(h.map((x) => x.month), ["2026-08", "2026-09", "2026-10"]);
+  const oct = h[2];
+  assert.equal(oct.net, oct.collected - oct.billsPaid - oct.otherSpending);
+});

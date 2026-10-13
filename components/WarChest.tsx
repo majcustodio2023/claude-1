@@ -6,6 +6,7 @@ import type { TrackerData } from "@/lib/types";
 import { AccountSelect } from "./Money";
 import { useTracker } from "./App";
 import { Badge, Bar, Btn, Card, Stat } from "./ui";
+import { HELP } from "./help";
 
 const monthName = (m: string) => new Date(m + "-01T00:00:00").toLocaleDateString(locale(), { month: "short", year: "numeric" });
 
@@ -22,6 +23,7 @@ export default function WarChest() {
   return (
     <Card
       title="War chest"
+      help={HELP.warChest}
       icon="💰"
       glow="gold"
       actions={
@@ -275,7 +277,8 @@ function moveTo(d: TrackerData, key: string, accountId: string, date: string) {
   if (kind === "stream") d.streamMonths[a][b].accountId = accountId;
   if (kind === "pay") for (const deal of d.deals) for (const p of deal.payments) if (p.id === a) p.accountId = accountId;
   if (kind === "spend") d.adHocExpenses.find((e) => e.id === a)!.accountId = accountId;
-  if (kind === "spend" || kind === "bill") d.settings.lastPayAccountId = accountId;
+  if (kind === "spend" || kind === "bill" || kind === "billpay") d.settings.lastPayAccountId = accountId;
+  if (kind === "billpay") for (const byBill of Object.values(d.billPayments ?? {})) for (const pays of Object.values(byBill)) for (const p of pays) if (p.id === a) p.accountId = accountId;
   if (kind === "bill") {
     const from = ((d.expensePaidFrom ??= {})[a] ??= {});
     from[b] = { date: from[b]?.date ?? date, accountId };
@@ -286,7 +289,7 @@ function Moves({ moves, asOf }: { moves: (CashFlow & { account: string })[]; asO
   const { update } = useTracker();
   const [all, setAll] = useState(false);
   const shown = all ? moves : moves.slice(0, 8);
-  const movable = (key: string) => /^(stream|pay|spend|bill):/.test(key);
+  const movable = (key: string) => /^(stream|pay|spend|bill|billpay):/.test(key);
   return (
     <div>
       <div className="font-display text-xl tracking-wide mb-2">Money moves since {asOf}</div>

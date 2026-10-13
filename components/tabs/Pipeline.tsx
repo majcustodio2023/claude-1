@@ -6,6 +6,7 @@ import type { Deal, DealStage } from "@/lib/types";
 import { useTracker } from "../App";
 import { Bar, Btn, Card, NumInput, TextInput, celebrate, money } from "../ui";
 import { AccountSelect, CollectForm, accountName, settle, type Collection } from "../Money";
+import { HELP } from "../help";
 
 const STAGES: [DealStage, string][] = [
   ["lead", "Lead"],
@@ -25,7 +26,7 @@ export default function Pipeline() {
 
   return (
     <div className="space-y-4">
-      <Card title="Spawn a new boss (deal or receivable)" icon="⚔" glow="hero">
+      <Card help={HELP.newDeal} title="Spawn a new boss (deal or receivable)" icon="⚔" glow="hero">
         <form
           className="flex flex-wrap gap-2"
           onSubmit={(e) => {
@@ -65,7 +66,7 @@ export default function Pipeline() {
 function Section({ title, deals }: { title: string; deals: Deal[] }) {
   if (!deals.length) return null;
   return (
-    <Card title={title} icon="◆">
+    <Card title={title} icon="◆" help={HELP.deals}>
       <div className="grid md:grid-cols-2 gap-3">
         {deals.map((d) => (
           <DealCard key={d.id} deal={d} />

@@ -5,7 +5,7 @@ import type { TrackerData } from "./types";
 
 export function seedData(): TrackerData {
   return {
-    version: 4,
+    version: 5,
     settings: { monthlyGoal: 10000, targetCpl: 20, targetRoas: 2, currency: "USD", cashBufferMonths: 3 },
     streams: [],
     streamMonths: {},
@@ -13,6 +13,7 @@ export function seedData(): TrackerData {
     oneTime: [],
     expenses: [],
     expensePaid: {},
+    billPayments: {},
     adHocExpenses: [],
     logs: {},
     team: [],
