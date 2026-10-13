@@ -82,10 +82,9 @@ export interface AdSetInfo {
 }
 
 export async function fetchCampaignInsights(campaignId: string, token: string, preset: DatePreset) {
-  const q = `fields=${INSIGHT_FIELDS}&date_preset=${preset}`;
   const [campaign, ads, adsets, info] = await Promise.all([
-    graphGet<{ data: RawInsight[] }>(`${campaignId}/insights?${q}`, token),
-    graphGet<{ data: RawInsight[] }>(`${campaignId}/insights?${q},ad_id,ad_name,adset_id,adset_name&level=ad&limit=200`, token),
+    graphGet<{ data: RawInsight[] }>(`${campaignId}/insights?fields=${INSIGHT_FIELDS}&date_preset=${preset}`, token),
+    graphGet<{ data: RawInsight[] }>(`${campaignId}/insights?fields=${INSIGHT_FIELDS},ad_id,ad_name,adset_id,adset_name&date_preset=${preset}&level=ad&limit=200`, token),
     graphGet<{ data: AdSetInfo[] }>(`${campaignId}/adsets?fields=id,name,daily_budget,effective_status&limit=100`, token),
     graphGet<CampaignInfo>(`${campaignId}?fields=id,name,status,effective_status,objective,daily_budget`, token),
   ]);
