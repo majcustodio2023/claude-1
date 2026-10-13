@@ -281,6 +281,9 @@ export interface Settings {
   lastPayAccountId?: string;
   /** Months of expenses to keep as a safety buffer (default 3). */
   cashBufferMonths?: number;
+  /** Kit's personality (see lib/personas.ts), and the owner's own description when it's "custom". */
+  kitPersona?: string;
+  kitPersonaCustom?: string;
 }
 
 export interface TrackerData {

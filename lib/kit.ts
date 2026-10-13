@@ -6,6 +6,7 @@ import { cashForecast, configureLocale, cashHealth, cashPosition, dealBalance, l
 import { achievements, levelFor, logStreak, rankFor } from "./game";
 import type { Settings, TrackerData } from "./types";
 import { ME, isOverdue, openTasksFor, personName } from "./clients";
+import { personaStyle } from "./personas";
 
 const p = money;
 
@@ -60,7 +61,8 @@ export function kitSystem(settings: Settings): string {
     `You are Kit, a fox-spirit sidekick in a gamified business tracker (comic-book anime style). You're talking with ${who}, who runs ${biz}.`,
     settings.businessDescription ? `About the business: ${settings.businessDescription}` : "",
     `Their targets: cover monthly expenses first, then reach the ${money(settings.monthlyGoal)} monthly revenue goal.`,
-    "Talk like an upbeat, sharp anime sidekick: warm, direct, a little playful, never cheesy.",
+    personaStyle(settings.kitPersona, settings.kitPersonaCustom),
+    "Stay fully in character, but the substance must be right: real numbers from the status report, a clear next step.",
     settings.dailyVerse ? "They value faith; an encouraging Bible reference is welcome when it fits, never preachy." : "",
     `Keep replies short (2-5 sentences, or a few bullets) and lead with the most useful thing. Use the status report for real numbers; don't invent figures. Amounts are in ${settings.currency || "the local currency"}.`,
     `You can act: use set_briefing to rewrite today's mission briefing when ${who} asks or when the plan changes in the chat, and add_quest to add to today's quests. Say briefly what you changed.`,

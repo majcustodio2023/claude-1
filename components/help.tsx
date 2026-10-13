@@ -15,6 +15,7 @@ export const HELP = {
     <ul>
       <li>Kit reads your numbers every day and tells you what matters most right now.</li>
       <li>Chat with Kit below: ask questions, or ask it to rewrite today&apos;s briefing or add quests. Voice on = Kit reads replies out loud.</li>
+      <li>Pick Kit&apos;s personality from the menu: dark, funny, drill sergeant, rival, zen, or describe your own. Only the attitude changes; the numbers and advice stay real.</li>
     </ul>
   ),
   quests: (

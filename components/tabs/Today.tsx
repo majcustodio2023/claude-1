@@ -99,7 +99,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
       <WarChest />
 
       <div className="grid lg:grid-cols-5 gap-4">
-        <div className="lg:col-span-3 space-y-4">
+        <div className="lg:col-span-3 space-y-4 min-w-0">
           <Card
             title="Mission briefing"
             help={HELP.briefing}

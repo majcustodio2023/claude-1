@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { uid } from "@/lib/finance";
 import type { KitAction } from "@/lib/kit";
+import { CUSTOM_PERSONA, PERSONAS, personaFor, type Persona } from "@/lib/personas";
 import type { KitMessage } from "@/lib/types";
 import { useTracker } from "./App";
 import { Btn } from "./ui";
@@ -17,12 +18,12 @@ const getRecognizer = (): (new () => Recognizer) | null => {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
 };
 
-function speak(text: string) {
+function speak(text: string, persona: Persona) {
   if (typeof window === "undefined" || !window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text.replace(/[*_#`]/g, ""));
-  u.rate = 1.05;
-  u.pitch = 1.25;
+  u.rate = persona.rate;
+  u.pitch = persona.pitch;
   const voice = window.speechSynthesis.getVoices().find((v) => /en[-_](PH|US|GB)/i.test(v.lang) && /female|samantha|zira|google/i.test(v.name));
   if (voice) u.voice = voice;
   window.speechSynthesis.speak(u);
@@ -40,6 +41,9 @@ export default function KitChat() {
   const endRef = useRef<HTMLDivElement>(null);
   const chat = data.kitChat ?? [];
   const canListen = Boolean(getRecognizer());
+  const personaId = data.settings.kitPersona ?? "kit";
+  const persona = personaFor(personaId);
+  const kitName = personaId === CUSTOM_PERSONA ? "Kit" : persona.name;
 
   useEffect(() => {
     try {
@@ -85,7 +89,7 @@ export default function KitChat() {
       const reply: KitMessage = { role: "assistant", text: json.reply || "Done!", at: new Date().toISOString() };
       update((d) => void (d.kitChat = [...(d.kitChat ?? []), reply].slice(-KEEP)));
       if (json.actions?.length) apply(json.actions);
-      if (voice) speak(reply.text);
+      if (voice) speak(reply.text, persona);
     } catch (e) {
       setError((e as Error).message);
     }
@@ -111,9 +115,26 @@ export default function KitChat() {
 
   return (
     <div className="mt-5 border-t-[3px] border-outline pt-4">
-      <div className="flex items-center justify-between gap-2 mb-3">
-        <span className="font-display text-xl tracking-wide">Talk to Kit</span>
-        <div className="flex gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <span className="font-display text-xl tracking-wide">Talk to {kitName}</span>
+        <div className="flex gap-2 flex-wrap justify-end items-center">
+          <select
+            className="text-base max-w-full"
+            aria-label="Kit's personality"
+            title="Kit's personality"
+            value={personaId}
+            onChange={(e) => {
+              const id = e.target.value;
+              update((d) => void (d.settings.kitPersona = id));
+            }}
+          >
+            {PERSONAS.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.emoji} {p.name}
+              </option>
+            ))}
+            <option value={CUSTOM_PERSONA}>✍️ Your own</option>
+          </select>
           {chat.length > 0 && (
             <button className="text-base text-muted underline" onClick={() => confirm("Clear the chat with Kit?") && update((d) => void (d.kitChat = []))}>
               Clear
@@ -124,6 +145,13 @@ export default function KitChat() {
           </button>
         </div>
       </div>
+      {personaId !== CUSTOM_PERSONA && <p className="text-base text-muted -mt-1 mb-3">{persona.emoji} {persona.tagline}</p>}
+      {personaId === CUSTOM_PERSONA && (
+        <label className="block text-base text-muted mb-3">
+          Describe Kit&apos;s personality (e.g. &ldquo;a sarcastic pirate who calls money doubloons&rdquo;)
+          <CustomPersona value={data.settings.kitPersonaCustom ?? ""} onSave={(v) => update((d) => void (d.settings.kitPersonaCustom = v))} />
+        </label>
+      )}
       {chat.length > 0 && (
         <div className="max-h-80 overflow-y-auto space-y-2.5 mb-3 pr-1">
           {chat.map((m, i) => (
@@ -133,7 +161,7 @@ export default function KitChat() {
               </div>
             </div>
           ))}
-          {busy && <div className="text-lg font-bold text-gold animate-pulse">Kit is thinking…</div>}
+          {busy && <div className="text-lg font-bold text-gold animate-pulse">{kitName} is thinking…</div>}
           <div ref={endRef} />
         </div>
       )}
@@ -155,6 +183,11 @@ export default function KitChat() {
       </form>
     </div>
   );
+}
+
+function CustomPersona({ value, onSave }: { value: string; onSave: (v: string) => void }) {
+  const [v, setV] = useState(value);
+  return <textarea className="w-full mt-1 text-lg" rows={2} maxLength={600} value={v} onChange={(e) => setV(e.target.value)} onBlur={() => v !== value && onSave(v)} />;
 }
 
 function KeyForm({ onSaved }: { onSaved: () => void }) {
