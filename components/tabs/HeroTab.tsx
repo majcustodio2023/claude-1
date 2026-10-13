@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { ITEMS, RARITY, SLOT_LABEL, itemById, shopStock, type Item } from "@/lib/items";
+import { ITEMS, RARITY, SLOT_LABEL, isKitSlot, itemById, shopStock, type Item } from "@/lib/items";
+import { PERSONAS } from "@/lib/personas";
 import { REWARD, buyItem, ensureGame } from "@/lib/loot";
 import type { HeroLook, ItemSlot } from "@/lib/types";
 import { useTracker } from "../App";
-import { HERO_DEFAULTS, Hero } from "../characters";
+import { HERO_DEFAULTS, Hero, KIT_LOOKS, Kit } from "../characters";
 import { Badge, Btn, Card, toast } from "../ui";
 import { HELP } from "../help";
 
@@ -19,7 +20,8 @@ const HAIRS: [NonNullable<HeroLook["hair"]>, string][] = [
   ["mohawk", "Mohawk"],
   ["bob", "Bob"],
 ];
-const SLOTS: ItemSlot[] = ["hat", "face", "weapon", "back", "aura", "pet"];
+const SLOTS: ItemSlot[] = ["hat", "face", "weapon", "back", "aura", "pet", "kit-head", "kit-face", "kit-neck", "kit-tail"];
+const FURS = ["#ff8a1f", "#2b2140", "#ff5fae", "#8a6a3a", "#4f6bff", "#f4efe4", "#e8e8f0", "#d62839", "#6ee77a", "#ffd23f"];
 
 export default function HeroTab() {
   const { data, update, today } = useTracker();
@@ -82,6 +84,8 @@ export default function HeroTab() {
         </div>
       </Card>
 
+      <KitLocker />
+
       <Card title="Your items" icon="🎒" help={HELP.inventory}>
         {!game?.owned.length ? (
           <p className="text-lg text-muted">No items yet. Buy some in the shop below, or find loot in 🎁 tasks and boss fights.</p>
@@ -115,8 +119,12 @@ export default function HeroTab() {
             const short = (game?.coins ?? 0) < i.price;
             return (
               <div key={i.id} className="bg-card-2 border-[3px] border-outline rounded-[12px] p-2.5 text-center shadow-[3px_3px_0_#0b0a14]" style={{ borderColor: RARITY[i.rarity].color }}>
-                <div className="flex justify-center">
-                  <Hero size={120} items={[...equipped.filter((e) => itemById(e)?.slot !== i.slot), i.id]} gear={gear} />
+                <div className="flex justify-center h-[135px] items-center">
+                  {isKitSlot(i.slot) ? (
+                    <Kit size={115} items={[...equipped.filter((e) => itemById(e)?.slot !== i.slot), i.id]} />
+                  ) : (
+                    <Hero size={120} items={[...equipped.filter((e) => itemById(e)?.slot !== i.slot), i.id]} gear={gear} />
+                  )}
                 </div>
                 <div className="font-display text-lg tracking-wide leading-tight mt-1">{i.name}</div>
                 <div className="text-sm font-extrabold" style={{ color: RARITY[i.rarity].color }}>
@@ -176,6 +184,52 @@ export default function HeroTab() {
         </Card>
       </div>
     </div>
+  );
+}
+
+/** Kit's personality (sets its look and how it talks) and colours. */
+function KitLocker() {
+  const { data, update, today } = useTracker();
+  const persona = data.settings.kitPersona ?? "kit";
+  const base = KIT_LOOKS[persona] ?? KIT_LOOKS.kit;
+  const kl = data.game?.kitLook ?? {};
+  const setKit = (patch: { fur?: string; eyes?: string }) =>
+    update((d) => {
+      const g = ensureGame(d, today);
+      g.kitLook = { ...g.kitLook, ...patch };
+      for (const k of Object.keys(g.kitLook) as ("fur" | "eyes")[]) if (!g.kitLook[k]) delete g.kitLook[k];
+    });
+  return (
+    <Card title="Kit's locker" icon="🦊" glow="gold" help={HELP.kitLocker}>
+      <div className="grid md:grid-cols-[minmax(0,260px)_1fr] gap-6 items-start">
+        <div className="text-center">
+          <div className="bg-card-2 border-[3px] border-outline rounded-[14px] p-3 shadow-[4px_4px_0_#0b0a14] inline-block">
+            <Kit size={200} talking className="bob max-w-full h-auto" />
+          </div>
+        </div>
+        <div className="space-y-4 min-w-0">
+          <div>
+            <div className="text-base font-extrabold text-muted mb-1.5">Personality (changes how Kit looks and talks)</div>
+            <div className="flex gap-2 flex-wrap">
+              {PERSONAS.map((p) => (
+                <button key={p.id} className={`btn ${persona === p.id ? "btn-primary" : "btn-ghost"} px-3`} onClick={() => update((d) => void (d.settings.kitPersona = p.id))}>
+                  {p.emoji} {p.name}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Swatches label="Fur" value={kl.fur ?? base.fur} options={FURS} onPick={(fur) => setKit({ fur })} />
+            {kl.fur && <Btn onClick={() => setKit({ fur: undefined })}>Match personality</Btn>}
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Swatches label="Eyes" value={kl.eyes ?? base.eyes} options={["#0b0a14", "#ff2a4f", "#ffd23f", "#4fd2ff", "#6ee77a", "#c77dff"]} onPick={(eyes) => setKit({ eyes })} />
+            {kl.eyes && <Btn onClick={() => setKit({ eyes: undefined })}>Match personality</Btn>}
+          </div>
+          <p className="text-base text-muted">Kit&apos;s outfits (hats, shades, collars and more) show up in the shop. Wear them under &ldquo;Your items&rdquo;.</p>
+        </div>
+      </div>
+    </Card>
   );
 }
 

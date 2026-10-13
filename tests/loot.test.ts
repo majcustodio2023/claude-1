@@ -118,3 +118,8 @@ test("past months keep their safe amount and say whether it was spent or saved",
   const h = funHistory(d, "2026-10-13");
   assert.deepEqual(h.map((r) => [r.month, r.verdict]), [["2026-09", "over"], ["2026-08", "saved"]]);
 });
+
+test("the shop always has 2 items for Kit", async () => {
+  const { isKitSlot } = await import("../lib/items");
+  for (const d of ["2026-10-13", "2026-10-16", "2026-11-02"]) assert.equal(shopStock(d).items.filter((i) => isKitSlot(i.slot)).length, 2);
+});

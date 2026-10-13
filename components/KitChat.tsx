@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { uid } from "@/lib/finance";
-import type { KitAction } from "@/lib/kit";
+import { stripActions, type KitAction } from "@/lib/kit";
 import { CUSTOM_PERSONA, PERSONAS, personaFor, type Persona } from "@/lib/personas";
 import type { KitMessage } from "@/lib/types";
 import { useTracker } from "./App";
 import { Btn } from "./ui";
+import { Kit } from "./characters";
 
 const KEEP = 30;
 
@@ -82,7 +83,7 @@ export default function KitChat() {
       const res = await fetch("/api/kit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history.map(({ role, text }) => ({ role, text })), today }),
+        body: JSON.stringify({ messages: history.map(({ role, text }) => ({ role, text: role === "assistant" ? stripActions(text) : text })), today }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? "Kit couldn't answer");
@@ -155,9 +156,10 @@ export default function KitChat() {
       {chat.length > 0 && (
         <div className="max-h-80 overflow-y-auto space-y-2.5 mb-3 pr-1">
           {chat.map((m, i) => (
-            <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+            <div key={i} className={`flex items-end gap-1.5 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+              {m.role === "assistant" && <Kit size={38} className="shrink-0" />}
               <div className={`max-w-[85%] whitespace-pre-wrap rounded-[12px] border-[3px] border-outline px-3.5 py-2 text-[1.05rem] leading-snug font-semibold ${m.role === "user" ? "bg-accent text-outline" : "bg-[#fffbea] text-[#15132b]"}`}>
-                {m.text}
+                {m.role === "assistant" ? stripActions(m.text) : m.text}
               </div>
             </div>
           ))}

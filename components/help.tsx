@@ -150,6 +150,13 @@ export const HELP = {
       <li>The gear you earn from achievements stays for good. Untick &ldquo;Show achievement gear&rdquo; to hide it.</li>
     </ul>
   ),
+  kitLocker: (
+    <ul>
+      <li>Pick Kit&apos;s personality: each one has its own look and its own way of talking. The numbers and advice stay real.</li>
+      <li>Recolour Kit&apos;s fur and eyes, or press &ldquo;Match personality&rdquo; to go back to that personality&apos;s colours.</li>
+      <li>Kit items (hats, shades, collars) are sold in the shop next to yours. The nine-tailed form only drops as loot.</li>
+    </ul>
+  ),
   inventory: (
     <ul>
       <li>Everything you&apos;ve bought or looted. Tap an item to wear it; one per slot (head, face, weapon, back, aura, pet).</li>

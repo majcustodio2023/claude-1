@@ -28,7 +28,14 @@ export const SLOT_LABEL: Record<ItemSlot, string> = {
   back: "Back",
   aura: "Aura",
   pet: "Pet",
+  "kit-head": "Kit's head",
+  "kit-face": "Kit's face",
+  "kit-neck": "Kit's neck",
+  "kit-tail": "Kit's tails",
 };
+
+/** Slots worn by Kit rather than the hero. */
+export const isKitSlot = (slot: ItemSlot) => slot.startsWith("kit-");
 
 export const ITEMS: Item[] = [
   { id: "cat-ears", name: "Cat ears", slot: "hat", rarity: "common", price: 120, source: "both" },
@@ -57,6 +64,17 @@ export const ITEMS: Item[] = [
   { id: "slime", name: "Pet slime", slot: "pet", rarity: "common", price: 180, source: "both" },
   { id: "ghost", name: "Pet ghost", slot: "pet", rarity: "rare", price: 380, source: "both" },
   { id: "mini-dragon", name: "Mini dragon", slot: "pet", rarity: "epic", price: 800, source: "both" },
+  { id: "kit-bow", name: "Kit: big bow", slot: "kit-head", rarity: "common", price: 100, source: "both" },
+  { id: "kit-ninja", name: "Kit: ninja headband", slot: "kit-head", rarity: "common", price: 120, source: "both" },
+  { id: "kit-headphones", name: "Kit: DJ headphones", slot: "kit-head", rarity: "rare", price: 260, source: "both" },
+  { id: "kit-wizard", name: "Kit: wizard hat", slot: "kit-head", rarity: "rare", price: 280, source: "shop" },
+  { id: "kit-crown", name: "Kit: royal crown", slot: "kit-head", rarity: "epic", price: 550, source: "both" },
+  { id: "kit-shades", name: "Kit: cool shades", slot: "kit-face", rarity: "common", price: 100, source: "both" },
+  { id: "kit-monocle", name: "Kit: gentleman monocle", slot: "kit-face", rarity: "rare", price: 240, source: "both" },
+  { id: "kit-bell", name: "Kit: bell collar", slot: "kit-neck", rarity: "common", price: 110, source: "both" },
+  { id: "kit-bandana", name: "Kit: bandana", slot: "kit-neck", rarity: "common", price: 110, source: "shop" },
+  { id: "kit-chain", name: "Kit: gold chain", slot: "kit-neck", rarity: "epic", price: 600, source: "both" },
+  { id: "kit-ninetails", name: "Kit: nine-tailed form", slot: "kit-tail", rarity: "legendary", price: 0, source: "loot" },
 ];
 
 export const itemById = (id: string | undefined) => ITEMS.find((i) => i.id === id);
@@ -66,6 +84,8 @@ const dayNumber = (date: string) => Math.floor(Date.parse(date + "T00:00:00Z") /
 
 export const SHOP_DAYS = 3;
 export const SHOP_SIZE = 6;
+/** Of the six, how many are for Kit. */
+const KIT_IN_SHOP = 2;
 
 /** Small seeded random generator, so the shop is the same for everyone on the same days. */
 export function seeded(seed: number) {
@@ -84,8 +104,12 @@ export function shopStock(today: string): { items: Item[]; restockIn: number; pe
   const day = dayNumber(today);
   const period = Math.floor(day / SHOP_DAYS);
   const rand = seeded(period * 7919 + 13);
-  const pool = ITEMS.filter((i) => i.source !== "loot");
-  const items: Item[] = [];
-  while (items.length < SHOP_SIZE && pool.length) items.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
+  const pick = (pool: Item[], n: number) => {
+    const out: Item[] = [];
+    while (out.length < n && pool.length) out.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
+    return out;
+  };
+  const forSale = ITEMS.filter((i) => i.source !== "loot");
+  const items = [...pick(forSale.filter((i) => !isKitSlot(i.slot)), SHOP_SIZE - KIT_IN_SHOP), ...pick(forSale.filter((i) => isKitSlot(i.slot)), KIT_IN_SHOP)];
   return { items, restockIn: SHOP_DAYS - (day - period * SHOP_DAYS), period };
 }

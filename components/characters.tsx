@@ -295,45 +295,7 @@ function GearTop({ has }: { has: Has }) {
   );
 }
 
-export function Kit({ size = 110, className = "", talking = false }: { size?: number; className?: string; talking?: boolean }) {
-  return (
-    <svg viewBox="0 0 160 150" width={size} height={size * 0.94} className={className} role="img" aria-label="Kit the fox sidekick">
-      <g stroke={INK} strokeWidth="4" strokeLinejoin="round" strokeLinecap="round">
-        {/* tail */}
-        <path className="tail-swish" d="M110,120 C150,118 158,80 140,62 C150,90 128,104 104,104 Z" fill="#ff8a1f" />
-        <path d="M140,62 C152,74 150,90 144,98 C146,84 142,72 140,62 Z" fill="#fff4e0" strokeWidth="3" />
-        {/* body */}
-        <ellipse cx="80" cy="118" rx="34" ry="24" fill="#ff8a1f" />
-        <ellipse cx="80" cy="124" rx="18" ry="14" fill="#fff4e0" strokeWidth="3" />
-        {/* ears */}
-        <path d="M36,58 L30,10 L68,40 Z" fill="#ff8a1f" />
-        <path d="M124,58 L130,10 L92,40 Z" fill="#ff8a1f" />
-        <path d="M40,46 L37,24 L56,40 Z M120,46 L123,24 L104,40 Z" fill="#3a1d0b" strokeWidth="2" />
-        {/* head */}
-        <path d="M24,66 C24,40 50,30 80,30 C110,30 136,40 136,66 C136,92 112,108 80,108 C48,108 24,92 24,66 Z" fill="#ff8a1f" />
-        <path d="M40,78 C52,74 66,82 80,98 C94,82 108,74 120,78 C116,98 100,106 80,106 C60,106 44,98 40,78 Z" fill="#fff4e0" strokeWidth="3" />
-        {/* forehead mark */}
-        <path d="M80,40 L74,54 L80,50 L86,54 Z" fill="#4fd2ff" strokeWidth="2.5" />
-      </g>
-      {/* eyes */}
-      <g stroke={INK} strokeWidth="3">
-        <ellipse cx="60" cy="68" rx="9" ry="11" fill={INK} />
-        <ellipse cx="100" cy="68" rx="9" ry="11" fill={INK} />
-        <circle cx="63" cy="64" r="3.5" fill="#fff" stroke="none" />
-        <circle cx="103" cy="64" r="3.5" fill="#fff" stroke="none" />
-        <circle cx="57" cy="73" r="1.6" fill="#fff" stroke="none" />
-        <circle cx="97" cy="73" r="1.6" fill="#fff" stroke="none" />
-      </g>
-      <ellipse cx="44" cy="82" rx="7" ry="4" fill="#ff6f91" opacity="0.75" />
-      <ellipse cx="116" cy="82" rx="7" ry="4" fill="#ff6f91" opacity="0.75" />
-      {/* nose + mouth */}
-      <g stroke={INK} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-        <ellipse cx="80" cy="84" rx="5" ry="3.5" fill={INK} />
-        {talking ? <path d="M72,92 Q80,104 88,92 Z" fill="#c2253a" /> : <path d="M72,92 Q76,97 80,92 Q84,97 88,92" fill="none" />}
-      </g>
-    </svg>
-  );
-}
+export { Kit, KitStyleContext, KIT_LOOKS } from "./kitArt";
 
 /** Spiky comic "sound effect" burst with text, e.g. KA-CHING! */
 export function SfxBurst({ text, className = "", color = "#ffd23f", ink = "#ff3b4f" }: { text: string; className?: string; color?: string; ink?: string }) {
