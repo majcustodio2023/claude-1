@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { dailyAdvice, generateTodos } from "@/lib/advice";
-import { daysLeftInMonth, monthOf, summarize, uid, weekLogs } from "@/lib/finance";
+import { cashPosition, daysLeftInMonth, monthOf, summarize, uid, weekLogs } from "@/lib/finance";
 import { QUEST_XP, achievements } from "@/lib/game";
 import { useTracker } from "../App";
-import { Badge, Bar, Btn, Card, Meter, Stat, celebrate, peso } from "../ui";
+import { Badge, Bar, Btn, Card, Meter, NumInput, Stat, celebrate, peso } from "../ui";
 import { Kit } from "../characters";
 
 export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log" | "ads") => void }) {
@@ -13,6 +13,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
   const s = useMemo(() => summarize(data, month), [data, month]);
   const advice = useMemo(() => dailyAdvice(data, today), [data, today]);
   const wk = useMemo(() => weekLogs(data, today), [data, today]);
+  const cash = useMemo(() => cashPosition(data, today), [data, today]);
   const badges = useMemo(() => achievements(data, s, today), [data, s, today]);
   const todos = data.todos[today];
   const [newTodo, setNewTodo] = useState("");
@@ -88,6 +89,31 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
         <Stat label="Monthly upkeep" value={peso(s.fixedExpenses)} hint={`${peso(s.expensesPaid)} marked paid`} />
         <Stat label="Extra spending" value={peso(s.adHocExpenses)} tone={s.adHocExpenses ? "bad" : undefined} />
       </div>
+
+      <Card
+        title="War chest"
+        icon="💰"
+        glow="gold"
+        actions={
+          <div className="flex items-center gap-2 text-sm text-muted flex-wrap">
+            Bank balance
+            <NumInput className="w-32" value={data.settings.cashBalance} placeholder="₱ amount" onChange={(v) => update((d) => void (d.settings.cashBalance = v))} />
+            on
+            <input type="date" value={data.settings.cashAsOf ?? ""} onChange={(e) => update((d) => void (d.settings.cashAsOf = e.target.value || undefined))} aria-label="Balance date" />
+          </div>
+        }
+      >
+        {cash.set ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <Stat label="Cash on hand now" value={peso(cash.now)} hint={`${peso(cash.start)} on ${cash.asOf} + ${peso(cash.inflow)} in − ${peso(cash.outflow)} out`} tone={cash.now >= 0 ? "gold" : "bad"} />
+            <Stat label="Still coming this month" value={peso(cash.incomingThisMonth)} hint="Retainers not yet collected" tone="cyan" />
+            <Stat label="Bills left this month" value={peso(cash.unpaidThisMonth)} hint="Fixed expenses not marked paid" tone={cash.unpaidThisMonth ? "bad" : undefined} />
+            <Stat label="Projected month-end" value={peso(cash.monthEnd)} hint="Now + incoming − bills left" tone={cash.monthEnd >= 0 ? "good" : "bad"} />
+          </div>
+        ) : (
+          <p className="text-base text-muted">Enter your bank balance and its date to track cash on hand.</p>
+        )}
+      </Card>
 
       <div className="grid lg:grid-cols-5 gap-4">
         <div className="lg:col-span-3 space-y-4">

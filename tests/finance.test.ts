@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { dailyAdvice, generateTodos } from "../lib/advice";
-import { expectedForStream, summarize } from "../lib/finance";
+import { cashPosition, expectedForStream, summarize } from "../lib/finance";
 import { seedData } from "../lib/seed";
 
 test("Local Ecom Hero pays 15% or the ₱25k floor, whichever is higher", () => {
@@ -46,4 +46,19 @@ test("advice and to-dos are produced from the data", () => {
   const todos = generateTodos(d, "2026-10-12");
   assert.ok(todos.some((t) => t.text.includes("Interior design funnel")));
   assert.ok(todos.some((t) => t.text.includes("Opsified")));
+});
+
+test("cash on hand starts from the bank balance and follows money in and out", () => {
+  const d = seedData();
+  // Seed: ₱165,000 on Oct 11, plus ₱30,000 one-time and ₱38,766 AACIO that day, minus ₱22,000 delayed salary.
+  const c = cashPosition(d, "2026-10-13");
+  assert.equal(c.now, 165000 + 30000 + 38766 - 22000);
+  // Paying the household line and collecting Opsified moves it.
+  d.expensePaid["2026-10"] = { household: true };
+  d.streamMonths["2026-10"].opsified = { collected: 50000, collectedOn: "2026-10-12" };
+  const c2 = cashPosition(d, "2026-10-13");
+  assert.equal(c2.now, c.now - 65500 + 50000);
+  // Month-end: + LEH ₱25k floor + ads client ₱18k incoming, − unpaid salary, client costs, GHL.
+  assert.equal(c2.monthEnd, c2.now + 25000 + 18000 - (27000 + 22000 + 26000));
+  assert.equal(cashPosition({ ...d, settings: { ...d.settings, cashBalance: undefined } }, "2026-10-13").set, false);
 });

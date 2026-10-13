@@ -69,9 +69,12 @@ export default function Ads() {
         glow="hero"
         title="Tracked campaigns"
         actions={
-          <select value={preset} onChange={(e) => setPreset(e.target.value as DatePreset)}>
-            {PRESETS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-          </select>
+          <div className="flex items-center gap-2 flex-wrap">
+            {data.trackedCampaigns.length > 0 && <SyncSpend />}
+            <select value={preset} onChange={(e) => setPreset(e.target.value as DatePreset)}>
+              {PRESETS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+            </select>
+          </div>
         }
       >
         {data.trackedCampaigns.length === 0 ? (
@@ -96,6 +99,44 @@ export default function Ads() {
 
       {(data.trackedCampaigns.some((t) => t.mode === "autopilot") || (data.autopilotLog?.length ?? 0) > 0) && <AutopilotCard />}
     </div>
+  );
+}
+
+// Records each tracked campaign's Meta spend for the selected month as an "ads"
+// expense. Re-syncing updates the same entries instead of adding new ones.
+function SyncSpend() {
+  const { update, month } = useTracker();
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+
+  const sync = async () => {
+    setBusy(true);
+    setMsg("");
+    const res = await fetch(`/api/meta/spend?month=${month}`);
+    const json = await res.json();
+    setBusy(false);
+    if (!res.ok) return setMsg(json.error);
+    const rows = json.spend as { trackedId: string; name: string; amount?: number; error?: string }[];
+    const ok = rows.filter((r) => r.amount != null);
+    update((d) => {
+      for (const r of ok) {
+        const id = `meta-${month}-${r.trackedId}`;
+        const entry = { id, date: json.until as string, label: `Meta ads: ${r.name}`, amount: Math.round(r.amount!), category: "ads" as const };
+        const i = d.adHocExpenses.findIndex((e) => e.id === id);
+        if (i >= 0) d.adHocExpenses[i] = entry;
+        else if (entry.amount > 0) d.adHocExpenses.push(entry);
+      }
+    });
+    const total = ok.reduce((a, r) => a + r.amount!, 0);
+    const failed = rows.filter((r) => r.error);
+    setMsg(`${peso(total)} recorded as ${month} ad spend${failed.length ? ` · ${failed.length} failed: ${failed[0].error}` : ""}`);
+  };
+
+  return (
+    <span className="flex items-center gap-2">
+      {msg && <span className="text-sm text-muted">{msg}</span>}
+      <Btn onClick={sync} disabled={busy}>{busy ? "Syncing…" : "Sync spend to expenses"}</Btn>
+    </span>
   );
 }
 

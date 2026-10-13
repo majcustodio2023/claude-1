@@ -159,3 +159,57 @@ export function weekLogs(data: TrackerData, today: string) {
     adSpend: sum("adSpend"),
   };
 }
+
+export interface CashPosition {
+  set: boolean;
+  asOf?: string;
+  start: number;
+  inflow: number;
+  outflow: number;
+  now: number;
+  incomingThisMonth: number;
+  unpaidThisMonth: number;
+  monthEnd: number;
+}
+
+/**
+ * Cash on hand: the bank balance entered on cashAsOf, plus everything collected
+ * since, minus everything paid since. Month-end adds retainers still incoming
+ * and subtracts fixed expenses not yet marked paid.
+ */
+export function cashPosition(data: TrackerData, today: string): CashPosition {
+  const start = data.settings.cashBalance;
+  const asOf = data.settings.cashAsOf;
+  if (start == null || !asOf) {
+    return { set: false, start: 0, inflow: 0, outflow: 0, now: 0, incomingThisMonth: 0, unpaidThisMonth: 0, monthEnd: 0 };
+  }
+  const inRange = (d?: string) => Boolean(d && d >= asOf && d <= today);
+  const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
+
+  const streamIn = sum(
+    Object.entries(data.streamMonths).flatMap(([m, byStream]) =>
+      Object.values(byStream)
+        .filter((x) => x.collected != null && inRange(x.collectedOn ?? `${m}-01`))
+        .map((x) => x.collected!),
+    ),
+  );
+  const dealIn = sum(data.deals.flatMap((d) => d.payments).filter((p) => inRange(p.date)).map((p) => p.amount));
+  const oneTimeIn = sum(data.oneTime.filter((o) => inRange(o.date)).map((o) => o.amount));
+  const inflow = streamIn + dealIn + oneTimeIn;
+
+  const adHocOut = sum(data.adHocExpenses.filter((e) => inRange(e.date)).map((e) => e.amount));
+  const logAdOut = sum(Object.values(data.logs).filter((l) => inRange(l.date)).map((l) => l.adSpend ?? 0));
+  const thisMonth = monthOf(today);
+  let fixedOut = 0;
+  for (const [m, paid] of Object.entries(data.expensePaid)) {
+    if (m < monthOf(asOf) || m > thisMonth) continue;
+    fixedOut += sum(data.expenses.filter((e) => paid[e.id] && expenseAppliesTo(e, m)).map((e) => e.amount));
+  }
+  const outflow = adHocOut + logAdOut + fixedOut;
+  const now = start + inflow - outflow;
+
+  const s = summarize(data, thisMonth);
+  const paidNow = data.expensePaid[thisMonth] ?? {};
+  const unpaidThisMonth = sum(data.expenses.filter((e) => expenseAppliesTo(e, thisMonth) && !paidNow[e.id]).map((e) => e.amount));
+  return { set: true, asOf, start, inflow, outflow, now, incomingThisMonth: s.recurringPending, unpaidThisMonth, monthEnd: now + s.recurringPending - unpaidThisMonth };
+}

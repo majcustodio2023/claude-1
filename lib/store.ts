@@ -50,9 +50,20 @@ async function writeDoc(doc: StoredDoc): Promise<void> {
   await fs.writeFile(LOCAL_FILE, JSON.stringify(doc, null, 2));
 }
 
+// Version 2 added the bank balance. Data saved before that gets the Oct 11
+// balance from Maj's plan once; it's editable on HQ.
+function migrate(doc: StoredDoc): StoredDoc {
+  if ((doc.data.version ?? 1) < 2) {
+    const settings = { ...doc.data.settings };
+    if (settings.cashBalance == null) Object.assign(settings, { cashBalance: 165000, cashAsOf: "2026-10-11" });
+    return { ...doc, data: { ...doc.data, version: 2, settings } };
+  }
+  return doc;
+}
+
 async function loadDoc(): Promise<StoredDoc> {
   const doc = await readDoc();
-  if (doc?.data) return doc;
+  if (doc?.data) return migrate(doc);
   const fresh: StoredDoc = { data: seedData(), secrets: { tokens: {} } };
   await writeDoc(fresh);
   return fresh;

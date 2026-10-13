@@ -79,8 +79,8 @@ function seedTasks(): Task[] {
 export function seedData(): TrackerData {
   const created = "2026-10-12";
   return {
-    version: 1,
-    settings: { monthlyGoal: 250000, targetCpl: 500, targetRoas: 2, currency: "PHP" },
+    version: 2,
+    settings: { monthlyGoal: 250000, targetCpl: 500, targetRoas: 2, currency: "PHP", cashBalance: 165000, cashAsOf: "2026-10-11" },
     streams: [
       {
         id: "leh", name: "Local Ecom Hero", kind: "percent_floor", amount: 25000,

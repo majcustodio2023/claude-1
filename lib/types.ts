@@ -164,6 +164,9 @@ export interface Settings {
   targetCpl: number;
   targetRoas: number;
   currency: string;
+  /** Bank balance on cashAsOf; cash on hand is worked out from there. */
+  cashBalance?: number;
+  cashAsOf?: string; // YYYY-MM-DD
 }
 
 export interface TrackerData {
