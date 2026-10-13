@@ -67,7 +67,7 @@ test("cash on hand starts from the bank balance and follows money in and out", (
 test("a mid-month balance update doesn't subtract bills already paid", () => {
   const d = seedData();
   d.expensePaid["2026-10"] = { household: true };
-  Object.assign(d.settings, recordBalance(d, 120000, "2026-10-20"));
+  Object.assign(d.settings, recordBalance(d, [{ id: "main", name: "Bank", balance: 120000 }], "2026-10-20"));
   assert.equal(d.settings.cashHistory?.at(-1)?.balance, 120000);
   assert.ok(d.settings.cashHistory?.at(-1)?.predicted != null);
   assert.equal(cashPosition(d, "2026-10-20").now, 120000);
@@ -111,4 +111,54 @@ test("money follows the currency and locale in settings", async () => {
   assert.equal(money(1234.4), "$1,234");
   configureLocale({ currency: "PHP", locale: "en-PH" });
   assert.equal(money(30000), "₱30,000");
+});
+
+test("money lands in the account it was collected into, bills come out of theirs, transfers move it", () => {
+  const d = seedData();
+  Object.assign(d.settings, recordBalance(d, [{ id: "bank", name: "Bank", balance: 100000 }, { id: "wallet", name: "Wallet", balance: 20000 }], "2026-10-13"));
+  d.streamMonths["2026-10"].opsified = { collected: 50000, collectedOn: "2026-10-14", accountId: "wallet" };
+  d.expensePaid["2026-10"] = { household: true };
+  d.expensePaidFrom = { "2026-10": { household: { date: "2026-10-14", accountId: "bank" } } };
+  d.transfers = [{ id: "t1", date: "2026-10-15", from: "wallet", to: "bank", amount: 30000 }];
+  const c = cashPosition(d, "2026-10-15");
+  const by = Object.fromEntries(c.accounts.map((a) => [a.id, a.now]));
+  assert.equal(by.wallet, 20000 + 50000 - 30000);
+  assert.equal(by.bank, 100000 - 65500 + 30000);
+  assert.equal(c.now, 120000 + 50000 - 65500);
+  // A transfer isn't income or spending.
+  assert.equal(c.inflow, 50000);
+  assert.equal(c.outflow, 65500);
+  // Money with no account goes to the first one.
+  d.deals[0].payments.push({ id: "p-x", date: "2026-10-15", amount: 1000 });
+  assert.equal(cashPosition(d, "2026-10-15").accounts[0].now, by.bank + 1000);
+});
+
+test("a balance check-in already includes money recorded that day", () => {
+  const d = seedData();
+  d.streamMonths["2026-10"].opsified = { collected: 50000, collectedOn: "2026-10-13" };
+  Object.assign(d.settings, recordBalance(d, [{ id: "main", name: "Bank", balance: 90000 }], "2026-10-13"));
+  assert.equal(cashPosition(d, "2026-10-13").now, 90000);
+  // Collected after the check-in, same day: counts.
+  d.streamMonths["2026-10"]["ads-client"] = { collected: 18000, collectedOn: "2026-10-13" };
+  assert.equal(cashPosition(d, "2026-10-13").now, 108000);
+});
+
+test("ad spend from check-ins isn't counted again once it's entered as an expense", () => {
+  const d = seedData();
+  d.logs["2026-10-12"] = { date: "2026-10-12", adSpend: 5000 };
+  const before = cashPosition(d, "2026-10-13").now;
+  assert.equal(summarize(d, "2026-10").adSpend, 5000);
+  d.adHocExpenses.push({ id: "meta-1", date: "2026-10-12", label: "Meta ads", amount: 5200, category: "ads" });
+  const s = summarize(d, "2026-10");
+  assert.equal(s.adSpend, 5200);
+  assert.equal(cashPosition(d, "2026-10-13").now, before + 5000 - 5200);
+});
+
+test("an archived stream still counts in months it paid", () => {
+  const d = seedData();
+  d.streamMonths["2026-10"].opsified = { collected: 50000, collectedOn: "2026-10-12" };
+  const before = summarize(d, "2026-10").recurringCollected;
+  d.streams.find((x) => x.id === "opsified")!.active = false;
+  assert.equal(summarize(d, "2026-10").recurringCollected, before);
+  assert.ok(!summarize(d, "2026-11").streams.some((r) => r.stream.id === "opsified"));
 });

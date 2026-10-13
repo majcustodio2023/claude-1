@@ -1,4 +1,4 @@
-import type { Deal, ExpenseLine, IncomeStream, StreamMonth, TrackerData } from "./types";
+import type { CashAccount, Deal, ExpenseLine, IncomeStream, StreamMonth, TrackerData } from "./types";
 
 export const monthOf = (date: string) => date.slice(0, 7);
 
@@ -99,10 +99,23 @@ export interface MonthSummary {
   wonUnpaid: number;
 }
 
+/**
+ * Ad spend typed into daily check-ins. It only counts as money out for months
+ * with no "ads" expenses: once spend is entered as an expense (or synced from
+ * Meta), the check-in numbers are the same money and would double count.
+ */
+export function logAdSpend(data: TrackerData, month: string): number {
+  if (data.adHocExpenses.some((e) => e.category === "ads" && monthOf(e.date) === month)) return 0;
+  return Object.values(data.logs)
+    .filter((l) => monthOf(l.date) === month)
+    .reduce((a, l) => a + (l.adSpend ?? 0), 0);
+}
+
 export function summarize(data: TrackerData, month: string): MonthSummary {
   const sm = data.streamMonths[month] ?? {};
+  // Archived streams still show in months where they paid, so history doesn't change.
   const streams: StreamRow[] = data.streams
-    .filter((s) => s.active)
+    .filter((s) => s.active || sm[s.id]?.collected != null)
     .map((s) => {
       const m = sm[s.id];
       const isCollected = m?.collected != null;
@@ -129,10 +142,8 @@ export function summarize(data: TrackerData, month: string): MonthSummary {
 
   const adHoc = data.adHocExpenses.filter((e) => monthOf(e.date) === month);
   const adHocExpenses = adHoc.reduce((a, e) => a + e.amount, 0);
-  const logAdSpend = Object.values(data.logs)
-    .filter((l) => monthOf(l.date) === month)
-    .reduce((a, l) => a + (l.adSpend ?? 0), 0);
-  const adSpend = logAdSpend + adHoc.filter((e) => e.category === "ads").reduce((a, e) => a + e.amount, 0);
+  const adSpend = adHoc.some((e) => e.category === "ads") ? adHoc.filter((e) => e.category === "ads").reduce((a, e) => a + e.amount, 0) : logAdSpend(data, month);
+  const extraAdSpend = adSpend - adHoc.filter((e) => e.category === "ads").reduce((a, e) => a + e.amount, 0);
 
   const goal = data.settings.monthlyGoal;
   const open = data.deals.filter((d) => d.stage !== "won" && d.stage !== "lost");
@@ -150,7 +161,7 @@ export function summarize(data: TrackerData, month: string): MonthSummary {
     expenseTarget,
     adHocExpenses,
     adSpend,
-    totalSpent: expensesPaid + adHocExpenses + logAdSpend,
+    totalSpent: expensesPaid + adHocExpenses + extraAdSpend,
     expensesPaid,
     goal,
     pctExpenses: expenseTarget ? moneyMade / expenseTarget : 0,
@@ -188,6 +199,84 @@ export function weekLogs(data: TrackerData, today: string) {
   };
 }
 
+/** The accounts money sits in. Older data with only a total gets one account. */
+export function cashAccounts(data: TrackerData): CashAccount[] {
+  const accts = data.settings.cashAccounts ?? [];
+  if (accts.length) return accts;
+  return data.settings.cashBalance != null ? [{ id: "main", name: "Bank", balance: data.settings.cashBalance }] : [];
+}
+
+/** The account to suggest next: the last one money went into (or was paid from), else the first. */
+export function defaultAccountId(data: TrackerData, dir: "in" | "out" = "in"): string | undefined {
+  const accts = cashAccounts(data);
+  const last = dir === "in" ? data.settings.lastAccountId : data.settings.lastPayAccountId;
+  return accts.find((a) => a.id === last)?.id ?? accts[0]?.id;
+}
+
+export type FlowKind = "stream" | "deal" | "bill" | "spend" | "ads" | "transfer";
+
+/** One movement of money in or out of an account. amount > 0 is money in. */
+export interface CashFlow {
+  key: string;
+  date: string;
+  amount: number;
+  /** Raw account id as saved (may be blank or point at a removed account). */
+  accountId?: string;
+  label: string;
+  kind: FlowKind;
+}
+
+/** Every recorded money movement, oldest first. Transfers show as an out and an in. */
+export function cashFlows(data: TrackerData): CashFlow[] {
+  const flows: CashFlow[] = [];
+  const asOf = data.settings.cashAsOf;
+  for (const [m, byStream] of Object.entries(data.streamMonths)) {
+    for (const [id, x] of Object.entries(byStream)) {
+      if (x.collected == null || !x.collected) continue;
+      const name = data.streams.find((st) => st.id === id)?.name ?? "Retainer";
+      flows.push({ key: `stream:${m}:${id}`, date: x.collectedOn ?? `${m}-01`, amount: x.collected, accountId: x.accountId, label: name, kind: "stream" });
+    }
+  }
+  for (const d of data.deals) for (const p of d.payments) flows.push({ key: `pay:${p.id}`, date: p.date, amount: p.amount, accountId: p.accountId, label: `${d.name}${p.note ? ` · ${p.note}` : ""}`, kind: "deal" });
+  for (const o of data.oneTime ?? []) flows.push({ key: `ot:${o.id}`, date: o.date, amount: o.amount, label: o.label, kind: "deal" });
+  for (const e of data.adHocExpenses) flows.push({ key: `spend:${e.id}`, date: e.date, amount: -e.amount, accountId: e.accountId, label: e.label, kind: e.category === "ads" ? "ads" : "spend" });
+  const logMonths = new Set(Object.values(data.logs).filter((l) => l.adSpend).map((l) => monthOf(l.date)));
+  for (const m of logMonths) {
+    if (!logAdSpend(data, m)) continue;
+    for (const l of Object.values(data.logs)) if (l.adSpend && monthOf(l.date) === m) flows.push({ key: `log:${l.date}`, date: l.date, amount: -l.adSpend, label: "Ad spend (daily check-in)", kind: "ads" });
+  }
+  for (const [m, paid] of Object.entries(data.expensePaid)) {
+    for (const e of data.expenses) {
+      if (!paid[e.id] || !expenseAppliesTo(e, m)) continue;
+      const rec = data.expensePaidFrom?.[m]?.[e.id];
+      // Bills ticked before payment dates were saved: count them on the check-in day of their month, else the 1st.
+      const date = rec?.date ?? (asOf && monthOf(asOf) === m ? asOf : `${m}-01`);
+      flows.push({ key: `bill:${m}:${e.id}`, date, amount: -e.amount, accountId: rec?.accountId, label: e.name, kind: "bill" });
+    }
+  }
+  const acctName = (id: string) => cashAccounts(data).find((a) => a.id === id)?.name ?? "another account";
+  for (const t of data.transfers ?? []) {
+    const note = t.note ? ` · ${t.note}` : "";
+    flows.push({ key: `xfer-out:${t.id}`, date: t.date, amount: -t.amount, accountId: t.from, label: `Moved to ${acctName(t.to)}${note}`, kind: "transfer" });
+    flows.push({ key: `xfer-in:${t.id}`, date: t.date, amount: t.amount, accountId: t.to, label: `Moved from ${acctName(t.from)}${note}`, kind: "transfer" });
+  }
+  return flows.sort((a, b) => a.date.localeCompare(b.date));
+}
+
+/** Keys of flows the balance entered on cashAsOf already includes. */
+function settledKeys(data: TrackerData): Set<string> {
+  const asOf = data.settings.cashAsOf;
+  const keys = new Set(data.settings.cashSettled ?? []);
+  if (asOf) for (const id of data.settings.cashPaidAtAsOf ?? []) keys.add(`bill:${monthOf(asOf)}:${id}`);
+  return keys;
+}
+
+export interface AccountPosition extends CashAccount {
+  inflow: number;
+  outflow: number;
+  now: number;
+}
+
 export interface CashPosition {
   set: boolean;
   asOf?: string;
@@ -195,52 +284,62 @@ export interface CashPosition {
   inflow: number;
   outflow: number;
   now: number;
+  accounts: AccountPosition[];
+  /** Money moves since the last balance check-in, newest first */
+  moves: (CashFlow & { account: string })[];
   incomingThisMonth: number;
   unpaidThisMonth: number;
   monthEnd: number;
 }
 
 /**
- * Cash on hand: the bank balance entered on cashAsOf, plus everything collected
- * since, minus everything paid since. Month-end adds retainers still incoming
- * and subtracts fixed expenses not yet marked paid.
+ * Cash on hand per account: each balance entered on cashAsOf, plus money
+ * collected into it since, minus money paid from it since. Money with no
+ * account (or a removed one) counts in the first account. Month-end adds
+ * retainers still incoming and subtracts fixed expenses not yet marked paid.
  */
 export function cashPosition(data: TrackerData, today: string): CashPosition {
-  const start = data.settings.cashBalance;
   const asOf = data.settings.cashAsOf;
-  if (start == null || !asOf) {
-    return { set: false, start: 0, inflow: 0, outflow: 0, now: 0, incomingThisMonth: 0, unpaidThisMonth: 0, monthEnd: 0 };
+  const accts = cashAccounts(data);
+  if (!accts.length || !asOf) {
+    return { set: false, start: 0, inflow: 0, outflow: 0, now: 0, accounts: [], moves: [], incomingThisMonth: 0, unpaidThisMonth: 0, monthEnd: 0 };
   }
-  const inRange = (d?: string) => Boolean(d && d >= asOf && d <= today);
   const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
+  const settled = settledKeys(data);
+  const resolve = (id?: string) => accts.find((a) => a.id === id) ?? accts[0];
+  const moves = cashFlows(data)
+    .filter((f) => f.date >= asOf && f.date <= today && !(f.date === asOf && settled.has(f.key)))
+    .map((f) => ({ ...f, account: resolve(f.accountId).id }));
+  const accounts = accts.map((a) => {
+    const mine = moves.filter((f) => f.account === a.id);
+    const inflow = sum(mine.filter((f) => f.amount > 0).map((f) => f.amount));
+    const outflow = -sum(mine.filter((f) => f.amount < 0).map((f) => f.amount)) || 0;
+    return { ...a, inflow, outflow, now: a.balance + inflow - outflow };
+  });
+  // Transfers move money between accounts; they aren't income or spending.
+  const real = moves.filter((f) => f.kind !== "transfer");
+  const inflow = sum(real.filter((f) => f.amount > 0).map((f) => f.amount));
+  const outflow = -sum(real.filter((f) => f.amount < 0).map((f) => f.amount)) || 0;
+  const start = sum(accts.map((a) => a.balance));
+  const now = sum(accounts.map((a) => a.now));
 
-  const streamIn = sum(
-    Object.entries(data.streamMonths).flatMap(([m, byStream]) =>
-      Object.values(byStream)
-        .filter((x) => x.collected != null && inRange(x.collectedOn ?? `${m}-01`))
-        .map((x) => x.collected!),
-    ),
-  );
-  const dealIn = sum(data.deals.flatMap((d) => d.payments).filter((p) => inRange(p.date)).map((p) => p.amount));
-  const oneTimeIn = sum(data.oneTime.filter((o) => inRange(o.date)).map((o) => o.amount));
-  const inflow = streamIn + dealIn + oneTimeIn;
-
-  const adHocOut = sum(data.adHocExpenses.filter((e) => inRange(e.date)).map((e) => e.amount));
-  const logAdOut = sum(Object.values(data.logs).filter((l) => inRange(l.date)).map((l) => l.adSpend ?? 0));
   const thisMonth = monthOf(today);
-  let fixedOut = 0;
-  for (const [m, paid] of Object.entries(data.expensePaid)) {
-    if (m < monthOf(asOf) || m > thisMonth) continue;
-    const before = m === monthOf(asOf) ? new Set(data.settings.cashPaidAtAsOf ?? []) : null;
-    fixedOut += sum(data.expenses.filter((e) => paid[e.id] && !before?.has(e.id) && expenseAppliesTo(e, m)).map((e) => e.amount));
-  }
-  const outflow = adHocOut + logAdOut + fixedOut;
-  const now = start + inflow - outflow;
-
   const s = summarize(data, thisMonth);
   const paidNow = data.expensePaid[thisMonth] ?? {};
   const unpaidThisMonth = sum(data.expenses.filter((e) => expenseAppliesTo(e, thisMonth) && !paidNow[e.id]).map((e) => e.amount));
-  return { set: true, asOf, start, inflow, outflow, now, incomingThisMonth: s.recurringPending, unpaidThisMonth, monthEnd: now + s.recurringPending - unpaidThisMonth };
+  return {
+    set: true,
+    asOf,
+    start,
+    inflow,
+    outflow,
+    now,
+    accounts,
+    moves: moves.reverse(),
+    incomingThisMonth: s.recurringPending,
+    unpaidThisMonth,
+    monthEnd: now + s.recurringPending - unpaidThisMonth,
+  };
 }
 
 export function addMonths(month: string, n: number): string {
@@ -293,15 +392,19 @@ export function cashHealth(data: TrackerData, today: string) {
   };
 }
 
-/** Settings changes for a new bank balance check-in. */
-export function recordBalance(data: TrackerData, balance: number, date: string): Partial<TrackerData["settings"]> {
+/** Settings changes for a balance check-in: what each account holds on that date. */
+export function recordBalance(data: TrackerData, accounts: CashAccount[], date: string): Partial<TrackerData["settings"]> {
   const before = cashPosition(data, date);
+  const balance = accounts.reduce((a, x) => a + x.balance, 0);
   const entry = { date, balance, ...(before.set && { predicted: Math.round(before.now) }) };
   const history = (data.settings.cashHistory ?? []).filter((h) => h.date !== date);
   return {
+    cashAccounts: accounts,
     cashBalance: balance,
     cashAsOf: date,
-    cashPaidAtAsOf: Object.entries(data.expensePaid[monthOf(date)] ?? {}).filter(([, v]) => v).map(([k]) => k),
+    // Anything already recorded for that day is in the balance just entered.
+    cashSettled: cashFlows({ ...data, settings: { ...data.settings, cashAsOf: date } }).filter((f) => f.date === date).map((f) => f.key),
+    cashPaidAtAsOf: [],
     cashHistory: [...history, entry].sort((a, b) => a.date.localeCompare(b.date)).slice(-60),
   };
 }

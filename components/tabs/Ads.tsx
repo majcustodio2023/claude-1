@@ -159,7 +159,7 @@ function SyncSpend() {
         const id = `meta-${month}-${r.trackedId}`;
         const entry = { id, date: json.until as string, label: `Meta ads: ${r.name}`, amount: Math.round(r.amount!), category: "ads" as const };
         const i = d.adHocExpenses.findIndex((e) => e.id === id);
-        if (i >= 0) d.adHocExpenses[i] = entry;
+        if (i >= 0) d.adHocExpenses[i] = { ...d.adHocExpenses[i], ...entry };
         else if (entry.amount > 0) d.adHocExpenses.push(entry);
       }
     });

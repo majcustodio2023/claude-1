@@ -26,7 +26,8 @@ export function kitContext(data: TrackerData, today: string): string {
     `Spending this month: fixed ${p(s.fixedExpenses)} (${p(s.expensesPaid)} paid), extra ${p(s.adHocExpenses)}, ad spend ${p(s.adSpend)}.`,
   ];
   if (cash.set) {
-    lines.push(`Cash on hand ≈ ${p(cash.now)} (bank balance last entered ${cash.asOf}); projected month-end ${p(cash.monthEnd)}; runway ${health.runwayMonths?.toFixed(1) ?? "?"} months.`);
+    lines.push(`Cash on hand ≈ ${p(cash.now)} (balances last entered ${cash.asOf}); projected month-end ${p(cash.monthEnd)}; runway ${health.runwayMonths?.toFixed(1) ?? "?"} months.`);
+    if (cash.accounts.length > 1) lines.push(`By account: ${cash.accounts.map((a) => `${a.name} ${p(a.now)}`).join("; ")}.`);
     lines.push(`Forecast: ${cashForecast(data, today, 4).map((f) => `${f.month} ends ${p(f.end)}`).join(", ")}.`);
   }
   const open = data.deals.filter((d) => d.stage !== "lost" && !(d.stage === "won" && dealBalance(d) <= 0));

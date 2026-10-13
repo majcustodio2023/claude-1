@@ -1,10 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { expenseAppliesTo, monthOf, summarize, uid } from "@/lib/finance";
+import { defaultAccountId, expenseAppliesTo, monthOf, summarize, uid } from "@/lib/finance";
 import type { AdHocExpense, ExpenseLine } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Btn, Card, NumInput, TextInput, money } from "../ui";
+import { AccountSelect } from "../Money";
 
 const LINE_CATS: ExpenseLine["category"][] = ["household", "payroll", "client", "software", "debt", "other"];
 const ADHOC_CATS: AdHocExpense["category"][] = ["ads", "software", "payroll", "household", "other"];
@@ -12,7 +13,23 @@ const ADHOC_CATS: AdHocExpense["category"][] = ["ads", "software", "payroll", "h
 export default function Expenses() {
   const { data, update, month, today } = useTracker();
   const s = useMemo(() => summarize(data, month), [data, month]);
-  const [form, setForm] = useState({ label: "", amount: undefined as number | undefined, date: today, category: "ads" as AdHocExpense["category"] });
+  const [form, setForm] = useState({ label: "", amount: undefined as number | undefined, date: today, category: "ads" as AdHocExpense["category"], accountId: defaultAccountId(data, "out") });
+  const paidFrom = data.expensePaidFrom?.[month] ?? {};
+  const payDate = monthOf(today) === month ? today : `${month}-01`;
+  // Ticking a bill records when and from which account it was paid, so the War chest takes it out of the right place.
+  const setPaid = (id: string, isPaid: boolean) =>
+    update((d) => {
+      (d.expensePaid[month] ??= {})[id] = isPaid;
+      const from = ((d.expensePaidFrom ??= {})[month] ??= {});
+      if (isPaid) from[id] = { date: payDate, accountId: defaultAccountId(d, "out") };
+      else delete from[id];
+    });
+  const setPaidFrom = (id: string, accountId: string) =>
+    update((d) => {
+      const from = ((d.expensePaidFrom ??= {})[month] ??= {});
+      from[id] = { date: from[id]?.date ?? payDate, accountId };
+      d.settings.lastPayAccountId = accountId;
+    });
   const paid = data.expensePaid[month] ?? {};
   const setLine = (id: string, patch: Partial<ExpenseLine>) => update((d) => void Object.assign(d.expenses.find((x) => x.id === id)!, patch));
   const adHoc = data.adHocExpenses.filter((e) => monthOf(e.date) === month).sort((a, b) => a.date.localeCompare(b.date));
@@ -34,11 +51,11 @@ export default function Expenses() {
                     type="checkbox"
                     disabled={!applies}
                     checked={Boolean(paid[e.id])}
-                    onChange={(ev) => update((d) => void ((d.expensePaid[month] ??= {})[e.id] = ev.target.checked))}
+                    onChange={(ev) => setPaid(e.id, ev.target.checked)}
                   />
                   Paid
                 </label>
-                <TextInput className="md:col-span-4" value={e.name} onChange={(v) => setLine(e.id, { name: v })} />
+                <TextInput className="md:col-span-3" value={e.name} onChange={(v) => setLine(e.id, { name: v })} />
                 <NumInput className="md:col-span-2" value={e.amount} onChange={(v) => setLine(e.id, { amount: v ?? 0 })} />
                 <select className="md:col-span-1" value={e.category} onChange={(ev) => setLine(e.id, { category: ev.target.value as ExpenseLine["category"] })}>
                   {LINE_CATS.map((c) => <option key={c}>{c}</option>)}
@@ -48,8 +65,9 @@ export default function Expenses() {
                   to
                   <input type="month" className="w-full" value={e.endMonth ?? ""} onChange={(ev) => setLine(e.id, { endMonth: ev.target.value || undefined })} title="Ends" />
                 </div>
-                <div className="md:col-span-1 flex justify-end gap-2">
+                <div className="md:col-span-2 col-span-2 flex justify-end items-center gap-2">
                   {!applies && <Badge>Not this month</Badge>}
+                  {applies && paid[e.id] && <AccountSelect className="text-sm py-0.5" value={paidFrom[e.id]?.accountId} onChange={(id) => setPaidFrom(e.id, id)} label="Paid from" />}
                   <button className="text-muted text-sm" onClick={() => confirm(`Remove ${e.name}?`) && update((d) => void (d.expenses = d.expenses.filter((x) => x.id !== e.id)))}>✕</button>
                 </div>
               </div>
@@ -67,7 +85,10 @@ export default function Expenses() {
           onSubmit={(e) => {
             e.preventDefault();
             if (!form.label || !form.amount) return;
-            update((d) => void d.adHocExpenses.push({ id: uid("adhoc"), label: form.label, amount: form.amount!, date: form.date, category: form.category }));
+            update((d) => {
+              d.adHocExpenses.push({ id: uid("adhoc"), label: form.label, amount: form.amount!, date: form.date, category: form.category, ...(form.accountId && { accountId: form.accountId }) });
+              if (form.accountId) d.settings.lastPayAccountId = form.accountId;
+            });
             setForm({ ...form, label: "", amount: undefined });
           }}
         >
@@ -77,6 +98,7 @@ export default function Expenses() {
             {ADHOC_CATS.map((c) => <option key={c}>{c}</option>)}
           </select>
           <input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
+          <AccountSelect value={form.accountId} onChange={(id) => setForm({ ...form, accountId: id })} label="Paid from" />
           <Btn kind="primary">Add</Btn>
         </form>
         {adHoc.length === 0 ? (
@@ -88,6 +110,7 @@ export default function Expenses() {
                 <span className="text-muted w-24">{e.date}</span>
                 <span className="flex-1">{e.label}</span>
                 <Badge>{e.category}</Badge>
+                <AccountSelect className="text-sm py-0.5" value={e.accountId} label="Paid from" onChange={(id) => update((d) => void (d.adHocExpenses.find((x) => x.id === e.id)!.accountId = id))} />
                 <span className="tabular-nums font-medium">{money(e.amount)}</span>
                 <button className="text-muted text-sm" onClick={() => update((d) => void (d.adHocExpenses = d.adHocExpenses.filter((x) => x.id !== e.id)))}>✕</button>
               </li>
