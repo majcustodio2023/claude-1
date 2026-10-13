@@ -83,11 +83,11 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Stat label="Retainers collected" value={peso(s.recurringCollected)} hint={`${peso(s.recurringPending)} still incoming`} tone="cyan" />
-        <Stat label="Boss loot (deals)" value={peso(s.dealCollected)} hint={`${peso(s.wonUnpaid)} won, not yet paid`} tone="gold" />
-        <Stat label="One-time drops" value={peso(s.oneTimeCollected)} tone="good" />
-        <Stat label="If retainers land" value={peso(s.projected)} hint="Collected + incoming" />
-        <Stat label="Bosses in the field" value={peso(s.openPipeline)} hint="Counts once collected" tone="hero" />
+        <Stat label="Collected this month" value={peso(s.moneyMade)} hint={`Retainers ${peso(s.recurringCollected)} · deals ${peso(s.dealCollected)}`} tone="good" />
+        <Stat label="Retainers to collect" value={peso(s.recurringPending)} hint={`of ${peso(s.recurringCollected + s.recurringPending)} retainers this month`} tone="cyan" />
+        <Stat label="Deals to collect" value={peso(s.wonUnpaid)} hint="Closed, waiting for payment" tone="gold" />
+        <Stat label="Month total if all lands" value={peso(s.projected)} hint="Collected + everything still owed" />
+        <Stat label="Bosses in the field" value={peso(s.openPipeline)} hint="Not closed yet" tone="hero" />
         <Stat label="Ad spend" value={peso(s.adSpend)} />
         <Stat label="Monthly upkeep" value={peso(s.fixedExpenses)} hint={`${peso(s.expensesPaid)} marked paid`} />
         <Stat label="Extra spending" value={peso(s.adHocExpenses)} tone={s.adHocExpenses ? "bad" : undefined} />

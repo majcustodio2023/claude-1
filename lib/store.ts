@@ -2,6 +2,7 @@ import "server-only";
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { foldOneTimeIntoDeals } from "./finance";
 import { seedData } from "./seed";
 import type { AutopilotEntry, Creative, TrackerData } from "./types";
 
@@ -52,13 +53,17 @@ async function writeDoc(doc: StoredDoc): Promise<void> {
 
 // Version 2 added the bank balance. Data saved before that gets the Oct 11
 // balance from Maj's plan once; it's editable on HQ.
+// Version 3 folded one-time income into deals, so one-offs show as collected or
+// still to collect. The seeded ₱30k one-time payment hadn't actually come in.
 function migrate(doc: StoredDoc): StoredDoc {
-  if ((doc.data.version ?? 1) < 2) {
-    const settings = { ...doc.data.settings };
+  let data = doc.data;
+  if ((data.version ?? 1) < 2) {
+    const settings = { ...data.settings };
     if (settings.cashBalance == null) Object.assign(settings, { cashBalance: 165000, cashAsOf: "2026-10-11" });
-    return { ...doc, data: { ...doc.data, version: 2, settings } };
+    data = { ...data, version: 2, settings };
   }
-  return doc;
+  if (data.version < 3) data = { ...foldOneTimeIntoDeals(data), version: 3 };
+  return data === doc.data ? doc : { ...doc, data };
 }
 
 async function loadDoc(): Promise<StoredDoc> {

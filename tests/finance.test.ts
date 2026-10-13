@@ -13,8 +13,10 @@ test("Local Ecom Hero pays 15% or the ₱25k floor, whichever is higher", () => 
 
 test("October seed: money made counts only collected cash", () => {
   const s = summarize(seedData(), "2026-10");
-  // ₱38,766 AACIO + ₱30,000 one-time; retainers not yet marked collected; deals not closed.
-  assert.equal(s.moneyMade, 68766);
+  // ₱38,766 AACIO; retainers not yet marked collected; the ₱30k one-off is closed but not collected.
+  assert.equal(s.moneyMade, 38766);
+  assert.equal(s.wonUnpaid, 30000);
+  assert.equal(s.projected, 38766 + 93000 + 30000);
   assert.equal(s.fixedExpenses, 140500); // debt starts November
   assert.equal(s.recurringPending, 25000 + 50000 + 18000);
   assert.equal(s.openPipeline, 135000 + 80000 + 230000);
@@ -34,8 +36,7 @@ test("collecting a deal adds to money made in the payment month", () => {
   deal.payments.push({ id: "p1", date: "2026-10-15", amount: 80000 });
   const s = summarize(d, "2026-10");
   assert.equal(s.dealCollected, 80000);
-  assert.equal(s.moneyMade, 148766);
-  assert.ok(s.moneyMade >= s.expenseTarget);
+  assert.equal(s.moneyMade, 118766);
 });
 
 test("advice and to-dos are produced from the data", () => {
@@ -50,9 +51,9 @@ test("advice and to-dos are produced from the data", () => {
 
 test("cash on hand starts from the bank balance and follows money in and out", () => {
   const d = seedData();
-  // Seed: ₱165,000 on Oct 11, plus ₱30,000 one-time and ₱38,766 AACIO that day, minus ₱22,000 delayed salary.
+  // Seed: ₱165,000 on Oct 11, plus ₱38,766 AACIO that day, minus ₱22,000 delayed salary.
   const c = cashPosition(d, "2026-10-13");
-  assert.equal(c.now, 165000 + 30000 + 38766 - 22000);
+  assert.equal(c.now, 165000 + 38766 - 22000);
   // Paying the household line and collecting Opsified moves it.
   d.expensePaid["2026-10"] = { household: true };
   d.streamMonths["2026-10"].opsified = { collected: 50000, collectedOn: "2026-10-12" };
@@ -87,4 +88,19 @@ test("forecast rolls month-end cash forward with recurring income and bills", ()
   const h = cashHealth(d, "2026-10-13");
   assert.equal(h.bufferTarget, 140500 * 3);
   assert.equal(h.daysSinceUpdate, 2);
+});
+
+test("old one-time income becomes closed deals: paid ones keep the payment, the seeded ₱30k is to collect", async () => {
+  const { foldOneTimeIntoDeals } = await import("../lib/finance");
+  const d = seedData();
+  d.oneTime = [
+    { id: "ot-1", date: "2026-10-11", label: "One-time client payment", amount: 30000 },
+    { id: "ot-x", date: "2026-10-05", label: "Consulting", amount: 5000 },
+  ];
+  d.deals = d.deals.filter((x) => x.id !== "deal-ot-1");
+  const m = foldOneTimeIntoDeals(d);
+  assert.equal(m.oneTime.length, 0);
+  const s = summarize(m, "2026-10");
+  assert.equal(s.wonUnpaid, 30000);
+  assert.equal(s.dealCollected, 5000);
 });

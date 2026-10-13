@@ -16,7 +16,6 @@ export default function Income() {
   const { data, update, month, today } = useTracker();
   const s = useMemo(() => summarize(data, month), [data, month]);
   const [editing, setEditing] = useState(false);
-  const [ot, setOt] = useState({ label: "", amount: undefined as number | undefined, date: today });
 
   const setSM = (streamId: string, patch: Partial<StreamMonth>) =>
     update((d) => {
@@ -30,7 +29,6 @@ export default function Income() {
     update((d) => void Object.assign(d.streams.find((x) => x.id === id)!, patch));
 
   const collectDate = monthOf(today) === month ? today : `${month}-01`;
-  const oneTime = data.oneTime.filter((o) => monthOf(o.date) === month).sort((a, b) => a.date.localeCompare(b.date));
 
   return (
     <div className="space-y-4">
@@ -157,36 +155,7 @@ export default function Income() {
         </Card>
       )}
 
-      <Card icon="◆" title={`One-time income · ${month}`}>
-        <form
-          className="flex flex-wrap gap-2 mb-3"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!ot.label || !ot.amount) return;
-            update((d) => void d.oneTime.push({ id: uid("ot"), label: ot.label, amount: ot.amount!, date: ot.date }));
-            setOt({ label: "", amount: undefined, date: today });
-          }}
-        >
-          <input className="flex-1 min-w-40" placeholder="What was it?" value={ot.label} onChange={(e) => setOt({ ...ot, label: e.target.value })} />
-          <NumInput className="w-32" placeholder="Amount" value={ot.amount} onChange={(v) => setOt({ ...ot, amount: v })} />
-          <input type="date" value={ot.date} onChange={(e) => setOt({ ...ot, date: e.target.value })} />
-          <Btn kind="primary">Add income</Btn>
-        </form>
-        {oneTime.length === 0 ? (
-          <p className="text-sm text-muted">Nothing this month.</p>
-        ) : (
-          <ul className="divide-y divide-line">
-            {oneTime.map((o) => (
-              <li key={o.id} className="flex items-center gap-3 py-2 text-sm">
-                <span className="text-muted w-24">{o.date}</span>
-                <span className="flex-1">{o.label}</span>
-                <span className="tabular-nums font-medium">{peso(o.amount)}</span>
-                <button className="text-muted text-sm" onClick={() => update((d) => void (d.oneTime = d.oneTime.filter((x) => x.id !== o.id)))}>✕</button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
+      <p className="text-base text-muted">One-off payments live in Boss Deals: add them as &quot;Closed, to collect&quot; and press Collected when the money lands.</p>
     </div>
   );
 }

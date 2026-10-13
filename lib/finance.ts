@@ -92,6 +92,7 @@ export function summarize(data: TrackerData, month: string): MonthSummary {
   const oneTimeCollected = data.oneTime.filter((o) => monthOf(o.date) === month).reduce((a, o) => a + o.amount, 0);
 
   const moneyMade = recurringCollected + dealCollected + oneTimeCollected;
+  const wonUnpaid = data.deals.filter((d) => d.stage === "won").reduce((a, d) => a + dealBalance(d), 0);
 
   const lines = data.expenses.filter((e) => expenseAppliesTo(e, month));
   const fixedExpenses = lines.reduce((a, e) => a + e.amount, 0);
@@ -117,7 +118,7 @@ export function summarize(data: TrackerData, month: string): MonthSummary {
     dealCollected,
     oneTimeCollected,
     moneyMade,
-    projected: moneyMade + recurringPending,
+    projected: moneyMade + recurringPending + wonUnpaid,
     fixedExpenses,
     expenseTarget,
     adHocExpenses,
@@ -130,7 +131,7 @@ export function summarize(data: TrackerData, month: string): MonthSummary {
     gapToExpenses: Math.max(expenseTarget - moneyMade, 0),
     gapToGoal: Math.max(goal - moneyMade, 0),
     openPipeline: open.reduce((a, d) => a + d.value, 0),
-    wonUnpaid: data.deals.filter((d) => d.stage === "won").reduce((a, d) => a + dealBalance(d), 0),
+    wonUnpaid,
   };
 }
 
@@ -276,4 +277,19 @@ export function recordBalance(data: TrackerData, balance: number, date: string):
     cashPaidAtAsOf: Object.entries(data.expensePaid[monthOf(date)] ?? {}).filter(([, v]) => v).map(([k]) => k),
     cashHistory: [...history, entry].sort((a, b) => a.date.localeCompare(b.date)).slice(-60),
   };
+}
+
+/** Turns one-time income entries into closed deals: paid ones keep their payment, the seeded ₱30k becomes "to collect". */
+export function foldOneTimeIntoDeals(data: TrackerData): TrackerData {
+  if (!data.oneTime?.length) return data;
+  const deals = data.oneTime.map((o) => ({
+    id: `deal-${o.id}`,
+    name: o.label,
+    value: o.amount,
+    stage: "won" as const,
+    expectedClose: o.date,
+    payments: o.id === "ot-1" ? [] : [{ id: `pay-${o.id}`, date: o.date, amount: o.amount }],
+    createdAt: o.date,
+  }));
+  return { ...data, deals: [...data.deals, ...deals], oneTime: [] };
 }
