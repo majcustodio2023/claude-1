@@ -144,6 +144,23 @@ export interface TrackedCampaign {
   maxDailyBudget?: number;
 }
 
+export interface Creative {
+  id: string;
+  kind: "image" | "video";
+  source: "higgsfield" | "link";
+  status: "generating" | "ready" | "failed";
+  url?: string;
+  prompt?: string;
+  /** Higgsfield request, while generating */
+  requestId?: string;
+  error?: string;
+  createdAt: string;
+  /** Media already uploaded to each ad account (keyed by AdAccount.id) */
+  meta?: Record<string, { imageHash?: string; videoId?: string }>;
+  /** Test ads made from this creative */
+  ads?: { adId: string; trackedId: string; campaign: string; createdAt: string }[];
+}
+
 export interface AutopilotEntry {
   id: string;
   at: string; // ISO time
@@ -186,5 +203,9 @@ export interface TrackerData {
   adAccounts: AdAccount[];
   trackedCampaigns: TrackedCampaign[];
   autopilotLog?: AutopilotEntry[];
+  /** Ad creatives: AI-generated (Higgsfield) or added by link. Owned by the server. */
+  creatives?: Creative[];
+  /** Set by the server: which integrations have a saved key (keys never reach the browser). */
+  integrations?: { higgsfield?: boolean };
   updatedAt?: string;
 }

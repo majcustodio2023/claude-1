@@ -3,14 +3,14 @@ import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { seedData } from "./seed";
-import type { AutopilotEntry, TrackerData } from "./types";
+import type { AutopilotEntry, Creative, TrackerData } from "./types";
 
 // The whole tracker lives in one JSON document. Meta tokens are kept beside it,
 // encrypted, and are never sent to the browser.
 
 interface StoredDoc {
   data: TrackerData;
-  secrets?: { tokens?: Record<string, string> };
+  secrets?: { tokens?: Record<string, string>; higgsfield?: string };
 }
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -71,7 +71,11 @@ async function loadDoc(): Promise<StoredDoc> {
 
 function withTokenFlags(doc: StoredDoc): TrackerData {
   const tokens = doc.secrets?.tokens ?? {};
-  return { ...doc.data, adAccounts: doc.data.adAccounts.map((a) => ({ ...a, hasToken: Boolean(tokens[a.id]) })) };
+  return {
+    ...doc.data,
+    adAccounts: doc.data.adAccounts.map((a) => ({ ...a, hasToken: Boolean(tokens[a.id]) })),
+    integrations: { higgsfield: Boolean(doc.secrets?.higgsfield) },
+  };
 }
 
 export async function getData(): Promise<TrackerData> {
@@ -83,15 +87,17 @@ export async function saveData(data: TrackerData): Promise<TrackerData> {
   const tokens = { ...(doc.secrets?.tokens ?? {}) };
   // Drop tokens for ad accounts that were removed.
   for (const id of Object.keys(tokens)) if (!data.adAccounts.some((a) => a.id === id)) delete tokens[id];
+  const { integrations: _i, ...rest } = data;
   const next: StoredDoc = {
     data: {
-      ...data,
+      ...rest,
       adAccounts: data.adAccounts.map(({ hasToken: _h, ...a }) => a),
-      // The server owns the Autopilot log; a browser tab with older data mustn't overwrite it.
+      // The server owns the Autopilot log and creatives; a browser tab with older data mustn't overwrite them.
       autopilotLog: doc.data.autopilotLog,
+      creatives: doc.data.creatives,
       updatedAt: new Date().toISOString(),
     },
-    secrets: { tokens },
+    secrets: { ...doc.secrets, tokens },
   };
   await writeDoc(next);
   return withTokenFlags(next);
@@ -126,11 +132,33 @@ export async function setToken(adAccountRef: string, token: string | null): Prom
   const tokens = { ...(doc.secrets?.tokens ?? {}) };
   if (token) tokens[adAccountRef] = encrypt(token.trim());
   else delete tokens[adAccountRef];
-  await writeDoc({ ...doc, secrets: { tokens } });
+  await writeDoc({ ...doc, secrets: { ...doc.secrets, tokens } });
 }
 
 export async function getToken(adAccountRef: string): Promise<string | null> {
   const doc = await loadDoc();
   const blob = doc.secrets?.tokens?.[adAccountRef];
   return blob ? decrypt(blob) : null;
+}
+
+/** Higgsfield API key, stored as "keyId:secret", encrypted like the Meta tokens. */
+export async function setHiggsfieldKey(key: string | null): Promise<void> {
+  const doc = await loadDoc();
+  const secrets = { ...doc.secrets };
+  if (key) secrets.higgsfield = encrypt(key.trim());
+  else delete secrets.higgsfield;
+  await writeDoc({ ...doc, secrets });
+}
+
+export async function getHiggsfieldKey(): Promise<string | null> {
+  const doc = await loadDoc();
+  return doc.secrets?.higgsfield ? decrypt(doc.secrets.higgsfield) : null;
+}
+
+/** Applies a change to the creatives list on the server's copy of the data. */
+export async function updateCreatives(fn: (list: Creative[]) => Creative[]): Promise<Creative[]> {
+  const doc = await loadDoc();
+  const creatives = fn([...(doc.data.creatives ?? [])]);
+  await writeDoc({ ...doc, data: { ...doc.data, creatives } });
+  return creatives;
 }

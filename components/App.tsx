@@ -12,6 +12,7 @@ import Log from "./tabs/Log";
 import Tasks from "./tabs/Tasks";
 import Team from "./tabs/Team";
 import Ads from "./tabs/Ads";
+import Creatives from "./tabs/Creatives";
 import SettingsTab from "./tabs/Settings";
 import { Bar, Celebrations, celebrate, peso } from "./ui";
 import { Hero } from "./characters";
@@ -43,6 +44,7 @@ const TABS = [
   ["tasks", "Missions", "🎯"],
   ["team", "Squad", "🦸"],
   ["ads", "Ad Command", "📡"],
+  ["creatives", "Creatives", "🎨"],
   ["settings", "Settings", "⚙️"],
 ] as const;
 type TabId = (typeof TABS)[number][0];
@@ -137,6 +139,7 @@ export default function App() {
         {tab === "tasks" && <Tasks />}
         {tab === "team" && <Team />}
         {tab === "ads" && <Ads />}
+        {tab === "creatives" && <Creatives />}
         {tab === "settings" && <SettingsTab />}
       </div>
       <Celebrations />

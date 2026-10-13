@@ -11,6 +11,7 @@ A private web app for running the agency: money in vs. the monthly expense and �
 - **Daily log**: leads, booked calls, show-ups, closes, ad spend, energy, wins and blockers. Weekly totals show on Today.
 - **Tasks**: the 50-item Eisenhower checklist from the Oct 11 plan, with owners and due dates. **Team**: members, cost, and their open tasks.
 - **Meta Ads**: add ad accounts (yours and teammates'), save an access token per account, pick which campaigns to track, and analyze them: cost per result, ROAS, link CTR, CPC, CPM, frequency, hook rate (3s views ÷ impressions), hold rate (ThruPlays ÷ 3s views), plus per-ad results. Each campaign is **View only** (suggestions), **Manage** (suggestions get one-click buttons to pause losing ads or change the daily budget ±20%, each confirmed before it's sent to Meta), or **Autopilot** (the same changes applied once a day on their own, with limits: at most 3 pauses a run and never the best ad, budget raises only up to a max daily budget you set, and at most one budget change every 3 days). Every Autopilot run is logged in the app.
+- **Creatives**: generate ad images with Higgsfield (Soul) from a prompt, animate any image into a 5–15s video (Kling via Higgsfield), or add your own videos and images by public link (Google Drive and Dropbox share links are converted to direct downloads). "Make test ad" on a campaign set to Manage or Autopilot uploads the media to that ad account and creates a **paused** ad in the same ad set as the campaign's best single image/video ad, copying its page, text, headline, link and button.
 
 ## Running locally
 
@@ -30,3 +31,7 @@ npm test
 ## Meta tokens
 
 Use a System User token from Meta Business Settings (doesn't expire) with `ads_read`, plus `ads_management` if you'll use Manage mode. Tokens are checked against Meta, encrypted with `APP_SECRET`, and never returned to the browser.
+
+## Higgsfield key
+
+Create an API key at cloud.higgsfield.ai and paste it in the Creatives tab as `KEY_ID:KEY_SECRET`. It's encrypted with `APP_SECRET` like the Meta tokens and never returned to the browser. Generations use your Higgsfield credits.
