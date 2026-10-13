@@ -55,7 +55,10 @@ export default function Tasks() {
           <select value={form.quadrant} onChange={(e) => setForm({ ...form, quadrant: e.target.value as Quadrant })}>
             {QUADS.map(([q, l]) => <option key={q} value={q}>{l}</option>)}
           </select>
-          <input className="w-28" placeholder="Owner" value={form.owner} onChange={(e) => setForm({ ...form, owner: e.target.value })} />
+          <input className="w-36" placeholder="Who" list="task-owners" value={form.owner} onChange={(e) => setForm({ ...form, owner: e.target.value })} />
+          <datalist id="task-owners">
+            {Array.from(new Set(["You", ...data.team.filter((m) => m.active).map((m) => m.name), ...owners])).map((o) => <option key={o} value={o} />)}
+          </datalist>
           <input type="date" value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} />
           <Btn kind="primary">Add task</Btn>
         </form>

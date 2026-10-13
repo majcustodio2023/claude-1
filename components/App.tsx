@@ -137,7 +137,7 @@ export default function App() {
           ))}
         </nav>
         {tab === "today" && <Today goTo={go} />}
-        {tab === "income" && <Income />}
+        {tab === "income" && <Income goTo={go} />}
         {tab === "pipeline" && <Pipeline />}
         {tab === "expenses" && <Expenses />}
         {tab === "log" && <Log />}

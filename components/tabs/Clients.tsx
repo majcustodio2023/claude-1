@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { ME, clientKind, clientMoney, clientStats, isOverdue, nextStatus, openTasksFor, people, personName, teamPay } from "@/lib/clients";
+import { ME, archiveClient, clientKind, clientMoney, clientStats, createClient, deleteClient, deleteClientSummary, isOverdue, nextStatus, openTasksFor, people, personName, renameClient, teamPay } from "@/lib/clients";
 import { addMonths, billPaid, expenseAppliesTo, locale, money, monthOf, parseAmount, uid } from "@/lib/finance";
 import type { Client, ClientTask } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate } from "../ui";
 import { HELP } from "../help";
+import { StreamTerms } from "../StreamSettings";
 
 const STATUS: Record<ClientTask["status"], { label: string; cls: string }> = {
   todo: { label: "To do", cls: "btn-ghost" },
@@ -19,13 +20,11 @@ export default function Clients() {
   const [who, setWho] = useState("all");
   const [showArchived, setShowArchived] = useState(false);
   const [name, setName] = useState("");
+  const [kind, setKind] = useState<"recurring" | "project" | "">("recurring");
+  const [amount, setAmount] = useState("");
   const clients = data.clients ?? [];
   const active = clients.filter((c) => !c.archived);
   const archived = clients.filter((c) => c.archived);
-  const fromIncome = data.streams.filter((s) => s.active && !clients.some((c) => c.streamId === s.id));
-
-  const addClient = (c: Partial<Client> & { name: string }) =>
-    update((d) => void (d.clients = [...(d.clients ?? []), { id: uid("client"), createdAt: today, ...c }]));
 
   return (
     <div className="space-y-4">
@@ -53,28 +52,20 @@ export default function Clients() {
           onSubmit={(e) => {
             e.preventDefault();
             if (!name.trim()) return;
-            addClient({ name: name.trim() });
+            update((d) => void createClient(d, { name: name.trim(), kind: kind || undefined, amount: parseAmount(amount) || 0 }, today));
             setName("");
+            setAmount("");
           }}
         >
           <input className="flex-1 min-w-48 text-lg" placeholder="New client name" value={name} onChange={(e) => setName(e.target.value)} />
+          <select value={kind} onChange={(e) => setKind(e.target.value as typeof kind)} aria-label="How they pay">
+            <option value="recurring">Monthly retainer</option>
+            <option value="project">One-time project</option>
+            <option value="">Decide later</option>
+          </select>
+          {kind && <input inputMode="decimal" className="w-36" placeholder={kind === "recurring" ? "Monthly fee" : "Project price"} value={amount} onChange={(e) => setAmount(e.target.value)} />}
           <Btn kind="primary">+ Add client</Btn>
         </form>
-        {fromIncome.length > 0 && (
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-base">
-            <span className="text-muted">From your income:</span>
-            {fromIncome.map((s) => (
-              <Btn key={s.id} kind="soft" onClick={() => addClient({ name: s.name, streamId: s.id })}>
-                + {s.name}
-              </Btn>
-            ))}
-            {fromIncome.length > 1 && (
-              <button className="underline text-muted" onClick={() => update((d) => void (d.clients = [...(d.clients ?? []), ...fromIncome.map((s) => ({ id: uid("client"), name: s.name, streamId: s.id, createdAt: today }))]))}>
-                Add all
-              </button>
-            )}
-          </div>
-        )}
         {who !== "all" && <MyPlate personId={who} />}
       </Card>
 
@@ -135,7 +126,7 @@ function MyPlate({ personId }: { personId: string }) {
 }
 
 function ClientCard({ client: c, who }: { client: Client; who: string }) {
-  const { data, update, today } = useTracker();
+  const { data, update, today, month } = useTracker();
   const [showDone, setShowDone] = useState(false);
   const [settings, setSettings] = useState(false);
   const all = (data.clientTasks ?? []).filter((t) => t.clientId === c.id);
@@ -166,7 +157,7 @@ function ClientCard({ client: c, who }: { client: Client; who: string }) {
         <div className="mb-4 bg-card-2 rounded-[8px] p-3 space-y-2 text-base">
           <label className="flex items-center gap-2">
             <span className="text-muted w-20">Name</span>
-            <TextInput className="flex-1" value={c.name} onChange={(v) => set({ name: v })} />
+            <TextInput className="flex-1" value={c.name} onChange={(v) => v.trim() && update((d) => renameClient(d, c.id, v.trim()))} />
           </label>
           <label className="flex items-center gap-2">
             <span className="text-muted w-20">Pays by</span>
@@ -176,48 +167,15 @@ function ClientCard({ client: c, who }: { client: Client; who: string }) {
               <option value="project">One-time project</option>
             </select>
           </label>
-          {clientKind(c) === "recurring" && (
-            <label className="flex items-center gap-2">
-              <span className="text-muted w-20">Income</span>
-              <select value={c.streamId ?? ""} onChange={(e) => set({ streamId: e.target.value || undefined })}>
-                <option value="">Not linked yet</option>
-                {data.streams.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-          {clientKind(c) === "project" && (
-            <label className="flex items-center gap-2">
-              <span className="text-muted w-20">Deal</span>
-              <select value={c.dealId ?? ""} onChange={(e) => set({ dealId: e.target.value || undefined })}>
-                <option value="">Not linked yet</option>
-                {data.deals.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
           <label className="flex items-center gap-2">
             <span className="text-muted w-20">Notes</span>
             <TextInput className="flex-1" value={c.notes} onChange={(v) => set({ notes: v })} placeholder="Contacts, links, scope…" />
           </label>
           <div className="flex gap-2">
-            <Btn onClick={() => set({ archived: !c.archived })}>{c.archived ? "Unarchive" : "Archive client"}</Btn>
-            <Btn
-              kind="danger"
-              onClick={() =>
-                confirm(`Delete ${c.name} and all ${all.length} of its tasks?`) &&
-                update((d) => {
-                  d.clients = d.clients!.filter((x) => x.id !== c.id);
-                  d.clientTasks = (d.clientTasks ?? []).filter((t) => t.clientId !== c.id);
-                })
-              }
-            >
+            <Btn onClick={() => (c.archived || confirm(`Archive ${c.name}? Their retainer and monthly team pay stop from this month. Everything already paid stays in your history.`)) && update((d) => archiveClient(d, c.id, !c.archived, month))}>
+              {c.archived ? "Unarchive" : "Archive client"}
+            </Btn>
+            <Btn kind="danger" onClick={() => confirm(deleteClientSummary(data, c.id)) && update((d) => deleteClient(d, c.id))}>
               Delete
             </Btn>
           </div>
@@ -440,14 +398,14 @@ function ClientMoneyPanel({ client: c }: { client: Client }) {
       <div className="flex flex-wrap items-center gap-3">
         <Badge tone={kind === "recurring" ? "accent" : "hero"}>{kind === "recurring" ? "Monthly retainer" : "One-time project"}</Badge>
         {kind === "recurring" ? (
-          stream && stream.kind !== "fixed" ? (
+          stream ? (
             <span className="text-base">
-              Due {monthName(month)}: <b>{money(m.income)}</b> <span className="text-muted">(set in Income)</span>
+              Due {monthName(month)}: <b>{money(m.income)}</b>
             </span>
           ) : (
             <label className="flex items-center gap-2 text-base font-bold">
               Monthly fee
-              <NumInput className="w-32" value={stream?.amount} onChange={setFee} placeholder="0" />
+              <NumInput className="w-32" value={undefined} onChange={setFee} placeholder="0" />
             </label>
           )
         ) : (
@@ -471,15 +429,17 @@ function ClientMoneyPanel({ client: c }: { client: Client }) {
         )}
         <span className="text-base ml-auto">
           {kind === "recurring" ? (
-            m.collected ? <span className="text-good font-bold">Collected {money(m.collected)} ✓</span> : stream ? <span className="text-muted">Not collected for {monthName(month)} yet (Income tab)</span> : null
+            m.collected ? <span className="text-good font-bold">Collected {money(m.collected)} ✓</span> : stream ? <span className="text-muted">Not collected for {monthName(month)} yet · mark it in Income</span> : null
           ) : deal ? (
             <span>
               <span className="text-good font-bold">{money(m.collected)} collected</span>
-              {m.toCollect > 0 && <span className="text-muted"> · {money(m.toCollect)} to collect (Boss Deals)</span>}
+              {m.toCollect > 0 && <span className="text-muted"> · {money(m.toCollect)} to collect in Income</span>}
             </span>
           ) : null}
         </span>
       </div>
+
+      {kind === "recurring" && stream && <StreamTerms stream={stream} />}
 
       <TeamPay client={c} kind={kind} />
 
