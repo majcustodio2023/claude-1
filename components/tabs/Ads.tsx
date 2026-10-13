@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { locale, moneyIn, uid } from "@/lib/finance";
-import type { AdRow, CampaignInfo, DatePreset, Metrics, Suggestion, SuggestedAction } from "@/lib/meta";
+import type { CampaignInfo, DatePreset, SuggestedAction } from "@/lib/meta";
+import CampaignView, { type InsightResult } from "../ads/CampaignView";
 import type { AdAccount, AutopilotEntry, TrackedCampaign } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Btn, Card, NumInput, Stat, TextInput, money } from "../ui";
@@ -20,14 +21,6 @@ const PRESETS: [DatePreset, string][] = [
   ["last_month", "Last month"],
 ];
 
-interface InsightResult {
-  campaign: CampaignInfo;
-  metrics: Metrics;
-  ads: AdRow[];
-  suggestions: Suggestion[];
-  fetchedAt: string;
-  currency?: string;
-}
 
 export default function Ads() {
   const { data, update } = useTracker();
@@ -226,7 +219,7 @@ function AutopilotCard() {
               <div className="flex-1">
                 <div className="font-medium">{e.action}</div>
                 <div className="text-muted">
-                  {e.campaign} · {new Date(e.at).toLocaleString(locale())}
+                  {e.by === "you" ? "You" : "Autopilot"} · {e.campaign} · {new Date(e.at).toLocaleString(locale())}
                   {e.note ? ` · ${e.note}` : ""}
                 </div>
               </div>
@@ -327,8 +320,6 @@ function AccountRow({ account }: { account: AdAccount }) {
   );
 }
 
-const TONE = { good: "good", info: "accent", warn: "warn", bad: "bad" } as const;
-
 /** Copies a read-only link to this campaign's live results, for an ads expert or client. */
 function ShareLink({ tracked }: { tracked: TrackedCampaign }) {
   const { update } = useTracker();
@@ -379,10 +370,9 @@ function ShareLink({ tracked }: { tracked: TrackedCampaign }) {
 }
 
 function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCampaign; preset: DatePreset; result?: InsightResult; onResult: (r: InsightResult) => void }) {
-  const { data, update } = useTracker();
+  const { data, update, reload } = useTracker();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
-  const [applied, setApplied] = useState<Record<string, string>>({});
   const account = data.adAccounts.find((a) => a.id === tracked.adAccountRef);
   // Meta reports money in the ad account's currency.
   const cur = (n: number) => moneyIn(n, result?.currency);
@@ -395,20 +385,15 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
     const json = await res.json();
     setBusy(false);
     if (!res.ok) return setErr(json.error);
-    setApplied({});
     onResult(json);
   };
 
-  const apply = async (key: string, action: SuggestedAction) => {
-    const what = action.type === "pause" ? `Pause "${action.targetName}"` : `Set daily budget of "${action.targetName}" to ${cur(action.newDailyBudget!)}`;
-    if (!confirm(`${what} in Meta now?`)) return;
-    setApplied((x) => ({ ...x, [key]: "Applying…" }));
+  const apply = async (action: SuggestedAction): Promise<string | null> => {
     const res = await fetch("/api/meta/action", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tracked: tracked.id, action }) });
     const json = await res.json();
-    setApplied((x) => ({ ...x, [key]: res.ok ? "Done" : json.error }));
+    if (res.ok) void reload();
+    return res.ok ? null : json.error;
   };
-
-  const m = result?.metrics;
 
   return (
     <div className="border border-line bg-card-2/50 rounded-[3px] p-3 space-y-3">
@@ -447,84 +432,17 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
           </label>
         )}
         <label className="flex items-center gap-1">
+          Budget step % <NumInput className="w-16" value={tracked.scaleStep} placeholder="20" onChange={(v) => set({ scaleStep: v && v > 0 && v <= 100 ? v : undefined })} />
+        </label>
+        <label className="flex items-center gap-1">
+          Pause ads after <NumInput className="w-16" value={tracked.killAt} placeholder="1.5" onChange={(v) => set({ killAt: v && v > 0 ? v : undefined })} />× target with no results
+        </label>
+        <label className="flex items-center gap-1">
           Result event <TextInput className="w-48" value={tracked.resultAction} placeholder="auto (leads)" onChange={(v) => set({ resultAction: v || undefined })} />
         </label>
       </div>
       {err && <p className="text-sm text-bad">{err}</p>}
-      {m && result && (
-        <>
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
-            <Stat label="Spend" value={cur(m.spend)} />
-            <Stat label="Results" value={m.results} hint={m.resultType} />
-            <Stat label="Cost / result" value={m.cpl != null ? cur(m.cpl) : "–"} />
-            <Stat label="ROAS" value={m.roas != null ? `${m.roas.toFixed(2)}x` : "–"} />
-            <Stat label="Link CTR" value={`${m.ctr.toFixed(2)}%`} hint={`${m.linkClicks} clicks · CPC ${cur(m.cpc)}`} />
-            <Stat label="CPM" value={cur(m.cpm)} hint={`Freq ${m.frequency.toFixed(1)}`} />
-            <Stat label="3s video views" value={m.videoViews3s.toLocaleString()} hint={m.hookRate != null ? `Hook ${m.hookRate.toFixed(0)}%` : undefined} />
-            <Stat label="ThruPlays" value={m.thruplays.toLocaleString()} hint={m.holdRate != null ? `Hold ${m.holdRate.toFixed(0)}%` : undefined} />
-          </div>
-          <div className="space-y-2">
-            {result.suggestions.map((s, i) => {
-              const key = `${i}-${s.title}`;
-              return (
-                <div key={key} className="flex gap-3 items-start text-sm">
-                  <Badge tone={TONE[s.severity]}>{s.severity === "bad" ? "fix" : s.severity === "warn" ? "watch" : s.severity === "good" ? "win" : "note"}</Badge>
-                  <div className="flex-1">
-                    <div className="font-medium">{s.title}</div>
-                    <div className="text-muted">{s.detail}</div>
-                  </div>
-                  {s.action &&
-                    (tracked.mode !== "view" ? (
-                      applied[key] ? (
-                        <span className="text-sm text-muted">{applied[key]}</span>
-                      ) : (
-                        <Btn onClick={() => apply(key, s.action!)}>
-                          {s.action.type === "pause" ? "Pause ad" : `Budget → ${cur(s.action.newDailyBudget!)}/day`}
-                        </Btn>
-                      )
-                    ) : (
-                      <span className="text-sm text-muted">Switch to Manage to apply</span>
-                    ))}
-                </div>
-              );
-            })}
-          </div>
-          {result.ads.length > 0 && (
-            <details>
-              <summary className="text-sm cursor-pointer">Ads in this campaign ({result.ads.length})</summary>
-              <div className="overflow-x-auto mt-2">
-                <table className="w-full text-sm">
-                  <thead className="text-muted text-left">
-                    <tr>
-                      <th className="py-1 pr-2">Ad</th>
-                      <th className="pr-2">Spend</th>
-                      <th className="pr-2">Results</th>
-                      <th className="pr-2">Cost/result</th>
-                      <th className="pr-2">CTR</th>
-                      <th className="pr-2">Hook</th>
-                      <th>Hold</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-line">
-                    {[...result.ads].sort((a, b) => b.m.spend - a.m.spend).map((a) => (
-                      <tr key={a.id}>
-                        <td className="py-1 pr-2 max-w-64 truncate">{a.name}</td>
-                        <td className="pr-2 tabular-nums">{cur(a.m.spend)}</td>
-                        <td className="pr-2 tabular-nums">{a.m.results}</td>
-                        <td className="pr-2 tabular-nums">{a.m.cpl != null ? cur(a.m.cpl) : "–"}</td>
-                        <td className="pr-2 tabular-nums">{a.m.ctr.toFixed(2)}%</td>
-                        <td className="pr-2 tabular-nums">{a.m.hookRate != null ? `${a.m.hookRate.toFixed(0)}%` : "–"}</td>
-                        <td className="tabular-nums">{a.m.holdRate != null ? `${a.m.holdRate.toFixed(0)}%` : "–"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </details>
-          )}
-          <p className="text-sm text-muted">Updated {new Date(result.fetchedAt).toLocaleString(locale())}</p>
-        </>
-      )}
+      {result && <CampaignView key={result.fetchedAt} tracked={tracked} result={result} onApply={apply} />}
     </div>
   );
 }

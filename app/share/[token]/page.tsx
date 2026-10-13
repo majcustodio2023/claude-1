@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { configureLocale, locale, moneyIn } from "@/lib/finance";
-import { analyze, fetchCampaignInsights, toMetrics, type AdRow, type DatePreset, type Metrics, type Suggestion } from "@/lib/meta";
-import { resolveTracked } from "@/lib/meta-server";
+import type { AdRow, DatePreset, Metrics, Suggestion } from "@/lib/meta";
+import { campaignReport, resolveTracked } from "@/lib/meta-server";
 import { getData } from "@/lib/store";
 import { Badge, Stat } from "@/components/ui";
 
@@ -45,15 +45,9 @@ export default async function SharedCampaign({ params, searchParams }: { params:
   let error = "";
   try {
     const { token: metaToken } = await resolveTracked(tracked.id);
-    const raw = await fetchCampaignInsights(tracked.campaignId, metaToken, preset);
-    const metrics = toMetrics(raw.campaign, tracked.resultAction);
-    const ads = raw.ads.map((a) => ({ id: a.ad_id!, name: a.ad_name ?? a.ad_id!, adsetId: a.adset_id, adsetName: a.adset_name, m: toMetrics(a, tracked.resultAction) }));
-    const suggestions = analyze(metrics, ads, raw.adsets, raw.info, {
-      cpl: tracked.targetCpl ?? data.settings.targetCpl,
-      roas: tracked.targetRoas ?? data.settings.targetRoas,
-    }, raw.currency);
-    report = { metrics, ads, suggestions };
-    currency = raw.currency;
+    const full = await campaignReport(tracked, data, metaToken, preset);
+    report = { metrics: full.metrics, ads: full.ads, suggestions: full.suggestions };
+    currency = full.currency;
   } catch (e) {
     error = (e as Error).message;
   }

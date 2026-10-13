@@ -17,8 +17,12 @@ export interface Plan {
   skipped: { action: SuggestedAction; reason: string }[];
 }
 
+const LEVEL = { ad: "ad", adset: "ad set", campaign: "campaign" } as const;
+
 export function describeAction(a: SuggestedAction): string {
-  return a.type === "pause" ? `Pause ad "${a.targetName}"` : `Set daily budget of "${a.targetName}" to ${moneyIn(a.newDailyBudget ?? 0, a.currency)}`;
+  if (a.type === "pause") return `Pause ${LEVEL[a.level]} "${a.targetName}"`;
+  if (a.type === "resume") return `Turn on ${LEVEL[a.level]} "${a.targetName}"`;
+  return `Set daily budget of "${a.targetName}" to ${moneyIn(a.newDailyBudget ?? 0, a.currency)}`;
 }
 
 export function planAutopilot(
@@ -34,7 +38,8 @@ export function planAutopilot(
   const withSpend = ads.filter((a) => a.m.spend > 0);
   const keep = [...withSpend].sort((a, b) => b.m.results - a.m.results || (a.m.cpl ?? Infinity) - (b.m.cpl ?? Infinity))[0];
   let pauses = 0;
-  for (const a of actions.filter((x) => x.type === "pause")) {
+  // Autopilot only pauses single ads. Ad sets and campaigns wait for you.
+  for (const a of actions.filter((x) => x.type === "pause" && x.level === "ad")) {
     if (done.some((e) => e.type === "pause" && e.targetId === a.targetId)) continue; // already paused earlier
     if (keep && a.targetId === keep.id) {
       plan.skipped.push({ action: a, reason: "It's the best ad left with spend, so it stays on." });
