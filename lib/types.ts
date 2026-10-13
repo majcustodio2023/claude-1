@@ -133,6 +133,32 @@ export interface TeamMember {
   active: boolean;
 }
 
+/** A client the agency works for. Can be linked to an income stream. */
+export interface Client {
+  id: string;
+  name: string;
+  /** Income stream this client pays through, if any */
+  streamId?: string;
+  notes?: string;
+  archived?: boolean;
+  createdAt: string;
+}
+
+export type ClientTaskStatus = "todo" | "doing" | "done";
+
+export interface ClientTask {
+  id: string;
+  clientId: string;
+  title: string;
+  details?: string;
+  /** Who's doing it: "me" (the owner) and/or team member ids. Several = working on it together. */
+  assignees: string[];
+  status: ClientTaskStatus;
+  dueDate?: string;
+  createdAt: string;
+  doneOn?: string;
+}
+
 export type Quadrant = "do" | "schedule" | "delegate" | "eliminate";
 
 export interface Task {
@@ -268,6 +294,8 @@ export interface TrackerData {
   logs: Record<string, DailyLog>; // date -> log
   team: TeamMember[];
   tasks: Task[];
+  clients?: Client[];
+  clientTasks?: ClientTask[];
   todos: Record<string, TodoItem[]>; // date -> items
   /** Hero gear earned from achievements: achievement id -> date first unlocked. Gear is kept for good. */
   heroGear?: Record<string, string>;

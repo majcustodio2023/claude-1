@@ -18,6 +18,8 @@ export function seedData(): TrackerData {
     logs: {},
     team: [],
     tasks: [],
+    clients: [],
+    clientTasks: [],
     todos: {},
     adAccounts: [],
     trackedCampaigns: [],
