@@ -10,7 +10,7 @@ A private web app for running the agency: money in vs. the monthly expense and �
 - **Expenses**: fixed monthly lines (with optional start/end months, e.g. the ₱20k debt Nov–Apr), paid checkboxes, and other spending such as ad spend.
 - **Daily log**: leads, booked calls, show-ups, closes, ad spend, energy, wins and blockers. Weekly totals show on Today.
 - **Tasks**: the 50-item Eisenhower checklist from the Oct 11 plan, with owners and due dates. **Team**: members, cost, and their open tasks.
-- **Meta Ads**: add ad accounts (yours and teammates'), save an access token per account, pick which campaigns to track, and analyze them: cost per result, ROAS, link CTR, CPC, CPM, frequency, hook rate (3s views ÷ impressions), hold rate (ThruPlays ÷ 3s views), plus per-ad results. Each campaign is **View only** (suggestions) or **Manage** (suggestions get one-click buttons to pause losing ads or change the daily budget ±20%, each confirmed before it's sent to Meta).
+- **Meta Ads**: add ad accounts (yours and teammates'), save an access token per account, pick which campaigns to track, and analyze them: cost per result, ROAS, link CTR, CPC, CPM, frequency, hook rate (3s views ÷ impressions), hold rate (ThruPlays ÷ 3s views), plus per-ad results. Each campaign is **View only** (suggestions), **Manage** (suggestions get one-click buttons to pause losing ads or change the daily budget ±20%, each confirmed before it's sent to Meta), or **Autopilot** (the same changes applied once a day on their own, with limits: at most 3 pauses a run and never the best ad, budget raises only up to a max daily budget you set, and at most one budget change every 3 days). Every Autopilot run is logged in the app.
 
 ## Running locally
 
@@ -25,6 +25,7 @@ npm test
 1. Create a Supabase project (or use an existing one) and run `supabase/schema.sql`, then register your `TRACKER_DB_KEY` with the insert at the bottom of that file.
 2. Import this repo in Vercel and set the variables from `.env.example`.
 3. Add the subdomain (e.g. `tracker.majcustodioph.com`) under the project's Domains.
+4. For the daily Autopilot run, set `CRON_SECRET` (any long random string). Vercel Cron calls `/api/cron/autopilot` at 01:00 UTC (9:00 Manila) with it; without it the route stays closed and only the in-app "Run now" button works.
 
 ## Meta tokens
 

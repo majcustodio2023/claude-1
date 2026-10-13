@@ -91,6 +91,13 @@ export async function fetchCampaignInsights(campaignId: string, token: string, p
   return { campaign: campaign.data[0] ?? {}, ads: ads.data, adsets: adsets.data, info };
 }
 
+/** Campaign spend between two dates (inclusive), in the account's currency. */
+export async function fetchSpend(campaignId: string, token: string, since: string, until: string): Promise<number> {
+  const range = encodeURIComponent(JSON.stringify({ since, until }));
+  const res = await graphGet<{ data: { spend?: string }[] }>(`${campaignId}/insights?fields=spend&time_range=${range}`, token);
+  return Number(res.data[0]?.spend ?? 0);
+}
+
 // ---------- metrics ----------
 
 const LEAD_TYPES = ["lead", "onsite_conversion.lead_grouped", "offsite_conversion.fb_pixel_lead", "onsite_web_lead"];
