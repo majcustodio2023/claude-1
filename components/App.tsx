@@ -170,7 +170,7 @@ export default function App() {
         {tab === "log" && <Log />}
         {tab === "clients" && <Clients />}
         {tab === "tasks" && <Tasks />}
-        {tab === "team" && <Team />}
+        {tab === "team" && <Team goTo={go} />}
         {tab === "ads" && <Ads />}
         {tab === "creatives" && <Creatives />}
         {tab === "settings" && <SettingsTab />}
