@@ -11,6 +11,7 @@ import ManualSpending from "../ManualSpending";
 import { paySub, setSubs, subDone, subPaid, subRows, subsTotal, unpaySub } from "@/lib/subs";
 import { Icon } from "../icons";
 import { EditButton, SaveButton } from "../editable";
+import { Avatar } from "../avatars";
 
 const LINE_CATS: ExpenseLine["category"][] = ["household", "payroll", "client", "software", "debt", "other"];
 const monthLabel = (m: string, style: "long" | "short" = "long") => new Date(m + "-01T00:00:00").toLocaleDateString(locale(), { month: style, year: "numeric" });
@@ -105,6 +106,8 @@ function BillRow({ bill: e, isNew = false }: { bill: ExpenseLine; isNew?: boolea
   const [date, setDate] = useState(payDate);
   const [accountId, setAccountId] = useState(defaultAccountId(data, "out"));
   const [settings, setSettings] = useState(isNew);
+  const member = e.memberId ? data.team.find((m) => m.id === e.memberId) : undefined;
+  const client = e.clientId ? data.clients?.find((c) => c.id === e.clientId) : undefined;
   const setLine = (patch: Partial<ExpenseLine>) => update((d) => void Object.assign(d.expenses.find((x) => x.id === e.id)!, patch));
   const listed = subsTotal(e.subs);
   const subList = subRows(e.amount, e.subs).map((sub) => {
@@ -148,10 +151,16 @@ function BillRow({ bill: e, isNew = false }: { bill: ExpenseLine; isNew?: boolea
   const typed = parseAmount(text) || 0;
 
   return (
-    <div className={`border-[3px] rounded-[10px] p-3.5 space-y-3 ${left === 0 && paid > 0 ? "border-good/60 bg-good/5" : "border-outline bg-card-2/60"}`}>
+    <div id={`bill-${e.id}`} className={`border-[3px] rounded-[10px] p-3.5 space-y-3 transition-shadow ${left === 0 && paid > 0 ? "border-good/60 bg-good/5" : "border-outline bg-card-2/60"}`}>
       <div className="flex flex-wrap items-center gap-2">
+        {member && <Avatar value={member.avatar} seed={member.id} kind="person" size={52} title={member.name} />}
         <div className="flex-1 min-w-40">
           <div className="text-xl font-extrabold [overflow-wrap:anywhere]">{e.name}</div>
+          {member && (
+            <div className="text-base font-bold text-accent">
+              {client ? `${member.name}'s pay for ${client.name}` : `${member.name}'s base pay`}
+            </div>
+          )}
           <div className="text-base text-muted font-bold">
             {money(e.amount)} a month · <span className="capitalize">{e.category}</span>
             {e.startMonth && ` · from ${monthLabel(e.startMonth, "short")}`}

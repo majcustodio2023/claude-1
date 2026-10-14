@@ -11,7 +11,21 @@ import { Avatar } from "../avatars";
 import { AvatarButton } from "../AvatarPicker";
 import { EditButton, SaveButton } from "../editable";
 
-export default function Team() {
+/** Opens Expenses and scrolls to a bill, flashing it so it's easy to spot. */
+export function showBill(goTo: (tab: "expenses") => void, billId: string) {
+  goTo("expenses");
+  let tries = 0;
+  const find = () => {
+    const el = document.getElementById(`bill-${billId}`);
+    if (!el) return void (tries++ < 20 && setTimeout(find, 100));
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.classList.add("ring-4", "ring-gold");
+    setTimeout(() => el.classList.remove("ring-4", "ring-gold"), 2500);
+  };
+  setTimeout(find, 50);
+}
+
+export default function Team({ goTo }: { goTo: (tab: "expenses") => void }) {
   const { data, update, today } = useTracker();
   const [justAdded, setJustAdded] = useState<string | null>(null);
   const [editSquad, setEditSquad] = useState(false);
@@ -63,7 +77,7 @@ export default function Team() {
       {data.team.length === 0 && <p className="text-lg text-muted">No one in the squad yet. Press &ldquo;Add member&rdquo; to add your first teammate.</p>}
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {active.map((m) => (
-          <MemberCard key={m.id} member={m} startEditing={m.id === justAdded} />
+          <MemberCard key={m.id} member={m} startEditing={m.id === justAdded} goTo={goTo} />
         ))}
       </div>
       {inactive.length > 0 && (
@@ -71,7 +85,7 @@ export default function Team() {
           <summary className="cursor-pointer text-base font-extrabold text-muted">Inactive ({inactive.length})</summary>
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4 mt-3 opacity-80">
             {inactive.map((m) => (
-              <MemberCard key={m.id} member={m} startEditing={false} />
+              <MemberCard key={m.id} member={m} startEditing={false} goTo={goTo} />
             ))}
           </div>
         </details>
@@ -90,7 +104,7 @@ function MiniStat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function MemberCard({ member: m, startEditing }: { member: TeamMember; startEditing: boolean }) {
+function MemberCard({ member: m, startEditing, goTo }: { member: TeamMember; startEditing: boolean; goTo: (tab: "expenses") => void }) {
   const { data, update, today } = useTracker();
   const [editing, setEditing] = useState(startEditing);
   const month = monthOf(today);
@@ -110,7 +124,8 @@ function MemberCard({ member: m, startEditing }: { member: TeamMember; startEdit
       const line = d.expenses.find((x) => x.memberId === m.id && !x.clientId);
       if (line) line.active = on;
     });
-  const base = basePayLine(data, m.id)?.amount ?? 0;
+  const baseLine = basePayLine(data, m.id);
+  const base = baseLine?.amount ?? 0;
   const pay = data.expenses.filter((e) => e.memberId === m.id && e.clientId && expenseAppliesTo(e, month));
   const clientPay = pay.reduce((a, e) => a + e.amount, 0);
   const clientWork = openTasksFor(data, m.id, today);
@@ -164,12 +179,17 @@ function MemberCard({ member: m, startEditing }: { member: TeamMember; startEdit
             <MiniStat label="Base pay / mo" value={base ? money(base) : "None"} />
             <MiniStat label="Client pay" value={clientPay ? money(clientPay) : "None"} />
           </div>
+          {baseLine && (
+            <button type="button" className="text-base font-bold underline text-accent text-left" onClick={() => showBill(goTo, baseLine.id)}>
+              Base pay is the &ldquo;{baseLine.name}&rdquo; bill in Expenses →
+            </button>
+          )}
           {pay.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {pay.map((e) => (
-                <span key={e.id} className="px-2.5 py-1 rounded-full bg-accent/20 border-2 border-accent/60 text-sm font-bold">
-                  {clientName(e.clientId ?? "") || e.name} · {money(e.amount)}
-                </span>
+                <button type="button" key={e.id} onClick={() => showBill(goTo, e.id)} title="Show this bill in Expenses" className="px-2.5 py-1 rounded-full bg-accent/20 border-2 border-accent/60 text-sm font-bold hover:bg-accent/40">
+                  {clientName(e.clientId ?? "") || e.name} · {money(e.amount)} →
+                </button>
               ))}
             </div>
           )}
