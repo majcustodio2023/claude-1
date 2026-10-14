@@ -120,6 +120,13 @@ export default function App() {
   const go = (id: TabId) => {
     setTab(id);
     history.replaceState(null, "", `#${id}`);
+    // Each tab opens at its top: if you'd scrolled past where the tabs start, jump back up there.
+    requestAnimationFrame(() => {
+      const el = document.getElementById("tab-top");
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + window.scrollY - 12;
+      if (window.scrollY > top) window.scrollTo({ top: Math.max(top, 0) });
+    });
   };
 
   return (
@@ -152,7 +159,7 @@ export default function App() {
             ))}
           </nav>
         )}
-        <div className="min-w-0">
+        <div className="min-w-0" id="tab-top">
         {look.layout !== "dock" && (
           <nav className={`flex gap-2.5 overflow-x-auto pt-1 pb-4 mb-5 -mx-4 px-4 ${look.layout === "sidebar" ? "lg:hidden" : ""}`} aria-label="Sections">
             {TABS.map(([id, label, icon]) => (
