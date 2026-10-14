@@ -124,6 +124,13 @@ export default function SettingsTab() {
               ))}
             </select>
           </label>
+          <label className="text-sm text-muted flex flex-col gap-1">
+            Income tab shows
+            <select value={data.settings.incomeView ?? "profit"} onChange={(e) => set({ incomeView: e.target.value as "profit" | "gross" })}>
+              <option value="profit">Profit (after team pay for each client)</option>
+              <option value="gross">Gross (what clients pay)</option>
+            </select>
+          </label>
         </div>
         <p className="text-sm text-muted mt-2">Your accounts (bank, e-wallets) and their balances are managed in the War chest on HQ.</p>
       </Card>

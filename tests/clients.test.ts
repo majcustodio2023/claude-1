@@ -64,3 +64,10 @@ test("client money: retainer per month and project overall, minus team pay", asy
   assert.equal(p.toCollect, 230000);
   assert.equal(p.profit, 190000);
 });
+
+test("keepOf takes the payment's share of team pay", async () => {
+  const { keepOf } = await import("../lib/clients");
+  assert.equal(keepOf(50000, 50000, 22000), 28000);
+  assert.equal(keepOf(25000, 50000, 22000), 14000);
+  assert.equal(keepOf(10000, 10000, 0), 10000);
+});

@@ -211,6 +211,14 @@ export interface AdAccount {
   accountId: string;
   /** true when a token is saved on the server (the token itself never leaves it) */
   hasToken?: boolean;
+  /** Default group for this account's campaigns: "client:<id>", "group:<id>" or "none". */
+  group?: string;
+}
+
+/** A folder for ad campaigns that aren't tied to one client, e.g. "Personal" or "Agency brand". */
+export interface AdGroup {
+  id: string;
+  name: string;
 }
 
 export interface TrackedCampaign {
@@ -218,6 +226,8 @@ export interface TrackedCampaign {
   adAccountRef: string; // AdAccount.id
   campaignId: string;
   name: string;
+  /** "client:<id>", "group:<id>" or "none". Blank = the account's group, else matched by name. */
+  group?: string;
   /** view: suggestions only. manage: one-click changes. autopilot: changes applied daily on their own. */
   mode: "view" | "manage" | "autopilot";
   /** Action type counted as a result, e.g. "lead". Defaults to lead detection. */
@@ -308,6 +318,8 @@ export interface Settings {
   kitPersonaCustom?: string;
   /** Share of the month's spare money that's safe to spend on fun (percent, default 20). */
   funPercent?: number;
+  /** Income tab: show what you keep after team pay ("profit", default) or the full amount clients pay ("gross"). */
+  incomeView?: "profit" | "gross";
   /** Theme, design style, layout and text size (see lib/appearance.ts). */
   appearance?: Appearance;
 }
@@ -385,6 +397,8 @@ export interface TrackerData {
   kitChat?: KitMessage[];
   adAccounts: AdAccount[];
   trackedCampaigns: TrackedCampaign[];
+  /** Custom folders for campaigns, next to the client folders. */
+  adGroups?: AdGroup[];
   autopilotLog?: AutopilotEntry[];
   /** Ad creatives: AI-generated (Higgsfield) or added by link. Owned by the server. */
   creatives?: Creative[];
