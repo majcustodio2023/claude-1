@@ -108,6 +108,8 @@ export const HELP = {
       <li>The people on your team. Anyone here can be given client tasks and client pay.</li>
       <li>Base pay is their regular monthly pay. It&apos;s a bill in Expenses, so it counts once and you mark it paid there.</li>
       <li>Client pay (set on each client card) is added on top and listed on their card.</li>
+      <li>Press Edit on a card to change their name, role, pay or notes, then Save. Tap their picture to pick a new look: people, animals, bosses, robots or emblems.</li>
+      <li>&ldquo;Squad&rdquo; at the top lets you rename the team and pick its emblem.</li>
     </ul>
   ),
   adAccounts: (

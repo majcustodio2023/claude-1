@@ -6,7 +6,10 @@ import { addMonths, billPaid, expenseAppliesTo, locale, money, monthOf, parseAmo
 import type { Client, ClientTask } from "@/lib/types";
 import { useTracker } from "../App";
 import { clientTaskKey, hasChest } from "@/lib/loot";
-import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate } from "../ui";
+import { Badge, Bar, Btn, Card, TextInput, celebrate } from "../ui";
+import { Avatar } from "../avatars";
+import { AvatarButton } from "../AvatarPicker";
+import { EditButton, EditableNumber, SaveButton } from "../editable";
 import { HELP } from "../help";
 import { StreamTerms } from "../StreamSettings";
 import { incomePartlyCollected } from "@/lib/subs";
@@ -143,21 +146,23 @@ function ClientCard({ client: c, who }: { client: Client; who: string }) {
 
   return (
     <Card
-      icon="💼"
+      icon={<Avatar value={c.avatar} seed={c.id} kind="emblem" size={44} className="-my-2 mr-1" title={c.name} />}
       title={c.name}
       glow={st.overdue ? "hero" : "cyan"}
       actions={
         <>
           {st.overdue > 0 && <Badge tone="bad">{st.overdue} overdue</Badge>}
           <Badge tone={st.open ? "warn" : "good"}>{st.open ? `${st.open} open` : "All clear"}</Badge>
-          <button className="btn btn-ghost px-3" onClick={() => setSettings(!settings)} aria-expanded={settings} title="Client settings">
-            <Icon name="gear" size={20} />
-          </button>
+          {!settings && <EditButton title="Edit client: name, picture, notes" onClick={() => setSettings(true)} />}
         </>
       }
     >
       {settings && (
         <div className="mb-4 bg-card-2 rounded-[8px] p-3 space-y-2 text-base">
+          <div className="flex items-center gap-3">
+            <AvatarButton value={c.avatar} seed={c.id} kind="emblem" size={64} name={c.name} onChange={(v) => set({ avatar: v })} />
+            <span className="text-sm text-muted font-bold">Tap the picture to pick a logo, mascot or face for this client.</span>
+          </div>
           <label className="flex items-center gap-2">
             <span className="text-muted w-20">Name</span>
             <TextInput className="flex-1" value={c.name} onChange={(v) => v.trim() && update((d) => renameClient(d, c.id, v.trim()))} />
@@ -174,7 +179,8 @@ function ClientCard({ client: c, who }: { client: Client; who: string }) {
             <span className="text-muted w-20">Notes</span>
             <TextInput className="flex-1" value={c.notes} onChange={(v) => set({ notes: v })} placeholder="Contacts, links, scope…" />
           </label>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
+            <SaveButton onClick={() => setSettings(false)} />
             <Btn onClick={() => (c.archived || confirm(`Archive ${c.name}? Their retainer and monthly team pay stop from this month. Everything already paid stays in your history.`)) && update((d) => archiveClient(d, c.id, !c.archived, month))}>
               {c.archived ? "Unarchive" : "Archive client"}
             </Btn>
@@ -317,7 +323,8 @@ function TaskRow({ task: t }: { task: ClientTask }) {
           <div className="flex flex-wrap items-center gap-1.5 mt-1 text-sm">
             {t.assignees.length === 0 && <span className="text-muted">Unassigned</span>}
             {t.assignees.map((id) => (
-              <span key={id} className="px-2 py-0.5 rounded-full bg-accent/20 border border-accent/60 font-bold">
+              <span key={id} className="inline-flex items-center gap-1 pl-0.5 pr-2 py-0.5 rounded-full bg-accent/20 border border-accent/60 font-bold">
+                {data.team.some((m) => m.id === id) ? <Avatar value={data.team.find((m) => m.id === id)?.avatar} seed={id} kind="person" size={22} /> : <span className="w-1" />}
                 {personName(data, id)}
               </span>
             ))}
@@ -335,7 +342,7 @@ function TaskRow({ task: t }: { task: ClientTask }) {
               </div>
               <TextInput className="w-full text-sm" value={t.details} onChange={(v) => set({ details: v || undefined })} placeholder="Details, links, notes" />
               <div className="flex gap-2">
-                <Btn onClick={() => setEditing(false)}>Done editing</Btn>
+                <SaveButton onClick={() => setEditing(false)} />
                 <Btn kind="danger" onClick={() => confirm(`Delete "${t.title}"?`) && update((d) => void (d.clientTasks = d.clientTasks!.filter((x) => x.id !== t.id)))}>
                   Delete
                 </Btn>
@@ -344,8 +351,8 @@ function TaskRow({ task: t }: { task: ClientTask }) {
           )}
         </div>
         {!editing && (
-          <button className="text-muted px-1.5 text-lg" onClick={() => setEditing(true)} aria-label="Edit task" title="Edit: who, due date, details">
-            ✎
+          <button className="text-muted px-1.5" onClick={() => setEditing(true)} aria-label="Edit task" title="Edit: who, due date, details">
+            <Icon name="pencil" size={20} />
           </button>
         )}
       </div>
@@ -409,17 +416,17 @@ function ClientMoneyPanel({ client: c }: { client: Client }) {
               Due {monthName(month)}: <b>{money(m.income)}</b>
             </span>
           ) : (
-            <label className="flex items-center gap-2 text-base font-bold">
+            <div className="flex items-center gap-2 text-base font-bold">
               Monthly fee
-              <NumInput className="w-32" value={undefined} onChange={setFee} placeholder="0" />
-            </label>
+              <EditableNumber label="monthly fee" value={undefined} onChange={setFee} placeholder="0" />
+            </div>
           )
         ) : (
           <>
-            <label className="flex items-center gap-2 text-base font-bold">
+            <div className="flex items-center gap-2 text-base font-bold">
               Project price
-              <NumInput className="w-32" value={deal?.value} onChange={setPrice} placeholder="0" />
-            </label>
+              <EditableNumber label="project price" value={deal?.value} onChange={setPrice} placeholder="0" />
+            </div>
             {deal && (
               <select
                 value={deal.stage === "won" ? "won" : deal.stage === "lost" ? "lost" : "lead"}
@@ -517,8 +524,9 @@ function TeamPay({ client: c, kind }: { client: Client; kind: "recurring" | "pro
         const paid = billPaid(data, payM, e);
         return (
           <div key={e.id} className="flex flex-wrap items-center gap-2 text-base">
+            <Avatar value={data.team.find((t) => t.id === e.memberId)?.avatar} seed={e.memberId ?? e.id} kind="person" size={36} />
             <span className="font-bold">{memberName(e.memberId)}</span>
-            <NumInput className="w-28" value={e.amount} onChange={(v) => update((d) => void (d.expenses.find((x) => x.id === e.id)!.amount = v ?? 0))} />
+            <EditableNumber label={`${memberName(e.memberId)}'s pay`} inputClass="w-28" value={e.amount} onChange={(v) => update((d) => void (d.expenses.find((x) => x.id === e.id)!.amount = v ?? 0))} />
             <span className="text-muted">{kind === "recurring" ? "/ month" : `once, ${monthName(payM)}`}</span>
             {paid >= e.amount && e.amount > 0 ? <Badge tone="good">Paid ✓</Badge> : paid > 0 ? <Badge tone="gold">{money(paid)} paid</Badge> : <Badge tone="warn">Not paid{kind === "recurring" ? " this month" : ""}</Badge>}
             <button className="text-muted ml-auto px-2" title={kind === "recurring" ? "Stop this monthly pay" : "Remove"} onClick={() => confirm(`Stop paying ${memberName(e.memberId)} for ${c.name}?`) && stop(e.id)}>

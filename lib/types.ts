@@ -63,6 +63,8 @@ export interface Deal {
   expectedClose?: string;
   payments: Payment[];
   notes?: string;
+  /** The boss's look (lib/avatar.ts). */
+  avatar?: string;
   createdAt: string;
 }
 
@@ -150,6 +152,8 @@ export interface TeamMember {
   monthlyCost: number;
   notes?: string;
   active: boolean;
+  /** Avatar code (lib/avatar.ts); empty means an automatic one. */
+  avatar?: string;
 }
 
 /** A client the agency works for. Can be linked to an income stream. */
@@ -164,6 +168,7 @@ export interface Client {
   dealId?: string;
   notes?: string;
   archived?: boolean;
+  avatar?: string;
   createdAt: string;
 }
 
@@ -219,6 +224,7 @@ export interface AdAccount {
 export interface AdGroup {
   id: string;
   name: string;
+  avatar?: string;
 }
 
 export interface TrackedCampaign {
@@ -320,6 +326,9 @@ export interface Settings {
   funPercent?: number;
   /** Income tab: show what you keep after team pay ("profit", default) or the full amount clients pay ("gross"). */
   incomeView?: "profit" | "gross";
+  /** The team's name and emblem on the Squad tab. */
+  squadName?: string;
+  squadAvatar?: string;
   /** Theme, design style, layout and text size (see lib/appearance.ts). */
   appearance?: Appearance;
 }

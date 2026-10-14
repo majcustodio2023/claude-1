@@ -2,7 +2,9 @@
 
 import { REST_ID, newSub } from "@/lib/subs";
 import type { SubItem } from "@/lib/types";
+import { useState } from "react";
 import { Btn, NumInput, TextInput, money } from "./ui";
+import { Icon } from "./icons";
 
 export interface SubRow {
   sub: SubItem;
@@ -30,13 +32,24 @@ export function SubItems({
   addLabel?: string;
   verb?: string;
 }) {
+  const [editingParts, setEditingParts] = useState(false);
+  const canEdit = onEdit;
+  // Parts read as plain text until you tap "Edit parts".
+  onEdit = editingParts ? canEdit : undefined;
   const list = subs ?? [];
   const change = (id: string, patch: Partial<SubItem>) => onEdit?.(list.map((s) => (s.id === id ? { ...s, ...patch } : s)));
   const doneCount = rows.filter((r) => r.done).length;
 
   if (!list.length) {
-    return onEdit ? (
-      <Btn kind="soft" className="text-base" onClick={() => onEdit([newSub()])}>
+    return canEdit ? (
+      <Btn
+        kind="soft"
+        className="text-base"
+        onClick={() => {
+          canEdit([newSub()]);
+          setEditingParts(true);
+        }}
+      >
         {addLabel}
       </Btn>
     ) : null;
@@ -84,10 +97,21 @@ export function SubItems({
           );
         })}
       </ul>
-      {onEdit && (
-        <button className="text-base underline text-muted px-1" onClick={() => onEdit([...list, newSub()])}>
-          + Add a part
-        </button>
+      {onEdit ? (
+        <div className="flex flex-wrap items-center gap-3 px-1">
+          <button className="text-base underline text-muted" onClick={() => onEdit([...list, newSub()])}>
+            + Add a part
+          </button>
+          <Btn type="button" kind="primary" className="ml-auto px-3 py-1.5" onClick={() => setEditingParts(false)}>
+            <Icon name="check" size={18} /> Save parts
+          </Btn>
+        </div>
+      ) : (
+        canEdit && (
+          <button className="text-sm text-muted underline px-1 inline-flex items-center gap-1" onClick={() => setEditingParts(true)}>
+            <Icon name="pencil" size={16} /> Edit parts
+          </button>
+        )
       )}
     </div>
   );

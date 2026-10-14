@@ -5,7 +5,9 @@ import { uid } from "@/lib/finance";
 import type { Quadrant, Task } from "@/lib/types";
 import { useTracker } from "../App";
 import { hasChest, taskKey } from "@/lib/loot";
-import { Btn, Card } from "../ui";
+import { Btn, Card, TextInput } from "../ui";
+import { Avatar } from "../avatars";
+import { SaveButton } from "../editable";
 import { HELP } from "../help";
 import { Icon } from "../icons";
 
@@ -75,32 +77,7 @@ export default function Tasks() {
               <p className="text-sm text-muted -mt-2 mb-3">{desc}</p>
               <ul className="space-y-2">
                 {list.map((t) => (
-                  <li key={t.id} className="flex items-start gap-2 group">
-                    <input type="checkbox" className="mt-1" checked={t.done} onChange={() => set(t.id, { done: !t.done, doneOn: !t.done ? today : undefined })} />
-                    <div className="flex-1 min-w-0">
-                      <div className={`text-sm ${t.done ? "line-through text-muted" : ""}`}>
-                        {t.title}
-                        {!t.done && hasChest(taskKey(t.id)) && <span className="ml-1.5" title="Loot chest: finish this for a random item"><Icon name="gift" size={20} /></span>}
-                      </div>
-                      <div className="text-sm text-muted flex gap-2 flex-wrap items-center">
-                        <span>{t.owner}</span>
-                        {t.due && <span>· {t.due}</span>}
-                        <input
-                          type="date"
-                          className="!py-0 !px-1 text-sm"
-                          value={t.dueDate ?? ""}
-                          onChange={(e) => set(t.id, { dueDate: e.target.value || undefined })}
-                          title="Due date"
-                        />
-                        {t.dueDate && !t.done && t.dueDate < today && <span className="text-bad">overdue</span>}
-                      </div>
-                      {t.details && <div className="text-sm text-muted mt-1">{t.details}</div>}
-                    </div>
-                    <select className="text-sm !py-0 opacity-0 group-hover:opacity-100" value={t.quadrant} onChange={(e) => set(t.id, { quadrant: e.target.value as Quadrant })} aria-label="Move">
-                      {QUADS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-                    </select>
-                    <button className="text-muted text-sm opacity-0 group-hover:opacity-100" onClick={() => update((d) => void (d.tasks = d.tasks.filter((x) => x.id !== t.id)))}>✕</button>
-                  </li>
+                  <TaskItem key={t.id} task={t} />
                 ))}
               </ul>
             </Card>
@@ -108,5 +85,59 @@ export default function Tasks() {
         })}
       </div>
     </div>
+  );
+}
+
+function TaskItem({ task: t }: { task: Task }) {
+  const { data, update, today } = useTracker();
+  const [editing, setEditing] = useState(false);
+  const set = (patch: Partial<Task>) => update((d) => void Object.assign(d.tasks.find((x) => x.id === t.id)!, patch));
+  const member = data.team.find((m) => m.name && t.owner.toLowerCase().includes(m.name.split(/[ /]/)[0].toLowerCase()));
+  return (
+    <li className="flex items-start gap-2">
+      <input type="checkbox" className="mt-1 w-5 h-5" checked={t.done} onChange={() => set({ done: !t.done, doneOn: !t.done ? today : undefined })} aria-label={t.title} />
+      <div className="flex-1 min-w-0">
+        {editing ? (
+          <div className="space-y-2">
+            <TextInput className="w-full" value={t.title} onChange={(v) => v.trim() && set({ title: v.trim() })} />
+            <div className="flex flex-wrap gap-2 items-center text-sm">
+              <TextInput className="w-32" value={t.owner} placeholder="Who" onChange={(v) => set({ owner: v.trim() || "You" })} />
+              <label className="flex items-center gap-1 text-muted">
+                Due <input type="date" value={t.dueDate ?? ""} onChange={(e) => set({ dueDate: e.target.value || undefined })} />
+              </label>
+              <select value={t.quadrant} onChange={(e) => set({ quadrant: e.target.value as Quadrant })} aria-label="Move to">
+                {QUADS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+              </select>
+            </div>
+            <div className="flex gap-2">
+              <SaveButton onClick={() => setEditing(false)} />
+              <Btn kind="danger" onClick={() => confirm(`Delete "${t.title}"?`) && update((d) => void (d.tasks = d.tasks.filter((x) => x.id !== t.id)))}>Delete</Btn>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className={`text-base font-bold leading-snug ${t.done ? "line-through text-muted" : ""}`}>
+              {t.title}
+              {!t.done && hasChest(taskKey(t.id)) && <span className="ml-1.5" title="Loot chest: finish this for a random item"><Icon name="gift" size={20} /></span>}
+            </div>
+            <div className="text-sm text-muted flex gap-2 flex-wrap items-center mt-0.5">
+              <span className="inline-flex items-center gap-1">
+                {member && <Avatar value={member.avatar} seed={member.id} kind="person" size={22} />}
+                {t.owner}
+              </span>
+              {t.due && <span>· {t.due}</span>}
+              {t.dueDate && <span>· due {t.dueDate}</span>}
+              {t.dueDate && !t.done && t.dueDate < today && <span className="text-bad font-bold">overdue</span>}
+            </div>
+            {t.details && <div className="text-sm text-muted mt-1">{t.details}</div>}
+          </>
+        )}
+      </div>
+      {!editing && (
+        <button className="text-muted px-1" onClick={() => setEditing(true)} aria-label="Edit mission" title="Edit: name, who, due date, column">
+          <Icon name="pencil" size={18} />
+        </button>
+      )}
+    </li>
   );
 }

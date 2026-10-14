@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import type { IncomeStream, StreamKind } from "@/lib/types";
 import { useTracker } from "./App";
-import { NumInput } from "./ui";
+import { NumInput, money } from "./ui";
+import { EditButton, SaveButton } from "./editable";
 import { SubItems } from "./SubItems";
 import { setSubs, subRows, subsTotal } from "@/lib/subs";
 
@@ -13,11 +15,23 @@ export const KIND_LABEL: Record<StreamKind, string> = {
 };
 
 /** How a monthly income works out its amount: fixed fee, a share of revenue, or whatever actually came in. */
-export function StreamTerms({ stream: st }: { stream: IncomeStream }) {
+export function StreamTerms({ stream: st, alwaysEdit = false }: { stream: IncomeStream; alwaysEdit?: boolean }) {
   const { update } = useTracker();
+  const [editing, setEditing] = useState(false);
   const set = (patch: Partial<IncomeStream>) => update((d) => void Object.assign(d.streams.find((x) => x.id === st.id)!, patch));
   const listed = subsTotal(st.subs);
   const base = st.kind === "percent_floor" ? (st.floor ?? 0) : st.amount;
+  if (!alwaysEdit && !editing) {
+    return (
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-base font-bold flex-1 min-w-40">{termsText(st, money)}</span>
+          <EditButton title="Change how this is paid" onClick={() => setEditing(true)} />
+        </div>
+        <SubItems rows={subRows(base, st.subs).map((sub) => ({ sub, done: false }))} subs={st.subs} onEdit={(subs) => update((d) => setSubs(d.streams.find((x) => x.id === st.id)!, subs))} addLabel="+ Break into parts (each collected on its own)" />
+      </div>
+    );
+  }
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-end gap-3 text-base">
@@ -50,6 +64,7 @@ export function StreamTerms({ stream: st }: { stream: IncomeStream }) {
         )}
       </div>
       <SubItems rows={subRows(base, st.subs).map((sub) => ({ sub, done: false }))} subs={st.subs} onEdit={(subs) => update((d) => setSubs(d.streams.find((x) => x.id === st.id)!, subs))} addLabel="+ Break into parts (each collected on its own)" />
+      {!alwaysEdit && <SaveButton onClick={() => setEditing(false)} />}
     </div>
   );
 }

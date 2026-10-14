@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Avatar } from "./avatars";
 import { bossCoins, finishBoss, type FightRank, type RewardEvent } from "@/lib/loot";
 import { RARITY } from "@/lib/items";
 import { useTracker } from "./App";
@@ -139,7 +140,9 @@ export default function BossFight({ dealId, onClose }: { dealId: string; onClose
             disabled={phase !== "fight"}
           >
             <div key={`b${hit}`} className={phase === "ko" || phase === "done" ? "boss-ko" : hit ? "boss-hit" : "bob"}>
-              <Boss size={210} hp={hp / MAX_HP} />
+              <div style={{ filter: hp / MAX_HP < 0.25 ? "saturate(1.8) brightness(0.9)" : undefined }}>
+                <Avatar value={deal?.avatar} seed={dealId} kind="monster" size={210} title={deal?.name} />
+              </div>
             </div>
             {pops.map((p) => (
               <span key={p.id} className={`dmg-float absolute left-1/2 top-6 font-display tracking-wide pointer-events-none ${p.crit ? "text-gold text-5xl" : "text-white text-3xl"}`} style={{ WebkitTextStroke: "2px #0b0a14" }}>
