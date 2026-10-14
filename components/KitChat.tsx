@@ -64,7 +64,7 @@ export default function KitChat() {
   const [voice, setVoice] = useState(false);
   const [listening, setListening] = useState(false);
   const recRef = useRef<Recognizer | null>(null);
-  const endRef = useRef<HTMLDivElement>(null);
+  const boxRef = useRef<HTMLDivElement>(null);
   const chat = data.kitChat ?? [];
   const canListen = Boolean(getRecognizer());
   const personaId = data.settings.kitPersona ?? "kit";
@@ -76,7 +76,12 @@ export default function KitChat() {
       setVoice(localStorage.getItem("kit:voice") === "1");
     } catch {}
   }, []);
-  useEffect(() => endRef.current?.scrollIntoView({ block: "nearest" }), [chat.length, busy]);
+  // Keep the newest message in view by scrolling only the chat box, never the page
+  // (scrollIntoView here used to drag HQ down to the chat whenever it opened).
+  useEffect(() => {
+    const box = boxRef.current;
+    if (box) box.scrollTop = box.scrollHeight;
+  }, [chat.length, busy]);
 
   const toggleVoice = () => {
     const next = !voice;
@@ -187,7 +192,7 @@ export default function KitChat() {
       )}
       {voiceSetup && <VoiceSetup hasVoice={aiVoice} onChange={setAiVoice} onTest={() => speak(`${kitName} here. Let's get you paid.`, persona, aiVoice, setError)} />}
       {chat.length > 0 && (
-        <div className="max-h-80 overflow-y-auto space-y-2.5 mb-3 pr-1">
+        <div ref={boxRef} className="max-h-80 overflow-y-auto space-y-2.5 mb-3 pr-1">
           {chat.map((m, i) => (
             <div key={i} className={`flex items-end gap-1.5 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
               {m.role === "assistant" && <Kit size={38} className="shrink-0" />}
@@ -202,7 +207,6 @@ export default function KitChat() {
             </div>
           ))}
           {busy && <div className="text-lg font-bold text-gold animate-pulse">{kitName} is thinking…</div>}
-          <div ref={endRef} />
         </div>
       )}
       {error && <p className="text-base font-bold text-bad mb-2">{error}</p>}
