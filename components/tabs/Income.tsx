@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { clientForDeal, clientForStream, makeClientFromStream } from "@/lib/clients";
+import { clientForDeal, clientForStream, dealCost, keepOf, makeClientFromStream, streamCost } from "@/lib/clients";
 import { dealBalance, dealPaid, defaultAccountId, expectedForStream, monthOf, parseAmount, summarize, uid, type StreamRow } from "@/lib/finance";
 import type { Deal, IncomeStream, StreamMonth, SubItem } from "@/lib/types";
 import { useTracker } from "../App";
@@ -16,7 +16,7 @@ import { Icon } from "../icons";
 type Go = (tab: "clients" | "pipeline") => void;
 
 export default function Income({ goTo }: { goTo: Go }) {
-  const { data, month } = useTracker();
+  const { data, month, update } = useTracker();
   const s = useMemo(() => summarize(data, month), [data, month]);
   const retainers = s.streams.filter((r) => clientForStream(data, r.stream.id));
   const other = s.streams.filter((r) => !clientForStream(data, r.stream.id));
@@ -25,14 +25,47 @@ export default function Income({ goTo }: { goTo: Go }) {
   const projects = data.deals.filter(
     (d) => d.stage !== "lost" && (projectIds.has(d.id) || (d.stage === "won" && (dealBalance(d) > 0 || d.payments.some((p) => monthOf(p.date) === month)))),
   );
-  const sum = (rows: StreamRow[], k: "collected" | "pending") => rows.reduce((a, r) => a + (k === "collected" ? r.collected : r.isCollected ? 0 : Math.max(r.expected - r.collected, 0)), 0);
+  const profit = (data.settings.incomeView ?? "profit") === "profit";
+  // In profit view every amount is what you keep after the team pay tied to that client.
+  const amount = (paid: number, total: number, cost: number) => (profit ? keepOf(paid, total, cost) : paid);
+  const due = (r: StreamRow) => (r.isCollected ? 0 : Math.max(r.expected - r.collected, 0));
+  const sum = (rows: StreamRow[], k: "collected" | "pending") => rows.reduce((a, r) => a + amount(k === "collected" ? r.collected : due(r), r.expected, streamCost(data, r.stream.id, month)), 0);
+  const kept =
+    s.streams.reduce((a, r) => a + keepOf(r.collected, r.expected, streamCost(data, r.stream.id, month)), 0) +
+    data.deals.reduce((a, d) => a + d.payments.filter((p) => monthOf(p.date) === month).reduce((b, p) => b + keepOf(p.amount, d.value, dealCost(data, d.id)), 0), 0);
+  const teamPaid = Math.max(s.moneyMade - kept, 0);
+  const setView = (v: "profit" | "gross") => update((d) => void (d.settings.incomeView = v));
 
   return (
     <div className="space-y-4">
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-base font-extrabold text-muted">Show amounts as</span>
+        <div className="flex rounded-[10px] border-2 border-line overflow-hidden">
+          {(
+            [
+              ["profit", "Profit (after team pay)"],
+              ["gross", "Gross (what clients pay)"],
+            ] as const
+          ).map(([v, l]) => (
+            <button key={v} type="button" aria-pressed={(profit ? "profit" : "gross") === v} onClick={() => setView(v)} className={`px-3 py-1.5 text-sm font-extrabold ${(profit ? "profit" : "gross") === v ? "bg-gold text-outline" : "bg-card-2/60 text-muted hover:text-ink"}`}>
+              {l}
+            </button>
+          ))}
+        </div>
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Stat label="Collected this month" value={money(s.moneyMade)} hint="Everything below that's been paid" tone="good" />
-        <Stat label="Retainers still due" value={money(sum(retainers, "pending"))} hint={`${money(sum(retainers, "collected"))} collected`} tone="cyan" />
-        <Stat label="Projects to collect" value={money(projects.filter((d) => d.stage === "won").reduce((a, d) => a + dealBalance(d), 0))} hint="Closed, not fully paid" tone="gold" />
+        {profit ? (
+          <Stat label="Profit collected" value={money(kept)} hint={teamPaid ? `${money(s.moneyMade)} in − ${money(teamPaid)} team pay` : "Everything below that's been paid"} tone="good" />
+        ) : (
+          <Stat label="Collected this month" value={money(s.moneyMade)} hint={teamPaid ? `${money(kept)} profit after team pay` : "Everything below that's been paid"} tone="good" />
+        )}
+        <Stat label={profit ? "Retainer profit still due" : "Retainers still due"} value={money(sum(retainers, "pending"))} hint={`${money(sum(retainers, "collected"))} collected`} tone="cyan" />
+        <Stat
+          label={profit ? "Project profit to collect" : "Projects to collect"}
+          value={money(projects.filter((d) => d.stage === "won").reduce((a, d) => a + amount(dealBalance(d), d.value, dealCost(data, d.id)), 0))}
+          hint="Closed, not fully paid"
+          tone="gold"
+        />
         <Stat label="Other income" value={money(sum(other, "collected"))} hint={`${money(sum(other, "pending"))} still expected`} />
       </div>
 
@@ -81,6 +114,8 @@ function IncomeRow({ row: r, goTo }: { row: StreamRow; goTo: Go }) {
   const [settings, setSettings] = useState(false);
   const st = r.stream;
   const client = clientForStream(data, st.id);
+  const cost = streamCost(data, st.id, month);
+  const profit = (data.settings.incomeView ?? "profit") === "profit";
   const collectDate = monthOf(today) === month ? today : `${month}-01`;
 
   const setSM = (patch: Partial<StreamMonth>) =>
@@ -150,9 +185,22 @@ function IncomeRow({ row: r, goTo }: { row: StreamRow; goTo: Go }) {
             <NumInput className="w-36" value={r.month?.actual} onChange={(v) => setSM({ actual: v })} placeholder={String(st.amount)} />
           </label>
         )}
-        <div className="md:text-right md:w-32">
-          <div className="text-sm text-muted">Due this month</div>
-          <div className="font-display text-2xl tracking-wide">{money(r.expected)}</div>
+        <div className="md:text-right md:w-40">
+          {profit && cost > 0 ? (
+            <>
+              <div className="text-sm text-muted">You keep this month</div>
+              <div className="font-display text-2xl tracking-wide text-good">{money(r.expected - cost)}</div>
+              <div className="text-sm text-muted">
+                {money(r.expected)} − {money(cost)} team
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="text-sm text-muted">Due this month</div>
+              <div className="font-display text-2xl tracking-wide">{money(r.expected)}</div>
+              {cost > 0 && <div className="text-sm text-muted">{money(r.expected - cost)} after team pay</div>}
+            </>
+          )}
         </div>
         <div className="flex gap-2 items-center flex-wrap">
           {r.isCollected || partly ? (
@@ -235,6 +283,8 @@ function ProjectRow({ deal, goTo }: { deal: Deal; goTo: Go }) {
   const paid = dealPaid(deal);
   const balance = dealBalance(deal);
   const closed = deal.stage === "won";
+  const cost = dealCost(data, deal.id);
+  const profit = (data.settings.incomeView ?? "profit") === "profit" && cost > 0;
   const collect = (c: { amount: number; date: string; accountId?: string; note?: string; alreadyCounted: boolean }) => {
     const id = uid("pay");
     update((d) => {
@@ -259,11 +309,12 @@ function ProjectRow({ deal, goTo }: { deal: Deal; goTo: Go }) {
           </div>
           <div className="text-base text-muted mt-0.5">
             Price {money(deal.value)} · {money(paid)} collected
+            {cost > 0 && ` · ${money(cost)} team pay · ${money(deal.value - cost)} profit`}
           </div>
         </div>
-        <div className="md:text-right md:w-32">
-          <div className="text-sm text-muted">To collect</div>
-          <div className="font-display text-2xl tracking-wide">{money(closed ? balance : 0)}</div>
+        <div className="md:text-right md:w-40">
+          <div className="text-sm text-muted">{profit ? "You keep, still to collect" : "To collect"}</div>
+          <div className={`font-display text-2xl tracking-wide ${profit ? "text-good" : ""}`}>{money(closed ? (profit ? keepOf(balance, deal.value, cost) : balance) : 0)}</div>
         </div>
         <div className="flex gap-2 items-center flex-wrap">
           {closed && balance > 0 && !collecting && (

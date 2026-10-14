@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { locale, moneyIn, uid } from "@/lib/finance";
 import type { CampaignInfo, DatePreset, SuggestedAction } from "@/lib/meta";
 import CampaignView, { type InsightResult } from "../ads/CampaignView";
 import type { AdAccount, AutopilotEntry, TrackedCampaign } from "@/lib/types";
+import { NO_GROUP, autoGroupOf, autoGroupOfAccount, groupCampaigns, groupChoices, type ResolvedGroup } from "@/lib/adgroups";
 import { useTracker } from "../App";
 import { Badge, Btn, Card, NumInput, Stat, TextInput, money } from "../ui";
 import { HELP } from "../help";
@@ -89,10 +90,11 @@ export default function Ads() {
               </div>
             )}
             <div className="space-y-4">
-              {data.trackedCampaigns.map((t) => (
-                <TrackedCard key={t.id} tracked={t} preset={preset} result={results[t.id]} onResult={(r) => setResults((x) => ({ ...x, [t.id]: r }))} />
+              {groupCampaigns(data).map(({ group, campaigns }) => (
+                <GroupSection key={group.key} group={group} campaigns={campaigns} preset={preset} results={results} setResult={(id, r) => setResults((x) => ({ ...x, [id]: r }))} />
               ))}
             </div>
+            <CustomGroups />
           </>
         )}
       </Card>
@@ -273,6 +275,9 @@ function AccountRow({ account }: { account: AdAccount }) {
         <span className="font-medium">{account.label}</span>
         <span className="text-sm text-muted">{account.owner} · {account.accountId}</span>
         {account.hasToken ? <Badge tone="good">Token saved</Badge> : <Badge tone="warn">No token</Badge>}
+        <label className="flex items-center gap-1 text-sm text-muted">
+          Campaigns go to <GroupPicker value={account.group} auto={autoGroupOfAccount(data, account)} onChange={(group) => update((d) => void (d.adAccounts.find((x) => x.id === account.id)!.group = group))} />
+        </label>
         <div className="flex-1" />
         {account.hasToken && <Btn onClick={loadCampaigns} disabled={busy}>Choose campaigns</Btn>}
         <Btn
@@ -369,7 +374,7 @@ function ShareLink({ tracked }: { tracked: TrackedCampaign }) {
   );
 }
 
-function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCampaign; preset: DatePreset; result?: InsightResult; onResult: (r: InsightResult) => void }) {
+function TrackedCard({ tracked, preset, result, onResult, signal }: { tracked: TrackedCampaign; preset: DatePreset; result?: InsightResult; onResult: (r: InsightResult) => void; signal: number }) {
   const { data, update, reload } = useTracker();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
@@ -387,6 +392,11 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
     if (!res.ok) return setErr(json.error);
     onResult(json);
   };
+  // "Analyze all" on the group bumps the signal.
+  useEffect(() => {
+    if (signal) void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signal]);
 
   const apply = async (action: SuggestedAction): Promise<string | null> => {
     const res = await fetch("/api/meta/action", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tracked: tracked.id, action }) });
@@ -421,6 +431,9 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
       </div>
       <div className="flex gap-3 flex-wrap text-sm text-muted items-center">
         <label className="flex items-center gap-1">
+          Group <GroupPicker value={tracked.group} auto={autoGroupOf(data, tracked)} onChange={(group) => set({ group })} />
+        </label>
+        <label className="flex items-center gap-1">
           Target cost per result <NumInput className="w-24" value={tracked.targetCpl} placeholder={String(data.settings.targetCpl)} onChange={(v) => set({ targetCpl: v })} />
         </label>
         <label className="flex items-center gap-1">
@@ -444,5 +457,116 @@ function TrackedCard({ tracked, preset, result, onResult }: { tracked: TrackedCa
       {err && <p className="text-sm text-bad">{err}</p>}
       {result && <CampaignView key={result.fetchedAt} tracked={tracked} result={result} onApply={apply} />}
     </div>
+  );
+}
+
+/** One client's (or group's) campaigns, with totals and "Analyze all". */
+function GroupSection({ group, campaigns, preset, results, setResult }: { group: ResolvedGroup; campaigns: TrackedCampaign[]; preset: DatePreset; results: Record<string, InsightResult>; setResult: (id: string, r: InsightResult) => void }) {
+  const [signal, setSignal] = useState(0);
+  const loaded = campaigns.map((t) => results[t.id]).filter(Boolean);
+  const spend = loaded.reduce((a, r) => a + r.metrics.spend, 0);
+  const res = loaded.reduce((a, r) => a + r.metrics.results, 0);
+  const currencies = [...new Set(loaded.map((r) => r.currency))];
+  const cur = (n: number) => moneyIn(n, currencies.length === 1 ? currencies[0] : undefined);
+  return (
+    <details open className="border-[3px] border-outline rounded-[12px] bg-card-2/40">
+      <summary className="cursor-pointer list-none p-3 flex items-center gap-2 flex-wrap">
+        <Icon name={group.kind === "client" ? "briefcase" : group.kind === "group" ? "box" : "radar"} size={22} />
+        <span className="font-display text-xl tracking-wide">{group.name}</span>
+        <Badge tone={group.kind === "client" ? "accent" : group.kind === "group" ? "gold" : "muted"}>{group.kind === "client" ? "client" : group.kind === "group" ? "group" : "no group"}</Badge>
+        <span className="text-sm text-muted">
+          {campaigns.length} campaign{campaigns.length === 1 ? "" : "s"}
+          {loaded.length > 0 && ` · ${cur(spend)} spent · ${res} results${res ? ` · ${cur(spend / res)} each` : ""}`}
+        </span>
+        <div className="flex-1" />
+        <Btn
+          onClick={(e) => {
+            e.preventDefault();
+            setSignal((x) => x + 1);
+          }}
+        >
+          Analyze all
+        </Btn>
+      </summary>
+      <div className="px-3 pb-3 space-y-4">
+        {campaigns.map((t) => (
+          <TrackedCard key={t.id} tracked={t} preset={preset} result={results[t.id]} onResult={(r) => setResult(t.id, r)} signal={signal} />
+        ))}
+      </div>
+    </details>
+  );
+}
+
+/** Picks a client or custom group. Blank means automatic (the account's group, or matched by name). */
+function GroupPicker({ value, auto, onChange }: { value?: string; auto: ResolvedGroup; onChange: (v: string | undefined) => void }) {
+  const { data, update } = useTracker();
+  const choices = groupChoices(data);
+  return (
+    <select
+      value={value ?? ""}
+      onChange={(e) => {
+        const v = e.target.value;
+        if (v === "__new") {
+          const name = prompt("Name the new group (e.g. Personal, Agency brand)")?.trim();
+          if (!name) return;
+          const id = uid("grp");
+          update((d) => void (d.adGroups = [...(d.adGroups ?? []), { id, name }]));
+          onChange(`group:${id}`);
+        } else onChange(v || undefined);
+      }}
+    >
+      <option value="">Auto{auto.kind !== "none" ? ` (${auto.name})` : ""}</option>
+      {choices.some((c) => c.kind === "client") && (
+        <optgroup label="Clients">
+          {choices.filter((c) => c.kind === "client").map((c) => <option key={c.key} value={c.key}>{c.name}</option>)}
+        </optgroup>
+      )}
+      {choices.some((c) => c.kind === "group") && (
+        <optgroup label="Your groups">
+          {choices.filter((c) => c.kind === "group").map((c) => <option key={c.key} value={c.key}>{c.name}</option>)}
+        </optgroup>
+      )}
+      <option value={NO_GROUP}>No group</option>
+      <option value="__new">+ New group…</option>
+    </select>
+  );
+}
+
+/** Add, rename and remove custom groups. */
+function CustomGroups() {
+  const { data, update } = useTracker();
+  const [name, setName] = useState("");
+  const groups = data.adGroups ?? [];
+  const remove = (id: string) =>
+    update((d) => {
+      d.adGroups = (d.adGroups ?? []).filter((g) => g.id !== id);
+      for (const t of d.trackedCampaigns) if (t.group === `group:${id}`) delete t.group;
+      for (const a of d.adAccounts) if (a.group === `group:${id}`) delete a.group;
+    });
+  return (
+    <details className="mt-4">
+      <summary className="cursor-pointer font-extrabold">Your groups ({groups.length})</summary>
+      <p className="text-sm text-muted mt-1">Clients already have a group each. Make extra ones for ads that aren&apos;t for a client, like &ldquo;Personal&rdquo; or &ldquo;Agency brand&rdquo;.</p>
+      <div className="space-y-2 mt-2">
+        {groups.map((g) => (
+          <div key={g.id} className="flex items-center gap-2">
+            <TextInput className="flex-1 max-w-xs" value={g.name} onChange={(v) => update((d) => void (d.adGroups!.find((x) => x.id === g.id)!.name = v || g.name))} />
+            <Btn kind="danger" onClick={() => confirm(`Remove the group "${g.name}"? Its campaigns go back to automatic grouping.`) && remove(g.id)}>Remove</Btn>
+          </div>
+        ))}
+        <form
+          className="flex gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!name.trim()) return;
+            update((d) => void (d.adGroups = [...(d.adGroups ?? []), { id: uid("grp"), name: name.trim() }]));
+            setName("");
+          }}
+        >
+          <input className="flex-1 max-w-xs" placeholder="New group name" value={name} onChange={(e) => setName(e.target.value)} />
+          <Btn kind="primary">Add group</Btn>
+        </form>
+      </div>
+    </details>
   );
 }

@@ -64,6 +64,24 @@ export interface ClientMoney {
   profit: number;
 }
 
+/** Team pay for the client behind an income stream, in a month. 0 when the stream isn't a client's. */
+export function streamCost(data: TrackerData, streamId: string, month: string): number {
+  const c = (data.clients ?? []).find((x) => x.streamId === streamId);
+  return c ? teamPay(data, c.id).filter((e) => expenseAppliesTo(e, month)).reduce((a, e) => a + e.amount, 0) : 0;
+}
+
+/** Team pay for the whole project behind a deal. */
+export function dealCost(data: TrackerData, dealId: string): number {
+  const c = (data.clients ?? []).find((x) => x.dealId === dealId);
+  return c ? teamPay(data, c.id).filter((e) => e.active).reduce((a, e) => a + e.amount, 0) : 0;
+}
+
+/** The part of a payment you keep: the payment minus its share of the team pay. */
+export function keepOf(paid: number, total: number, cost: number): number {
+  if (!cost || !total) return paid;
+  return paid - cost * Math.min(paid / total, 1);
+}
+
 /** What a client brings in versus what you pay the team for them. */
 export function clientMoney(data: TrackerData, c: Client, month: string): ClientMoney {
   const kind = clientKind(c);

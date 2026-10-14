@@ -51,6 +51,8 @@ export const HELP = {
       <li>When a payment arrives, press &ldquo;Mark collected&rdquo;, check the amount and pick the account it went into.</li>
       <li>% of revenue clients: type their revenue for the month here and the amount due updates.</li>
       <li>To change a fee or stop a client, use Edit in Clients.</li>
+      <li>&ldquo;Show amounts as&rdquo; at the top switches between profit and gross. Profit is what you keep after the team pay tied to each client (set in Clients). Gross is the full amount the client pays. The choice is also in Settings → Money.</li>
+      <li>Your goals on HQ still count the money that actually came in.</li>
     </ul>
   ),
   projects: (
@@ -116,6 +118,8 @@ export const HELP = {
   ),
   campaigns: (
     <ul>
+      <li>Campaigns are grouped by client, so you see one client&apos;s ads together. A campaign is matched to a client by name; pick a different one with &ldquo;Group&rdquo; on the campaign, or set &ldquo;Campaigns go to&rdquo; on an ad account to group all its campaigns at once.</li>
+      <li>For ads that aren&apos;t for a client, make your own group (e.g. &ldquo;Personal&rdquo;) with &ldquo;+ New group…&rdquo; in the Group menu, or under &ldquo;Your groups&rdquo;. &ldquo;Analyze all&rdquo; loads every campaign in a group at once.</li>
       <li>Pick the campaigns to watch. View only = suggestions. Manage = one-click changes. Autopilot = changes applied daily.</li>
       <li>&ldquo;Sync spend to expenses&rdquo; records each campaign&apos;s spend for the month under Manual spending.</li>
       <li>&ldquo;Share results&rdquo; copies a read-only link to that campaign: live results, what needs doing, and the changes made. Send it to your ads expert or client. It updates by itself every time they open it, and they can&apos;t change anything. &ldquo;Turn off link&rdquo; stops it working.</li>
