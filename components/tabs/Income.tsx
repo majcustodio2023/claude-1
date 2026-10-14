@@ -5,7 +5,8 @@ import { clientForDeal, clientForStream, dealCost, keepOf, makeClientFromStream,
 import { dealBalance, dealPaid, defaultAccountId, expectedForStream, monthOf, parseAmount, summarize, uid, type StreamRow } from "@/lib/finance";
 import type { Deal, IncomeStream, StreamMonth, SubItem } from "@/lib/types";
 import { useTracker } from "../App";
-import { Badge, Btn, Card, NumInput, Stat, celebrate, money } from "../ui";
+import { Badge, Btn, Card, Stat, celebrate, money } from "../ui";
+import { EditButton, EditableNumber, SaveButton } from "../editable";
 import { AccountSelect, CollectForm, accountName, settle } from "../Money";
 import { StreamTerms, termsText } from "../StreamSettings";
 import { HELP } from "../help";
@@ -174,16 +175,16 @@ function IncomeRow({ row: r, goTo }: { row: StreamRow; goTo: Go }) {
           <div className="text-base text-muted mt-0.5">{termsText(st, money)}</div>
         </div>
         {st.kind === "percent_floor" && (
-          <label className="text-base text-muted flex flex-col gap-1">
+          <div className="text-base text-muted flex flex-col gap-1">
             Their revenue this month
-            <NumInput className="w-36" value={r.month?.revenueBase} onChange={(v) => setSM({ revenueBase: v })} placeholder="0" />
-          </label>
+            <EditableNumber label="their revenue this month" className="text-ink text-lg" inputClass="w-36" value={r.month?.revenueBase} onChange={(v) => setSM({ revenueBase: v })} placeholder="0" />
+          </div>
         )}
         {st.kind === "variable" && (
-          <label className="text-base text-muted flex flex-col gap-1">
+          <div className="text-base text-muted flex flex-col gap-1">
             Actual this month
-            <NumInput className="w-36" value={r.month?.actual} onChange={(v) => setSM({ actual: v })} placeholder={String(st.amount)} />
-          </label>
+            <EditableNumber label="actual this month" className="text-ink text-lg" inputClass="w-36" value={r.month?.actual} onChange={(v) => setSM({ actual: v })} placeholder={String(st.amount)} />
+          </div>
         )}
         <div className="md:text-right md:w-40">
           {profit && cost > 0 ? (
@@ -205,7 +206,7 @@ function IncomeRow({ row: r, goTo }: { row: StreamRow; goTo: Go }) {
         <div className="flex gap-2 items-center flex-wrap">
           {r.isCollected || partly ? (
             <>
-              {!r.month?.subs && <NumInput className="w-28" value={r.collected} onChange={(v) => setSM({ collected: v ?? 0 })} />}
+              {!r.month?.subs && <EditableNumber label="amount collected" inputClass="w-28" value={r.collected} onChange={(v) => setSM({ collected: v ?? 0 })} />}
               <AccountSelect value={r.month?.accountId} onChange={(id) => setSM({ accountId: id })} label="Account it went into" />
               <Btn onClick={() => setSM({ collected: undefined, collectedOn: undefined, accountId: undefined, subs: undefined })}>Undo</Btn>
             </>
@@ -221,9 +222,7 @@ function IncomeRow({ row: r, goTo }: { row: StreamRow; goTo: Go }) {
               Edit in Clients
             </button>
           ) : (
-            <button className="btn btn-ghost px-3" onClick={() => setSettings(!settings)} aria-expanded={settings} title="Change the amount or how it's paid">
-              <Icon name="gear" size={20} />
-            </button>
+            !settings && <EditButton title="Change the name, amount or how it's paid" onClick={() => setSettings(true)} />
           )}
         </div>
       </div>
@@ -256,8 +255,9 @@ function IncomeRow({ row: r, goTo }: { row: StreamRow; goTo: Go }) {
             <span className="text-muted">Name</span>
             <input className="flex-1" defaultValue={st.name} onBlur={(e) => e.target.value.trim() && setStream({ name: e.target.value.trim() })} />
           </label>
-          <StreamTerms stream={st} />
+          <StreamTerms stream={st} alwaysEdit />
           <div className="flex flex-wrap gap-2 items-center">
+            <SaveButton onClick={() => setSettings(false)} />
             <Btn kind="soft" onClick={() => update((d) => makeClientFromStream(d, st.id, today))}>
               This is a client → move to Clients
             </Btn>

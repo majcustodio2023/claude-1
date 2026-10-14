@@ -5,7 +5,8 @@ import { defaultAccountId, monthOf, parseAmount, uid } from "@/lib/finance";
 import { DEFAULT_FUN_PERCENT, funBudget, funHistory } from "@/lib/fun";
 import { useTracker } from "./App";
 import { AccountSelect } from "./Money";
-import { Badge, Bar, Btn, Card, NumInput, money } from "./ui";
+import { Badge, Bar, Btn, Card, money } from "./ui";
+import { EditableNumber } from "./editable";
 import { HELP } from "./help";
 
 const VERDICT = {
@@ -109,7 +110,7 @@ export default function FunMoney() {
 
       <div className="flex flex-wrap items-center gap-2 mt-4 text-base text-muted">
         Safe share of spare money
-        <NumInput className="w-20" value={data.settings.funPercent ?? DEFAULT_FUN_PERCENT} onChange={(v) => update((d) => void (d.settings.funPercent = Math.min(Math.max(v ?? DEFAULT_FUN_PERCENT, 0), 100)))} />%
+        <EditableNumber label="safe share" inputClass="w-20" format={(n) => `${n}%`} value={data.settings.funPercent ?? DEFAULT_FUN_PERCENT} onChange={(v) => update((d) => void (d.settings.funPercent = Math.min(Math.max(v ?? DEFAULT_FUN_PERCENT, 0), 100)))} />
       </div>
 
       {history.length > 0 && (

@@ -5,11 +5,14 @@ import { locale, moneyIn, uid } from "@/lib/finance";
 import type { CampaignInfo, DatePreset, SuggestedAction } from "@/lib/meta";
 import CampaignView, { type InsightResult } from "../ads/CampaignView";
 import type { AdAccount, AutopilotEntry, TrackedCampaign } from "@/lib/types";
-import { NO_GROUP, autoGroupOf, autoGroupOfAccount, groupCampaigns, groupChoices, type ResolvedGroup } from "@/lib/adgroups";
+import { NO_GROUP, autoGroupOf, autoGroupOfAccount, groupCampaigns, groupChoices, groupOf, type ResolvedGroup } from "@/lib/adgroups";
 import { useTracker } from "../App";
 import { Badge, Btn, Card, NumInput, Stat, TextInput, money } from "../ui";
 import { HELP } from "../help";
 import { Icon } from "../icons";
+import { Avatar } from "../avatars";
+import { AvatarButton } from "../AvatarPicker";
+import { EditButton, EditableText, SaveButton } from "../editable";
 
 const PRESETS: [DatePreset, string][] = [
   ["today", "Today"],
@@ -378,6 +381,7 @@ function TrackedCard({ tracked, preset, result, onResult, signal }: { tracked: T
   const { data, update, reload } = useTracker();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [editSettings, setEditSettings] = useState(false);
   const account = data.adAccounts.find((a) => a.id === tracked.adAccountRef);
   // Meta reports money in the ad account's currency.
   const cur = (n: number) => moneyIn(n, result?.currency);
@@ -429,7 +433,9 @@ function TrackedCard({ tracked, preset, result, onResult, signal }: { tracked: T
         <Btn kind="primary" onClick={load} disabled={busy}>{busy ? "Loading…" : result ? "Refresh" : "Analyze"}</Btn>
         <button className="text-muted text-sm" onClick={() => update((d) => void (d.trackedCampaigns = d.trackedCampaigns.filter((x) => x.id !== tracked.id)))}>✕</button>
       </div>
-      <div className="flex gap-3 flex-wrap text-sm text-muted items-center">
+      {editSettings ? (
+        <div className="bg-card-2 rounded-[8px] p-3 space-y-3">
+      <div className="flex gap-3 flex-wrap text-base text-muted items-center">
         <label className="flex items-center gap-1">
           Group <GroupPicker value={tracked.group} auto={autoGroupOf(data, tracked)} onChange={(group) => set({ group })} />
         </label>
@@ -454,6 +460,38 @@ function TrackedCard({ tracked, preset, result, onResult, signal }: { tracked: T
           Result event <TextInput className="w-48" value={tracked.resultAction} placeholder="auto (leads)" onChange={(v) => set({ resultAction: v || undefined })} />
         </label>
       </div>
+          <SaveButton onClick={() => setEditSettings(false)} />
+        </div>
+      ) : (
+        <div className="flex gap-x-3 gap-y-1 flex-wrap text-base text-muted items-center">
+          <span>
+            Group <b className="text-ink">{groupOf(data, tracked).name}</b>
+          </span>
+          <span>
+            Target <b className="text-ink">{cur(tracked.targetCpl ?? data.settings.targetCpl)}</b> per result
+          </span>
+          <span>
+            ROAS <b className="text-ink">{tracked.targetRoas ?? data.settings.targetRoas}×</b>
+          </span>
+          {tracked.mode === "autopilot" && tracked.maxDailyBudget != null && (
+            <span>
+              Max <b className="text-ink">{cur(tracked.maxDailyBudget)}</b>/day
+            </span>
+          )}
+          <span>
+            Steps of <b className="text-ink">{tracked.scaleStep ?? 20}%</b>
+          </span>
+          <span>
+            Pause at <b className="text-ink">{tracked.killAt ?? 1.5}×</b> target
+          </span>
+          {tracked.resultAction && (
+            <span>
+              Result <b className="text-ink">{tracked.resultAction}</b>
+            </span>
+          )}
+          <EditButton label="Settings" title="Change targets and group" onClick={() => setEditSettings(true)} />
+        </div>
+      )}
       {err && <p className="text-sm text-bad">{err}</p>}
       {result && <CampaignView key={result.fetchedAt} tracked={tracked} result={result} onApply={apply} />}
     </div>
@@ -462,8 +500,11 @@ function TrackedCard({ tracked, preset, result, onResult, signal }: { tracked: T
 
 /** One client's (or group's) campaigns, with totals and "Analyze all". */
 function GroupSection({ group, campaigns, preset, results, setResult }: { group: ResolvedGroup; campaigns: TrackedCampaign[]; preset: DatePreset; results: Record<string, InsightResult>; setResult: (id: string, r: InsightResult) => void }) {
+  const { data } = useTracker();
   const [signal, setSignal] = useState(0);
   const loaded = campaigns.map((t) => results[t.id]).filter(Boolean);
+  const [gKind, gId] = group.key.split(":");
+  const gAvatar = gKind === "client" ? data.clients?.find((c) => c.id === gId)?.avatar : gKind === "group" ? data.adGroups?.find((g) => g.id === gId)?.avatar : undefined;
   const spend = loaded.reduce((a, r) => a + r.metrics.spend, 0);
   const res = loaded.reduce((a, r) => a + r.metrics.results, 0);
   const currencies = [...new Set(loaded.map((r) => r.currency))];
@@ -471,7 +512,7 @@ function GroupSection({ group, campaigns, preset, results, setResult }: { group:
   return (
     <details open className="border-[3px] border-outline rounded-[12px] bg-card-2/40">
       <summary className="cursor-pointer list-none p-3 flex items-center gap-2 flex-wrap">
-        <Icon name={group.kind === "client" ? "briefcase" : group.kind === "group" ? "box" : "radar"} size={22} />
+        {group.kind === "none" ? <Icon name="radar" size={22} /> : <Avatar value={gAvatar} seed={gId} kind="emblem" size={44} title={group.name} />}
         <span className="font-display text-xl tracking-wide">{group.name}</span>
         <Badge tone={group.kind === "client" ? "accent" : group.kind === "group" ? "gold" : "muted"}>{group.kind === "client" ? "client" : group.kind === "group" ? "group" : "no group"}</Badge>
         <span className="text-sm text-muted">
@@ -549,8 +590,9 @@ function CustomGroups() {
       <p className="text-sm text-muted mt-1">Clients already have a group each. Make extra ones for ads that aren&apos;t for a client, like &ldquo;Personal&rdquo; or &ldquo;Agency brand&rdquo;.</p>
       <div className="space-y-2 mt-2">
         {groups.map((g) => (
-          <div key={g.id} className="flex items-center gap-2">
-            <TextInput className="flex-1 max-w-xs" value={g.name} onChange={(v) => update((d) => void (d.adGroups!.find((x) => x.id === g.id)!.name = v || g.name))} />
+          <div key={g.id} className="flex items-center gap-3 flex-wrap">
+            <AvatarButton value={g.avatar} seed={g.id} kind="emblem" size={48} name={g.name} onChange={(v) => update((d) => void (d.adGroups!.find((x) => x.id === g.id)!.avatar = v))} />
+            <EditableText className="flex-1 max-w-xs text-lg" label="group name" value={g.name} onChange={(v) => update((d) => void (d.adGroups!.find((x) => x.id === g.id)!.name = v.trim() || g.name))} />
             <Btn kind="danger" onClick={() => confirm(`Remove the group "${g.name}"? Its campaigns go back to automatic grouping.`) && remove(g.id)}>Remove</Btn>
           </div>
         ))}

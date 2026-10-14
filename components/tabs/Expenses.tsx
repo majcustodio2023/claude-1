@@ -10,12 +10,14 @@ import { SubItems } from "../SubItems";
 import ManualSpending from "../ManualSpending";
 import { paySub, setSubs, subDone, subPaid, subRows, subsTotal, unpaySub } from "@/lib/subs";
 import { Icon } from "../icons";
+import { EditButton, SaveButton } from "../editable";
 
 const LINE_CATS: ExpenseLine["category"][] = ["household", "payroll", "client", "software", "debt", "other"];
 const monthLabel = (m: string, style: "long" | "short" = "long") => new Date(m + "-01T00:00:00").toLocaleDateString(locale(), { month: style, year: "numeric" });
 
 export default function Expenses() {
   const { data, update, month } = useTracker();
+  const [justAdded, setJustAdded] = useState<string | null>(null);
   const s = useMemo(() => summarize(data, month), [data, month]);
   const [showOff, setShowOff] = useState(false);
   const applies = data.expenses.filter((e) => expenseAppliesTo(e, month));
@@ -31,13 +33,20 @@ export default function Expenses() {
             <li>Each bill has a monthly amount: what you expect to pay every month (rent, salaries, software…). Together they are your &ldquo;stay afloat&rdquo; number on HQ.</li>
             <li>When you pay, type what you paid and press Pay. Paid part of it? Enter that part; the rest stays as &ldquo;left to pay&rdquo;.</li>
             <li>Each payment is saved with the day you paid, the time you recorded it, and the account it came out of. It&apos;s taken off that account in the War chest.</li>
-            <li>A bill that only runs for some months (like a loan)? Open <Icon name="gear" size={20} /> and set when it starts and ends.</li>
+            <li>To rename a bill, change its amount, or set when it starts and ends (like a loan), press <Icon name="pencil" size={20} /> Edit, then Save.</li>
             <li>Made a mistake? Press ✕ on a payment to remove it.</li>
             <li>A bill made of smaller costs (Household → maid, groceries, electricity)? Press &ldquo;Break into parts&rdquo; and add each one with its amount. Tick a part when you pay it and the bill fills up as you go. Whatever the parts don&apos;t cover shows as &ldquo;Everything else&rdquo;.</li>
           </ul>
         }
         actions={
-          <Btn kind="soft" onClick={() => update((d) => void d.expenses.push({ id: uid("exp"), name: "New bill", amount: 0, category: "other", active: true }))}>
+          <Btn
+            kind="soft"
+            onClick={() => {
+              const id = uid("exp");
+              update((d) => void d.expenses.push({ id, name: "New bill", amount: 0, category: "other", active: true }));
+              setJustAdded(id);
+            }}
+          >
             + Add bill
           </Btn>
         }
@@ -51,7 +60,7 @@ export default function Expenses() {
         <div className="space-y-3 mt-4">
           {applies.length === 0 && <p className="text-lg text-muted">No bills yet. Press &ldquo;Add bill&rdquo; to add your regular monthly costs.</p>}
           {applies.map((e) => (
-            <BillRow key={`${month}-${e.id}`} bill={e} />
+            <BillRow key={`${month}-${e.id}`} bill={e} isNew={e.id === justAdded} />
           ))}
         </div>
         {others.length > 0 && (
@@ -80,12 +89,12 @@ function Num({ label, value, tone = "" }: { label: string; value: number; tone?:
   return (
     <div className="bg-card-2 border-[3px] border-outline rounded-[10px] p-2.5 sm:p-3 min-w-0">
       <div className="text-xs sm:text-sm font-extrabold uppercase text-muted">{label}</div>
-      <div className={`font-display text-xl sm:text-3xl tracking-wide break-all ${tone}`}>{money(value)}</div>
+      <div className={`font-display text-lg sm:text-3xl tracking-wide [overflow-wrap:anywhere] ${tone}`}>{money(value)}</div>
     </div>
   );
 }
 
-function BillRow({ bill: e }: { bill: ExpenseLine }) {
+function BillRow({ bill: e, isNew = false }: { bill: ExpenseLine; isNew?: boolean }) {
   const { data, update, month, today } = useTracker();
   const applies = expenseAppliesTo(e, month);
   const pays = data.billPayments?.[month]?.[e.id] ?? [];
@@ -95,7 +104,7 @@ function BillRow({ bill: e }: { bill: ExpenseLine }) {
   const [text, setText] = useState("");
   const [date, setDate] = useState(payDate);
   const [accountId, setAccountId] = useState(defaultAccountId(data, "out"));
-  const [settings, setSettings] = useState(false);
+  const [settings, setSettings] = useState(isNew);
   const setLine = (patch: Partial<ExpenseLine>) => update((d) => void Object.assign(d.expenses.find((x) => x.id === e.id)!, patch));
   const listed = subsTotal(e.subs);
   const subList = subRows(e.amount, e.subs).map((sub) => {
@@ -141,38 +150,54 @@ function BillRow({ bill: e }: { bill: ExpenseLine }) {
   return (
     <div className={`border-[3px] rounded-[10px] p-3.5 space-y-3 ${left === 0 && paid > 0 ? "border-good/60 bg-good/5" : "border-outline bg-card-2/60"}`}>
       <div className="flex flex-wrap items-center gap-2">
-        <TextInput className="flex-1 min-w-40 text-lg font-bold" value={e.name} onChange={(v) => setLine({ name: v })} />
-        <label className="flex items-center gap-2 text-base text-muted">
-          Monthly amount
-          <NumInput className="w-32" value={e.amount} onChange={(v) => setLine({ amount: Math.max(v ?? 0, listed) })} />
-        </label>
+        <div className="flex-1 min-w-40">
+          <div className="text-xl font-extrabold [overflow-wrap:anywhere]">{e.name}</div>
+          <div className="text-base text-muted font-bold">
+            {money(e.amount)} a month · <span className="capitalize">{e.category}</span>
+            {e.startMonth && ` · from ${monthLabel(e.startMonth, "short")}`}
+            {e.endMonth && ` · until ${monthLabel(e.endMonth, "short")}`}
+          </div>
+        </div>
         {applies ? status : <Badge>Not due this month</Badge>}
-        <button className="btn btn-ghost px-3" onClick={() => setSettings(!settings)} aria-expanded={settings} title="Bill settings">
-          <Icon name="gear" size={20} />
-        </button>
+        {!settings && <EditButton title="Edit this bill" onClick={() => setSettings(true)} />}
       </div>
 
       {settings && (
-        <div className="flex flex-wrap items-center gap-3 text-base text-muted bg-card-2 rounded-[8px] p-3">
-          <label className="flex items-center gap-2">
-            Type
-            <select value={e.category} onChange={(ev) => setLine({ category: ev.target.value as ExpenseLine["category"] })}>
-              {LINE_CATS.map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-            </select>
-          </label>
-          <label className="flex items-center gap-2">
-            Starts
-            <OptionalMonth value={e.startMonth} empty="Always" onChange={(v) => setLine({ startMonth: v })} />
-          </label>
-          <label className="flex items-center gap-2">
-            Ends
-            <OptionalMonth value={e.endMonth} empty="Never" onChange={(v) => setLine({ endMonth: v })} />
-          </label>
-          <Btn kind="danger" onClick={() => confirm(`Remove ${e.name}? Payments already recorded stay in your history.`) && update((d) => void (d.expenses = d.expenses.filter((x) => x.id !== e.id)))}>
-            Remove bill
-          </Btn>
+        <div className="space-y-3 text-base bg-card-2 rounded-[8px] p-3">
+          <div className="flex flex-wrap items-end gap-3">
+            <label className="flex flex-col gap-1 text-sm font-extrabold uppercase text-muted flex-1 min-w-48">
+              Name
+              <TextInput className="text-lg normal-case font-bold" value={e.name} onChange={(v) => v.trim() && setLine({ name: v.trim() })} />
+            </label>
+            <label className="flex flex-col gap-1 text-sm font-extrabold uppercase text-muted">
+              Monthly amount
+              <NumInput className="w-36 text-lg" value={e.amount} onChange={(v) => setLine({ amount: Math.max(v ?? 0, listed) })} />
+            </label>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 text-muted">
+            <label className="flex items-center gap-2">
+              Type
+              <select value={e.category} onChange={(ev) => setLine({ category: ev.target.value as ExpenseLine["category"] })}>
+                {LINE_CATS.map((c) => (
+                  <option key={c}>{c}</option>
+                ))}
+              </select>
+            </label>
+            <label className="flex items-center gap-2">
+              Starts
+              <OptionalMonth value={e.startMonth} empty="Always" onChange={(v) => setLine({ startMonth: v })} />
+            </label>
+            <label className="flex items-center gap-2">
+              Ends
+              <OptionalMonth value={e.endMonth} empty="Never" onChange={(v) => setLine({ endMonth: v })} />
+            </label>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <SaveButton onClick={() => setSettings(false)} />
+            <Btn kind="danger" onClick={() => confirm(`Remove ${e.name}? Payments already recorded stay in your history.`) && update((d) => void (d.expenses = d.expenses.filter((x) => x.id !== e.id)))}>
+              Remove bill
+            </Btn>
+          </div>
         </div>
       )}
 
