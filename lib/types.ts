@@ -336,12 +336,32 @@ export interface Settings {
 /** How the hero looks. Every field has a default, so older data needs nothing. */
 export interface HeroLook {
   skin?: string;
-  hair?: "spiky" | "long" | "mohawk" | "bob";
+  /** Hair style id (see lib/heroLook.ts). */
+  hair?: string;
   hairColor?: string;
+  /** Eye colour. */
   eyes?: string;
+  eyeStyle?: string;
+  mouth?: string;
+  /** Face marks: blush, freckles, scar… */
+  marks?: string;
+  eyewear?: string;
+  headwear?: string;
+  earrings?: string;
+  /** Top style and its colours (outfit = main colour, accent = trim/chest panel). */
+  top?: string;
   outfit?: string;
   accent?: string;
+  emblem?: string;
+  /** Neckwear style; scarf is its colour. */
+  neck?: string;
   scarf?: string;
+  back?: string;
+  backColor?: string;
+  bottoms?: string;
+  bottomsColor?: string;
+  shoes?: string;
+  gloves?: string;
   /** Show the gear earned from achievements (default on). */
   achievementGear?: boolean;
 }

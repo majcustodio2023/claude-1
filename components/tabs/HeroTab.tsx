@@ -6,34 +6,23 @@ import { PERSONAS } from "@/lib/personas";
 import { REWARD, buyItem, ensureGame } from "@/lib/loot";
 import type { HeroLook, ItemSlot } from "@/lib/types";
 import { useTracker } from "../App";
-import { HERO_DEFAULTS, Hero, KIT_LOOKS, Kit } from "../characters";
+import { Hero, KIT_LOOKS, Kit, shade } from "../characters";
+import { HERO_DEFAULTS, HERO_GROUPS, HERO_OPTIONS, heroChoiceLabel, heroLookCount, randomHeroLook, type HeroOption } from "@/lib/heroLook";
+import { EditButton, Field, SaveButton } from "../editable";
 import { Badge, Btn, Card, toast } from "../ui";
 import { HELP } from "../help";
 import { Glyph, Icon } from "../icons";
 
-const SKINS = ["#ffe6d1", "#ffd9b8", "#f1c27d", "#d9a066", "#a86b3c", "#7a4a26", "#4b2e1a"];
-const HAIR_COLORS = ["#2a2f7a", "#16131f", "#e8e8f0", "#ffd23f", "#ff8a1f", "#d62839", "#ff8fc0", "#7b2cbf", "#2ec4b6", "#4caf50"];
-const EYES = ["#ffae00", "#4fd2ff", "#d62839", "#7b2cbf", "#4caf50", "#8d5524", "#ff5fae"];
-const OUTFITS = ["#2c2b6b", "#16131f", "#c1121f", "#1b4332", "#3a0ca3", "#f1f1f1", "#ff8a1f", "#0077b6"];
-const HAIRS: [NonNullable<HeroLook["hair"]>, string][] = [
-  ["spiky", "Spiky"],
-  ["long", "Long"],
-  ["mohawk", "Mohawk"],
-  ["bob", "Bob"],
-];
 const SLOTS: ItemSlot[] = ["hat", "face", "weapon", "back", "aura", "pet", "kit-head", "kit-face", "kit-neck", "kit-tail"];
 const FURS = ["#ff8a1f", "#2b2140", "#ff5fae", "#8a6a3a", "#4f6bff", "#f4efe4", "#e8e8f0", "#d62839", "#6ee77a", "#ffd23f"];
 
 export default function HeroTab() {
   const { data, update, today } = useTracker();
   const game = data.game;
-  const look = { ...HERO_DEFAULTS, ...game?.look };
   const equipped = Object.values(game?.equipped ?? {}).filter(Boolean) as string[];
-  const [pose, setPose] = useState(false);
   const stock = shopStock(today);
   const gear = Object.keys(data.heroGear ?? {});
 
-  const setLook = (patch: Partial<HeroLook>) => update((d) => void (ensureGame(d, today).look = { ...d.game!.look, ...patch }));
   const equip = (slot: ItemSlot, id?: string) =>
     update((d) => {
       const g = ensureGame(d, today);
@@ -50,40 +39,7 @@ export default function HeroTab() {
 
   return (
     <div className="space-y-5">
-      <Card title={`Hero locker · ${game?.coins ?? 0} 🪙`} icon="🦸" glow="hero" help={HELP.hero}>
-        <div className="grid md:grid-cols-[minmax(0,260px)_1fr] gap-6 items-start">
-          <div className="text-center">
-            <div className="bg-card-2 border-[3px] border-outline rounded-[14px] p-3 shadow-[4px_4px_0_var(--color-outline)] inline-block">
-              <Hero size={230} mood="ready" attacking={pose} gear={gear} className="bob max-w-full h-auto" />
-            </div>
-            <div className="mt-3 flex justify-center gap-2">
-              <Btn onClick={() => setPose(!pose)}>{pose ? "Stand" : "Battle pose"}</Btn>
-              <Btn onClick={() => confirm("Reset your look to the default?") && update((d) => void (ensureGame(d, today).look = {}))}>Reset look</Btn>
-            </div>
-          </div>
-          <div className="space-y-4 min-w-0">
-            <Swatches label="Skin" value={look.skin} options={SKINS} onPick={(skin) => setLook({ skin })} />
-            <div>
-              <div className="text-base font-extrabold text-muted mb-1.5">Hair style</div>
-              <div className="flex gap-2 flex-wrap">
-                {HAIRS.map(([id, name]) => (
-                  <button key={id} className={`btn ${look.hair === id ? "btn-primary" : "btn-ghost"} px-3`} onClick={() => setLook({ hair: id })}>
-                    {name}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <Swatches label="Hair colour" value={look.hairColor} options={HAIR_COLORS} onPick={(hairColor) => setLook({ hairColor })} />
-            <Swatches label="Eyes" value={look.eyes} options={EYES} onPick={(eyes) => setLook({ eyes })} />
-            <Swatches label="Suit" value={look.outfit} options={OUTFITS} onPick={(outfit) => setLook({ outfit })} />
-            <Swatches label="Chest panel" value={look.accent} options={["#ffd23f", "#4fd2ff", "#ff5fae", "#6ee77a", "#f1f1f1", "#ff8a1f"]} onPick={(accent) => setLook({ accent })} />
-            <Swatches label="Scarf" value={look.scarf} options={["#ff3b4f", "#ffd23f", "#4fd2ff", "#16131f", "#f1f1f1", "#7b2cbf", "#6ee77a"]} onPick={(scarf) => setLook({ scarf })} />
-            <label className="flex items-center gap-2 text-base font-bold">
-              <input type="checkbox" checked={look.achievementGear} onChange={(e) => setLook({ achievementGear: e.target.checked })} /> Show achievement gear ({gear.length})
-            </label>
-          </div>
-        </div>
-      </Card>
+      <HeroLocker />
 
       <KitLocker />
 
@@ -183,6 +139,157 @@ export default function HeroTab() {
             </ul>
           )}
         </Card>
+      </div>
+    </div>
+  );
+}
+
+/** Your hero: a clean card with the look, and a full editor behind "Customize look". */
+function HeroLocker() {
+  const { data, update, today } = useTracker();
+  const game = data.game;
+  const look = { ...HERO_DEFAULTS, ...game?.look };
+  const gear = Object.keys(data.heroGear ?? {});
+  const [pose, setPose] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [group, setGroup] = useState<(typeof HERO_GROUPS)[number]>("Hair");
+  const setLook = (patch: Partial<HeroLook>) => update((d) => void (ensureGame(d, today).look = { ...d.game!.look, ...patch }));
+  const pick = (o: HeroOption) => heroChoiceLabel(o, look[o.key]);
+  const opt = (key: HeroOption["key"]) => HERO_OPTIONS.find((o) => o.key === key)!;
+  const summary: [string, string][] = [
+    ["Hair", pick(opt("hair"))],
+    ["Top", pick(opt("top"))],
+    ["Bottoms", pick(opt("bottoms"))],
+    ["Eyes", pick(opt("eyeStyle"))],
+    ["Headwear", pick(opt("headwear"))],
+    ["On your back", pick(opt("back"))],
+  ];
+
+  return (
+    <Card
+      title={
+        <>
+          Hero locker · {game?.coins ?? 0} <Icon name="coin" size={22} />
+        </>
+      }
+      icon="🦸"
+      glow="hero"
+      help={HELP.hero}
+      actions={!editing && <EditButton label="Customize look" title="Change your hero's hair, face, clothes and extras" onClick={() => setEditing(true)} />}
+    >
+      <div className="grid md:grid-cols-[minmax(0,280px)_1fr] gap-6 items-start">
+        <div className={`text-center md:sticky md:top-4 ${editing ? "max-md:sticky max-md:top-0 max-md:z-20 max-md:bg-card max-md:py-2 max-md:-mx-1" : ""}`}>
+          <div className="bg-card-2 border-[3px] border-outline rounded-[14px] p-3 shadow-[4px_4px_0_var(--color-outline)] inline-block">
+            <Hero size={240} mood="ready" attacking={pose} gear={gear} className={`bob max-w-full h-auto ${editing ? "max-md:w-[130px]" : ""}`} />
+          </div>
+          <div className="mt-3 flex justify-center gap-2 flex-wrap">
+            <Btn onClick={() => setPose(!pose)}>{pose ? "Stand" : "Battle pose"}</Btn>
+            {editing && (
+              <Btn onClick={() => setLook(randomHeroLook())}>
+                <Icon name="sparkles" size={20} /> Random look
+              </Btn>
+            )}
+          </div>
+        </div>
+
+        {!editing ? (
+          <div className="space-y-4 min-w-0">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {summary.map(([label, value]) => (
+                <Field key={label} label={label}>
+                  {value}
+                </Field>
+              ))}
+            </div>
+            <p className="text-base text-muted">
+              {look.achievementGear ? `Showing ${gear.length} piece${gear.length === 1 ? "" : "s"} of achievement gear.` : "Achievement gear is hidden."} Shop items you wear show on top of your look.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4 min-w-0">
+            <p className="text-sm text-muted font-bold">{bigCount(heroLookCount())} possible looks. Changes show on your hero right away.</p>
+            <div className="flex gap-1.5 flex-wrap" role="tablist">
+              {HERO_GROUPS.map((g) => (
+                <button key={g} type="button" role="tab" aria-selected={group === g} onClick={() => setGroup(g)} className={`btn px-4 py-1.5 ${group === g ? "btn-primary" : "btn-ghost"}`}>
+                  {g}
+                </button>
+              ))}
+            </div>
+            <div className="space-y-3">
+              {HERO_OPTIONS.filter((o) => o.group === group).map((o) => (
+                <OptionRow key={o.key} option={o} value={look[o.key]} look={look} onPick={(v) => setLook({ [o.key]: v })} />
+              ))}
+            </div>
+            <label className="flex items-center gap-2 text-base font-bold">
+              <input type="checkbox" className="w-5 h-5" checked={look.achievementGear} onChange={(e) => setLook({ achievementGear: e.target.checked })} /> Show achievement gear ({gear.length})
+            </label>
+            <div className="flex gap-2 flex-wrap">
+              <SaveButton label="Save look" onClick={() => setEditing(false)} />
+              <Btn onClick={() => confirm("Reset your look to the default?") && update((d) => void (ensureGame(d, today).look = {}))}>Reset look</Btn>
+            </div>
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+}
+
+function bigCount(n: number): string {
+  for (const [v, w] of [[1e18, "quintillion"], [1e15, "quadrillion"], [1e12, "trillion"], [1e9, "billion"], [1e6, "million"]] as const) if (n >= v) return `Over ${Math.floor(n / v).toLocaleString()} ${w}`;
+  return n.toLocaleString();
+}
+
+function OptionRow({ option: o, value, look, onPick }: { option: HeroOption; value: string; look: Required<HeroLook>; onPick: (v: string) => void }) {
+  if (o.colors) {
+    // An empty colour means "a shade of the top", shown as its own swatch.
+    const swatch = (c: string) => c || shade(look.outfit, -0.35);
+    return (
+      <div>
+        <div className="text-base font-extrabold text-muted mb-1.5">{o.label}</div>
+        <div className="flex gap-2 flex-wrap items-center">
+          {o.colors.map((c) => (
+            <button
+              key={c || "auto"}
+              type="button"
+              aria-label={c ? `${o.label} ${c}` : `${o.label} matches the top`}
+              title={c ? undefined : "Match the top"}
+              onClick={() => onPick(c)}
+              className={`w-9 h-9 rounded-full border-[3px] ${value === c ? "border-white scale-110" : "border-outline"} shadow-[2px_2px_0_var(--color-outline)] ${c ? "" : "grid place-content-center text-[10px] font-extrabold text-white"}`}
+              style={{ background: swatch(c) }}
+            >
+              {c ? null : "AUTO"}
+            </button>
+          ))}
+          <label className="w-9 h-9 rounded-full border-[3px] border-outline grid place-content-center cursor-pointer overflow-hidden relative" title="Pick any colour">
+            <Icon name="palette" size={20} />
+            <input type="color" value={swatch(value)} onChange={(e) => onPick(e.target.value)} className="absolute inset-0 opacity-0 cursor-pointer" aria-label={`${o.label}: any colour`} />
+          </label>
+        </div>
+      </div>
+    );
+  }
+  const list = o.choices ?? [];
+  const i = Math.max(0, list.findIndex((c) => c[0] === value));
+  const step = (d: number) => onPick(list[(i + d + list.length) % list.length][0]);
+  return (
+    <div>
+      <div className="text-base font-extrabold text-muted mb-1.5">
+        {o.label} <span className="font-bold text-sm">({i + 1} of {list.length})</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+        <button type="button" className="btn btn-ghost px-3 py-1 text-xl" onClick={() => step(-1)} aria-label={`Previous ${o.label}`}>
+          ‹
+        </button>
+        <select className="flex-1 min-w-0 max-w-64 text-lg font-bold" value={list[i]?.[0]} onChange={(e) => onPick(e.target.value)} aria-label={o.label}>
+          {list.map(([v, l]) => (
+            <option key={v} value={v}>
+              {l}
+            </option>
+          ))}
+        </select>
+        <button type="button" className="btn btn-ghost px-3 py-1 text-xl" onClick={() => step(1)} aria-label={`Next ${o.label}`}>
+          ›
+        </button>
       </div>
     </div>
   );
