@@ -1,5 +1,6 @@
 "use client";
 
+import { ContactChips, ContactFields } from "../Contact";
 import { setDealStage } from "@/lib/fallen";
 import { useState } from "react";
 import { ME, archiveClient, clientKind, clientMoney, clientStats, createClient, deleteClient, deleteClientSummary, isOverdue, nextStatus, openTasksFor, people, personName, renameClient, teamPay } from "@/lib/clients";
@@ -154,7 +155,7 @@ function ClientCard({ client: c, who }: { client: Client; who: string }) {
         <>
           {st.overdue > 0 && <Badge tone="bad">{st.overdue} overdue</Badge>}
           <Badge tone={st.open ? "warn" : "good"}>{st.open ? `${st.open} open` : "All clear"}</Badge>
-          {!settings && <EditButton title="Edit client: name, picture, notes" onClick={() => setSettings(true)} />}
+          {!settings && <EditButton title="Edit client: name, picture, contact, notes" onClick={() => setSettings(true)} />}
         </>
       }
     >
@@ -178,8 +179,12 @@ function ClientCard({ client: c, who }: { client: Client; who: string }) {
           </label>
           <label className="flex items-center gap-2">
             <span className="text-muted w-20">Notes</span>
-            <TextInput className="flex-1" value={c.notes} onChange={(v) => set({ notes: v })} placeholder="Contacts, links, scope…" />
+            <TextInput className="flex-1" value={c.notes} onChange={(v) => set({ notes: v })} placeholder="Scope, links, anything to remember…" />
           </label>
+          <div>
+            <div className="text-sm font-extrabold uppercase text-muted mb-1">Contact</div>
+            <ContactFields value={c.contact} onChange={(contact) => set({ contact })} />
+          </div>
           <div className="flex gap-2 flex-wrap">
             <SaveButton onClick={() => setSettings(false)} />
             <Btn onClick={() => (c.archived || confirm(`Archive ${c.name}? Their retainer and monthly team pay stop from this month. Everything already paid stays in your history.`)) && update((d) => archiveClient(d, c.id, !c.archived, month))}>
@@ -197,6 +202,7 @@ function ClientCard({ client: c, who }: { client: Client; who: string }) {
           {c.notes}
         </p>
       )}
+      {!settings && <ContactChips value={c.contact} className="-mt-1 mb-3" />}
       <ClientMoneyPanel client={c} />
 
       {total > 0 && (

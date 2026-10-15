@@ -10,6 +10,7 @@ import { HELP } from "../help";
 import { Avatar } from "../avatars";
 import { AvatarButton } from "../AvatarPicker";
 import { EditButton, SaveButton } from "../editable";
+import { ContactChips, ContactFields } from "../Contact";
 
 /** Opens Expenses and scrolls to a bill, flashing it so it's easy to spot. */
 export function showBill(goTo: (tab: "expenses") => void, billId: string) {
@@ -163,6 +164,10 @@ function MemberCard({ member: m, startEditing, goTo }: { member: TeamMember; sta
             Notes
             <TextInput className="w-full mt-1 text-base normal-case" value={m.notes} onChange={(v) => set({ notes: v || undefined })} placeholder="Schedule, contact, rate…" />
           </label>
+          <div>
+            <div className="text-sm font-extrabold uppercase text-muted mb-1">Contact</div>
+            <ContactFields value={m.contact} onChange={(contact) => set({ contact })} />
+          </div>
           <label className="flex items-center gap-2 text-base font-bold">
             <input type="checkbox" className="w-5 h-5" checked={m.active} onChange={(e) => setActive(e.target.checked)} /> Active (their pay counts each month)
           </label>
@@ -213,6 +218,7 @@ function MemberCard({ member: m, startEditing, goTo }: { member: TeamMember; sta
             </div>
           )}
           {m.notes && <p className="text-base text-muted whitespace-pre-wrap [overflow-wrap:anywhere]">{m.notes}</p>}
+          <ContactChips value={m.contact} />
           <div className="flex justify-end">
             <EditButton onClick={() => setEditing(true)} />
           </div>

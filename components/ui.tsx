@@ -135,12 +135,13 @@ export function NumInput({ value, onChange, className = "", placeholder }: { val
 }
 
 /** Text input that commits on blur. */
-export function TextInput({ value, onChange, className = "", placeholder }: { value: string | undefined; onChange: (v: string) => void; className?: string; placeholder?: string }) {
+export function TextInput({ value, onChange, className = "", placeholder, type }: { value: string | undefined; onChange: (v: string) => void; className?: string; placeholder?: string; type?: string }) {
   const [text, setText] = useState(value ?? "");
   useEffect(() => setText(value ?? ""), [value]);
   return (
     <input
       className={className}
+      type={type}
       value={text}
       placeholder={placeholder}
       onChange={(e) => setText(e.target.value)}
