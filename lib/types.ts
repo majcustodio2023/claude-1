@@ -331,6 +331,8 @@ export interface Settings {
   squadAvatar?: string;
   /** Theme, design style, layout and text size (see lib/appearance.ts). */
   appearance?: Appearance;
+  /** Music and sound effect volumes, 0 to 1 (0 = off). last* remember the level before muting. */
+  sound?: { music?: number; sfx?: number; lastMusic?: number; lastSfx?: number };
 }
 
 /** How the hero looks. Every field has a default, so older data needs nothing. */
@@ -378,7 +380,7 @@ export interface GameState {
   look?: HeroLook;
   /** Kit's colours. Blank = the colours of the chosen personality. */
   kitLook?: { fur?: string; eyes?: string };
-  /** Bosses (deals) beaten but not fought yet: the mini game plays for these. */
+  /** Bosses (deals) beaten but not fought yet: the battle plays for these. */
   bossQueue?: string[];
   /** Recent coins and loot, newest first. */
   log: { at: string; text: string; coins?: number; item?: string }[];

@@ -12,6 +12,9 @@ import { EditButton, Field, SaveButton } from "../editable";
 import { Badge, Btn, Card, toast } from "../ui";
 import { HELP } from "../help";
 import { Glyph, Icon } from "../icons";
+import BossFight, { useHeroLevel } from "../BossFight";
+import { PASSIVE_DESC, SKILLS, STAT_LABEL, itemPowerText, loadoutFor, statText, type StatKey } from "@/lib/battle";
+import { sfx } from "@/lib/sound";
 
 const SLOTS: ItemSlot[] = ["hat", "face", "weapon", "back", "aura", "pet", "kit-head", "kit-face", "kit-neck", "kit-tail"];
 const FURS = ["#ff8a1f", "#2b2140", "#ff5fae", "#8a6a3a", "#4f6bff", "#f4efe4", "#e8e8f0", "#d62839", "#6ee77a", "#ffd23f"];
@@ -34,12 +37,15 @@ export default function HeroTab() {
     const err = buyItem(structuredClone(data), item.id, today);
     if (err) return toast(err);
     update((d) => void buyItem(d, item.id, today));
+    sfx("coin");
     toast(`Bought ${item.name}! Equipped.`);
   };
 
   return (
     <div className="space-y-5">
       <HeroLocker />
+
+      <BattleStats />
 
       <KitLocker />
 
@@ -58,8 +64,9 @@ export default function HeroTab() {
                     None
                   </button>
                   {mine.map((i) => (
-                    <button key={i.id} className={`btn ${game.equipped[slot] === i.id ? "btn-primary" : "btn-ghost"} px-3`} onClick={() => equip(slot, i.id)} style={{ borderColor: RARITY[i.rarity].color }}>
-                      {i.name}
+                    <button key={i.id} className={`btn ${game.equipped[slot] === i.id ? "btn-primary" : "btn-ghost"} px-3 flex-col !items-start !gap-0 text-left`} onClick={() => equip(slot, i.id)} style={{ borderColor: RARITY[i.rarity].color }}>
+                      <span>{i.name}</span>
+                      <span className="text-xs normal-case font-bold opacity-80">{[itemPowerText(i.id).stats, itemPowerText(i.id).extra].filter(Boolean).join(" · ")}</span>
                     </button>
                   ))}
                 </div>
@@ -69,7 +76,7 @@ export default function HeroTab() {
         )}
       </Card>
 
-      <Card title={`Item shop · new stock in ${stock.restockIn} day${stock.restockIn === 1 ? "" : "s"}`} icon="🛒" glow="gold" help={HELP.shop}>
+      <Card title={`Item shop · new stock ${stock.restockIn === 1 ? "tomorrow" : `in ${stock.restockIn} days`}`} icon="🛒" glow="gold" help={HELP.shop}>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {stock.items.map((i) => {
             const owned = game?.owned.includes(i.id);
@@ -87,6 +94,7 @@ export default function HeroTab() {
                 <div className="text-sm font-extrabold" style={{ color: RARITY[i.rarity].color }}>
                   {RARITY[i.rarity].label} · {SLOT_LABEL[i.slot]}
                 </div>
+                <PowerLine id={i.id} />
                 <div className="mt-2">
                   {owned ? (
                     <Badge tone="good">Owned</Badge>
@@ -110,7 +118,7 @@ export default function HeroTab() {
             <li>Mission done: +{REWARD.task}</li>
             <li>Client task done: +{REWARD.clientTask}</li>
             <li>Bill paid in full: +{REWARD.bill}</li>
-            <li>Boss defeated (deal fully paid): mini game, 60 to 400 coins, plus loot</li>
+            <li>Boss defeated (deal fully paid): turn-based battle, 60 to 400 coins, plus loot</li>
             <li><Icon name="gift" size={20} /> on a task = guaranteed loot when you finish it. Other tasks sometimes drop a surprise too.</li>
           </ul>
         </Card>
@@ -141,6 +149,81 @@ export default function HeroTab() {
         </Card>
       </div>
     </div>
+  );
+}
+
+function PowerLine({ id }: { id: string }) {
+  const p = itemPowerText(id);
+  if (!p.stats && !p.extra) return null;
+  return (
+    <div className="text-xs font-bold leading-snug mt-1">
+      {p.stats && <div className="text-ink">{p.stats}</div>}
+      {p.extra && <div className="text-gold">{p.extra}</div>}
+    </div>
+  );
+}
+
+/** Battle stats from gear, achievements and level, plus a practice fight to try them. */
+function BattleStats() {
+  const { data } = useTracker();
+  const level = useHeroLevel();
+  const lo = loadoutFor(data, level);
+  const [practice, setPractice] = useState(false);
+  return (
+    <Card
+      title="Battle stats"
+      icon={<Icon name="swords" size={24} />}
+      glow="hero"
+      actions={
+        <Btn kind="hero" onClick={() => setPractice(true)}>
+          <Icon name="swords" size={20} /> Practice battle
+        </Btn>
+      }
+    >
+      <div className="grid grid-cols-5 gap-2">
+        {(Object.keys(STAT_LABEL) as StatKey[]).map((k) => (
+          <div key={k} className="bg-card-2 border-[3px] border-outline rounded-[10px] text-center p-2 min-w-0">
+            <div className="text-xs font-extrabold uppercase text-muted truncate">{STAT_LABEL[k]}</div>
+            <div className="font-display text-2xl sm:text-3xl tracking-wide tabular-nums">{lo.stats[k]}</div>
+          </div>
+        ))}
+      </div>
+      <div className="grid md:grid-cols-2 gap-4 mt-4">
+        <div>
+          <div className="text-sm font-extrabold uppercase text-muted mb-1">Skills</div>
+          <ul className="space-y-1 text-base">
+            {lo.skills.map((s) => (
+              <li key={s}>
+                <b>{SKILLS[s].name}</b> <span className="text-gold text-sm font-extrabold">{SKILLS[s].cost ? `${SKILLS[s].cost} EN` : "free"}</span> <span className="text-muted">· {SKILLS[s].desc}</span>
+              </li>
+            ))}
+            {lo.passives.map((p) => (
+              <li key={p} className="text-muted">
+                <b className="text-ink">Passive:</b> {PASSIVE_DESC[p]}
+              </li>
+            ))}
+            {lo.pets.map((p) => (
+              <li key={p.name} className="text-muted">
+                <b className="text-ink">{p.name}</b> attacks every round
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <div className="text-sm font-extrabold uppercase text-muted mb-1">Where your stats come from</div>
+          <ul className="space-y-0.5 text-base">
+            {lo.sources.map((s) => (
+              <li key={s.label} className="flex justify-between gap-2">
+                <span className="font-bold">{s.label}</span>
+                <span className="text-muted text-sm text-right">{statText(s.stats)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <p className="text-base text-muted mt-3">Wear gear from the shop or loot to raise your stats and unlock skills. Each slot holds one item, so pick the mix that suits your style. When a deal is fully paid, its boss shows up to fight.</p>
+      {practice && <BossFight practice onClose={() => setPractice(false)} />}
+    </Card>
   );
 }
 

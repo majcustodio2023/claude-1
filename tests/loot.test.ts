@@ -67,16 +67,17 @@ test("paying a bill in full pays coins; a deal paid off queues a boss fight", ()
   assert.deepEqual(d.game!.bossQueue, []);
 });
 
-test("the shop sells 6 items, the same for 3 days, then restocks", () => {
-  const a = shopStock("2026-10-13");
-  assert.equal(a.items.length, 6);
-  assert.equal(new Set(a.items.map((i) => i.id)).size, 6);
+test("the shop sells 8 items for the week, then restocks on Monday", () => {
+  const a = shopStock("2026-10-13"); // a Tuesday
+  assert.equal(a.items.length, 8);
+  assert.equal(new Set(a.items.map((i) => i.id)).size, 8);
   assert.ok(a.items.every((i) => i.source !== "loot"));
-  assert.ok(a.restockIn >= 1 && a.restockIn <= 3);
-  const later = shopStock(`2026-10-${13 + a.restockIn}`);
-  assert.equal(later.period, a.period + 1);
-  const sameWindow = shopStock(`2026-10-${13 + a.restockIn - 1}`);
-  assert.deepEqual(sameWindow.items.map((i) => i.id), a.items.map((i) => i.id));
+  assert.equal(a.restockIn, 6);
+  assert.deepEqual(shopStock("2026-10-12").items.map((i) => i.id), a.items.map((i) => i.id)); // Monday, same week
+  assert.deepEqual(shopStock("2026-10-18").items.map((i) => i.id), a.items.map((i) => i.id)); // Sunday, same week
+  const next = shopStock("2026-10-19");
+  assert.equal(next.period, a.period + 1);
+  assert.equal(next.restockIn, 7);
 });
 
 test("buying checks coins and ownership, then equips the item", () => {

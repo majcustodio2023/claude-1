@@ -8,6 +8,24 @@ import LookSettings from "../LookSettings";
 import { Glyph, Icon } from "../icons";
 import { PERSONAS } from "@/lib/personas";
 import { DEFAULT_FUN_PERCENT } from "@/lib/fun";
+import { sfx, startMusic, stopMusic } from "@/lib/sound";
+
+function Volume({ label, value, onChange, onTest }: { label: string; value: number; onChange: (v: number) => void; onTest: () => void }) {
+  return (
+    <div>
+      <div className="flex items-center justify-between text-base font-extrabold mb-1">
+        <span>{label}</span>
+        <span className="tabular-nums">{value === 0 ? "Off" : `${Math.round(value * 100)}%`}</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <input type="range" min={0} max={100} step={5} value={Math.round(value * 100)} onChange={(e) => onChange(Number(e.target.value) / 100)} className="flex-1 accent-[var(--color-gold)] h-8" aria-label={`${label} volume`} />
+        <Btn type="button" onClick={onTest} disabled={value === 0}>
+          Test
+        </Btn>
+      </div>
+    </div>
+  );
+}
 
 export const CURRENCIES = ["USD", "PHP", "EUR", "GBP", "AUD", "CAD", "SGD", "NZD", "INR", "AED", "MYR", "IDR", "THB", "VND", "JPY", "HKD", "ZAR", "MXN", "BRL"];
 const LOCALES: [string, string][] = [["", "Device default"], ["en-US", "English (US)"], ["en-GB", "English (UK)"], ["en-PH", "English (Philippines)"], ["en-AU", "English (Australia)"], ["en-CA", "English (Canada)"], ["en-IN", "English (India)"], ["en-SG", "English (Singapore)"], ["es-ES", "Español"], ["fr-FR", "Français"], ["de-DE", "Deutsch"], ["pt-BR", "Português (Brasil)"]];
@@ -33,6 +51,7 @@ export default function SettingsTab() {
           ["targets", "target", "Targets"],
           ["money", "income", "Money"],
           ["kit", "fox", "Kit"],
+          ["sound", "speaker", "Sound"],
           ["connections", "link", "Connections"],
           ["data", "gear", "Data"],
         ].map(([id, icon, label]) => (
@@ -152,6 +171,15 @@ export default function SettingsTab() {
             );
           })}
         </div>
+      </Card>
+
+      <div id="set-sound" className="scroll-mt-4" />
+      <Card icon={<Icon name="speaker" size={24} />} title="Music & sound">
+        <div className="grid sm:grid-cols-2 gap-4">
+          <Volume label="Battle music" value={data.settings.sound?.music ?? 0.5} onChange={(music) => set({ sound: { ...data.settings.sound, music } })} onTest={() => (startMusic(), setTimeout(stopMusic, 4000))} />
+          <Volume label="Sound effects" value={data.settings.sound?.sfx ?? 0.7} onChange={(sfxVol) => set({ sound: { ...data.settings.sound, sfx: sfxVol } })} onTest={() => (sfx("crit"), setTimeout(() => sfx("heal"), 450), setTimeout(() => sfx("coin"), 900))} />
+        </div>
+        <p className="text-sm text-muted mt-2">Plays in boss battles and when you get coins or loot. Slide to 0 to turn it off. All sounds are made by the app itself.</p>
       </Card>
 
       <div id="set-connections" className="scroll-mt-4" />

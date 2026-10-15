@@ -24,6 +24,7 @@ import { RARITY } from "@/lib/items";
 import MonthPicker from "./MonthPicker";
 import { Icon, WithIcons, type IconName } from "./icons";
 import { applyLook, resolveLook } from "@/lib/appearance";
+import { setVolumes, sfx } from "@/lib/sound";
 
 type Updater = (draft: TrackerData) => void;
 
@@ -111,6 +112,8 @@ export default function App() {
 
   const lookKey = JSON.stringify(data?.settings.appearance ?? {});
   useEffect(() => applyLook(JSON.parse(lookKey)), [lookKey]);
+  const soundKey = JSON.stringify(data?.settings.sound ?? {});
+  useEffect(() => setVolumes(JSON.parse(soundKey)), [soundKey]);
 
   if (data) configureLocale(data.settings);
   if (error) return <div className="p-6 text-bad">{error}</div>;
@@ -329,6 +332,8 @@ function RewardWatcher({ data, today }: { data: TrackerData; today: string }) {
     const events = claimRewards(draft, today);
     update((d) => void (d.game = draft.game));
     if (first) toast("+100 🪙 starter coins! Spend them in Hero & Shop");
+    if (events.some((e) => e.item)) sfx("loot");
+    else if (events.some((e) => e.coins)) sfx("coin");
     for (const ev of events) {
       if (ev.item) celebrate({ kicker: ev.chest ? "Loot chest opened" : "Surprise loot drop", title: ev.item.name, sub: `${RARITY[ev.item.rarity].label} item · from "${ev.text}". Equip it in Hero & Shop.`, icon: "🎁", sfx: "LOOT!" });
       if (ev.coins) toast(`+${ev.coins} 🪙 ${ev.text.length > 34 ? ev.text.slice(0, 32) + "…" : ev.text}`);
