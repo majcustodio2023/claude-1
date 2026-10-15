@@ -171,7 +171,8 @@ export const HELP = {
   ),
   shop: (
     <ul>
-      <li>Six items at a time, with new stock every 3 days. Buying equips the item straight away.</li>
+      <li>Eight items at a time, with new stock every Monday. Buying equips the item straight away.</li>
+      <li>Every item raises your battle stats (HP, attack, defense, speed, crit) and many unlock a skill for boss battles. The shop card shows what each one does.</li>
       <li>Legendary items are loot only: look for <Icon name="gift" size={20} /> tasks and get rank S in boss fights.</li>
     </ul>
   ),

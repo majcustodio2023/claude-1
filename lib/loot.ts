@@ -4,7 +4,7 @@ import type { GameState, TrackerData } from "./types";
 
 // Coins and loot. Finishing quests, missions and client tasks, and paying bills,
 // earns coins; some tasks carry a loot chest. Beating a boss (a deal fully paid)
-// starts the mini game, which pays out by how well you fight.
+// starts a turn-based battle (lib/battle.ts), which pays out by how well you fight.
 
 export const REWARD = { quest: 10, task: 20, clientTask: 20, bill: 15 } as const;
 export const STARTER_COINS = 100;
@@ -17,7 +17,7 @@ export interface Pending {
   kind: "quest" | "task" | "clientTask" | "bill" | "boss";
   label: string;
   coins: number;
-  /** Boss rewards wait for the mini game. */
+  /** Boss rewards wait for the battle. */
   dealId?: string;
 }
 

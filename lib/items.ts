@@ -82,9 +82,9 @@ export const itemById = (id: string | undefined) => ITEMS.find((i) => i.id === i
 /** Day number since 1970 for a YYYY-MM-DD date. */
 const dayNumber = (date: string) => Math.floor(Date.parse(date + "T00:00:00Z") / 86400000);
 
-export const SHOP_DAYS = 3;
-export const SHOP_SIZE = 6;
-/** Of the six, how many are for Kit. */
+export const SHOP_DAYS = 7;
+export const SHOP_SIZE = 8;
+/** Of the eight, how many are for Kit. */
 const KIT_IN_SHOP = 2;
 
 /** Small seeded random generator, so the shop is the same for everyone on the same days. */
@@ -99,9 +99,10 @@ export function seeded(seed: number) {
   };
 }
 
-/** This restock's items (new every 3 days) and how many days until the next one. */
+/** This week's items (new stock every Monday) and how many days until the next restock. */
 export function shopStock(today: string): { items: Item[]; restockIn: number; period: number } {
-  const day = dayNumber(today);
+  // Day 0 (1970-01-01) was a Thursday, so +3 makes weeks start on Monday.
+  const day = dayNumber(today) + 3;
   const period = Math.floor(day / SHOP_DAYS);
   const rand = seeded(period * 7919 + 13);
   const pick = (pool: Item[], n: number) => {
