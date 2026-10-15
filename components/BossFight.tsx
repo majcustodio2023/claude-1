@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Avatar } from "./avatars";
 import { bossCoins, finishBoss, type FightRank, type RewardEvent } from "@/lib/loot";
+import { rematchBoss, recordBattleLoss } from "@/lib/fallen";
 import { RARITY } from "@/lib/items";
 import { monthOf, summarize } from "@/lib/finance";
 import { levelFor } from "@/lib/game";
@@ -63,7 +64,7 @@ export function useHeroLevel() {
   return levelFor(s.moneyMade, s.goal).level;
 }
 
-export default function BossFight({ dealId, practice, onClose }: { dealId?: string; practice?: boolean; onClose: () => void }) {
+export default function BossFight({ dealId, practice, rematch, onClose }: { dealId?: string; practice?: boolean; rematch?: boolean; onClose: () => void }) {
   const { data, update, today } = useTracker();
   const deal = dealId ? data.deals.find((d) => d.id === dealId) : undefined;
   const level = useHeroLevel();
@@ -86,6 +87,7 @@ export default function BossFight({ dealId, practice, onClose }: { dealId?: stri
   const [log, setLog] = useState<string[]>([]);
   const [rank, setRank] = useState<FightRank>("C");
   const [reward, setReward] = useState<RewardEvent | null>(null);
+  const [fell, setFell] = useState(false);
   const alive = useRef(true);
   const seq = useRef(0);
 
@@ -274,10 +276,14 @@ export default function BossFight({ dealId, practice, onClose }: { dealId?: stri
   }, [phase, battle, act]);
 
   /** Pays out once (real bosses only), then shows the result. */
-  const claim = (r: FightRank) => {
+  const claim = (r: FightRank, gaveUp = false) => {
     if (reward || practice || !dealId) return setPhase("done");
+    // Giving up a rematch changes nothing: it stays in the Fallen.
+    if (rematch && gaveUp) return onClose();
     const draft = structuredClone(data);
-    const ev = finishBoss(draft, dealId, r, today);
+    const ev = rematch ? rematchBoss(draft, dealId, r, today) : finishBoss(draft, dealId, r, today);
+    if (gaveUp) recordBattleLoss(draft, dealId, today, battle.round);
+    setFell(gaveUp);
     update((d) => void (d.game = draft.game));
     setReward(ev);
     setRank(r);
@@ -305,14 +311,14 @@ export default function BossFight({ dealId, practice, onClose }: { dealId?: stri
       <div key={`s${shake}`} className={`relative max-w-4xl mx-auto px-3 sm:px-4 py-4 min-h-full flex flex-col overflow-x-clip ${shake ? "shake" : ""}`}>
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <div className="caption inline-block mb-1">{practice ? "Practice battle" : `Boss battle · tier ${spec.tier}`}</div>
+            <div className="caption inline-block mb-1">{practice ? "Practice battle" : `${rematch ? "Rematch" : "Boss battle"} · tier ${spec.tier}`}</div>
             <h2 className="font-display text-3xl sm:text-5xl tracking-wide break-words leading-none">{spec.name}</h2>
             {deal && <p className="text-base sm:text-lg text-muted font-bold">{money(deal.value)} collected in real life. Now finish it!</p>}
           </div>
           <SoundToggle playing={phase === "battle"} />
         </div>
 
-        {phase === "intro" && <Intro battle={b} spec={spec} practice={practice} onFight={begin} onSkip={skip} coins={deal ? [bossCoins(deal.value, data.settings.monthlyGoal, "C"), bossCoins(deal.value, data.settings.monthlyGoal, "S")] : null} />}
+        {phase === "intro" && <Intro battle={b} spec={spec} practice={practice || rematch} onFight={begin} onSkip={skip} coins={deal ? (rematch ? [0, bossCoins(deal.value, data.settings.monthlyGoal, "S") - bossCoins(deal.value, data.settings.monthlyGoal, "C")] : [bossCoins(deal.value, data.settings.monthlyGoal, "C"), bossCoins(deal.value, data.settings.monthlyGoal, "S")]) : null} />}
 
         {phase !== "intro" && phase !== "done" && (
           <>
@@ -443,14 +449,20 @@ export default function BossFight({ dealId, practice, onClose }: { dealId?: stri
                     <Btn kind="hero" onClick={restart}>
                       <Icon name="swords" size={20} /> Try again
                     </Btn>
-                    {practice ? <Btn onClick={onClose}>Leave</Btn> : <Btn onClick={() => claim("C")}>Take rank C reward</Btn>}
+                    {practice ? (
+                      <Btn onClick={onClose}>Leave</Btn>
+                    ) : rematch ? (
+                      <Btn onClick={() => claim("C", true)}>Leave (it stays in the Fallen)</Btn>
+                    ) : (
+                      <Btn onClick={() => claim("C", true)}>Give up · rank C reward</Btn>
+                    )}
                   </div>
                 </div>
               )}
               {phase === "won" && (
                 <div className="text-center pt-2">
                   <Btn kind="primary" className="text-xl" onClick={() => claim(rank)}>
-                    {practice ? "Finish" : `Claim rank ${rank} reward`}
+                    {practice ? "Finish" : rematch ? `Claim rematch reward (rank ${rank})` : `Claim rank ${rank} reward`}
                   </Btn>
                 </div>
               )}
@@ -475,7 +487,8 @@ export default function BossFight({ dealId, practice, onClose }: { dealId?: stri
               </>
             ) : (
               <>
-                <div className="font-display text-5xl text-gold tracking-wide">RANK {rank}</div>
+                <div className="font-display text-5xl text-gold tracking-wide">{rematch ? `REMATCH WON · ${rank}` : `RANK ${rank}`}</div>
+                {fell && <p className="text-base text-muted font-bold">This boss is in the Fallen on Boss Deals now. Gear up and come back for a rematch.</p>}
                 {reward && (
                   <div className="font-display text-3xl tracking-wide">
                     +{reward.coins} <Icon name="coin" size={24} />
@@ -489,7 +502,7 @@ export default function BossFight({ dealId, practice, onClose }: { dealId?: stri
                     </div>
                   </div>
                 ) : (
-                  <p className="text-base text-muted">{rank === "S" ? "" : "Win faster with more HP left for a better rank and loot."}</p>
+                  !fell && <p className="text-base text-muted">{rank === "S" ? "" : "Win faster with more HP left for a better rank and loot."}</p>
                 )}
               </>
             )}

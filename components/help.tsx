@@ -79,6 +79,7 @@ export const HELP = {
     <ul>
       <li>Change a deal&apos;s stage as it moves. When paid, press collect and pick the account it went into.</li>
       <li>Paid in parts? Use &ldquo;Record deposit&rdquo; for each payment. The rest stays as HP to collect.</li>
+      <li>Didn&apos;t close, or the client won&apos;t pay the rest? Press &ldquo;Mark as failed&rdquo;. It moves to the Fallen, stops counting as money to come, and can be revived any time.</li>
     </ul>
   ),
   checkin: (

@@ -66,6 +66,16 @@ export interface Deal {
   /** The boss's look (lib/avatar.ts). */
   avatar?: string;
   createdAt: string;
+  /** Set when marked as failed (stage is then "lost"): why, when, and the stage to go back to on revive. */
+  failed?: DealFailure;
+}
+
+export interface DealFailure {
+  at: string;
+  reason?: string;
+  /** "unclosed" = never closed; "unpaid" = closed but the rest was never paid. */
+  kind: "unclosed" | "unpaid";
+  from: DealStage;
 }
 
 export interface OneTimeIncome {
@@ -382,6 +392,8 @@ export interface GameState {
   kitLook?: { fur?: string; eyes?: string };
   /** Bosses (deals) beaten but not fought yet: the battle plays for these. */
   bossQueue?: string[];
+  /** Boss battles you gave up on, newest first. A rematch can still win them. */
+  battleLosses?: { dealId: string; at: string; round: number }[];
   /** Recent coins and loot, newest first. */
   log: { at: string; text: string; coins?: number; item?: string }[];
 }
