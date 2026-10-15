@@ -290,6 +290,7 @@ function GoogleCard({ connected, onChange }: { connected: boolean; onChange: () 
 
   return (
     <Card icon={<Icon name="link" size={22} />} glow="gold" title="Google Calendar" help={HELP.googleCalendar}>
+      <h3 className="text-lg font-extrabold mb-2">Your Google events, here</h3>
       {connected ? (
         <div className="space-y-3 text-base">
           <p className="flex items-center gap-2 font-bold">
@@ -325,6 +326,61 @@ function GoogleCard({ connected, onChange }: { connected: boolean; onChange: () 
           </Btn>
         </form>
       )}
+      <MissionsToGoogle />
     </Card>
+  );
+}
+
+/** The app's own feed of missions, for Google Calendar to subscribe to. */
+function MissionsToGoogle() {
+  const [url, setUrl] = useState("");
+  const [busy, setBusy] = useState(false);
+  const get = async (reset = false) => {
+    setBusy(true);
+    try {
+      const res = await fetch("/api/calendar/feed", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ reset }) });
+      const j = (await res.json()) as { url?: string };
+      if (j.url) setUrl(j.url);
+      if (reset) toast("New address made. The old one stopped working.");
+    } finally {
+      setBusy(false);
+    }
+  };
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      toast("Address copied");
+    } catch {
+      toast("Select the address and copy it");
+    }
+  };
+  return (
+    <div className="mt-5 pt-4 border-t-2 border-line space-y-3 text-base">
+      <h3 className="text-lg font-extrabold">Your missions, in Google</h3>
+      <p className="text-muted">Missions with a date (including ones you add on this calendar) show up in Google Calendar as their own calendar.</p>
+      {!url ? (
+        <Btn kind="primary" disabled={busy} onClick={() => get()}>
+          {busy ? "Getting it…" : "Get my missions address"}
+        </Btn>
+      ) : (
+        <>
+          <div className="flex gap-2">
+            <input className="flex-1 min-w-0" readOnly value={url} onFocus={(e) => e.target.select()} aria-label="Missions calendar address" />
+            <Btn kind="primary" type="button" onClick={copy}>
+              Copy
+            </Btn>
+          </div>
+          <ol className="list-decimal pl-5 space-y-1 text-muted">
+            <li>In Google Calendar on a computer, next to &ldquo;Other calendars&rdquo; on the left, click +.</li>
+            <li>Choose &ldquo;From URL&rdquo;, paste the address, and click &ldquo;Add calendar&rdquo;.</li>
+            <li>Done. Google checks it for new missions every few hours, on its own schedule.</li>
+          </ol>
+          <p className="text-sm text-muted">Keep this address private: anyone with it can see your missions.</p>
+          <Btn kind="danger" disabled={busy} onClick={() => confirm("Make a new address? The old one stops working, so you'd add the new one in Google again.") && get(true)}>
+            Make a new address
+          </Btn>
+        </>
+      )}
+    </div>
   );
 }

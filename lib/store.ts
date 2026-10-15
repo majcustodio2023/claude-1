@@ -1,5 +1,5 @@
 import "server-only";
-import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
+import { createCipheriv, createDecipheriv, createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { foldOneTimeIntoDeals, upgradeBillPayments } from "./finance";
@@ -12,7 +12,7 @@ import type { AutopilotEntry, Creative, TrackerData } from "./types";
 
 interface StoredDoc {
   data: TrackerData;
-  secrets?: { tokens?: Record<string, string>; higgsfield?: string; anthropic?: string; openai?: string; calendar?: string };
+  secrets?: { tokens?: Record<string, string>; higgsfield?: string; anthropic?: string; openai?: string; calendar?: string; feed?: string };
 }
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -253,4 +253,22 @@ export async function setCalendarUrl(url: string | null): Promise<void> {
 export async function getCalendarUrl(): Promise<string | null> {
   const doc = await loadDoc();
   return doc.secrets?.calendar ? decrypt(doc.secrets.calendar) : null;
+}
+
+/** Secret token in the address calendar apps use to subscribe to the missions feed. Made on first use; `reset` makes a new one. */
+export async function getFeedToken(reset = false): Promise<string> {
+  const doc = await loadDoc();
+  if (doc.secrets?.feed && !reset) return decrypt(doc.secrets.feed);
+  const token = randomBytes(24).toString("base64url");
+  await writeDoc({ ...doc, secrets: { ...doc.secrets, feed: encrypt(token) } });
+  return token;
+}
+
+/** The data, if `token` matches the feed token (compared in constant time). */
+export async function dataForFeed(token: string): Promise<TrackerData | null> {
+  const doc = await loadDoc();
+  if (!doc.secrets?.feed || !token) return null;
+  const a = createHash("sha256").update(decrypt(doc.secrets.feed)).digest();
+  const b = createHash("sha256").update(token).digest();
+  return timingSafeEqual(a, b) ? doc.data : null;
 }
