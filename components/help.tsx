@@ -202,9 +202,10 @@ export const HELP = {
   ),
   googleCalendar: (
     <ul>
-      <li>Shows your Google Calendar events on this calendar. View only: the app never changes anything in Google.</li>
+      <li>Shows your Google Calendar events on this calendar. The app never edits or deletes anything in your Google Calendar.</li>
       <li>It uses your calendar&apos;s private iCal address. Anyone with that address can see your events, so it&apos;s stored encrypted and never shown again. If it ever leaks, reset it in Google Calendar&apos;s settings and link the new one.</li>
       <li>Other calendars work too: any address that ends in .ics (Outlook, Apple iCloud).</li>
+      <li>&ldquo;Your missions, in Google&rdquo; goes the other way: Google subscribes to your missions, so ones you add here appear there. Google refreshes it every few hours, so a new mission isn&apos;t instant. To change a mission, change it here.</li>
       <li>New events can take a few minutes to appear, because Google updates the feed on its own schedule.</li>
     </ul>
   ),

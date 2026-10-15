@@ -108,3 +108,23 @@ test("repeating events reach later months, counting from the start", () => {
   const nov = eventsBetween(ICS, "2026-11-01", "2026-12-31", "Asia/Manila").filter((e) => e.title === "Last Friday");
   assert.deepEqual(nov.map((e) => e.date), ["2026-11-28", "2026-12-26"]);
 });
+
+test("missions feed reads back as the same events", async () => {
+  const { missionsFeed } = await import("../lib/icsWrite");
+  const d = sampleData();
+  d.tasks = [
+    { id: "a", title: "Call bank, then pay; ok", quadrant: "do", owner: "You", dueDate: "2026-10-20", time: "14:30", done: false },
+    { id: "b", title: "Send invoices", quadrant: "schedule", owner: "VA", dueDate: "2026-10-21", done: true },
+    { id: "c", title: "No date", quadrant: "do", owner: "You", done: false },
+    { id: "d", title: "Skip me", quadrant: "eliminate", owner: "You", dueDate: "2026-10-22", done: false },
+    { id: "e", title: "A very long mission title that goes on and on so the line must be folded across several lines", quadrant: "do", owner: "You", dueDate: "2026-10-23", done: false },
+  ];
+  const ics = missionsFeed(d, "Asia/Manila", new Date("2026-10-15T00:00:00Z"));
+  assert.ok(ics.split("\r\n").every((l) => Buffer.byteLength(l) <= 75));
+  const ev = eventsBetween(ics, "2026-10-01", "2026-10-31", "Asia/Manila");
+  assert.deepEqual(ev.map((e) => [e.date, e.time ?? "", e.title]), [
+    ["2026-10-20", "14:30", "Call bank, then pay; ok"],
+    ["2026-10-21", "", "Done: Send invoices"],
+    ["2026-10-23", "", "A very long mission title that goes on and on so the line must be folded across several lines"],
+  ]);
+});
