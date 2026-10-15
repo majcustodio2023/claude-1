@@ -125,6 +125,21 @@ export async function saveData(data: TrackerData): Promise<TrackerData> {
   return withTokenFlags(next);
 }
 
+/** Daily snapshots the database keeps on every save (one per day). Empty without a database. */
+export async function listBackups(): Promise<{ day: string; savedAt: string }[]> {
+  if (!usingDatabase) return [];
+  const rows = (await rpc("tracker_backup_list", { p_key: DB_KEY })) as { day: string; saved_at: string }[] | null;
+  return (rows ?? []).map((r) => ({ day: r.day, savedAt: r.saved_at }));
+}
+
+/** Puts a day's snapshot back as the current data. Keys and server-owned lists stay as they are now. */
+export async function restoreBackup(day: string): Promise<TrackerData> {
+  if (!usingDatabase) throw new Error("Daily snapshots need the database");
+  const snap = (await rpc("tracker_backup_get", { p_key: DB_KEY, p_day: day })) as StoredDoc | null;
+  if (!snap?.data) throw new Error("No snapshot for that day");
+  return saveData(migrate(snap).data);
+}
+
 /** Creates (or with null, revokes) the read-only share link for a tracked campaign. Returns the token. */
 export async function setShareToken(trackedId: string, on: boolean): Promise<string | null> {
   const doc = await loadDoc();
