@@ -1,6 +1,7 @@
 "use client";
 
 import type { Settings } from "@/lib/types";
+import { useEffect, useRef, useState } from "react";
 import { useTracker } from "../App";
 import { Btn, Card, NumInput, TextInput } from "../ui";
 import { HELP } from "../help";
@@ -205,6 +206,7 @@ export default function SettingsTab() {
       <Card icon="⚙" title="Data">
         <div className="flex gap-2 flex-wrap">
           <Btn onClick={exportJson}>Download backup (JSON)</Btn>
+          <RestoreFile />
           <Btn
             onClick={async () => {
               await fetch("/api/login", { method: "DELETE" });
@@ -214,8 +216,86 @@ export default function SettingsTab() {
             Sign out
           </Btn>
         </div>
-        <p className="text-sm text-muted mt-2">Backups leave out Meta access tokens.</p>
+        <p className="text-sm text-muted mt-2">Backups leave out Meta access tokens and API keys.</p>
+        <DailySnapshots />
       </Card>
+    </div>
+  );
+}
+
+/** Loads a downloaded backup file back in, replacing what's there now. */
+function RestoreFile() {
+  const { reload } = useTracker();
+  const input = useRef<HTMLInputElement>(null);
+  const [msg, setMsg] = useState("");
+  const onFile = async (file: File) => {
+    setMsg("");
+    try {
+      const parsed = JSON.parse(await file.text());
+      const data = parsed?.data && parsed?.settings === undefined ? parsed.data : parsed;
+      if (!data || typeof data !== "object" || !data.settings || !Array.isArray(data.streams) || !Array.isArray(data.deals)) throw new Error("That file isn't a tracker backup.");
+      if (!window.confirm(`Replace everything in the tracker with the backup "${file.name}"?`)) return;
+      const res = await fetch("/api/state", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ data }) });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? "Restore failed");
+      await reload();
+      setMsg("Backup restored.");
+    } catch (e) {
+      setMsg((e as Error).message);
+    }
+  };
+  return (
+    <>
+      <Btn onClick={() => input.current?.click()}>Restore from backup file</Btn>
+      <input ref={input} type="file" accept="application/json,.json" className="hidden" onChange={(e) => (e.target.files?.[0] && onFile(e.target.files[0]), (e.target.value = ""))} />
+      {msg && <p className="w-full text-base font-bold" role="status">{msg}</p>}
+    </>
+  );
+}
+
+/** The database keeps one snapshot a day; any of them can be put back. */
+function DailySnapshots() {
+  const { reload } = useTracker();
+  const [list, setList] = useState<{ day: string; savedAt: string }[] | null>(null);
+  const [busy, setBusy] = useState("");
+  const [msg, setMsg] = useState("");
+  useEffect(() => {
+    fetch("/api/backups", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((j) => setList(j.backups ?? []))
+      .catch(() => setList([]));
+  }, []);
+  if (!list?.length) return null;
+  const restore = async (day: string) => {
+    if (!window.confirm(`Put the tracker back to how it was at the end of ${day}? Anything changed since then is replaced.`)) return;
+    setBusy(day);
+    setMsg("");
+    try {
+      const res = await fetch("/api/backups", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ day }) });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? "Restore failed");
+      await reload();
+      setMsg(`Restored ${day}.`);
+    } catch (e) {
+      setMsg((e as Error).message);
+    } finally {
+      setBusy("");
+    }
+  };
+  return (
+    <div className="mt-4">
+      <div className="text-lg font-extrabold">Daily snapshots</div>
+      <p className="text-sm text-muted mb-2">Saved automatically, one per day, so a bad edit can be undone.</p>
+      <ul className="space-y-1.5">
+        {list.map((b) => (
+          <li key={b.day} className="flex items-center gap-3 flex-wrap">
+            <span className="text-base font-bold tabular-nums">{b.day}</span>
+            <span className="text-sm text-muted">last saved {new Date(b.savedAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span>
+            <Btn onClick={() => restore(b.day)} disabled={Boolean(busy)}>
+              {busy === b.day ? "Restoring…" : "Restore"}
+            </Btn>
+          </li>
+        ))}
+      </ul>
+      {msg && <p className="text-base font-bold mt-2" role="status">{msg}</p>}
     </div>
   );
 }
