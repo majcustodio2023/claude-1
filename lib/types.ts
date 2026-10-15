@@ -68,6 +68,8 @@ export interface Deal {
   createdAt: string;
   /** Set when marked as failed (stage is then "lost"): why, when, and the stage to go back to on revive. */
   failed?: DealFailure;
+  /** Who to talk to about this deal. A deal linked to a client uses the client's contact. */
+  contact?: Contact;
 }
 
 export interface DealFailure {
@@ -155,6 +157,18 @@ export interface DailyLog {
   energy?: number; // 1-5
 }
 
+/** How to reach someone. Every field is optional. */
+export interface Contact {
+  person?: string;
+  company?: string;
+  phone?: string;
+  email?: string;
+  /** Messenger, WhatsApp, Viber, Telegram, Slack… a link or a handle. */
+  chat?: string;
+  website?: string;
+  address?: string;
+}
+
 export interface TeamMember {
   id: string;
   name: string;
@@ -164,6 +178,7 @@ export interface TeamMember {
   active: boolean;
   /** Avatar code (lib/avatar.ts); empty means an automatic one. */
   avatar?: string;
+  contact?: Contact;
 }
 
 /** A client the agency works for. Can be linked to an income stream. */
@@ -179,6 +194,7 @@ export interface Client {
   notes?: string;
   archived?: boolean;
   avatar?: string;
+  contact?: Contact;
   createdAt: string;
 }
 

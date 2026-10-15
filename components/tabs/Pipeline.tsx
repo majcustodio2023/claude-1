@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { dealBalance, dealPaid, defaultAccountId, uid } from "@/lib/finance";
-import type { Deal, DealStage } from "@/lib/types";
+import type { Contact, Deal, DealStage } from "@/lib/types";
+import { ContactChips, ContactFields } from "../Contact";
 import { useTracker } from "../App";
 import { clientForDeal, makeClientFromDeal, renameClient } from "@/lib/clients";
 import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate, money } from "../ui";
@@ -112,6 +113,13 @@ export function DealCard({ deal }: { deal: Deal }) {
   };
   const hp = deal.stage === "lost" ? 0 : deal.value ? balance / deal.value : 0;
   const client = clientForDeal(data, deal.id);
+  // A client's project shares the client's contact, so it's kept in one place.
+  const contact = client ? client.contact : deal.contact;
+  const setContact = (c: Contact | undefined) =>
+    update((d) => {
+      if (client) d.clients!.find((x) => x.id === client.id)!.contact = c;
+      else d.deals.find((x) => x.id === deal.id)!.contact = c;
+    });
 
   const stageLabel = STAGES.find(([v]) => v === deal.stage)?.[1] ?? deal.stage;
   const defeated = deal.stage === "won" && balance === 0;
@@ -161,8 +169,12 @@ export function DealCard({ deal }: { deal: Deal }) {
           </div>
           <label className="block text-sm font-extrabold uppercase text-muted">
             Notes
-            <TextInput className="w-full mt-1 text-base normal-case" value={deal.notes} onChange={(v) => set({ notes: v || undefined })} placeholder="Scope, contact, next step…" />
+            <TextInput className="w-full mt-1 text-base normal-case" value={deal.notes} onChange={(v) => set({ notes: v || undefined })} placeholder="Scope, next step…" />
           </label>
+          <div>
+            <div className="text-sm font-extrabold uppercase text-muted mb-1">Contact{client ? ` (shared with the client ${client.name})` : ""}</div>
+            <ContactFields value={contact} onChange={setContact} />
+          </div>
           {deal.payments.length > 0 && (
             <ul className="text-sm space-y-1">
               {deal.payments.map((p) => (
@@ -204,6 +216,7 @@ export function DealCard({ deal }: { deal: Deal }) {
             </ul>
           )}
           {deal.notes && <p className="text-base text-muted whitespace-pre-wrap [overflow-wrap:anywhere]">{deal.notes}</p>}
+          <ContactChips value={contact} />
         </>
       )}
       {client ? (

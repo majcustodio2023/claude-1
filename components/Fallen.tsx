@@ -5,7 +5,10 @@ import { FALLEN_LABEL, fallenList, reviveDeal, type Fallen, type FallenKind } fr
 import { useTracker } from "./App";
 import { Avatar } from "./avatars";
 import BossFight from "./BossFight";
-import { EditableText, Field } from "./editable";
+import { EditButton, EditableText, Field, SaveButton } from "./editable";
+import { ContactChips, ContactFields } from "./Contact";
+import { clientForDeal } from "@/lib/clients";
+import type { Contact } from "@/lib/types";
 import { Badge, Btn, Card, money } from "./ui";
 import { Icon } from "./icons";
 
@@ -70,7 +73,15 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 /** One fallen boss, on a tombstone. */
 function Grave({ f, onRematch }: { f: Fallen; onRematch: () => void }) {
-  const { update } = useTracker();
+  const { data, update } = useTracker();
+  const [editContact, setEditContact] = useState(false);
+  const client = clientForDeal(data, f.deal.id);
+  const contact = client ? client.contact : f.deal.contact;
+  const setContact = (c: Contact | undefined) =>
+    update((d) => {
+      if (client) d.clients!.find((x) => x.id === client.id)!.contact = c;
+      else d.deals.find((x) => x.id === f.deal.id)!.contact = c;
+    });
   const setReason = (reason: string) =>
     update((d) => {
       const deal = d.deals.find((x) => x.id === f.deal.id);
@@ -112,7 +123,16 @@ function Grave({ f, onRematch }: { f: Fallen; onRematch: () => void }) {
           <EditableText value={f.reason} onChange={setReason} placeholder="Add a reason (optional)" label="reason" className="text-lg" />
         </div>
       )}
+      {editContact ? (
+        <div className="space-y-2">
+          <ContactFields value={contact} onChange={setContact} />
+          <SaveButton onClick={() => setEditContact(false)} />
+        </div>
+      ) : (
+        <ContactChips value={contact} />
+      )}
       <div className="flex gap-2 flex-wrap">
+        {!editContact && <EditButton label="Contact" title="Add or change how to reach them" onClick={() => setEditContact(true)} />}
         {f.kind === "battle" ? (
           <Btn kind="hero" onClick={onRematch}>
             <Icon name="swords" size={20} /> Rematch
