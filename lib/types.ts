@@ -19,6 +19,8 @@ export interface IncomeStream {
   active: boolean;
   /** Optional breakdown into smaller parts, each collected on its own. */
   subs?: SubItem[];
+  /** Day of the month this client usually pays (1-31; past the month's end = its last day). */
+  payDay?: number;
 }
 
 /** One named part of a bill or income (e.g. Household → maid). Ticked off on its own each month. */
@@ -105,6 +107,8 @@ export interface ExpenseLine {
   memberId?: string;
   /** Optional breakdown into smaller parts, each paid on its own. */
   subs?: SubItem[];
+  /** Day of the month this bill is due (1-31; past the month's end = its last day). */
+  dueDay?: number;
 }
 
 export interface AdHocExpense {
@@ -227,6 +231,8 @@ export interface Task {
   owner: string;
   due?: string; // free text ("Weeks 1-3") or date
   dueDate?: string; // YYYY-MM-DD when known
+  /** Time of day it's scheduled for (HH:MM), set from the Calendar. */
+  time?: string;
   done: boolean;
   doneOn?: string;
 }
@@ -466,7 +472,7 @@ export interface TrackerData {
   /** Ad creatives: AI-generated (Higgsfield) or added by link. Owned by the server. */
   creatives?: Creative[];
   /** Set by the server: which integrations have a saved key (keys never reach the browser). */
-  integrations?: { higgsfield?: boolean; kit?: boolean; voice?: boolean };
+  integrations?: { higgsfield?: boolean; kit?: boolean; voice?: boolean; calendar?: boolean };
   updatedAt?: string;
 }
 

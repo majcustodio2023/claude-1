@@ -12,7 +12,7 @@ import type { AutopilotEntry, Creative, TrackerData } from "./types";
 
 interface StoredDoc {
   data: TrackerData;
-  secrets?: { tokens?: Record<string, string>; higgsfield?: string; anthropic?: string; openai?: string };
+  secrets?: { tokens?: Record<string, string>; higgsfield?: string; anthropic?: string; openai?: string; calendar?: string };
 }
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -91,6 +91,7 @@ function withTokenFlags(doc: StoredDoc): TrackerData {
       higgsfield: Boolean(doc.secrets?.higgsfield),
       kit: Boolean(process.env.ANTHROPIC_API_KEY || doc.secrets?.anthropic),
       voice: Boolean(process.env.OPENAI_API_KEY || doc.secrets?.openai),
+      calendar: Boolean(doc.secrets?.calendar),
     },
   };
 }
@@ -238,4 +239,18 @@ export async function getOpenAIKey(): Promise<string | null> {
   if (process.env.OPENAI_API_KEY) return process.env.OPENAI_API_KEY;
   const doc = await loadDoc();
   return doc.secrets?.openai ? decrypt(doc.secrets.openai) : null;
+}
+
+/** Private iCal address of the owner's calendar (e.g. Google Calendar's secret address). Encrypted; never sent to the browser. */
+export async function setCalendarUrl(url: string | null): Promise<void> {
+  const doc = await loadDoc();
+  const secrets = { ...doc.secrets };
+  if (url) secrets.calendar = encrypt(url.trim());
+  else delete secrets.calendar;
+  await writeDoc({ ...doc, secrets });
+}
+
+export async function getCalendarUrl(): Promise<string | null> {
+  const doc = await loadDoc();
+  return doc.secrets?.calendar ? decrypt(doc.secrets.calendar) : null;
 }

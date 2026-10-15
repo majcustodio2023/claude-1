@@ -185,6 +185,29 @@ export const HELP = {
       <li>Past months show what was safe, what you spent, and whether you spent it, saved it or went over.</li>
     </ul>
   ),
+  calendar: (
+    <ul>
+      <li>Your month at a glance: when clients pay (green), when bills are due (red), when deals should close (gold), and your missions (blue).</li>
+      <li>Set the day a client pays in Income or Clients (Edit, &ldquo;Pays on day&rdquo;) and the day a bill is due in Expenses (Edit, &ldquo;Due on&rdquo;). They repeat every month on their own.</li>
+      <li>Click any day to see everything on it and schedule a mission there. Missions added here also show in the Missions tab and earn the usual rewards.</li>
+      <li>Linked your Google Calendar? Its events show here too, in gray. The month picker at the top changes the month.</li>
+    </ul>
+  ),
+  calendarDay: (
+    <ul>
+      <li>Everything on the day you picked. Tick a mission to finish it.</li>
+      <li>&ldquo;Late&rdquo; means a client&apos;s pay day has passed and it isn&apos;t marked collected in Income yet. &ldquo;Overdue&rdquo; means a bill&apos;s due day has passed and it isn&apos;t paid.</li>
+      <li>Add a mission with an optional time and who&apos;s doing it. To change or delete it later, use the Missions tab.</li>
+    </ul>
+  ),
+  googleCalendar: (
+    <ul>
+      <li>Shows your Google Calendar events on this calendar. View only: the app never changes anything in Google.</li>
+      <li>It uses your calendar&apos;s private iCal address. Anyone with that address can see your events, so it&apos;s stored encrypted and never shown again. If it ever leaks, reset it in Google Calendar&apos;s settings and link the new one.</li>
+      <li>Other calendars work too: any address that ends in .ics (Outlook, Apple iCloud).</li>
+      <li>New events can take a few minutes to appear, because Google updates the feed on its own schedule.</li>
+    </ul>
+  ),
   manualIncome: (
     <ul>
       <li>For money that comes in by hand and isn&apos;t a client retainer or a deal: a refund, a one-off sale, a side job, a gift.</li>

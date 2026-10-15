@@ -10,6 +10,7 @@ import Pipeline from "./tabs/Pipeline";
 import Expenses from "./tabs/Expenses";
 import Log from "./tabs/Log";
 import Tasks from "./tabs/Tasks";
+import Calendar from "./tabs/Calendar";
 import Clients from "./tabs/Clients";
 import Team from "./tabs/Team";
 import Ads from "./tabs/Ads";
@@ -53,6 +54,7 @@ const TABS = [
   ["log", "Check-in", "checkin"],
   ["clients", "Clients", "clients"],
   ["tasks", "Missions", "target"],
+  ["calendar", "Calendar", "calendar"],
   ["team", "Squad", "squad"],
   ["ads", "Ad Command", "radar"],
   ["creatives", "Creatives", "palette"],
@@ -180,6 +182,7 @@ export default function App() {
         {tab === "log" && <Log />}
         {tab === "clients" && <Clients />}
         {tab === "tasks" && <Tasks />}
+        {tab === "calendar" && <Calendar />}
         {tab === "team" && <Team goTo={go} />}
         {tab === "ads" && <Ads />}
         {tab === "creatives" && <Creatives />}
