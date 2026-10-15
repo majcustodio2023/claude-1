@@ -84,7 +84,7 @@ export function subRows(total: number, subs: SubItem[] | undefined): SubItem[] {
 }
 
 /** Collected so far counts, but an income broken into parts is only done when every part is in. */
-function streamDone(s: IncomeStream, m: StreamMonth | undefined): boolean {
+export function streamDone(s: IncomeStream, m: StreamMonth | undefined): boolean {
   if (m?.collected == null) return false;
   if (!m.subs || !s.subs?.length) return true;
   return subRows(expectedForStream(s, m), s.subs).every((sub) => m.subs![sub.id] != null);

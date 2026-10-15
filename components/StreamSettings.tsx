@@ -7,6 +7,7 @@ import { NumInput, money } from "./ui";
 import { EditButton, SaveButton } from "./editable";
 import { SubItems } from "./SubItems";
 import { setSubs, subRows, subsTotal } from "@/lib/subs";
+import { ordinal } from "@/lib/calendar";
 
 export const KIND_LABEL: Record<StreamKind, string> = {
   fixed: "Same amount every month",
@@ -62,6 +63,7 @@ export function StreamTerms({ stream: st, alwaysEdit = false }: { stream: Income
             <NumInput className="w-32" value={st.amount} onChange={(v) => set({ amount: Math.max(v ?? 0, listed) })} />
           </label>
         )}
+        <DayField label="Pays on day" value={st.payDay} onChange={(payDay) => set({ payDay })} />
       </div>
       <SubItems rows={subRows(base, st.subs).map((sub) => ({ sub, done: false }))} subs={st.subs} onEdit={(subs) => update((d) => setSubs(d.streams.find((x) => x.id === st.id)!, subs))} addLabel="+ Break into parts (each collected on its own)" />
       {!alwaysEdit && <SaveButton onClick={() => setEditing(false)} />}
@@ -69,9 +71,27 @@ export function StreamTerms({ stream: st, alwaysEdit = false }: { stream: Income
   );
 }
 
-/** One line describing the terms, e.g. "15% of their revenue, at least ₱25,000". */
+/** One line describing the terms, e.g. "15% of their revenue, at least ₱25,000 · pays on the 15th". */
 export function termsText(st: IncomeStream, money: (n: number) => string) {
-  if (st.kind === "percent_floor") return `${Math.round((st.percent ?? 0) * 1000) / 10}% of their revenue, at least ${money(st.floor ?? 0)}`;
-  if (st.kind === "fixed") return `${money(st.amount)} every month`;
-  return `Changes monthly · usually about ${money(st.amount)}`;
+  const day = st.payDay ? ` · pays on the ${ordinal(st.payDay)}` : "";
+  if (st.kind === "percent_floor") return `${Math.round((st.percent ?? 0) * 1000) / 10}% of their revenue, at least ${money(st.floor ?? 0)}${day}`;
+  if (st.kind === "fixed") return `${money(st.amount)} every month${day}`;
+  return `Changes monthly · usually about ${money(st.amount)}${day}`;
+}
+
+/** Day of the month (1-31) picker; blank = not set. Shows on the Calendar. */
+export function DayField({ label, value, onChange }: { label: string; value?: number; onChange: (v: number | undefined) => void }) {
+  return (
+    <label className="flex flex-col gap-1 text-muted">
+      {label}
+      <select value={value ?? ""} onChange={(e) => onChange(e.target.value ? Number(e.target.value) : undefined)}>
+        <option value="">Not set</option>
+        {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+          <option key={d} value={d}>
+            {d === 31 ? "31st / last day" : ordinal(d)}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
 }

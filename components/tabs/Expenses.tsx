@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { addMonths, billPaid, defaultAccountId, expenseAppliesTo, locale, moneyHistory, monthOf, parseAmount, summarize, uid } from "@/lib/finance";
+import { ordinal } from "@/lib/calendar";
 import type { BillPayment, ExpenseLine, SubItem } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Bar, Btn, Card, NumInput, TextInput, celebrate, money } from "../ui";
@@ -163,6 +164,7 @@ function BillRow({ bill: e, isNew = false }: { bill: ExpenseLine; isNew?: boolea
           )}
           <div className="text-base text-muted font-bold">
             {money(e.amount)} a month · <span className="capitalize">{e.category}</span>
+            {e.dueDay && ` · due on the ${ordinal(e.dueDay)}`}
             {e.startMonth && ` · from ${monthLabel(e.startMonth, "short")}`}
             {e.endMonth && ` · until ${monthLabel(e.endMonth, "short")}`}
           </div>
@@ -189,6 +191,17 @@ function BillRow({ bill: e, isNew = false }: { bill: ExpenseLine; isNew?: boolea
               <select value={e.category} onChange={(ev) => setLine({ category: ev.target.value as ExpenseLine["category"] })}>
                 {LINE_CATS.map((c) => (
                   <option key={c}>{c}</option>
+                ))}
+              </select>
+            </label>
+            <label className="flex items-center gap-2">
+              Due on
+              <select value={e.dueDay ?? ""} onChange={(ev) => setLine({ dueDay: ev.target.value ? Number(ev.target.value) : undefined })}>
+                <option value="">Not set</option>
+                {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                  <option key={d} value={d}>
+                    {d === 31 ? "31st / last day" : ordinal(d)}
+                  </option>
                 ))}
               </select>
             </label>

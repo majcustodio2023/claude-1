@@ -126,7 +126,7 @@ function TaskItem({ task: t }: { task: Task }) {
                 {t.owner}
               </span>
               {t.due && <span>· {t.due}</span>}
-              {t.dueDate && <span>· due {t.dueDate}</span>}
+              {t.dueDate && <span>· due {t.dueDate}{t.time && ` at ${t.time}`}</span>}
               {t.dueDate && !t.done && t.dueDate < today && <span className="text-bad font-bold">overdue</span>}
             </div>
             {t.details && <div className="text-sm text-muted mt-1">{t.details}</div>}
