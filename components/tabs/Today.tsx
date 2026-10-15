@@ -10,6 +10,7 @@ import { Kit } from "../characters";
 import WarChest from "../WarChest";
 import FunMoney from "../FunMoney";
 import ManualSpending from "../ManualSpending";
+import ManualIncome from "../ManualIncome";
 import { REWARD, hasChest, questKey } from "@/lib/loot";
 import { CURRENCIES } from "./Settings";
 import KitChat from "../KitChat";
@@ -90,7 +91,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Stat label="Collected this month" value={money(s.moneyMade)} hint={`Retainers ${money(s.recurringCollected)} · deals ${money(s.dealCollected)}`} tone="good" />
+        <Stat label="Collected this month" value={money(s.moneyMade)} hint={`Retainers ${money(s.recurringCollected)} · deals ${money(s.dealCollected)}${s.oneTimeCollected ? ` · manual ${money(s.oneTimeCollected)}` : ""}`} tone="good" />
         <Stat label="Retainers to collect" value={money(s.recurringPending)} hint={`of ${money(s.recurringCollected + s.recurringPending)} retainers this month`} tone="cyan" />
         <Stat label="Deals to collect" value={money(s.wonUnpaid)} hint="Closed, waiting for payment" tone="gold" />
         <Stat label="Month total if all lands" value={money(s.projected)} hint="Collected + everything still owed" />
@@ -101,6 +102,7 @@ export default function Today({ goTo }: { goTo: (t: "income" | "pipeline" | "log
       </div>
 
       <WarChest />
+      <ManualIncome compact goTo={() => goTo("income")} />
       <ManualSpending compact goTo={() => goTo("expenses")} />
       <FunMoney />
 

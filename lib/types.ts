@@ -80,11 +80,15 @@ export interface DealFailure {
   from: DealStage;
 }
 
+/** Money that came in by hand, outside clients and deals (a refund, a sale, a gift). */
 export interface OneTimeIncome {
   id: string;
   date: string;
   label: string;
   amount: number;
+  category?: "sales" | "refund" | "side" | "gift" | "other";
+  /** Cash account it went into. Blank = the first account. */
+  accountId?: string;
 }
 
 export interface ExpenseLine {
