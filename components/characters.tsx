@@ -6,21 +6,14 @@
 import { createContext, useContext } from "react";
 import type { HeroLook } from "@/lib/types";
 import { ItemAura, ItemBack, ItemFace, ItemHat, ItemPet, ItemWeapon } from "./heroItems";
+import { HERO_DEFAULTS, HERO_HAIR } from "@/lib/heroLook";
+import { Extra, Eyes, HairBack, HairFront, Mouth } from "./avatars";
 
 export type HeroMood = "ready" | "focus" | "hype";
 
 export const INK = "#0b0a14";
 
-export const HERO_DEFAULTS: Required<HeroLook> = {
-  skin: "#ffd9b8",
-  hair: "spiky",
-  hairColor: "#2a2f7a",
-  eyes: "#ffae00",
-  outfit: "#2c2b6b",
-  accent: "#ffd23f",
-  scarf: "#ff3b4f",
-  achievementGear: true,
-};
+export { HERO_DEFAULTS };
 
 /** The player's saved look and equipped items, so every Hero on screen matches. */
 export const HeroStyleContext = createContext<{ look?: HeroLook; items?: string[] }>({});
@@ -59,63 +52,68 @@ export function Hero({
   const skin = L.skin;
   const skinShade = shade(skin, -0.16);
   const suit = L.outfit;
-  const legs = shade(suit, -0.15);
+  const legs = L.bottomsColor || shade(suit, -0.15);
+  const sleeve = L.top === "tank" ? skin : L.top === "sailor" ? "#f1f1f1" : suit;
+  const hand = L.gloves !== "none" && L.gloves.startsWith("#") ? L.gloves : skin;
+  const avHair = HERO_HAIR.find(([v]) => v === L.hair)?.[2] ?? null;
+  const classicHair = ["spiky", "long", "mohawk", "bob"].includes(L.hair) ? L.hair : null;
   // Right hand: raised when hyped (weapon held up), at the side otherwise.
-  const hand: [number, number] = hype ? [151, 98] : [138, 201];
+  const handAt: [number, number] = hype ? [151, 98] : [138, 201];
   return (
     <svg viewBox="-20 -24 240 270" width={size} height={size * 1.125} className={className} role="img" aria-label="Hero">
       <ellipse cx="100" cy="236" rx="62" ry="9" fill="#000" opacity="0.28" />
       <ItemAura items={items} />
       <GearBack has={has} />
+      <HeroBack kind={L.back} color={L.backColor} />
       <ItemBack items={items} />
-      {L.hair === "long" && <path d="M48,92 C40,140 44,170 56,186 L144,186 C156,170 160,140 152,92 Z" fill={L.hairColor} stroke={INK} strokeWidth="4" strokeLinejoin="round" />}
+      {classicHair === "long" && <path d="M48,92 C40,140 44,170 56,186 L144,186 C156,170 160,140 152,92 Z" fill={L.hairColor} stroke={INK} strokeWidth="4" strokeLinejoin="round" />}
+      {avHair != null && (
+        <g transform={AV}>
+          <HairBack style={avHair} color={L.hairColor} outfit={suit} />
+        </g>
+      )}
       <g stroke={INK} strokeWidth="4" strokeLinejoin="round" strokeLinecap="round">
-        {/* scarf tail, waving */}
-        <path className="scarf-wave" d="M120,150 C150,140 170,150 192,132 C182,156 170,168 140,166 Z" fill={L.scarf} />
-        {/* legs */}
-        <path d="M84,206 L80,232 L98,232 L98,206 Z" fill={legs} />
-        <path d="M104,206 L104,232 L122,232 L118,206 Z" fill={legs} />
-        <path d="M76,232 h24 M102,232 h24" strokeWidth="6" />
-        {/* body with cel shading */}
-        <path d="M68,160 C68,148 80,142 100,142 C120,142 132,148 132,160 L128,210 L72,210 Z" fill={suit} />
-        <path d="M116,146 C126,150 132,154 132,160 L128,210 L114,210 Z" fill={shade(suit, -0.3)} stroke="none" />
-        <path d="M86,150 L114,150 L108,206 L92,206 Z" fill={L.accent} strokeWidth="3" />
-        <path d="M103,160 L92,178 L101,178 L96,194 L110,172 L101,172 Z" fill={L.scarf} strokeWidth="3" />
+        {L.neck === "scarf" && <path className="scarf-wave" d="M120,150 C150,140 170,150 192,132 C182,156 170,168 140,166 Z" fill={L.scarf} />}
+        <Bottoms kind={L.bottoms} color={legs} skin={skin} shoes={L.shoes} />
+        <Top kind={L.top} color={suit} accent={L.accent} emblem={L.emblem} skin={skin} />
+        <BottomsOver kind={L.bottoms} color={legs} />
         {/* arms */}
         {hype ? (
           <>
             <path d="M128,158 C142,146 150,126 150,104" fill="none" strokeWidth="14" stroke={INK} />
-            <path d="M128,158 C142,146 150,126 150,104" fill="none" strokeWidth="8" stroke={suit} />
-            <circle cx="151" cy="98" r="11" fill={skin} />
+            <path d="M128,158 C142,146 150,126 150,104" fill="none" strokeWidth="8" stroke={sleeve} />
+            <circle cx="151" cy="98" r="11" fill={hand} />
             <path d="M72,160 C58,170 54,184 58,196" fill="none" strokeWidth="14" stroke={INK} />
-            <path d="M72,160 C58,170 54,184 58,196" fill="none" strokeWidth="8" stroke={suit} />
-            <circle cx="58" cy="199" r="9" fill={skin} />
+            <path d="M72,160 C58,170 54,184 58,196" fill="none" strokeWidth="8" stroke={sleeve} />
+            <circle cx="58" cy="199" r="9" fill={hand} />
           </>
         ) : (
           <>
             <path d="M72,160 C60,172 58,186 62,198" fill="none" strokeWidth="14" stroke={INK} />
-            <path d="M72,160 C60,172 58,186 62,198" fill="none" strokeWidth="8" stroke={suit} />
-            <circle cx="62" cy="201" r="9" fill={skin} />
+            <path d="M72,160 C60,172 58,186 62,198" fill="none" strokeWidth="8" stroke={sleeve} />
+            <circle cx="62" cy="201" r="9" fill={hand} />
             <path d="M128,160 C140,172 142,186 138,198" fill="none" strokeWidth="14" stroke={INK} />
-            <path d="M128,160 C140,172 142,186 138,198" fill="none" strokeWidth="8" stroke={suit} />
-            <circle cx="138" cy="201" r="9" fill={skin} />
+            <path d="M128,160 C140,172 142,186 138,198" fill="none" strokeWidth="8" stroke={sleeve} />
+            <circle cx="138" cy="201" r="9" fill={hand} />
           </>
         )}
-        {/* scarf wrap */}
-        <path d="M70,140 C84,152 116,152 130,140 L132,154 C116,164 84,164 68,154 Z" fill={L.scarf} />
+        <Neck kind={L.neck} color={L.scarf} />
         {/* face with cel shadow */}
         <ellipse cx="100" cy="96" rx="48" ry="47" fill={skin} />
         <path d="M136,70 C150,88 150,116 130,136 C120,142 112,143 108,143 C130,130 142,104 136,70 Z" fill={skinShade} stroke="none" opacity="0.8" />
         <ellipse cx="52" cy="102" rx="7" ry="10" fill={skin} />
         <ellipse cx="148" cy="102" rx="7" ry="10" fill={skinShade} />
       </g>
-      <ellipse cx="72" cy="118" rx="9" ry="5" fill="#ff8fa3" opacity="0.7" />
-      <ellipse cx="128" cy="118" rx="9" ry="5" fill="#ff8fa3" opacity="0.7" />
+      <FaceMarks kind={L.marks} />
       {/* eyes */}
       {hype ? (
         <g stroke={INK} strokeWidth="5" strokeLinecap="round" fill="none">
           <path d="M70,104 Q82,90 94,104" />
           <path d="M106,104 Q118,90 130,104" />
+        </g>
+      ) : L.eyeStyle !== "hero" ? (
+        <g transform={AV}>
+          <Eyes style={Number(L.eyeStyle) || 0} color={L.eyes} skin={skin} />
         </g>
       ) : (
         <g stroke={INK} strokeWidth="3">
@@ -131,33 +129,324 @@ export function Hero({
           <circle cx="120" cy="100" r="3.5" fill="#fff" stroke="none" />
           <circle cx="80" cy="112" r="1.8" fill="#fff" stroke="none" />
           <circle cx="114" cy="112" r="1.8" fill="#fff" stroke="none" />
-          {mood === "focus" && (
-            <>
-              <path d="M66,86 L96,94" strokeWidth="5" strokeLinecap="round" />
-              <path d="M134,86 L104,94" strokeWidth="5" strokeLinecap="round" />
-            </>
-          )}
+        </g>
+      )}
+      {mood === "focus" && !hype && (
+        <g stroke={INK} strokeWidth="5" strokeLinecap="round">
+          <path d="M66,86 L96,94" />
+          <path d="M134,86 L104,94" />
         </g>
       )}
       {/* mouth */}
-      <g stroke={INK} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-        {hype ? (
-          <path d="M86,122 Q100,124 114,122 Q110,140 100,140 Q90,140 86,122 Z" fill="#c2253a" />
-        ) : mood === "focus" ? (
-          <path d="M92,128 L108,126" fill="none" />
-        ) : (
-          <path d="M90,124 Q100,132 110,124" fill="none" />
-        )}
-      </g>
+      {hype ? (
+        <path d="M86,122 Q100,124 114,122 Q110,140 100,140 Q90,140 86,122 Z" fill="#c2253a" stroke={INK} strokeWidth="3.5" strokeLinejoin="round" />
+      ) : mood === "focus" ? (
+        <path d="M92,128 L108,126" fill="none" stroke={INK} strokeWidth="3.5" strokeLinecap="round" />
+      ) : L.mouth !== "auto" ? (
+        <g transform={AV}>
+          <Mouth style={Number(L.mouth) || 0} y={64} />
+        </g>
+      ) : (
+        <path d="M90,124 Q100,132 110,124" fill="none" stroke={INK} strokeWidth="3.5" strokeLinecap="round" />
+      )}
+      {L.eyewear !== "none" && (
+        <g transform={AV}>
+          <Extra n={EYEWEAR[L.eyewear] ?? 0} hair={L.hairColor} outfit={suit} />
+        </g>
+      )}
+      {L.earrings === "studs" && (
+        <g transform={AV}>
+          <Extra n={9} hair={L.hairColor} outfit={suit} />
+        </g>
+      )}
       <ItemFace items={items} />
       <GearMid has={has} hype={hype} />
-      <Hair style={L.hair} color={L.hairColor} />
+      {classicHair ? (
+        <Hair style={classicHair as "spiky" | "long" | "mohawk" | "bob"} color={L.hairColor} />
+      ) : avHair != null ? (
+        <g transform={AV}>
+          <HairFront style={avHair} color={L.hairColor} outfit={suit} />
+        </g>
+      ) : null}
+      <Headwear kind={L.headwear} hair={L.hairColor} outfit={suit} accent={L.accent} />
       <GearTop has={has} />
       <ItemHat items={items} />
-      {it("hammer") || it("katana") || it("staff") || it("laser") || it("scythe") ? <ItemWeapon items={items} at={hand} raised={hype} /> : null}
+      {it("hammer") || it("katana") || it("staff") || it("laser") || it("scythe") ? <ItemWeapon items={items} at={handAt} raised={hype} /> : null}
       <ItemPet items={items} />
     </svg>
   );
+}
+
+/** Maps the avatar face grid (100×100, eyes at y 55) onto the hero's head. */
+const AV = "translate(100 104) scale(2.5) translate(-50 -55)";
+const EYEWEAR: Record<string, number> = { glasses: 1, round: 2, eyepatch: 6, shades: 13 };
+const HEADWEAR: Record<string, number> = { cap: 4, headband: 5, catears: 10, horns: 11, star: 12, headphones: 14, headset: 3 };
+
+function Headwear({ kind, hair, outfit, accent }: { kind: string; hair: string; outfit: string; accent: string }) {
+  const s = { stroke: INK, strokeWidth: 4, strokeLinejoin: "round" as const };
+  if (kind === "beanie")
+    return (
+      <g {...s}>
+        <path d="M50,80 C46,30 154,30 150,80 Z" fill={outfit} />
+        <path d="M46,74 L154,74 L154,90 L46,90 Z" fill={shade(outfit, -0.25)} />
+        <circle cx="100" cy="30" r="10" fill={accent} />
+      </g>
+    );
+  if (kind === "crown")
+    return (
+      <g {...s}>
+        <path d="M74,48 L72,22 L86,34 L100,14 L114,34 L128,22 L126,48 Z" fill="#ffd23f" />
+        <circle cx="100" cy="36" r="4" fill="#d62839" strokeWidth="2.5" />
+      </g>
+    );
+  const n = HEADWEAR[kind];
+  if (!n) return null;
+  return (
+    <g transform={AV}>
+      <Extra n={n} hair={hair} outfit={outfit} top={kind === "cap" ? 38 : 40} />
+    </g>
+  );
+}
+
+function FaceMarks({ kind }: { kind: string }) {
+  if (kind === "none") return null;
+  if (kind === "blush")
+    return (
+      <g fill="#ff8fa3" opacity="0.7">
+        <ellipse cx="72" cy="118" rx="9" ry="5" />
+        <ellipse cx="128" cy="118" rx="9" ry="5" />
+      </g>
+    );
+  if (kind === "freckles" || kind === "bandage")
+    return (
+      <g transform={AV}>
+        <Extra n={kind === "freckles" ? 15 : 7} hair="#000" outfit="#000" />
+      </g>
+    );
+  if (kind === "scar") return <path d="M122,90 L134,122 M124,100 L132,98 M127,108 L135,106 M130,116 L137,114" stroke="#c2253a" strokeWidth="3" strokeLinecap="round" fill="none" />;
+  if (kind === "whiskers") return <path d="M60,116 L76,118 M60,124 L76,122 M140,116 L124,118 M140,124 L124,122" stroke={INK} strokeWidth="3" strokeLinecap="round" />;
+  if (kind === "star") return <path d="M132,118 l2.6,5.2 5.7,0.8 -4.1,4 1,5.7 -5.2,-2.7 -5.1,2.7 1,-5.7 -4.1,-4 5.7,-0.8z" fill="#ffd23f" stroke={INK} strokeWidth="2" strokeLinejoin="round" />;
+  if (kind === "mole") return <circle cx="114" cy="132" r="2.4" fill={INK} />;
+  return null;
+}
+
+function Emblem({ kind, color }: { kind: string; color: string }) {
+  const s = { fill: color, strokeWidth: 3 };
+  switch (kind) {
+    case "none":
+      return null;
+    case "star":
+      return <path d="M100,166 l4,8.4 9.2,1.3 -6.6,6.5 1.6,9.2 -8.2,-4.4 -8.2,4.4 1.6,-9.2 -6.6,-6.5 9.2,-1.3z" {...s} />;
+    case "heart":
+      return <path d="M100,192 C88,184 86,176 90,171 C94,166 99,169 100,173 C101,169 106,166 110,171 C114,176 112,184 100,192 Z" {...s} />;
+    case "diamond":
+      return <path d="M100,164 L111,178 L100,194 L89,178 Z" {...s} />;
+    case "flame":
+      return <path d="M100,194 C88,192 86,180 94,172 C94,178 98,180 99,176 C98,170 102,164 106,162 C104,170 114,176 110,186 C108,191 104,194 100,194 Z" {...s} />;
+    case "crown":
+      return <path d="M88,188 L86,170 L94,177 L100,166 L106,177 L114,170 L112,188 Z" {...s} />;
+    case "coin":
+      return (
+        <g>
+          <circle cx="100" cy="179" r="12" {...s} />
+          <circle cx="100" cy="179" r="6.5" fill="none" strokeWidth="2.5" />
+        </g>
+      );
+    default:
+      return <path d="M103,160 L92,178 L101,178 L96,194 L110,172 L101,172 Z" {...s} />;
+  }
+}
+
+/** The torso: one of several outfits, with sleeves drawn separately by Hero. */
+function Top({ kind, color, accent, emblem, skin }: { kind: string; color: string; accent: string; emblem: string; skin: string }) {
+  const body = "M68,160 C68,148 80,142 100,142 C120,142 132,148 132,160 L128,210 L72,210 Z";
+  const side = <path d="M116,146 C126,150 132,154 132,160 L128,210 L114,210 Z" fill={shade(color, -0.3)} stroke="none" />;
+  const mark = <Emblem kind={emblem} color={kind === "hero" ? "#ff3b4f" : accent} />;
+  switch (kind) {
+    case "hoodie":
+      return (
+        <>
+          <path d="M70,150 C66,132 134,132 130,150 C120,140 80,140 70,150 Z" fill={shade(color, -0.2)} />
+          <path d={body} fill={color} />
+          {side}
+          <path d="M80,186 L120,186 L116,206 L84,206 Z" fill={shade(color, -0.15)} strokeWidth="3" />
+          <path d="M92,150 L90,172 M108,150 L110,172" strokeWidth="2.5" stroke={accent} />
+          <g transform="translate(0 -8) scale(1)">{emblem !== "none" && mark}</g>
+        </>
+      );
+    case "jacket":
+      return (
+        <>
+          <path d={body} fill={color} />
+          {side}
+          <path d="M88,146 L112,146 L110,210 L90,210 Z" fill={accent} strokeWidth="3" />
+          <path d="M88,146 L80,172 L90,180 M112,146 L120,172 L110,180" fill="none" strokeWidth="3" />
+          {mark}
+        </>
+      );
+    case "uniform":
+    case "suit":
+      return (
+        <>
+          <path d={body} fill={color} />
+          {side}
+          <path d="M86,146 L114,146 L100,182 Z" fill="#f5f5f5" strokeWidth="3" />
+          <path d="M96,150 L104,150 L106,178 L100,186 L94,178 Z" fill={kind === "suit" ? accent : "#d62839"} strokeWidth="3" />
+          <path d="M86,146 L94,184 L100,210 M114,146 L106,184 L100,210" fill="none" strokeWidth="3" />
+          {kind === "uniform" && <path d="M76,170 L88,170 L88,180 L76,180 Z" fill={accent} strokeWidth="2.5" />}
+        </>
+      );
+    case "gi":
+      return (
+        <>
+          <path d={body} fill={color} />
+          {side}
+          <path d="M84,146 L112,192 M116,146 L94,182" fill="none" strokeWidth="6" stroke={accent} />
+          <path d="M84,146 L112,192 M116,146 L94,182" fill="none" strokeWidth="2" />
+          <path d="M72,190 L128,190 L128,200 L72,200 Z" fill={INK} />
+          <path d="M100,198 L94,214 M104,198 L110,214" strokeWidth="5" />
+        </>
+      );
+    case "armor":
+      return (
+        <>
+          <path d={body} fill={shade(color, -0.1)} />
+          <path d="M78,152 C88,146 112,146 122,152 L118,190 C108,198 92,198 82,190 Z" fill={color} strokeWidth="3" />
+          <path d="M86,156 C94,152 104,152 112,156" fill="none" stroke="#fff" strokeWidth="3" opacity="0.6" />
+          <circle cx="68" cy="156" r="12" fill={accent} />
+          <circle cx="132" cy="156" r="12" fill={accent} />
+          <path d="M72,200 L128,200 L128,210 L72,210 Z" fill={accent} strokeWidth="3" />
+          {mark}
+        </>
+      );
+    case "tank":
+      return (
+        <>
+          <path d="M72,160 C72,150 80,146 86,146 L86,152 C94,158 106,158 114,152 L114,146 C120,146 128,150 128,160 L126,210 L74,210 Z" fill={color} />
+          <path d="M86,146 C90,154 110,154 114,146" fill={skin} strokeWidth="3" />
+          {mark}
+        </>
+      );
+    case "tee":
+      return (
+        <>
+          <path d={body} fill={color} />
+          {side}
+          <path d="M88,146 C92,154 108,154 112,146" fill={skin} strokeWidth="3" />
+          {mark}
+        </>
+      );
+    case "sailor":
+      return (
+        <>
+          <path d={body} fill="#f5f5f5" />
+          <path d="M116,146 C126,150 132,154 132,160 L128,210 L114,210 Z" fill="#d9dce6" stroke="none" />
+          <path d="M72,150 L100,176 L128,150 L128,162 L100,186 L72,162 Z" fill={color} strokeWidth="3" />
+          <path d="M92,178 L100,186 L108,178 L114,190 L100,188 L86,190 Z" fill={accent} strokeWidth="3" />
+          <path d="M72,200 L128,200 L128,210 L72,210 Z" fill={color} strokeWidth="3" />
+        </>
+      );
+    default:
+      return (
+        <>
+          <path d={body} fill={color} />
+          {side}
+          <path d="M86,150 L114,150 L108,206 L92,206 Z" fill={accent} strokeWidth="3" />
+          {mark}
+        </>
+      );
+  }
+}
+
+function Bottoms({ kind, color, skin, shoes }: { kind: string; color: string; skin: string; shoes: string }) {
+  const shoe = (
+    <g fill={shoes}>
+      <path d="M74,228 C76,224 98,224 100,228 L100,236 L72,236 Z" />
+      <path d="M100,228 C102,224 124,224 126,228 L128,236 L100,236 Z" />
+    </g>
+  );
+  if (kind === "shorts" || kind === "skirt")
+    return (
+      <>
+        <path d="M84,206 L82,230 L98,230 L98,206 Z" fill={skin} />
+        <path d="M104,206 L104,230 L120,230 L118,206 Z" fill={skin} />
+        {shoe}
+      </>
+    );
+  return (
+    <>
+      <path d="M84,206 L80,232 L98,232 L98,206 Z" fill={color} />
+      <path d="M104,206 L104,232 L122,232 L118,206 Z" fill={color} />
+      {kind === "cargo" && <path d="M80,214 L90,214 L90,222 L80,222 Z M110,214 L120,214 L120,222 L110,222 Z" fill={shade(color, -0.25)} strokeWidth="2.5" />}
+      {shoe}
+    </>
+  );
+}
+
+/** Shorts and skirts sit over the hem of the top so they read clearly at small sizes. */
+function BottomsOver({ kind, color }: { kind: string; color: string }) {
+  if (kind === "shorts") return <path d="M73,203 L127,203 L130,221 L103,221 L100,213 L97,221 L70,221 Z" fill={color} />;
+  if (kind === "skirt")
+    return (
+      <>
+        <path d="M73,203 L127,203 L140,225 L60,225 Z" fill={color} />
+        <path d="M86,206 L80,224 M100,206 L100,224 M114,206 L120,224" fill="none" strokeWidth="2.5" stroke={shade(color, -0.4)} />
+      </>
+    );
+  return null;
+}
+
+function Neck({ kind, color }: { kind: string; color: string }) {
+  switch (kind) {
+    case "scarf":
+      return <path d="M70,140 C84,152 116,152 130,140 L132,154 C116,164 84,164 68,154 Z" fill={color} />;
+    case "bandana":
+      return <path d="M74,142 C86,150 114,150 126,142 L100,168 Z" fill={color} />;
+    case "necklace":
+      return (
+        <>
+          <path d="M80,144 C88,158 112,158 120,144" fill="none" stroke="#ffd23f" strokeWidth="3" />
+          <path d="M100,156 L106,163 L100,170 L94,163 Z" fill={color} strokeWidth="2.5" />
+        </>
+      );
+    case "bow":
+      return <path d="M100,150 L84,142 L84,158 Z M100,150 L116,142 L116,158 Z" fill={color} strokeWidth="3" />;
+    case "tie":
+      return <path d="M95,146 L105,146 L108,176 L100,186 L92,176 Z" fill={color} strokeWidth="3" />;
+    default:
+      return null;
+  }
+}
+
+function HeroBack({ kind, color }: { kind: string; color: string }) {
+  const s = { stroke: INK, strokeWidth: 4, strokeLinejoin: "round" as const };
+  switch (kind) {
+    case "cape":
+      return <path className="scarf-wave" d="M70,146 C56,180 46,210 40,232 L160,232 C154,210 144,180 130,146 Z" fill={color} {...s} />;
+    case "backpack":
+      return (
+        <g {...s}>
+          <rect x="62" y="150" width="76" height="56" rx="14" fill={color} />
+          <path d="M70,150 L66,140 M130,150 L134,140" />
+        </g>
+      );
+    case "wings":
+      return (
+        <g {...s} fill={color === "#16131f" ? "#2b2d42" : "#f5f5f5"}>
+          <path d="M80,160 C50,120 20,120 4,140 C20,146 22,156 14,166 C30,166 34,176 28,186 C48,184 64,176 80,170 Z" />
+          <path d="M120,160 C150,120 180,120 196,140 C180,146 178,156 186,166 C170,166 166,176 172,186 C152,184 136,176 120,170 Z" />
+        </g>
+      );
+    case "sword":
+      return (
+        <g {...s}>
+          <path d="M146,124 L60,212 L68,220 L154,132 Z" fill={color} />
+          <path d="M140,118 L160,138" strokeWidth="8" />
+        </g>
+      );
+    default:
+      return null;
+  }
 }
 
 function Hair({ style, color }: { style: Required<HeroLook>["hair"]; color: string }) {

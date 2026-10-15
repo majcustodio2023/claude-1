@@ -157,7 +157,7 @@ function Eye({ cx, cy, style, color, skin, flip }: { cx: number; cy: number; sty
   }
 }
 
-function Eyes({ style, color, skin }: { style: number; color: string; skin: string }) {
+export function Eyes({ style, color, skin }: { style: number; color: string; skin: string }) {
   return (
     <>
       <Eye cx={41} cy={55} style={style} color={color} skin={skin} flip={false} />
@@ -166,7 +166,7 @@ function Eyes({ style, color, skin }: { style: number; color: string; skin: stri
   );
 }
 
-function Mouth({ style, y = 67 }: { style: number; y?: number }) {
+export function Mouth({ style, y = 67 }: { style: number; y?: number }) {
   const o = y - 67;
   const g = (d: string, fill = "none", w = 1.8) => <path d={d} fill={fill} stroke={INK} strokeWidth={w} strokeLinecap="round" strokeLinejoin="round" transform={`translate(0 ${o})`} />;
   switch (style) {
@@ -227,7 +227,7 @@ HAIR_FRONT[8] = HAIR_FRONT[1];
 HAIR_FRONT[9] = HAIR_FRONT[1];
 HAIR_FRONT[10] = HAIR_FRONT[7];
 
-function HairBack({ style, color, outfit }: { style: number; color: string; outfit: string }) {
+export function HairBack({ style, color, outfit }: { style: number; color: string; outfit: string }) {
   const p = (d: string, fill = color) => <path d={d} fill={fill} stroke={INK} strokeWidth={SW} strokeLinejoin="round" />;
   switch (style) {
     case 1:
@@ -279,7 +279,7 @@ function HairBack({ style, color, outfit }: { style: number; color: string; outf
   }
 }
 
-function HairFront({ style, color, outfit }: { style: number; color: string; outfit: string }) {
+export function HairFront({ style, color, outfit }: { style: number; color: string; outfit: string }) {
   if (style === 13) {
     return (
       <g stroke={INK} strokeWidth={SW} strokeLinejoin="round">
@@ -298,7 +298,7 @@ function HairFront({ style, color, outfit }: { style: number; color: string; out
   );
 }
 
-function Extra({ n, hair, outfit, top = 40 }: { n: number; hair: string; outfit: string; top?: number }) {
+export function Extra({ n, hair, outfit, top = 40 }: { n: number; hair: string; outfit: string; top?: number }) {
   const s = { stroke: INK, strokeWidth: SW, strokeLinejoin: "round" as const, strokeLinecap: "round" as const };
   switch (n) {
     case 1:
