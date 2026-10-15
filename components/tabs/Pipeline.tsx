@@ -11,13 +11,15 @@ import { EditButton, SaveButton } from "../editable";
 import { AccountSelect, CollectForm, accountName, settle, type Collection } from "../Money";
 import { HELP } from "../help";
 import { Icon } from "../icons";
+import FallenCard from "../Fallen";
+import { failDeal, setDealStage } from "@/lib/fallen";
 
 const STAGES: [DealStage, string][] = [
   ["lead", "Lead"],
   ["proposal", "Proposal sent"],
   ["negotiating", "Negotiating"],
   ["won", "Closed / won"],
-  ["lost", "Lost"],
+  ["lost", "Failed"],
 ];
 
 export default function Pipeline() {
@@ -26,7 +28,6 @@ export default function Pipeline() {
 
   const open = data.deals.filter((d) => d.stage !== "won" && d.stage !== "lost");
   const won = data.deals.filter((d) => d.stage === "won");
-  const lost = data.deals.filter((d) => d.stage === "lost");
 
   return (
     <div className="space-y-4">
@@ -62,7 +63,7 @@ export default function Pipeline() {
 
       <Section title={`Bosses in the field · ${money(open.reduce((a, d) => a + d.value, 0))}`} deals={open} />
       <Section title={`Closed · ${money(won.reduce((a, d) => a + dealPaid(d), 0))} collected, ${money(won.reduce((a, d) => a + dealBalance(d), 0))} to collect`} deals={won} />
-      {lost.length > 0 && <Section title="Lost" deals={lost} />}
+      <FallenCard />
     </div>
   );
 }
@@ -84,6 +85,8 @@ export function DealCard({ deal }: { deal: Deal }) {
   const { data, update, today } = useTracker();
   const [collecting, setCollecting] = useState<"full" | "deposit" | null>(null);
   const [editing, setEditing] = useState(false);
+  const [failing, setFailing] = useState(false);
+  const [reason, setReason] = useState("");
   const paid = dealPaid(deal);
   const balance = dealBalance(deal);
   const set = (patch: Partial<Deal>) => update((d) => void Object.assign(d.deals.find((x) => x.id === deal.id)!, patch));
@@ -141,7 +144,7 @@ export function DealCard({ deal }: { deal: Deal }) {
           <div className="flex flex-wrap gap-3">
             <label className="flex flex-col gap-1 text-sm font-extrabold uppercase text-muted">
               Status
-              <select value={deal.stage} onChange={(e) => set({ stage: e.target.value as DealStage })}>
+              <select value={deal.stage} onChange={(e) => update((d) => setDealStage(d, deal.id, e.target.value as DealStage, today))}>
                 {STAGES.map(([v, l]) => (
                   <option key={v} value={v}>{l}</option>
                 ))}
@@ -212,7 +215,34 @@ export function DealCard({ deal }: { deal: Deal }) {
           </button>
         )
       )}
-      {collecting ? (
+      {failing ? (
+        <div className="bg-card-2 border-[3px] border-bad rounded-[10px] p-3 space-y-2">
+          <div className="font-display text-xl tracking-wide text-bad">{deal.stage === "won" ? "The rest won't be paid?" : "Didn't close?"}</div>
+          <p className="text-sm text-muted font-bold">
+            {deal.stage === "won"
+              ? `The ${money(balance)} still owed stops counting as money to collect.${paid ? ` The ${money(paid)} already paid still counts.` : ""}`
+              : "It stops counting in your pipeline."}{" "}
+            It moves to the Fallen below, and you can revive it any time.
+          </p>
+          <label className="block text-sm font-extrabold uppercase text-muted">
+            What happened? (optional)
+            <TextInput className="w-full mt-1 text-base normal-case" value={reason} onChange={setReason} placeholder={deal.stage === "won" ? "e.g. Client stopped replying" : "e.g. Went with a cheaper agency"} />
+          </label>
+          <div className="flex gap-2 flex-wrap">
+            <Btn
+              kind="danger"
+              onClick={() => {
+                update((d) => failDeal(d, deal.id, today, reason));
+                setFailing(false);
+                setReason("");
+              }}
+            >
+              Mark as failed
+            </Btn>
+            <Btn onClick={() => setFailing(false)}>Cancel</Btn>
+          </div>
+        </div>
+      ) : collecting ? (
         <CollectForm
           amount={collecting === "full" ? balance : undefined}
           date={today}
@@ -230,6 +260,11 @@ export function DealCard({ deal }: { deal: Deal }) {
           )}
           {deal.stage !== "lost" && balance > 0 && <Btn onClick={() => setCollecting("deposit")}>Record deposit</Btn>}
           {!editing && <EditButton onClick={() => setEditing(true)} />}
+          {deal.stage !== "lost" && (deal.stage !== "won" || balance > 0) && (
+            <Btn kind="ghost" onClick={() => setFailing(true)} title="Didn't close, or won't be paid">
+              Mark as failed
+            </Btn>
+          )}
         </div>
       )}
     </div>

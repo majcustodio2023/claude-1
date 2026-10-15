@@ -1,5 +1,6 @@
 "use client";
 
+import { setDealStage } from "@/lib/fallen";
 import { useState } from "react";
 import { ME, archiveClient, clientKind, clientMoney, clientStats, createClient, deleteClient, deleteClientSummary, isOverdue, nextStatus, openTasksFor, people, personName, renameClient, teamPay } from "@/lib/clients";
 import { addMonths, billPaid, expenseAppliesTo, locale, money, monthOf, parseAmount, uid } from "@/lib/finance";
@@ -430,12 +431,12 @@ function ClientMoneyPanel({ client: c }: { client: Client }) {
             {deal && (
               <select
                 value={deal.stage === "won" ? "won" : deal.stage === "lost" ? "lost" : "lead"}
-                onChange={(e) => update((d) => void (d.deals.find((x) => x.id === deal.id)!.stage = e.target.value as typeof deal.stage))}
+                onChange={(e) => update((d) => setDealStage(d, deal.id, e.target.value as typeof deal.stage, today))}
                 aria-label="Project status"
               >
                 <option value="lead">Not closed yet</option>
                 <option value="won">Closed</option>
-                <option value="lost">Lost</option>
+                <option value="lost">Failed</option>
               </select>
             )}
           </>
