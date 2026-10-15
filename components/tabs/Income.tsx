@@ -13,6 +13,7 @@ import { HELP } from "../help";
 import { SubItems } from "../SubItems";
 import { collectSub, incomeSubRows, uncollectSub } from "@/lib/subs";
 import { Icon } from "../icons";
+import ManualIncome from "../ManualIncome";
 
 type Go = (tab: "clients" | "pipeline") => void;
 
@@ -94,6 +95,7 @@ export default function Income({ goTo }: { goTo: Go }) {
         )}
       </Card>
 
+      <ManualIncome />
       <Card icon="📦" title="Other income" help={HELP.otherIncome} actions={<AddOther />}>
         {other.length === 0 ? (
           <p className="text-lg text-muted">Money that isn&apos;t from a client, like product or SaaS sales, goes here.</p>

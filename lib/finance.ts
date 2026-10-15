@@ -285,7 +285,7 @@ export function cashFlows(data: TrackerData): CashFlow[] {
     }
   }
   for (const d of data.deals) for (const p of d.payments) flows.push({ key: `pay:${p.id}`, date: p.date, amount: p.amount, accountId: p.accountId, label: `${d.name}${p.note ? ` · ${p.note}` : ""}`, kind: "deal" });
-  for (const o of data.oneTime ?? []) flows.push({ key: `ot:${o.id}`, date: o.date, amount: o.amount, label: o.label, kind: "deal" });
+  for (const o of data.oneTime ?? []) flows.push({ key: `ot:${o.id}`, date: o.date, amount: o.amount, accountId: o.accountId, label: o.label, kind: "deal" });
   for (const e of data.adHocExpenses) flows.push({ key: `spend:${e.id}`, date: e.date, amount: -e.amount, accountId: e.accountId, label: e.label, kind: e.category === "ads" ? "ads" : "spend" });
   const logMonths = new Set(Object.values(data.logs).filter((l) => l.adSpend).map((l) => monthOf(l.date)));
   for (const m of logMonths) {

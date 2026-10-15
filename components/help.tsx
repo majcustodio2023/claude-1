@@ -185,6 +185,13 @@ export const HELP = {
       <li>Past months show what was safe, what you spent, and whether you spent it, saved it or went over.</li>
     </ul>
   ),
+  manualIncome: (
+    <ul>
+      <li>For money that comes in by hand and isn&apos;t a client retainer or a deal: a refund, a one-off sale, a side job, a gift.</li>
+      <li>Type what it was, how much, and pick the account it went into. It&apos;s added to that account in the War chest straight away and counts as money made this month.</li>
+      <li>Client fees go in Income and project payments in Boss Deals, so they aren&apos;t counted twice.</li>
+    </ul>
+  ),
   manualSpending: (
     <ul>
       <li>For money you spend by hand that isn&apos;t a monthly bill: groceries, a tool, gas, a one-off purchase, a late salary.</li>
