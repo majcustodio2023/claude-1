@@ -3,6 +3,7 @@
 // still do. Anything here can be revived (deals) or re-fought (battles).
 
 import { dealBalance, dealPaid } from "./finance";
+import { closeDeal } from "./clients";
 import type { Rarity } from "./items";
 import { bossCoins, ensureGame, rollItem, type FightRank, type RewardEvent } from "./loot";
 import type { Deal, DealStage, TrackerData } from "./types";
@@ -45,6 +46,7 @@ export function setDealStage(d: TrackerData, dealId: string, stage: DealStage, t
   if (stage === "lost") return failDeal(d, dealId, today);
   if (deal.stage === "lost") reviveDeal(d, dealId);
   deal.stage = stage;
+  if (stage === "won") closeDeal(d, dealId, today);
 }
 
 export function recordBattleLoss(d: TrackerData, dealId: string, today: string, round: number) {
