@@ -190,6 +190,7 @@ export const HELP = {
       <li>Your month at a glance: when clients pay (green), when bills are due (red), when deals should close (gold), and your missions (blue).</li>
       <li>Set the day a client pays in Income or Clients (Edit, &ldquo;Pays on day&rdquo;) and the day a bill is due in Expenses (Edit, &ldquo;Due on&rdquo;). They repeat every month on their own.</li>
       <li>Click any day to see everything on it and schedule a mission there. Missions added here also show in the Missions tab and earn the usual rewards.</li>
+      <li>Tick the little box on a mission to finish it (it&apos;s crossed out). Drag a mission to another day to move it. On a phone, open the day and press Move.</li>
       <li>Linked your Google Calendar? Its events show here too, in gray. The month picker at the top changes the month.</li>
     </ul>
   ),
@@ -197,7 +198,8 @@ export const HELP = {
     <ul>
       <li>Everything on the day you picked. Tick a mission to finish it.</li>
       <li>&ldquo;Late&rdquo; means a client&apos;s pay day has passed and it isn&apos;t marked collected in Income yet. &ldquo;Overdue&rdquo; means a bill&apos;s due day has passed and it isn&apos;t paid.</li>
-      <li>Add a mission with an optional time and who&apos;s doing it. To change or delete it later, use the Missions tab.</li>
+      <li>Add a mission with an optional time and who&apos;s doing it. Press Move to change its day or time, or to delete it. You can also drag it onto a day in the calendar.</li>
+      <li>Pay days, bills and deals move from their own settings. Google events are view only here: change those in Google Calendar.</li>
     </ul>
   ),
   googleCalendar: (
