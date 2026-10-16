@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { clientForDeal, clientForStream, dealCost, keepOf, makeClientFromStream, streamCost } from "@/lib/clients";
+import { clientForDeal, clientForStream, closeDeal, dealCost, keepOf, makeClientFromStream, streamCost } from "@/lib/clients";
 import { dealBalance, dealPaid, defaultAccountId, expectedForStream, monthOf, parseAmount, summarize, uid, type StreamRow } from "@/lib/finance";
 import type { Deal, IncomeStream, StreamMonth, SubItem } from "@/lib/types";
 import { useTracker } from "../App";
@@ -292,7 +292,10 @@ function ProjectRow({ deal, goTo }: { deal: Deal; goTo: Go }) {
     update((d) => {
       const x = d.deals.find((y) => y.id === deal.id)!;
       x.payments.push({ id, amount: c.amount, date: c.date, ...(c.note && { note: c.note }), ...(c.accountId && { accountId: c.accountId }) });
-      x.stage = "won";
+      if (x.stage !== "won") {
+        x.stage = "won";
+        closeDeal(d, deal.id, today);
+      }
       if (c.accountId) d.settings.lastAccountId = c.accountId;
       if (c.alreadyCounted) settle(d, `pay:${id}`);
     });

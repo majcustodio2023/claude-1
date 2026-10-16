@@ -162,11 +162,42 @@ export function makeClientFromStream(d: TrackerData, streamId: string, today: st
   return id;
 }
 
-/** Turns a deal into a project client, for tracking its tasks and team pay. */
+/** Turns a deal into a project client, for tracking its tasks and team pay. The deal's look and contact move to the client. */
 export function makeClientFromDeal(d: TrackerData, dealId: string, today: string) {
   const deal = d.deals.find((x) => x.id === dealId);
   if (!deal || clientForDeal(d, dealId)) return;
-  d.clients = [...(d.clients ?? []), { id: uid("client"), name: deal.name, kind: "project", dealId, createdAt: today }];
+  d.clients = [...(d.clients ?? []), { id: uid("client"), name: deal.name, kind: "project", dealId, createdAt: today, ...(deal.avatar && { avatar: deal.avatar }), ...(deal.contact && { contact: deal.contact }) }];
+}
+
+/**
+ * What happens when a deal closes. A one-time project becomes a project client.
+ * A recurring lead becomes a recurring client with a monthly income (its fee and pay day),
+ * and the deal itself is removed so the money isn't counted twice. Returns the client id.
+ */
+export function closeDeal(d: TrackerData, dealId: string, today: string): string | undefined {
+  const deal = d.deals.find((x) => x.id === dealId);
+  if (!deal) return;
+  if (!deal.recurring) {
+    makeClientFromDeal(d, dealId, today);
+    return clientForDeal(d, dealId)?.id;
+  }
+  const r = deal.recurring;
+  const streamId = uid("stream");
+  d.streams.push({ id: streamId, name: deal.name, kind: r.kind, amount: deal.value, active: true, ...(r.payDay && { payDay: r.payDay }), ...(deal.notes && { notes: deal.notes }) });
+  let client = clientForDeal(d, dealId);
+  if (client) {
+    client.kind = "recurring";
+    client.streamId = streamId;
+    delete client.dealId;
+    if (!client.contact && deal.contact) client.contact = deal.contact;
+    if (!client.avatar && deal.avatar) client.avatar = deal.avatar;
+  } else {
+    client = { id: uid("client"), name: deal.name, kind: "recurring", streamId, createdAt: today, ...(deal.avatar && { avatar: deal.avatar }), ...(deal.contact && { contact: deal.contact }) };
+    d.clients = [...(d.clients ?? []), client];
+  }
+  // Team pay set up on the deal now belongs to the retainer's client.
+  d.deals = d.deals.filter((x) => x.id !== dealId);
+  return client.id;
 }
 
 /**

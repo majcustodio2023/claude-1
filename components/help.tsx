@@ -72,6 +72,8 @@ export const HELP = {
   newDeal: (
     <ul>
       <li>Add a deal or one-off payment: still a lead, closed and waiting for payment, or already collected.</li>
+      <li>Pick &ldquo;Monthly retainer&rdquo; for a lead that would pay every month. The amount is the monthly fee, and you can set the day they pay.</li>
+      <li>When a deal closes it&apos;s added to Clients by itself. A retainer also becomes monthly income in Income.</li>
       <li>Only collected money counts as money made.</li>
     </ul>
   ),
@@ -79,6 +81,7 @@ export const HELP = {
     <ul>
       <li>Change a deal&apos;s stage as it moves. When paid, press collect and pick the account it went into.</li>
       <li>Paid in parts? Use &ldquo;Record deposit&rdquo; for each payment. The rest stays as HP to collect.</li>
+      <li>Monthly retainer lead signed? Press &ldquo;Signed! Make them a client&rdquo;. It moves to Clients and shows up in Income every month, with its pay day on the Calendar.</li>
       <li>Didn&apos;t close, or the client won&apos;t pay the rest? Press &ldquo;Mark as failed&rdquo;. It moves to the Fallen, stops counting as money to come, and can be revived any time.</li>
     </ul>
   ),

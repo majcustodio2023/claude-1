@@ -72,6 +72,8 @@ export interface Deal {
   failed?: DealFailure;
   /** Who to talk to about this deal. A deal linked to a client uses the client's contact. */
   contact?: Contact;
+  /** Set when the lead would pay every month (a retainer); value is then the monthly fee. Closing it turns it into a recurring client. */
+  recurring?: { kind: "fixed" | "variable"; payDay?: number };
 }
 
 export interface DealFailure {
