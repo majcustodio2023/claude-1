@@ -19,6 +19,7 @@ import SettingsTab from "./tabs/Settings";
 import HeroTab from "./tabs/HeroTab";
 import BossFight from "./BossFight";
 import { Bar, Celebrations, Toasts, celebrate, money, toast } from "./ui";
+import { KitBubble } from "./KitChat";
 import { Hero, HeroStyleContext, KitStyleContext } from "./characters";
 import { claimRewards, pendingRewards } from "@/lib/loot";
 import { RARITY } from "@/lib/items";
@@ -208,6 +209,7 @@ export default function App() {
           </div>
         </nav>
       )}
+      <KitBubble raised={look.layout === "dock"} />
       <Celebrations />
       <Toasts />
       <AchievementWatcher data={data} month={month} today={today} />
