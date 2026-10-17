@@ -3,7 +3,8 @@
 import { useState } from "react";
 import type { IncomeStream, StreamKind } from "@/lib/types";
 import { useTracker } from "./App";
-import { NumInput, money } from "./ui";
+import { Btn, NumInput, money } from "./ui";
+import { Icon } from "./icons";
 import { EditButton, SaveButton } from "./editable";
 import { SubItems } from "./SubItems";
 import { setSubs, subRows, subsTotal } from "@/lib/subs";
@@ -27,6 +28,11 @@ export function StreamTerms({ stream: st, alwaysEdit = false }: { stream: Income
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-base font-bold flex-1 min-w-40">{termsText(st, money)}</span>
+          {!st.payDay && (
+            <Btn kind="hero" onClick={() => setEditing(true)} title="Pick the day of the month they pay, so it shows on the Calendar">
+              <Icon name="calendar" size={18} /> Set pay day
+            </Btn>
+          )}
           <EditButton title="Change how this is paid" onClick={() => setEditing(true)} />
         </div>
         <SubItems rows={subRows(base, st.subs).map((sub) => ({ sub, done: false }))} subs={st.subs} onEdit={(subs) => update((d) => setSubs(d.streams.find((x) => x.id === st.id)!, subs))} addLabel="+ Break into parts (each collected on its own)" />

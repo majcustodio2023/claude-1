@@ -14,6 +14,7 @@ import { AvatarButton } from "../AvatarPicker";
 import { EditButton, EditableNumber, SaveButton } from "../editable";
 import { HELP } from "../help";
 import { StreamTerms } from "../StreamSettings";
+import { ordinal } from "@/lib/calendar";
 import { incomePartlyCollected } from "@/lib/subs";
 import { Icon } from "../icons";
 
@@ -30,6 +31,7 @@ export default function Clients() {
   const [name, setName] = useState("");
   const [kind, setKind] = useState<"recurring" | "project" | "">("recurring");
   const [amount, setAmount] = useState("");
+  const [payDay, setPayDay] = useState<number | undefined>();
   const clients = data.clients ?? [];
   const active = clients.filter((c) => !c.archived);
   const archived = clients.filter((c) => c.archived);
@@ -60,9 +62,10 @@ export default function Clients() {
           onSubmit={(e) => {
             e.preventDefault();
             if (!name.trim()) return;
-            update((d) => void createClient(d, { name: name.trim(), kind: kind || undefined, amount: parseAmount(amount) || 0 }, today));
+            update((d) => void createClient(d, { name: name.trim(), kind: kind || undefined, amount: parseAmount(amount) || 0, ...(kind === "recurring" && payDay && { payDay }) }, today));
             setName("");
             setAmount("");
+            setPayDay(undefined);
           }}
         >
           <input className="flex-1 min-w-48 text-lg" placeholder="New client name" value={name} onChange={(e) => setName(e.target.value)} />
@@ -72,6 +75,14 @@ export default function Clients() {
             <option value="">Decide later</option>
           </select>
           {kind && <input inputMode="decimal" className="w-36" placeholder={kind === "recurring" ? "Monthly fee" : "Project price"} value={amount} onChange={(e) => setAmount(e.target.value)} />}
+          {kind === "recurring" && (
+            <select value={payDay ?? ""} onChange={(e) => setPayDay(e.target.value ? Number(e.target.value) : undefined)} aria-label="Pays on day">
+              <option value="">Pays on: not set</option>
+              {Array.from({ length: 31 }, (_, i) => i + 1).map((n) => (
+                <option key={n} value={n}>Pays on the {n === 31 ? "last day" : ordinal(n)}</option>
+              ))}
+            </select>
+          )}
           <Btn kind="primary">+ Add client</Btn>
         </form>
         {who !== "all" && <MyPlate personId={who} />}

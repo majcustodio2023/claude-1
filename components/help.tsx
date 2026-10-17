@@ -69,6 +69,13 @@ export const HELP = {
       <li>If one of these is really a client, open <Icon name="gear" size={20} /> and press &ldquo;This is a client&rdquo;.</li>
     </ul>
   ),
+  payDays: (
+    <ul>
+      <li>Pick the day of the month each client pays. It shows on the Calendar every month as a pay day.</li>
+      <li>Paying on the 31st? Pick &ldquo;Last day&rdquo;; shorter months use their last day.</li>
+      <li>You can also set it on each client in Clients or Income (Edit).</li>
+    </ul>
+  ),
   newDeal: (
     <ul>
       <li>Add a deal or one-off payment: still a lead, closed and waiting for payment, or already collected.</li>
