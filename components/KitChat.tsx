@@ -53,7 +53,7 @@ async function speak(text: string, persona: Persona, aiVoice: boolean, onError: 
   }
 }
 
-export default function KitChat() {
+export default function KitChat({ popup = false }: { popup?: boolean }) {
   const { data, update, today } = useTracker();
   const [hasKey, setHasKey] = useState(Boolean(data.integrations?.kit));
   const [aiVoice, setAiVoice] = useState(Boolean(data.integrations?.voice));
@@ -145,12 +145,12 @@ export default function KitChat() {
     rec.start();
   };
 
-  if (!hasKey) return <KeyForm onSaved={() => setHasKey(true)} />;
+  if (!hasKey) return <KeyForm popup={popup} onSaved={() => setHasKey(true)} />;
 
   return (
-    <div className="mt-5 border-t-[3px] border-outline pt-4">
+    <div className={popup ? "" : "mt-5 border-t-[3px] border-outline pt-4"}>
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-        <span className="font-display text-xl tracking-wide">Talk to {kitName}</span>
+        {!popup && <span className="font-display text-xl tracking-wide">Talk to {kitName}</span>}
         <div className="flex gap-2 flex-wrap justify-end items-center">
           <select
             className="text-base max-w-full"
@@ -167,7 +167,7 @@ export default function KitChat() {
                 {p.name}
               </option>
             ))}
-            <option value={CUSTOM_PERSONA}>✍️ Your own</option>
+            <option value={CUSTOM_PERSONA}>Your own</option>
           </select>
           {chat.length > 0 && (
             <button className="text-base text-muted underline" onClick={() => confirm("Clear the chat with Kit?") && update((d) => void (d.kitChat = []))}>
@@ -192,7 +192,7 @@ export default function KitChat() {
       )}
       {voiceSetup && <VoiceSetup hasVoice={aiVoice} onChange={setAiVoice} onTest={() => speak(`${kitName} here. Let's get you paid.`, persona, aiVoice, setError)} />}
       {chat.length > 0 && (
-        <div ref={boxRef} className="max-h-80 overflow-y-auto space-y-2.5 mb-3 pr-1">
+        <div ref={boxRef} className={`${popup ? "max-h-[min(22rem,45vh)]" : "max-h-80"} overflow-y-auto space-y-2.5 mb-3 pr-1`}>
           {chat.map((m, i) => (
             <div key={i} className={`flex items-end gap-1.5 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
               {m.role === "assistant" && <Kit size={38} className="shrink-0" />}
@@ -279,12 +279,12 @@ function CustomPersona({ value, onSave }: { value: string; onSave: (v: string) =
   return <textarea className="w-full mt-1 text-lg" rows={2} maxLength={600} value={v} onChange={(e) => setV(e.target.value)} onBlur={() => v !== value && onSave(v)} />;
 }
 
-function KeyForm({ onSaved }: { onSaved: () => void }) {
+function KeyForm({ onSaved, popup = false }: { onSaved: () => void; popup?: boolean }) {
   const [key, setKey] = useState("");
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
   return (
-    <div className="mt-5 border-t-[3px] border-outline pt-4 space-y-2">
+    <div className={`${popup ? "" : "mt-5 border-t-[3px] border-outline pt-4"} space-y-2`}>
       <p className="text-lg">
         <span className="font-display text-xl tracking-wide">Wake Kit up:</span> to chat, Kit needs a Claude API key. Get one at console.anthropic.com → API keys, then paste it here (not in chat). It&apos;s encrypted and never shown again.
       </p>
@@ -308,5 +308,67 @@ function KeyForm({ onSaved }: { onSaved: () => void }) {
       </form>
       {msg && <p className="text-base font-bold text-bad">{msg}</p>}
     </div>
+  );
+}
+
+/** Kit as a chat bubble in the corner of every page, like a messenger chat head. Opens a pop-up chat. */
+export function KitBubble({ raised = false }: { raised?: boolean }) {
+  const { data } = useTracker();
+  const [open, setOpen] = useState(false);
+  const [seen, setSeen] = useState(0);
+  const chat = data.kitChat ?? [];
+  const personaId = data.settings.kitPersona ?? "kit";
+  const kitName = personaId === CUSTOM_PERSONA ? "Kit" : personaFor(personaId).name;
+  // Replies that came in while the chat was closed show as a red count on the bubble.
+  const unread = open ? 0 : chat.slice(seen).filter((m) => m.role === "assistant").length;
+
+  useEffect(() => {
+    if (open) setSeen(chat.length);
+  }, [open, chat.length]);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+  // Start counted as read, so old replies don't show as new on every page load.
+  useEffect(() => setSeen(chat.length), []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const bottom = raised ? "bottom-28" : "bottom-5";
+  return (
+    <>
+      {open && (
+        <div role="dialog" aria-label={`Chat with ${kitName}`} className={`fixed z-40 right-3 sm:right-5 ${raised ? "bottom-[12.5rem]" : "bottom-28"} w-[min(26rem,calc(100vw-1.5rem))] kit-pop`}>
+         <div className="hud hud-hero overflow-hidden flex flex-col max-h-[calc(100dvh-9rem)]">
+          <div className="flex items-center gap-2.5 px-4 py-2.5 bg-hero text-outline border-b-[3px] border-outline">
+            <Kit size={44} className="shrink-0" />
+            <div className="flex-1 min-w-0">
+              <div className="font-display text-xl tracking-wide leading-none">{kitName}</div>
+              <div className="text-sm font-extrabold">Your sidekick</div>
+            </div>
+            <button className="btn btn-ghost px-3 py-1" onClick={() => setOpen(false)} aria-label="Close chat" title="Close (Esc)">
+              <span className="font-display text-xl leading-none">X</span>
+            </button>
+          </div>
+          <div className="p-4 overflow-y-auto">
+            <KitChat popup />
+          </div>
+         </div>
+        </div>
+      )}
+      <button
+        onClick={() => setOpen(!open)}
+        aria-label={open ? `Close chat with ${kitName}` : `Chat with ${kitName}`}
+        title={open ? "Close chat" : `Chat with ${kitName}`}
+        className={`fixed z-40 right-3 sm:right-5 ${bottom} size-20 rounded-full border-[3px] border-outline bg-gold shadow-[4px_4px_0_var(--color-outline)] grid place-items-center transition-transform hover:-translate-y-1 hover:rotate-[-4deg] active:translate-y-0`}
+      >
+        <span className={open ? "" : "kit-bob"}>
+          <Kit size={66} />
+        </span>
+        {unread > 0 && (
+          <span className="absolute -top-1 -right-1 min-w-7 h-7 px-1.5 rounded-full bg-bad text-white border-[3px] border-outline font-display text-base grid place-items-center">{unread}</span>
+        )}
+      </button>
+    </>
   );
 }
