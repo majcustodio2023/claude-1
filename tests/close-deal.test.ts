@@ -46,3 +46,12 @@ test("closing a one-time deal adds it to Clients as a project", () => {
   closeDeal(d, "o1", today);
   assert.equal(d.clients!.filter((x) => x.dealId === "o1").length, 1, "never added twice");
 });
+
+test("a new retainer client can be added with its pay day", async () => {
+  const { createClient } = await import("../lib/clients");
+  const d = sampleData();
+  const id = createClient(d, { name: "Spa", kind: "recurring", amount: 15000, payDay: 20 }, today);
+  const stream = d.streams.find((s) => s.id === d.clients!.find((c) => c.id === id)!.streamId)!;
+  assert.equal(stream.payDay, 20);
+  assert.ok(calendarItems(d, "2026-10").some((i) => i.kind === "pay" && i.title === "Spa" && i.date === "2026-10-20"));
+});

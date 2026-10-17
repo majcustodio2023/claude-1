@@ -115,6 +115,8 @@ export interface NewClient {
   streamKind?: StreamKind;
   percent?: number;
   stage?: DealStage;
+  /** Retainer: day of the month they pay */
+  payDay?: number;
 }
 
 /** Adds a client with its income stream (retainer) or deal (project). Returns the client id. */
@@ -124,7 +126,7 @@ export function createClient(d: TrackerData, c: NewClient, today: string): strin
   if (c.kind === "recurring") {
     const streamId = uid("stream");
     const kind = c.streamKind ?? "fixed";
-    d.streams.push({ id: streamId, name: c.name, kind, amount: c.amount ?? 0, active: true, ...(kind === "percent_floor" && { percent: c.percent ?? 0, floor: c.amount ?? 0 }) });
+    d.streams.push({ id: streamId, name: c.name, kind, amount: c.amount ?? 0, active: true, ...(kind === "percent_floor" && { percent: c.percent ?? 0, floor: c.amount ?? 0 }), ...(c.payDay && { payDay: c.payDay }) });
     client.streamId = streamId;
   }
   if (c.kind === "project") {

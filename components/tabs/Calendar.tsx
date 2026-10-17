@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { calendarItems, daysInMonth, monthGrid, sortItems, type CalItem } from "@/lib/calendar";
+import { calendarItems, daysInMonth, monthGrid, ordinal, sortItems, type CalItem } from "@/lib/calendar";
 import { locale, monthOf, uid } from "@/lib/finance";
 import type { CalEvent } from "@/lib/ical";
 import type { Quadrant } from "@/lib/types";
@@ -98,7 +98,7 @@ export default function Calendar() {
         </div>
         {noDays && (
           <p className="text-base text-muted mb-3">
-            Tip: set the day each client pays (Income or Clients, Edit) and the day each bill is due (Expenses, Edit) and they show up here every month.
+            Tip: set the day each client pays in &ldquo;Client pay days&rdquo; below, and the day each bill is due in Expenses (Edit). They show up here every month.
           </p>
         )}
         <div className="grid grid-cols-7 gap-1 sm:gap-1.5">
@@ -121,7 +121,10 @@ export default function Calendar() {
 
       <div className="grid lg:grid-cols-[3fr_2fr] gap-4 items-start">
         <DayPanel date={selected} items={byDay.get(selected) ?? []} />
-        <GoogleCard connected={connected} onChange={google.refresh} />
+        <div className="space-y-4">
+          <PayDaysCard />
+          <GoogleCard connected={connected} onChange={google.refresh} />
+        </div>
       </div>
     </div>
   );
@@ -372,6 +375,61 @@ function DayRow({ it, date, today }: { it: CalItem; date: string; today: string 
         </div>
       )}
     </li>
+  );
+}
+
+/** Every monthly client and the day of the month they pay, set in one place. */
+function PayDaysCard() {
+  const { data, update } = useTracker();
+  const [editing, setEditing] = useState(false);
+  const streams = data.streams.filter((s) => s.active);
+  if (!streams.length) return null;
+  const missing = streams.filter((s) => !s.payDay).length;
+  return (
+    <Card icon={<Icon name="income" size={24} />} glow="hero" title="Client pay days" help={HELP.payDays} actions={!editing && <EditButton title="Set the days" onClick={() => setEditing(true)} />}>
+      {editing ? (
+        <div className="space-y-2">
+          {streams.map((s) => (
+            <label key={s.id} className="flex flex-wrap items-center justify-between gap-2 text-base font-bold">
+              <span className="[overflow-wrap:anywhere]">{s.name}</span>
+              <select
+                aria-label={`${s.name} pays on`}
+                value={s.payDay ?? ""}
+                onChange={(e) =>
+                  update((d) => {
+                    const x = d.streams.find((y) => y.id === s.id)!;
+                    if (e.target.value) x.payDay = Number(e.target.value);
+                    else delete x.payDay;
+                  })
+                }
+              >
+                <option value="">Not set</option>
+                {Array.from({ length: 31 }, (_, i) => i + 1).map((n) => (
+                  <option key={n} value={n}>
+                    {n === 31 ? "Last day" : `The ${ordinal(n)}`}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ))}
+          <SaveButton onClick={() => setEditing(false)} />
+        </div>
+      ) : (
+        <div className="space-y-1.5">
+          {streams.map((s) => (
+            <div key={s.id} className="flex flex-wrap items-center justify-between gap-2 text-base">
+              <span className="font-bold [overflow-wrap:anywhere]">{s.name}</span>
+              <span className={s.payDay ? "font-bold text-good" : "text-muted"}>{s.payDay ? (s.payDay === 31 ? "Last day" : `The ${ordinal(s.payDay)}`) : "Not set"}</span>
+            </div>
+          ))}
+          {missing > 0 && (
+            <Btn kind="hero" className="mt-2" onClick={() => setEditing(true)}>
+              Set {missing === streams.length ? "pay days" : `${missing} missing pay day${missing > 1 ? "s" : ""}`}
+            </Btn>
+          )}
+        </div>
+      )}
+    </Card>
   );
 }
 
