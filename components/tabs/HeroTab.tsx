@@ -15,6 +15,9 @@ import { Glyph, Icon } from "../icons";
 import BossFight, { useHeroLevel } from "../BossFight";
 import { PASSIVE_DESC, SKILLS, STAT_LABEL, itemPowerText, loadoutFor, statText, type StatKey } from "@/lib/battle";
 import { sfx } from "@/lib/sound";
+import { COVERS, CUSTOM_COVER, activeCover, buyCover, ownsCover, type Cover } from "@/lib/covers";
+import { CoverArt, shrinkCover } from "../covers";
+import { useRef } from "react";
 
 const SLOTS: ItemSlot[] = ["hat", "face", "weapon", "back", "aura", "pet", "kit-head", "kit-face", "kit-neck", "kit-tail"];
 const FURS = ["#ff8a1f", "#2b2140", "#ff5fae", "#8a6a3a", "#4f6bff", "#f4efe4", "#e8e8f0", "#d62839", "#6ee77a", "#ffd23f"];
@@ -44,6 +47,8 @@ export default function HeroTab() {
   return (
     <div className="space-y-5">
       <HeroLocker />
+
+      <CoverShop />
 
       <BattleStats />
 
@@ -444,5 +449,104 @@ function Swatches({ label, value, options, onPick }: { label: string; value: str
         </label>
       </div>
     </div>
+  );
+}
+
+/** Backgrounds for the banner your hero stands on: free ones, ones bought with coins, or your own picture. */
+function CoverShop() {
+  const { data, update, today } = useTracker();
+  const file = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const current = activeCover(data);
+  const coins = data.game?.coins ?? 0;
+  const image = data.game?.coverImage;
+
+  const pick = (c: Cover) => {
+    const err = buyCover(structuredClone(data), c.id, today);
+    if (err) return toast(err);
+    const bought = !ownsCover(data, c.id);
+    update((d) => void buyCover(d, c.id, today));
+    if (bought) {
+      sfx("coin");
+      toast(`Bought the ${c.name} cover!`);
+    }
+  };
+  const upload = async (f: File) => {
+    setBusy(true);
+    try {
+      const url = await shrinkCover(f);
+      update((d) => {
+        const g = ensureGame(d, today);
+        g.coverImage = url;
+        g.cover = CUSTOM_COVER;
+      });
+      toast("Your picture is on the banner.");
+    } catch (e) {
+      toast((e as Error).message);
+    }
+    setBusy(false);
+  };
+
+  return (
+    <Card title="Banner covers" icon={<Icon name="image" size={24} />} glow="cyan" help={HELP.covers}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {COVERS.map((c) => {
+          const owned = ownsCover(data, c.id);
+          const on = current === c.id;
+          return (
+            <div key={c.id} className={`bg-card-2 border-[3px] rounded-[12px] p-2 shadow-[3px_3px_0_var(--color-outline)] ${on ? "border-gold" : "border-outline"}`}>
+              <CoverArt id={c.id} className="w-full aspect-[4/1] rounded-[8px] border-2 border-outline block bg-card" />
+              <div className="flex items-center justify-between gap-2 mt-2">
+                <div className="min-w-0">
+                  <div className="font-display text-lg tracking-wide leading-tight">{c.name}</div>
+                  <div className="text-sm font-extrabold" style={{ color: RARITY[c.rarity].color }}>
+                    {c.price === 0 ? "Free" : RARITY[c.rarity].label}
+                  </div>
+                </div>
+                {on ? (
+                  <Badge tone="gold">In use</Badge>
+                ) : owned ? (
+                  <Btn onClick={() => pick(c)}>Use</Btn>
+                ) : (
+                  <Btn kind={coins < c.price ? "ghost" : "primary"} disabled={coins < c.price} onClick={() => pick(c)} title={coins < c.price ? `You need ${c.price - coins} more coins` : `Buy for ${c.price} coins`}>
+                    {c.price} <Icon name="coin" size={20} />
+                  </Btn>
+                )}
+              </div>
+            </div>
+          );
+        })}
+        <div className={`bg-card-2 border-[3px] rounded-[12px] p-2 shadow-[3px_3px_0_var(--color-outline)] ${current === CUSTOM_COVER ? "border-gold" : "border-outline border-dashed"}`}>
+          {image ? (
+            <CoverArt id={CUSTOM_COVER} image={image} className="w-full aspect-[4/1] rounded-[8px] border-2 border-outline block" />
+          ) : (
+            <button className="w-full aspect-[4/1] rounded-[8px] border-2 border-dashed border-line grid place-items-center text-muted font-bold" onClick={() => file.current?.click()}>
+              <span className="flex items-center gap-2"><Icon name="image" size={22} /> Your own picture</span>
+            </button>
+          )}
+          <div className="flex items-center justify-between gap-2 mt-2 flex-wrap">
+            <div className="min-w-0">
+              <div className="font-display text-lg tracking-wide leading-tight">Your own picture</div>
+              <div className="text-sm font-extrabold text-muted">Free · wide pictures look best</div>
+            </div>
+            <div className="flex gap-1.5 flex-wrap">
+              {image && current !== CUSTOM_COVER && <Btn onClick={() => update((d) => void (ensureGame(d, today).cover = CUSTOM_COVER))}>Use</Btn>}
+              {current === CUSTOM_COVER && <Badge tone="gold">In use</Badge>}
+              <Btn kind={image ? "ghost" : "primary"} disabled={busy} onClick={() => file.current?.click()}>{busy ? "Loading…" : image ? "Change" : "Upload"}</Btn>
+              {image && (
+                <Btn kind="ghost" onClick={() => confirm("Remove your banner picture?") && update((d) => {
+                  const g = ensureGame(d, today);
+                  delete g.coverImage;
+                  if (g.cover === CUSTOM_COVER) delete g.cover;
+                })}>
+                  Remove
+                </Btn>
+              )}
+            </div>
+          </div>
+          <input ref={file} type="file" accept="image/*" className="hidden" onChange={(e) => (e.target.files?.[0] && upload(e.target.files[0]), (e.target.value = ""))} />
+        </div>
+      </div>
+    </Card>
   );
 }

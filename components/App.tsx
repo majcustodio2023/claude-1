@@ -20,6 +20,8 @@ import HeroTab from "./tabs/HeroTab";
 import BossFight from "./BossFight";
 import { Bar, Celebrations, Toasts, celebrate, money, toast } from "./ui";
 import { KitBubble } from "./KitChat";
+import { CoverLayer } from "./covers";
+import { activeCover } from "@/lib/covers";
 import { Hero, HeroStyleContext, KitStyleContext } from "./characters";
 import { claimRewards, pendingRewards } from "@/lib/loot";
 import { RARITY } from "@/lib/items";
@@ -269,9 +271,11 @@ function PlayerCard({ data, month, today, saving, onSettings }: { data: TrackerD
   const q = questStats(data, today);
   const mood = s.moneyMade >= s.expenseTarget ? "hype" : s.pctExpenses < 0.5 ? "focus" : "ready";
   const rankBg = { bad: "bg-bad", warn: "bg-warn", accent: "bg-accent", good: "bg-good", gold: "bg-gold" }[rank.tone];
+  const cover = activeCover(data);
   return (
     <header className="hud hud-hero mt-5 mb-4 overflow-hidden">
-      <div className="speed-lines" />
+      <CoverLayer id={cover} image={data.game?.coverImage} />
+      {cover === "classic" && <div className="speed-lines" />}
       <span className="sparkle" style={{ left: "8%", top: "16%" }} />
       <span className="sparkle" style={{ left: "30%", top: "70%", animationDelay: "0.6s" }} />
       <span className="sparkle" style={{ right: "6%", top: "12%", animationDelay: "1.1s" }} />
@@ -288,7 +292,7 @@ function PlayerCard({ data, month, today, saving, onSettings }: { data: TrackerD
             </div>
           </div>
         </div>
-        <div className="flex-1 min-w-60 pb-4">
+        <div className={`flex-1 min-w-60 pb-4 ${cover === "classic" ? "" : "[text-shadow:0_2px_0_#0b0a14,0_0_10px_rgba(11,10,20,0.95)]"}`}>
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="comic-num text-5xl sm:text-6xl leading-none text-ink uppercase">{data.settings.playerName || "Hero"}</h1>
             <span className={`font-display text-xl tracking-wide px-3 pt-1 pb-0.5 border-[3px] border-outline rounded-md text-outline shadow-[3px_3px_0_var(--color-outline)] rotate-[2deg] ${rankBg}`}>{rank.name}</span>

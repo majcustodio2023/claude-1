@@ -247,6 +247,14 @@ const P: Record<string, ReactNode> = {
       <path d="m7.5 12.3 3 3 6-6.3" />
     </>
   ),
+  image: (
+    <>
+      <rect {...tone} x="3" y="4.5" width="18" height="15" rx="2.5" />
+      <rect x="3" y="4.5" width="18" height="15" rx="2.5" />
+      <circle cx="8.5" cy="9.5" r="1.8" />
+      <path d="m3.5 17.5 5-5 3.5 3.5 2.5-2.5 6 6" />
+    </>
+  ),
   film: (
     <>
       <path {...tone} d="M3 9.5h18V20H3z" />
