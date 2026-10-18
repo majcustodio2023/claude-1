@@ -176,7 +176,7 @@ test("set-up staff have a real job due, once a day", async () => {
   const d = withClients();
   ensureCity(d, "2026-10-18");
   const b = d.city!.buildings.find((x) => x.clientId === "z")!;
-  const content = { id: "c1", buildingId: b.id, role: "content" as const, name: "Kaito", createdAt: "2026-10-18", setup: {} as Record<string, string> };
+  const content: import("../lib/types").CityStaff = { id: "c1", buildingId: b.id, role: "content", name: "Kaito", createdAt: "2026-10-18", setup: {} };
   d.city!.staff.push(content);
   d.integrations = { ...(d.integrations ?? {}), staffKeys: [] } as typeof d.integrations;
   assert.equal(dueJob(d, content, "2026-10-18"), null, "not set up yet");

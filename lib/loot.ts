@@ -51,6 +51,7 @@ export function pendingRewards(data: TrackerData): Pending[] {
   // The city: building missions, using the staff's services, and townspeople's quests.
   for (const b of data.city?.buildings ?? []) for (const t of b.todos ?? []) if (t.done) add({ key: `ctodo:${t.id}`, kind: "city", label: t.title, coins: REWARD.clientTask });
   for (const s of data.city?.staff ?? []) for (const o of s.outputs ?? []) add({ key: `service:${o.id}`, kind: "city", label: `${s.name} wrote for you`, coins: REWARD.service });
+  for (const w of data.staffWork ?? []) if (!w.auto && w.status !== "queued") add({ key: `service:${w.id}`, kind: "city", label: `${data.city?.staff.find((s) => s.id === w.staffId)?.name ?? "Staff"} finished: ${w.label}`, coins: REWARD.service });
   for (const r of data.city?.videoRequests ?? []) add({ key: `service:${r.id}`, kind: "city", label: `Sent a ${r.style} edit to the studio`, coins: REWARD.service });
   for (const q of QUESTS) if (questState(data, q.id) === "done") add({ key: `cquest:${q.id}`, kind: "city", label: `Quest: ${q.title}`, coins: q.coins });
   for (const d of data.deals) {

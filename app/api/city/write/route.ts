@@ -1,18 +1,17 @@
 import { NextResponse } from "next/server";
 import { WRITER_PROMPTS } from "@/lib/cityPrompts";
-import { getAnthropicKey, getData } from "@/lib/store";
+import { ROLES } from "@/lib/city";
+import { businessDay, finishOrQueue } from "@/lib/cityJobs-server";
+import { getData } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
 
-const MODEL = process.env.KIT_MODEL ?? "claude-sonnet-5-5";
-
 // A city writer (ad script, ad copy, image copy) writes from a landing page, following
-// its own instructions and samples. Uses the same Claude key as Kit.
+// its own instructions and samples. With Kit's API key it writes straight away; without
+// one the job is queued for Claude in the project, which writes it within the hour.
 export async function POST(req: Request) {
   const { staffId, input, target, more } = (await req.json()) as { staffId: string; input: string; target?: string; more?: string };
-  const key = await getAnthropicKey();
-  if (!key) return NextResponse.json({ error: "Writers use the same Claude key as Kit. Add it in Kit's chat on HQ first." }, { status: 400 });
   const data = await getData();
   const staff = data.city?.staff.find((s) => s.id === staffId);
   if (!staff || !WRITER_PROMPTS[staff.role]) return NextResponse.json({ error: "That writer isn't in the city any more." }, { status: 404 });
@@ -39,16 +38,10 @@ export async function POST(req: Request) {
   ].filter(Boolean);
 
   try {
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-      body: JSON.stringify({ model: MODEL, max_tokens: 4096, system, messages: [{ role: "user", content: parts.join("\n\n") }] }),
-      cache: "no-store",
-    });
-    const json = (await res.json()) as { content?: { type: string; text?: string }[]; error?: { message: string } };
-    if (!res.ok) throw new Error(json.error?.message ?? `Claude API error ${res.status}`);
-    const text = (json.content ?? []).filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
-    return NextResponse.json({ text });
+    const label = ROLES[staff.role]?.action ?? "Writing";
+    const day = businessDay(data);
+    const r = await finishOrQueue({ staffId: staff.id, buildingId: staff.buildingId, jobId: "write", label, input: page.slice(0, 300), day }, system, parts.join("\n\n"));
+    return NextResponse.json({ text: r.entry.text, queued: r.queued, work: r.work });
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 502 });
   }

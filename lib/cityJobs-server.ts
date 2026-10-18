@@ -9,7 +9,16 @@ import type { CityStaff, StaffWork, TrackerData } from "./types";
 
 const MODEL = process.env.KIT_MODEL ?? "claude-sonnet-5-5";
 
-export const NO_KEY = "Staff work with the same Claude key as Kit. Add it in Kit's chat on HQ first.";
+/** Saves a job's result, or (without an API key) queues it for Claude in the project, which
+ *  picks the queue up every hour and writes the results back (see supabase tracker_work_*). */
+export async function finishOrQueue(base: Omit<StaffWork, "text" | "id" | "at" | "status" | "prompt">, system: string, user: string): Promise<{ work: StaffWork[]; entry: StaffWork; queued?: boolean }> {
+  const key = await getAnthropicKey();
+  const entry: StaffWork = { ...base, id: `work-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`, text: "", at: new Date().toISOString() };
+  if (key) entry.text = await claude(key, system, user);
+  else Object.assign(entry, { status: "queued", prompt: { system, user } });
+  const work = await updateStaffWork((list) => [entry, ...list]);
+  return { work, entry, queued: !key || undefined };
+}
 
 /** Today in the business's time zone. */
 export function businessDay(data: TrackerData, now = new Date()): string {
@@ -50,9 +59,7 @@ async function pageNumbers(s: CityStaff): Promise<string | null> {
 }
 
 /** One job, done and saved. Returns the whole work list. */
-export async function doJob(staffId: string, jobId?: string, input?: string, auto = false): Promise<{ work: StaffWork[]; entry?: StaffWork; skipped?: boolean }> {
-  const key = await getAnthropicKey();
-  if (!key) throw new Error(NO_KEY);
+export async function doJob(staffId: string, jobId?: string, input?: string, auto = false): Promise<{ work: StaffWork[]; entry?: StaffWork; skipped?: boolean; queued?: boolean }> {
   const data = await getData();
   const s = data.city?.staff.find((x) => x.id === staffId);
   if (!s) throw new Error("They aren't in the city any more.");
@@ -82,26 +89,11 @@ export async function doJob(staffId: string, jobId?: string, input?: string, aut
     "Write the finished work, ready to copy and use. Start straight with the work (no preamble). Use clear headings and short lines so it reads well on a phone. Never invent numbers, results or testimonials; where a real detail is missing, leave a clearly marked [placeholder].",
   ].join("\n\n");
   const user = [`Your job now: ${job.label}.`, job.brief, given && `${job.input?.label ?? "Input"}:\n"""\n${given.slice(0, 30000)}\n"""`].filter(Boolean).join("\n\n");
-  const text = await claude(key, system, user);
-  const entry: StaffWork = {
-    id: `work-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
-    staffId: s.id,
-    buildingId: s.buildingId,
-    jobId: job.id,
-    label: job.label,
-    text,
-    input: given ? given.slice(0, 300) : undefined,
-    auto: auto || undefined,
-    day: today,
-    at: new Date().toISOString(),
-  };
-  const work = await updateStaffWork((list) => [entry, ...list]);
-  return { work, entry };
+  return finishOrQueue({ staffId: s.id, buildingId: s.buildingId, jobId: job.id, label: job.label, input: given ? given.slice(0, 300) : undefined, auto: auto || undefined, day: today }, system, user);
 }
 
 /** The daily round: everyone who's set up does what's due, a few at a time. */
 export async function runDailyWork(): Promise<{ done: number; failed: string[] }> {
-  if (!(await getAnthropicKey())) return { done: 0, failed: [] };
   const data = await getData();
   const today = businessDay(data);
   const due = (data.city?.staff ?? []).filter((s) => dueJob(data, s, today));
@@ -120,6 +112,7 @@ export async function postToDiscord(workId: string): Promise<StaffWork[]> {
   const w = (data.staffWork ?? []).find((x) => x.id === workId);
   const s = w && data.city?.staff.find((x) => x.id === w.staffId);
   if (!w || !s) throw new Error("That work isn't there any more.");
+  if (w.status === "queued") throw new Error("That one isn't written yet.");
   const channel = s.setup?.channel?.trim();
   const token = await getStaffSecret(secretKey(s.id, "botToken"));
   if (!token || !channel) throw new Error(`Add the Discord bot token and the channel ID in ${s.name}'s setup first.`);

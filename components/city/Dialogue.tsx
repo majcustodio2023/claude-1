@@ -153,8 +153,8 @@ export default function Dialogue({ talk, onClose, goTo }: { talk: Talk; onClose:
       choices = [back, bye];
     } else if (page === "work") {
       const mine = workOf(data, staff.id);
-      text = !data.integrations?.kit
-        ? "I work with Claude, the same key Kit uses. Add it in Kit's chat on HQ and I'll get going."
+      text = mine[0]?.status === "queued"
+        ? `I'm on "${mine[0].label.toLowerCase()}". It'll be here within the hour.`
         : mine.length
           ? `Here's what I've made. ${mine[0].day === today ? `Today I did: ${mine[0].label.toLowerCase()}.` : ""} Want something else? Pick a job.`
           : prog.missing.length
@@ -298,7 +298,7 @@ function rolePanel(role: StaffRole, staff: CityStaff, building: CityBuilding, da
       };
     case "writer":
       return {
-        text: data.integrations?.kit ? (staff.role === "imageCopy" ? "Paste the landing page. Tell me the target market, or leave it blank and I'll suggest one first." : "Paste the landing page or sales page copy and I'll get writing.") : "I write with Claude, the same key Kit uses. Add it in Kit's chat on HQ and come back.",
+        text: staff.role === "imageCopy" ? "Paste the landing page. Tell me the target market, or leave it blank and I'll suggest one first." : "Paste the landing page or sales page copy and I'll get writing.",
         panel: <WriterPanel staff={staff} />,
       };
     case "videoEdit":
@@ -673,7 +673,8 @@ function WriterPanel({ staff }: { staff: CityStaff }) {
       const r = await fetch("/api/city/write", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ staffId: staff.id, input, target, more }) });
       const j = await r.json();
       if (!r.ok) throw new Error(j.error ?? "Something went wrong");
-      edit((s) => void (s.outputs = [{ id: uid("out"), input: input.slice(0, 300), target: target || undefined, text: j.text, at: today }, ...(s.outputs ?? [])].slice(0, 10)));
+      update((d) => void (d.staffWork = j.work));
+      setInput("");
       sfx("loot");
     } catch (e) {
       setErr((e as Error).message);
@@ -708,14 +709,16 @@ function WriterPanel({ staff }: { staff: CityStaff }) {
             <Icon name="pencil" size={20} /> {busy ? "Writing…" : "Write it"}
           </Btn>
           {err && <p className="text-bad font-bold mt-2">{err}</p>}
-          {(live.outputs ?? []).map((o, i) => (
+          <QueuePoll staffId={live.id} />
+          {[...workOf(data, live.id).map((w) => ({ id: w.id, text: w.text, at: w.day, target: undefined as string | undefined, queued: w.status === "queued" })), ...(live.outputs ?? []).map((o) => ({ ...o, queued: false }))].map((o, i) => (
             <div key={o.id} className={`mt-4 bg-card-2 border-[3px] border-outline rounded-[10px] p-3 ${i === 0 ? "city-pop" : ""}`}>
               <div className="flex items-center gap-2 mb-2">
                 <Badge tone={i === 0 ? "gold" : "muted"}>{i === 0 ? "Latest" : o.at}</Badge>
+                {o.queued && <Badge tone="accent">Writing it</Badge>}
                 {o.target && <span className="text-sm font-bold text-muted truncate">For: {o.target}</span>}
-                <Btn className="ml-auto text-sm py-1" onClick={() => copy(o.id, o.text)}>{copied === o.id ? "Copied" : "Copy"}</Btn>
+                {!o.queued && <Btn className="ml-auto text-sm py-1" onClick={() => copy(o.id, o.text)}>{copied === o.id ? "Copied" : "Copy"}</Btn>}
               </div>
-              <div className="text-base whitespace-pre-wrap leading-relaxed">{o.text}</div>
+              <div className="text-base whitespace-pre-wrap leading-relaxed">{o.queued ? `${live.name} is writing this through your Claude account. It lands here within the hour.` : o.text}</div>
             </div>
           ))}
         </div>
@@ -977,12 +980,7 @@ function WorkPanel({ staff, goTo }: { staff: CityStaff; goTo: (t: string) => voi
           Works on their own: {live.autoWork === false ? "Off" : "On"}
         </button>
       </div>
-      {!data.integrations?.kit && (
-        <div className="bg-card-2 border-[3px] border-bad rounded-[10px] p-3 mb-3">
-          <p className="text-lg font-bold">Staff work with Claude, the same key Kit uses. It isn&apos;t added yet.</p>
-          <Btn kind="primary" className="mt-2" onClick={() => goTo("today")}>Add it in Kit&apos;s chat on HQ</Btn>
-        </div>
-      )}
+      <QueuePoll staffId={live.id} />
       {NOT_LIVE[live.role] && <p className="text-base font-bold text-muted mb-3">{NOT_LIVE[live.role]}</p>}
       <div className="flex gap-2 flex-wrap">
         {jobs.map((j) => (
@@ -992,11 +990,11 @@ function WorkPanel({ staff, goTo }: { staff: CityStaff; goTo: (t: string) => voi
         ))}
       </div>
       {job.input && <textarea className="w-full min-h-24 mt-2" placeholder={`${job.input.label}: ${job.input.placeholder}`} value={input} onChange={(e) => setInput(e.target.value)} />}
-      <Btn kind="primary" className="mt-2" disabled={Boolean(doing) || !data.integrations?.kit || (job.input?.required && input.trim().length < 10)} onClick={go}>
+      <Btn kind="primary" className="mt-2" disabled={Boolean(doing) || (job.input?.required && input.trim().length < 10)} onClick={go}>
         <Icon name="rocket" size={20} /> {doing ? `${doing}…` : "Do it now"}
       </Btn>
       {doing && <p className="text-base font-bold text-good mt-2 city-blink">{live.name} is on it. This takes up to a minute.</p>}
-      {!doing && due && live.autoWork !== false && data.integrations?.kit && <p className="text-sm font-bold text-muted mt-2">Up next on their own: {due.label.toLowerCase()}.</p>}
+      {!doing && due && live.autoWork !== false && <p className="text-sm font-bold text-muted mt-2">Up next on their own: {due.label.toLowerCase()}.</p>}
       {err && <p className="text-bad font-bold mt-2">{err}</p>}
       <ul className="mt-4 space-y-2">
         {mine.map((w, i) => {
@@ -1008,16 +1006,21 @@ function WorkPanel({ staff, goTo }: { staff: CityStaff; goTo: (t: string) => voi
                   {w.label}
                 </button>
                 <Badge tone={w.day === today ? "gold" : "muted"}>{w.day === today ? "Today" : w.day}</Badge>
+                {w.status === "queued" && <Badge tone="accent">Working on it</Badge>}
                 {w.auto && <Badge tone="accent">On their own</Badge>}
                 {w.sent && <Badge tone="good">{w.sent}</Badge>}
               </div>
               {shown && (
                 <>
                   {w.input && <p className="text-sm text-muted mt-1 truncate">From: {w.input}</p>}
-                  <div className="text-base whitespace-pre-wrap leading-relaxed mt-2 max-h-96 overflow-y-auto">{w.text}</div>
+                  {w.status === "queued" ? (
+                    <p className="text-base font-bold mt-2">{live.name} is working on this through your Claude account. It lands here within the hour, no need to wait around.</p>
+                  ) : (
+                    <div className="text-base whitespace-pre-wrap leading-relaxed mt-2 max-h-96 overflow-y-auto">{w.text}</div>
+                  )}
                   <div className="flex gap-2 mt-2 flex-wrap">
-                    <Btn className="text-sm py-1" onClick={() => copy(w.id, w.text)}>{copied === w.id ? "Copied" : "Copy"}</Btn>
-                    {canPost && !w.sent && (
+                    {w.status !== "queued" && <Btn className="text-sm py-1" onClick={() => copy(w.id, w.text)}>{copied === w.id ? "Copied" : "Copy"}</Btn>}
+                    {canPost && !w.sent && w.status !== "queued" && (
                       <Btn kind="primary" className="text-sm py-1" onClick={async () => (await call("POST", { workId: w.id, post: "discord" })) && sfx("coin")}>
                         Post to Discord
                       </Btn>
@@ -1035,6 +1038,25 @@ function WorkPanel({ staff, goTo }: { staff: CityStaff; goTo: (t: string) => voi
       {!mine.length && <p className="text-base text-muted mt-3">Nothing made yet.</p>}
     </div>
   );
+}
+
+/** While someone's work is queued, checks every minute for it to come back done. */
+function QueuePoll({ staffId }: { staffId: string }) {
+  const { data, update } = useTracker();
+  const waiting = (data.staffWork ?? []).some((w) => w.staffId === staffId && w.status === "queued");
+  useEffect(() => {
+    if (!waiting) return;
+    const t = setInterval(async () => {
+      try {
+        const r = await fetch("/api/city/work", { cache: "no-store" });
+        if (!r.ok) return;
+        const { work } = (await r.json()) as { work: StaffWork[] };
+        update((d) => void (d.staffWork = work));
+      } catch {}
+    }, 60000);
+    return () => clearInterval(t);
+  }, [waiting]);
+  return null;
 }
 
 /** Opens an uploaded video. A video stored in pieces is joined back together in the browser first. */
