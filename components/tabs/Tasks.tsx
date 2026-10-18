@@ -5,6 +5,7 @@ import { uid } from "@/lib/finance";
 import type { Quadrant, Task } from "@/lib/types";
 import { useTracker } from "../App";
 import { hasChest, taskKey } from "@/lib/loot";
+import { doneBefore } from "@/lib/tasks";
 import { Btn, Card, TextInput } from "../ui";
 import { Avatar } from "../avatars";
 import { SaveButton } from "../editable";
@@ -25,6 +26,7 @@ export default function Tasks() {
   const [form, setForm] = useState({ title: "", quadrant: "do" as Quadrant, owner: "You", dueDate: "" });
   const owners = Array.from(new Set(data.tasks.map((t) => t.owner))).sort();
   const done = data.tasks.filter((t) => t.done).length;
+  const completed = data.tasks.filter((t) => doneBefore(t, today) && (owner === "all" || t.owner === owner)).sort((a, b) => (b.doneOn ?? "").localeCompare(a.doneOn ?? ""));
   const set = (id: string, patch: Partial<Task>) => update((d) => void Object.assign(d.tasks.find((x) => x.id === id)!, patch));
 
   return (
@@ -70,7 +72,7 @@ export default function Tasks() {
 
       <div className="grid md:grid-cols-2 gap-4">
         {QUADS.map(([q, label, desc]) => {
-          const all = data.tasks.filter((t) => t.quadrant === q);
+          const all = data.tasks.filter((t) => t.quadrant === q && !doneBefore(t, today));
           const list = all.filter((t) => (owner === "all" || t.owner === owner) && !(hideDone && t.done));
           return (
             <Card key={q} glow={q === "do" ? "hero" : q === "schedule" ? "cyan" : q === "delegate" ? "good" : "gold"} title={`${label} · ${all.filter((t) => t.done).length}/${all.length}`}>
@@ -84,6 +86,23 @@ export default function Tasks() {
           );
         })}
       </div>
+
+      {completed.length > 0 && (
+        <details className="hud p-4 sm:p-5 group">
+          <summary className="cursor-pointer list-none flex items-center gap-2.5 font-display text-2xl tracking-wide">
+            <Icon name="check" size={24} />
+            Completed · {completed.length}
+            <span className="text-base font-sans font-bold text-muted ml-auto group-open:hidden">Show</span>
+            <span className="text-base font-sans font-bold text-muted ml-auto hidden group-open:inline">Hide</span>
+          </summary>
+          <p className="text-sm text-muted mt-2 mb-3">Missions finished before today. Untick one to send it back to its column.</p>
+          <ul className="space-y-2">
+            {completed.map((t) => (
+              <TaskItem key={t.id} task={t} />
+            ))}
+          </ul>
+        </details>
+      )}
     </div>
   );
 }
@@ -128,6 +147,7 @@ function TaskItem({ task: t }: { task: Task }) {
               {t.due && <span>· {t.due}</span>}
               {t.dueDate && <span>· due {t.dueDate}{t.time && ` at ${t.time}`}</span>}
               {t.dueDate && !t.done && t.dueDate < today && <span className="text-bad font-bold">overdue</span>}
+              {t.done && t.doneOn && t.doneOn < today && <span className="text-good font-bold">done {t.doneOn}</span>}
             </div>
             {t.details && <div className="text-sm text-muted mt-1">{t.details}</div>}
           </>
