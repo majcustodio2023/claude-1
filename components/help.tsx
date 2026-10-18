@@ -69,6 +69,14 @@ export const HELP = {
       <li>If one of these is really a client, open <Icon name="gear" size={20} /> and press &ldquo;This is a client&rdquo;.</li>
     </ul>
   ),
+  covers: (
+    <ul>
+      <li>Pick the background your hero stands on in the banner at the top.</li>
+      <li>Three are free. The rest are bought with coins, like gear.</li>
+      <li>Or upload your own picture. Wide pictures look best; it&apos;s shrunk to save space.</li>
+      <li>The name, XP and stats get a dark layer behind them so they stay easy to read.</li>
+    </ul>
+  ),
   payDays: (
     <ul>
       <li>Pick the day of the month each client pays. It shows on the Calendar every month as a pay day.</li>

@@ -424,6 +424,12 @@ export interface GameState {
   battleLosses?: { dealId: string; at: string; round: number }[];
   /** Recent coins and loot, newest first. */
   log: { at: string; text: string; coins?: number; item?: string }[];
+  /** Banner covers bought in the shop (free ones aren't listed). */
+  covers?: string[];
+  /** The banner cover in use: a cover id, or "custom" for your own picture. */
+  cover?: string;
+  /** Your own banner picture, shrunk to a small JPEG data URL. */
+  coverImage?: string;
 }
 
 /** One month of fun money: what was safe to spend, and whether it was saved instead. */
