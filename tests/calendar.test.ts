@@ -128,3 +128,12 @@ test("missions feed reads back as the same events", async () => {
     ["2026-10-23", "", "A very long mission title that goes on and on so the line must be folded across several lines"],
   ]);
 });
+
+test("missions finished before today leave their column; done today stays", async () => {
+  const { doneBefore } = await import("../lib/tasks");
+  const base = { id: "t", title: "x", quadrant: "do" as const, owner: "You" };
+  assert.equal(doneBefore({ ...base, done: true, doneOn: "2026-10-18" }, "2026-10-18"), false);
+  assert.equal(doneBefore({ ...base, done: true, doneOn: "2026-10-17" }, "2026-10-18"), true);
+  assert.equal(doneBefore({ ...base, done: true }, "2026-10-18"), true);
+  assert.equal(doneBefore({ ...base, done: false }, "2026-10-18"), false);
+});
