@@ -15,9 +15,11 @@ import Dialogue, { type Talk } from "./Dialogue";
 import { CityArt, CityGlow, InteriorArt, type HouseInfo, type InteriorInfo } from "./art";
 import {
   T, buildingName, hits, layoutCity, layoutInterior, moveBox, roadRoute, roleOf, roofColor, setupProgress, titleOf, visibleBuildings,
-  STUDIO_KINDS, type CityLayout, type InteriorLayout, type Pt, type Rect,
+  STUDIO_KINDS, isShop, type CityLayout, type InteriorLayout, type Pt, type Rect,
 } from "@/lib/city";
 import { buildingReport, missions } from "@/lib/cityReport";
+import { CITIZENS } from "@/lib/cityLore";
+import { randomHeroLook } from "@/lib/heroLook";
 import { hashString, rng } from "@/lib/avatar";
 import { sfx } from "@/lib/sound";
 import type { CityStaff, HeroLook } from "@/lib/types";
@@ -97,8 +99,9 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
 
   const staffById = useMemo(() => new Map(staff.map((s) => [s.id, s])), [staffKey, city.staff]);
   const nameOf = useCallback((id: string) => buildingName(data, buildings.find((b) => b.id === id) ?? buildings[0]), [data, bIds]);
-  const latest = useRef({ staffById, nameOf, keys, cityLayout, interior });
-  latest.current = { staffById, nameOf, keys, cityLayout, interior };
+  const shopIds = buildings.filter(isShop).map((b) => b.id);
+  const latest = useRef({ staffById, nameOf, keys, cityLayout, interior, shopIds });
+  latest.current = { staffById, nameOf, keys, cityLayout, interior, shopIds };
 
   const switchScene = useCallback((next: Scene, at?: Pt) => {
     setFade((f) => f + 1);
@@ -167,6 +170,16 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
           a.onArrive = () => (a.wait = 3 + rand() * 5);
         }
       };
+      for (const c of CITIZENS) {
+        const home = layout.spots[c.spot];
+        const a: Agent = { id: `cit:${c.id}`, ...home, path: [], wait: rand() * 3, act: pick(c.bubbles, rand), visible: true, face: 1, moving: false };
+        (a as Agent & { decide: () => void }).decide = () => {
+          a.path = [{ x: home.x + (rand() - 0.5) * (c.spot === "plaza-left" ? 10 : 90), y: home.y + (rand() - 0.5) * (c.spot === "plaza-left" ? 4 : 40) }];
+          a.act = pick(c.bubbles, rand);
+          a.onArrive = () => (a.wait = 3 + rand() * 5);
+        };
+        map.set(a.id, a);
+      }
       for (const s of latest.current.staffById.values()) {
         if (!plot(s.buildingId)) continue;
         const out = rand() < (s.role === "reporter" ? 0.25 : 0.5);
@@ -260,7 +273,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   const talkTo = useCallback((id: string) => {
     const a = agents.current.get(id);
     if (!a) return;
-    if (Math.hypot(a.x - player.current.x, a.y - player.current.y) < 90) setTalk({ kind: "staff", staffId: id });
+    if (Math.hypot(a.x - player.current.x, a.y - player.current.y) < 90) setTalk(id.startsWith("cit:") ? { kind: "citizen", id: id.slice(4) } : { kind: "staff", staffId: id });
     else tapTo.current = { x: a.x, y: a.y + 20 };
   }, []);
 
@@ -335,7 +348,13 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
           const foot = { x: P.x - 11, y: P.y - 8, w: 22, h: 10 };
           if (scene.type === "city") {
             const p = L.cityLayout.plots.find((pl) => hits(foot, pl.door));
-            if (p) {
+            if (p && L.shopIds.includes(p.buildingId)) {
+              P.y = p.door.y + p.door.h + 0.9 * T;
+              doorLock.current = now + 900;
+              tapTo.current = null;
+              sfx("door");
+              setTalk({ kind: "shop", buildingId: p.buildingId });
+            } else if (p) {
               spawnInside.current = true;
               switchScene({ type: "inside", id: p.buildingId });
               tapTo.current = null;
@@ -431,13 +450,20 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         for (const a of agents.current.values()) {
           if (!a.visible) continue;
           const d = Math.hypot(a.x - P.x, a.y - P.y);
+          if (d >= 70 || (best && d >= best.d)) continue;
           const s = L.staffById.get(a.id);
-          if (s && d < 70 && (!best || d < best.d)) best = { key: `s:${a.id}`, label: `Talk to ${s.name} · ${titleOf(s)}`, go: () => setTalk({ kind: "staff", staffId: a.id }), d };
+          const c = a.id.startsWith("cit:") ? CITIZENS.find((x) => `cit:${x.id}` === a.id) : undefined;
+          if (s) best = { key: `s:${a.id}`, label: `Talk to ${s.name} · ${titleOf(s)}`, go: () => setTalk({ kind: "staff", staffId: a.id }), d };
+          else if (c) best = { key: `c:${c.id}`, label: `Talk to ${c.name} · ${c.title}`, go: () => setTalk({ kind: "citizen", id: c.id }), d };
+        }
+        if (!best && scene.type === "city") {
+          const g = L.cityLayout.gate;
+          if (P.y < g.h + 1.6 * T && Math.abs(P.x - (g.x + g.w / 2)) < g.w * 0.8) best = { key: "gate", label: "Look at the gate", go: () => setTalk({ kind: "gate" }), d: 0 };
         }
         if (!best && scene.type === "city") {
           const f = L.cityLayout.fountain;
           const kx = f.x - f.r * 1.9;
-          const ky = f.y + f.r * 0.9;
+          const ky = f.y + f.r * 1.6;
           if (Math.hypot(kx - P.x, ky - P.y) < 80) best = { key: "kit", label: "Talk to Kit · City guide", go: () => setTalk({ kind: "kit" }), d: 0 };
         }
         if (!best && scene.type === "inside" && L.interior) {
@@ -520,8 +546,12 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
           {scene.type === "city" ? <CityArt layout={cityLayout} houses={housesMemo} cityName={city.name} /> : interior && interiorMemo && <InteriorArt layout={interior} info={interiorMemo} />}
           {scene.type === "city" && <KitNpc layout={cityLayout} />}
           {sceneStaff.map((s) => (
-            <Npc key={`${scene.type}-${s.id}`} staff={s} refFn={(el) => (el ? els.current.set(s.id, el) : els.current.delete(s.id))} onTalk={talkTo} />
+            <Npc key={`${scene.type}-${s.id}`} id={s.id} name={s.name} color={roleOf(s).color} look={s.look} refFn={(el) => (el ? els.current.set(s.id, el) : els.current.delete(s.id))} onTalk={talkTo} />
           ))}
+          {scene.type === "city" &&
+            CITIZENS.map((c) => (
+              <Npc key={c.id} id={`cit:${c.id}`} name={c.name} color={c.color} look={citizenLook(c.id, c.seed)} refFn={(el) => (el ? els.current.set(`cit:${c.id}`, el) : els.current.delete(`cit:${c.id}`))} onTalk={talkTo} />
+            ))}
           <div ref={playerEl} className="absolute left-0 top-0 city-walker" style={{ width: 64 }}>
             <div className="city-shadow" />
             <div className="city-flip">
@@ -604,31 +634,43 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   );
 }
 
+/** Townspeople's looks: seeded, with the hooded stranger in the dark. */
+const looks = new Map<string, HeroLook>();
+function citizenLook(id: string, seed: string): HeroLook {
+  if (!looks.has(id)) {
+    const l = randomHeroLook(rng(hashString(seed)));
+    if (id === "stranger") Object.assign(l, { outfit: "#16151f", accent: "#7c5cff", hairColor: "#16151f", skin: "#c4bfe6", eyes: "#b5179e", back: "cape", backColor: "#2b2d42", neck: "none" });
+    if (id === "bram") Object.assign(l, { hairColor: "#f5f5f5", outfit: "#5a3825", accent: "#9aa0b4" });
+    if (id === "ume") Object.assign(l, { hairColor: "#d8d8e0", outfit: "#f15bb5" });
+    looks.set(id, l);
+  }
+  return looks.get(id)!;
+}
+
 const Npc = memo(
-  function Npc({ staff, refFn, onTalk }: { staff: CityStaff; refFn: (el: HTMLDivElement | null) => void; onTalk: (id: string) => void }) {
-    const role = roleOf(staff);
+  function Npc({ id, name, color, look, refFn, onTalk }: { id: string; name: string; color: string; look?: HeroLook; refFn: (el: HTMLDivElement | null) => void; onTalk: (id: string) => void }) {
     return (
-      <div ref={refFn} className="absolute left-0 top-0 city-walker city-npc" style={{ width: SPRITE, display: "none" }} onClick={() => onTalk(staff.id)}>
+      <div ref={refFn} className="absolute left-0 top-0 city-walker city-npc" style={{ width: SPRITE, display: "none" }} onClick={() => onTalk(id)}>
         <div className="city-bubble" />
         <div className="city-shadow" />
         <div className="city-flip">
           <div className="city-body">
-            <Hero size={SPRITE} look={staff.look as HeroLook} items={[]} mood="ready" />
+            <Hero size={SPRITE} look={look} items={[]} mood="ready" />
           </div>
         </div>
-        <div className="city-tag" style={{ background: role.color }}>
-          {staff.name}
+        <div className="city-tag" style={{ background: color }}>
+          {name}
         </div>
       </div>
     );
   },
-  (a, b) => a.staff.id === b.staff.id && a.staff.name === b.staff.name && a.staff.role === b.staff.role && JSON.stringify(a.staff.look) === JSON.stringify(b.staff.look),
+  (a, b) => a.id === b.id && a.name === b.name && a.color === b.color && JSON.stringify(a.look) === JSON.stringify(b.look),
 );
 
 const KitNpc = memo(function KitNpc({ layout }: { layout: CityLayout }) {
   const f = layout.fountain;
   const x = f.x - f.r * 1.9;
-  const y = f.y + f.r * 0.9;
+  const y = f.y + f.r * 1.6;
   return (
     <div className="absolute left-0 top-0" style={{ transform: `translate(${x - 32}px, ${y - 62}px)`, zIndex: Math.round(y) }}>
       <div className="city-bubble" style={{ opacity: 1 }}>

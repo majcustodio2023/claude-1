@@ -241,7 +241,12 @@ const STUDIOS: { kind: BuildingKind; name: string; roles: StaffRoleId[]; color: 
   { kind: "video", name: "AI Video Maker", roles: ["reporter", "videoAI", "videoEdit"], color: "#7c5cff" },
   { kind: "acquisition", name: "Client Acquisition", roles: ["reporter", "funnel", "adsTracker", "videoEdit"], color: "#ff4d5e" },
   { kind: "creative", name: "Ad Creatives", roles: ["reporter", "scriptWriter", "copyWriter", "imageCopy", "imageAI"], color: "#ff9f1c" },
+  { kind: "weapons", name: "Blade & Bolt", roles: [], color: "#e63946" },
+  { kind: "armor", name: "Iron Threads", roles: [], color: "#2ec4b6" },
 ];
+
+/** Shops: walking in opens the shop counter instead of an interior. */
+export const isShop = (b: Pick<CityBuilding, "kind">) => b.kind === "weapons" || b.kind === "armor";
 
 export const STUDIO_KINDS: BuildingKind[] = STUDIOS.map((s) => s.kind);
 
@@ -348,6 +353,10 @@ export interface CityLayout {
   lamps: { x: number; y: number }[];
   solids: Rect[];
   spawn: { x: number; y: number };
+  /** The sealed gate to the Hollow Wilds, in the north wall */
+  gate: Rect;
+  /** Where townspeople hang out */
+  spots: Record<"gate" | "plaza-left" | "plaza-right" | "corner", Pt>;
 }
 
 export const COLS = 3;
@@ -402,15 +411,26 @@ export function layoutCity(buildingIds: string[], studioIds: string[] = []): Cit
     trees.push({ x: area.x + 0.35 * T, y: area.y + 0.9 * T, s: 0.85 }, { x: area.x + area.w - 0.35 * T, y: area.y + 0.9 * T, s: 0.85 });
   });
   for (let c = 0; c <= COLS; c++) for (let r = 0; r <= rows; r++) lamps.push({ x: MARGIN + c * (PLOT_W + ROAD) - 6, y: MARGIN + r * (PLOT_H + ROAD) - 6 });
-  // Forest border
-  for (let x = T * 0.6; x < w; x += T * 1.15) trees.push({ x, y: T * 0.9, s: 1 + rand() * 0.3 }, { x: x + T * 0.4, y: h - T * 0.5, s: 1 + rand() * 0.3 });
+  // Forest border, with the gate in the north wall above the plaza
+  const gate = { x: plaza.x + plaza.w / 2 - 1.6 * T, y: 0, w: 3.2 * T, h: MARGIN };
+  for (let x = T * 0.6; x < w; x += T * 1.15) {
+    if (x < gate.x - 0.6 * T || x > gate.x + gate.w + 0.6 * T) trees.push({ x, y: T * 0.9, s: 1 + rand() * 0.3 });
+    trees.push({ x: x + T * 0.4, y: h - T * 0.5, s: 1 + rand() * 0.3 });
+  }
+  solids.push({ x: gate.x - 0.4 * T, y: 0, w: gate.w + 0.8 * T, h: MARGIN - 0.15 * T });
   for (let y = T * 2; y < h - T; y += T * 1.15) trees.push({ x: T * 0.7, y, s: 1 + rand() * 0.3 }, { x: w - T * 0.7, y: y + T * 0.4, s: 1 + rand() * 0.3 });
   for (const t of trees) solids.push({ x: t.x - 12 * t.s, y: t.y - 14 * t.s, w: 24 * t.s, h: 16 * t.s });
   const fountain = { x: plaza.x + plaza.w / 2, y: plaza.y + plaza.h * 0.45, r: 1.3 * T };
   solids.push({ x: fountain.x - fountain.r, y: fountain.y - fountain.r * 0.7, w: fountain.r * 2, h: fountain.r * 1.3 });
   // Walls around the world
   solids.push({ x: -50, y: -50, w: w + 100, h: 50 + T * 0.3 }, { x: -50, y: h - T * 0.2, w: w + 100, h: 50 }, { x: -50, y: 0, w: 50 + T * 0.3, h }, { x: w - T * 0.3, y: 0, w: 50, h });
-  return { w, h, plots, roads, plaza, fountain, trees, lamps, solids, spawn: { x: fountain.x, y: plaza.y + plaza.h - T * 0.8 } };
+  const spots = {
+    gate: { x: gate.x + gate.w + 1.2 * T, y: MARGIN + ROAD * 0.75 },
+    "plaza-left": { x: fountain.x - fountain.r * 2.4, y: fountain.y + 26 },
+    "plaza-right": { x: fountain.x + fountain.r * 2.1, y: fountain.y + fountain.r * 1.3 },
+    corner: { x: w - MARGIN - ROAD / 2, y: h - MARGIN - ROAD / 2 - 1.5 * T },
+  };
+  return { w, h, plots, roads, plaza, fountain, trees, lamps, solids, spawn: { x: fountain.x, y: plaza.y + plaza.h - T * 0.8 }, gate, spots };
 }
 
 export interface Station {

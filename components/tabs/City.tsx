@@ -16,7 +16,7 @@ import { uid } from "@/lib/finance";
 import { sfx } from "@/lib/sound";
 import type { CityBuilding, StaffRoleId } from "@/lib/types";
 
-const KIND_LABEL: Record<string, string> = { client: "Client department", video: "Studio", acquisition: "Studio", creative: "Studio", custom: "Building" };
+const KIND_LABEL: Record<string, string> = { client: "Client department", video: "Studio", acquisition: "Studio", creative: "Studio", weapons: "Shop", armor: "Shop", custom: "Building" };
 
 export default function City({ goTo }: { goTo: (tab: string) => void }) {
   const { data, update, today } = useTracker();
@@ -70,6 +70,10 @@ export default function City({ goTo }: { goTo: (tab: string) => void }) {
       <Card title="City planner" icon="layout" help={HELP.city}>
         <div className="space-y-4">
           <EditableText label="City name" value={city.name} onChange={(v) => update((d) => void (d.city!.name = v.trim() || d.city!.name))} placeholder="Name your city" />
+          <label className="flex items-center gap-3 font-bold text-lg">
+            <input type="checkbox" className="w-5 h-5" checked={city.freeShops !== false} onChange={(e) => update((d) => void (d.city!.freeShops = e.target.checked))} />
+            Shops give gear away for free (turn off to make items cost coins)
+          </label>
           <div className="grid gap-3 lg:grid-cols-2">
             {buildings.map((b) => (
               <BuildingCard key={b.id} building={b} />

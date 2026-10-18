@@ -17,7 +17,7 @@ test("the city is built with the studios and a department per client, once", () 
   const d = withClients();
   assert.equal(ensureCity(d, "2026-10-18"), true);
   const kinds = d.city!.buildings.map((b) => b.kind);
-  assert.deepEqual(kinds.filter((k) => k !== "client"), ["video", "acquisition", "creative"]);
+  assert.deepEqual(kinds.filter((k) => k !== "client"), ["video", "acquisition", "creative", "weapons", "armor"]);
   assert.equal(kinds.filter((k) => k === "client").length, 2);
   assert.equal(ensureCity(d, "2026-10-18"), false);
   const names = d.city!.staff.map((s) => s.name);
@@ -84,4 +84,35 @@ test("the Progress Room reports the client's real tasks", () => {
   assert.deepEqual(r.stats, [["Done", "1"], ["Open", "1"], ["Overdue", "1"]]);
   assert.match(r.say, /1 mission done, 1 still open, and 1 overdue/);
   assert.equal(missions(d, b)[0].title, "Hooks");
+});
+
+test("townspeople quests count from when you take them and pay once", async () => {
+  const { questState } = await import("../lib/cityLore");
+  const { pendingRewards } = await import("../lib/loot");
+  const d = withClients();
+  ensureCity(d, "2026-10-18");
+  d.clientTasks = [{ id: "old", clientId: "z", title: "Old", assignees: ["me"], status: "done", createdAt: "2026-10-01" }];
+  d.game = { coins: 0, claimed: { "ctask:old": "x" }, owned: [], equipped: {}, log: [] };
+  assert.equal(questState(d, "three-missions"), "new");
+  d.city!.quests = { "three-missions": { at: "2026-10-18", base: 1 } };
+  assert.equal(questState(d, "three-missions"), "active");
+  for (const id of ["a", "b", "c"]) d.clientTasks.push({ id, clientId: "z", title: id, assignees: ["me"], status: "done", createdAt: "2026-10-18" });
+  assert.equal(questState(d, "three-missions"), "done");
+  const keys = pendingRewards(d).map((p) => p.key);
+  assert.ok(keys.includes("cquest:three-missions"));
+  d.game.claimed["cquest:three-missions"] = "2026-10-18";
+  assert.ok(!pendingRewards(d).some((p) => p.key === "cquest:three-missions"));
+});
+
+test("shops hand gear out free unless turned off", async () => {
+  const { takeShopItem } = await import("../lib/loot");
+  const d = withClients();
+  ensureCity(d, "2026-10-18");
+  assert.ok(d.city!.buildings.some((b) => b.kind === "weapons") && d.city!.buildings.some((b) => b.kind === "armor"));
+  d.game = { coins: 0, claimed: {}, owned: [], equipped: {}, log: [] };
+  assert.equal(takeShopItem(d, "katana", "2026-10-18"), null);
+  assert.equal(d.game.equipped.weapon, "katana");
+  assert.match(takeShopItem(d, "scythe", "2026-10-18")!, /beyond the gate/);
+  d.city!.freeShops = false;
+  assert.match(takeShopItem(d, "hammer", "2026-10-18")!, /more coins/);
 });

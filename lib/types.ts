@@ -500,7 +500,7 @@ export type StaffRoleId =
   | "reporter" | "social" | "content" | "insights" | "ads" | "email" | "discord" | "webinar" | "app" | "store"
   | "videoAI" | "videoEdit" | "funnel" | "adsTracker" | "imageAI" | "scriptWriter" | "copyWriter" | "imageCopy" | "custom";
 
-export type BuildingKind = "client" | "video" | "acquisition" | "creative" | "custom";
+export type BuildingKind = "client" | "video" | "acquisition" | "creative" | "weapons" | "armor" | "custom";
 
 export interface CityRoom {
   id: string;
@@ -572,4 +572,8 @@ export interface CityState {
   /** Studios (video, acquisition, creative) knocked down on purpose. */
   skipKinds?: BuildingKind[];
   videoRequests?: VideoRequest[];
+  /** Quests taken from townspeople: when, and the count their goal is measured from. */
+  quests?: Record<string, { at: string; base: number }>;
+  /** Shops give gear away while this is on (default). Off = items cost coins. */
+  freeShops?: boolean;
 }

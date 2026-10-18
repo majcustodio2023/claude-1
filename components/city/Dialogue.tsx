@@ -17,6 +17,14 @@ import { blip, sfx } from "@/lib/sound";
 import { ROLES, buildingName, roleOf, say, secretKey, setupProgress, titleOf, type StaffRole } from "@/lib/city";
 import { buildingReport, missions } from "@/lib/cityReport";
 import { WRITER_PROMPTS } from "@/lib/cityPrompts";
+import { GATE, SHOPKEEPERS, STAFF_CHATS, citizenById, citizenStart, questById, questProgress, questState } from "@/lib/cityLore";
+import { ITEMS, RARITY, SLOT_LABEL } from "@/lib/items";
+import { ITEM_POWER } from "@/lib/battle";
+import { takeShopItem } from "@/lib/loot";
+import { hashString, rng } from "@/lib/avatar";
+import { randomHeroLook } from "@/lib/heroLook";
+import type { HeroLook, ItemSlot } from "@/lib/types";
+import { toast } from "../ui";
 import type { CityBuilding, CityStaff, Creative, TrackerData } from "@/lib/types";
 
 export type Talk =
@@ -24,9 +32,12 @@ export type Talk =
   | { kind: "board"; buildingId: string }
   | { kind: "screen"; buildingId: string }
   | { kind: "room"; buildingId: string; roomId: string }
-  | { kind: "kit" };
+  | { kind: "kit" }
+  | { kind: "citizen"; id: string }
+  | { kind: "gate" }
+  | { kind: "shop"; buildingId: string };
 
-type Page = "greet" | "jobs" | "panel" | "setup";
+type Page = "greet" | "jobs" | "panel" | "setup" | "chat" | "news" | `reply:${number}` | `node:${string}`;
 
 /** Each speaker gets their own voice pitch. */
 const pitchOf = (id: string) => 62 + (id.split("").reduce((a, c) => a + c.charCodeAt(0), 0) % 18);
@@ -49,9 +60,11 @@ function useTyped(text: string, voice: number) {
 
 export default function Dialogue({ talk, onClose, goTo }: { talk: Talk; onClose: () => void; goTo: (tab: string) => void }) {
   const { data, update, month, today } = useTracker();
-  const [page, setPage] = useState<Page>(talk.kind === "board" || talk.kind === "screen" ? "panel" : "greet");
+  const citizen = talk.kind === "citizen" ? citizenById(talk.id) : undefined;
+  const [page, setPage] = useState<Page>(talk.kind === "board" || talk.kind === "screen" ? "panel" : citizen ? `node:${citizenStart(data, citizen)}` : talk.kind === "gate" ? "node:0" : "greet");
+  const [chat] = useState(() => Math.floor(Math.random() * STAFF_CHATS.length));
   const staff = talk.kind === "staff" ? data.city?.staff.find((s) => s.id === talk.staffId) : undefined;
-  const bId = talk.kind === "staff" ? staff?.buildingId : talk.kind === "kit" ? undefined : talk.buildingId;
+  const bId = talk.kind === "staff" ? staff?.buildingId : "buildingId" in talk ? talk.buildingId : undefined;
   const building = data.city?.buildings.find((b) => b.id === bId);
   const place = building ? buildingName(data, building) : data.city?.name ?? "the city";
   const reporter = data.city?.staff.find((s) => s.buildingId === bId && s.role === "reporter");
@@ -65,7 +78,46 @@ export default function Dialogue({ talk, onClose, goTo }: { talk: Talk; onClose:
   const bye = { label: "See you!", go: onClose };
   const back = { label: "Back", go: () => setPage("greet") };
 
-  if (talk.kind === "kit") {
+  if (citizen) {
+    const id = page.startsWith("node:") ? page.slice(5) : "start";
+    const node = citizen.nodes[id] ?? citizen.nodes.start;
+    speaker = { id: citizen.id, name: citizen.name, title: citizen.title, color: citizen.color, portrait: <Hero look={citizenPortrait(citizen.id)} items={[]} size={112} /> };
+    text = node.text;
+    if (citizen.quest && ["offer", "accepted", "waiting", "after"].includes(id)) panel = <QuestCard id={citizen.quest} />;
+    choices = node.replies.map((r) => ({
+      label: r.label,
+      primary: Boolean(r.quest),
+      go: () => {
+        if (r.quest) {
+          const q = questById(r.quest)!;
+          update((d) => void (d.city!.quests = { ...(d.city!.quests ?? {}), [q.id]: { at: today, base: q.progress(d) } }));
+          sfx("loot");
+        }
+        if (r.next) setPage(`node:${r.next}`);
+        else onClose();
+      },
+    }));
+  } else if (talk.kind === "gate") {
+    const n = GATE[Number(page.slice(5)) || 0];
+    speaker = { id: "gate", name: "The Gate", title: "North wall", color: "#7c5cff", portrait: <Icon name="lock" size={80} className="text-hero" /> };
+    text = n.text;
+    if (page === "node:1") sfx("dark");
+    choices = n.replies.map((r) => ({ label: r.label, go: () => (r.next ? setPage(`node:${r.next}`) : onClose()) }));
+  } else if (talk.kind === "shop" && building) {
+    const k = SHOPKEEPERS[building.kind as "weapons" | "armor"] ?? SHOPKEEPERS.weapons;
+    speaker = { id: k.seed, name: k.name, title: `${k.title} · ${place}`, color: k.color, portrait: <Hero look={citizenPortrait(k.seed)} items={[]} size={112} /> };
+    if (page === "panel") {
+      text = data.city?.freeShops === false ? "Coins on the counter and it's yours." : "Everything's on the house while you're the only hero in town. Take what you like.";
+      panel = <ShopPanel slots={k.slots} />;
+      choices = [{ label: "Back", go: () => setPage("greet") }, bye];
+    } else if (page === "news") {
+      text = k.news;
+      choices = [{ label: "Show me the goods", go: () => setPage("panel"), primary: true }, { label: "Creepy. Bye.", go: onClose }];
+    } else {
+      text = k.greet;
+      choices = [{ label: "Show me the goods", go: () => setPage("panel"), primary: true }, { label: "Heard any news?", go: () => setPage("news") }, bye];
+    }
+  } else if (talk.kind === "kit") {
     const all = data.city?.staff ?? [];
     const waiting = all.filter((s) => setupProgress(s, keys).missing.length > 0).length;
     speaker = { id: "kit", name: "Kit", title: "City guide", color: "#ff9f1c", portrait: <Kit size={120} talking /> };
@@ -80,9 +132,17 @@ export default function Dialogue({ talk, onClose, goTo }: { talk: Talk; onClose:
       choices = [
         { label: role.action, go: () => setPage(role.panel === "setup" ? "setup" : "panel"), primary: true },
         { label: "What do you do?", go: () => setPage("jobs") },
+        { label: "How's it going?", go: () => setPage("chat") },
         ...(role.needs.length && role.panel !== "setup" ? [{ label: "My setup", go: () => setPage("setup") }] : []),
         bye,
       ];
+    } else if (page === "chat") {
+      const c = STAFF_CHATS[chat];
+      text = c.line;
+      choices = c.replies.map(([label], i) => ({ label, go: () => setPage(`reply:${i}`) }));
+    } else if (page.startsWith("reply:")) {
+      text = STAFF_CHATS[chat].replies[Number(page.slice(6))]?.[1] ?? "";
+      choices = [{ label: "Back to work talk", go: () => setPage("greet") }, bye];
     } else if (page === "jobs") {
       text = `My day looks like this: ${role.jobs.map((j) => j.toLowerCase()).join(", ")}.${prog.missing.length ? ` First I need: ${prog.missing.map((m) => m.label.toLowerCase()).join(", ")}.` : ""}`;
       choices = [back, bye];
@@ -821,3 +881,114 @@ function RoomPanel({ building, roomId }: { building: CityBuilding; roomId: strin
   );
 }
 
+
+/** Looks for townspeople and shopkeepers (the same seeds as in the city). */
+const portraits = new Map<string, HeroLook>();
+function citizenPortrait(id: string): HeroLook {
+  if (!portraits.has(id)) {
+    const c = citizenById(id);
+    const l = randomHeroLook(rng(hashString(c?.seed ?? id)));
+    if (id === "stranger") Object.assign(l, { outfit: "#16151f", accent: "#7c5cff", hairColor: "#16151f", skin: "#c4bfe6", eyes: "#b5179e", back: "cape", backColor: "#2b2d42", neck: "none" });
+    if (id === "bram") Object.assign(l, { hairColor: "#f5f5f5", outfit: "#5a3825", accent: "#9aa0b4" });
+    if (id === "ume") Object.assign(l, { hairColor: "#d8d8e0", outfit: "#f15bb5" });
+    portraits.set(id, l);
+  }
+  return portraits.get(id)!;
+}
+
+function QuestCard({ id }: { id: string }) {
+  const { data } = useTracker();
+  const q = questById(id);
+  if (!q) return null;
+  const st = questState(data, id);
+  const got = questProgress(data, id);
+  const claimed = Boolean(data.game?.claimed?.[`cquest:${id}`]);
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-2">
+        <Icon name="scroll" size={26} className="text-gold" />
+        <h3 className="font-display text-2xl tracking-wide flex-1">Quest: {q.title}</h3>
+        <Badge tone={st === "done" ? "good" : st === "active" ? "gold" : "accent"}>{st === "done" ? (claimed ? "Complete" : "Done!") : st === "active" ? "In progress" : "New"}</Badge>
+      </div>
+      <p className="text-lg font-bold">{q.goal}</p>
+      <div className="flex items-center gap-3 mt-3">
+        <div className="flex-1 h-4 rounded-full border-[3px] border-outline bg-card-2 overflow-hidden">
+          <div className="h-full bg-gold city-fill" style={{ width: `${st === "new" ? 0 : (got / q.need) * 100}%` }} />
+        </div>
+        <span className="font-display text-xl">{st === "new" ? 0 : got}/{q.need}</span>
+        <span className="flex items-center gap-1 font-display text-xl text-gold">
+          <Icon name="coin" size={20} /> {q.coins}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+const STAT_LABEL: Record<string, string> = { hp: "HP", atk: "ATK", def: "DEF", spd: "SPD", crit: "CRIT" };
+
+function ShopPanel({ slots }: { slots: string[] }) {
+  const { data, update, today } = useTracker();
+  const free = data.city?.freeShops !== false;
+  const owned = new Set(data.game?.owned ?? []);
+  const equipped = data.game?.equipped ?? {};
+  const list = ITEMS.filter((i) => slots.includes(i.slot));
+  const take = (id: string) =>
+    update((d) => {
+      const err = takeShopItem(d, id, today);
+      if (err) toast(err);
+      else sfx("loot");
+    });
+  const wear = (slot: ItemSlot, id: string) => update((d) => void (d.game!.equipped[slot] = d.game!.equipped[slot] === id ? undefined : id));
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-3">
+        <Icon name="shop" size={26} className="text-gold" />
+        <h3 className="font-display text-2xl tracking-wide flex-1">{free ? "Everything's free right now" : "For sale"}</h3>
+        <span className="flex items-center gap-1 font-display text-xl"><Icon name="coin" size={20} className="text-gold" />{data.game?.coins ?? 0}</span>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+        {list.map((it) => {
+          const have = owned.has(it.id);
+          const on = equipped[it.slot] === it.id;
+          const locked = it.source === "loot";
+          const stats = Object.entries(ITEM_POWER[it.id]?.stats ?? {});
+          return (
+            <div key={it.id} className="bg-card-2 border-[3px] border-outline rounded-[10px] overflow-hidden flex flex-col" style={{ boxShadow: `inset 0 0 0 2px ${RARITY[it.rarity].color}55` }}>
+              <div className="h-24 grid place-content-center overflow-hidden" style={{ background: `radial-gradient(circle, ${RARITY[it.rarity].color}44, transparent 70%)` }}>
+                <div className={locked && !have ? "opacity-40 grayscale" : ""}>
+                  <Hero size={78} items={[it.id]} />
+                </div>
+              </div>
+              <div className="p-2 flex-1 flex flex-col">
+                <div className="font-extrabold leading-tight">{it.name}</div>
+                <div className="text-xs font-extrabold uppercase" style={{ color: RARITY[it.rarity].color }}>
+                  {RARITY[it.rarity].label} · {SLOT_LABEL[it.slot]}
+                </div>
+                {stats.length > 0 && <div className="text-xs font-bold text-muted mt-0.5">{stats.map(([k, v]) => `${STAT_LABEL[k] ?? k} +${v}`).join(" · ")}</div>}
+                <div className="mt-auto pt-2">
+                  {have ? (
+                    <button type="button" onClick={() => wear(it.slot, it.id)} className={`w-full btn text-sm py-1 ${on ? "btn-primary" : "btn-ghost"}`}>
+                      {on ? "Wearing" : "Wear"}
+                    </button>
+                  ) : locked ? (
+                    <div className="text-xs font-extrabold text-hero text-center py-1">Drops beyond the gate</div>
+                  ) : (
+                    <button type="button" onClick={() => take(it.id)} className="w-full btn btn-primary text-sm py-1">
+                      {free ? (
+                        <>
+                          <s className="opacity-60 mr-1">{it.price}</s> Free
+                        </>
+                      ) : (
+                        `${it.price} coins`
+                      )}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

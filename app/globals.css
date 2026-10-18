@@ -513,3 +513,6 @@ html[data-light="1"] .speed-lines { opacity: 0.4; filter: invert(1); }
 @keyframes alert-pop { 50% { transform: scale(1.15); } }
 .lamp-glow { animation: lamp 3s ease-in-out infinite; }
 @keyframes lamp { 50% { opacity: 0.8; } }
+.fog { animation: fog 6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.fog-2 { animation-duration: 8s; animation-delay: -3s; }
+@keyframes fog { 0%, 100% { transform: translateX(-12px) scale(1); opacity: 0.25; } 50% { transform: translateX(14px) scale(1.15); opacity: 0.45; } }

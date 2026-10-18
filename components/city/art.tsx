@@ -136,7 +136,7 @@ function House({ r, info, door }: { r: Rect; info: HouseInfo; door: Rect }) {
           <Avatar value={info.avatar} seed={info.id} kind="emblem" size={52} />
         </svg>
       ) : (
-        <Icon name={info.kind === "video" ? "film" : info.kind === "acquisition" ? "rocket" : info.kind === "creative" ? "palette" : "home"} size={40} x={r.x + r.w / 2 - 20} y={r.y + roofH * 0.5 - 20} style={{ color: shade(roof, -0.35) }} strokeWidth={2.4} />
+        <Icon name={info.kind === "video" ? "film" : info.kind === "acquisition" ? "rocket" : info.kind === "creative" ? "palette" : info.kind === "weapons" ? "swords" : info.kind === "armor" ? "shield" : "home"} size={40} x={r.x + r.w / 2 - 20} y={r.y + roofH * 0.5 - 20} style={{ color: shade(roof, -0.35) }} strokeWidth={2.4} />
       )}
       {/* sign */}
       <g transform={`translate(${r.x + r.w / 2 - signW / 2} ${wallTop + 56})`}>
@@ -168,6 +168,12 @@ function House({ r, info, door }: { r: Rect; info: HouseInfo; door: Rect }) {
           <text x="43" y="22" textAnchor="middle" fontFamily="Bangers, Impact, sans-serif" fontSize="20" fill={INK}>ADS LAB</text>
         </g>
       )}
+      {(info.kind === "weapons" || info.kind === "armor") && (
+        <g transform={`translate(${r.x + 18} ${r.y - 22})`}>
+          <rect width="86" height="30" rx="6" fill="#ffd23f" stroke={INK} strokeWidth="3" className="neon" />
+          <text x="43" y="22" textAnchor="middle" fontFamily="Bangers, Impact, sans-serif" fontSize="20" fill={INK}>SHOP</text>
+        </g>
+      )}
       {info.kind === "acquisition" && (
         <g transform={`translate(${r.x + 18} ${r.y - 22})`}>
           <rect width="86" height="30" rx="6" fill="#ff4d5e" stroke={INK} strokeWidth="3" className="neon" />
@@ -189,6 +195,35 @@ function Flowers({ r, seed }: { r: Rect; seed: string }) {
         const y = r.y + 8 + rand() * (r.h - 16);
         return <circle key={i} cx={x} cy={y} r={4 + rand() * 2} fill={colors[Math.floor(rand() * colors.length)]} stroke={INK} strokeWidth="1.5" />;
       })}
+    </g>
+  );
+}
+
+/** The sealed gate to the Hollow Wilds: chains, fog seeping out, and a warning sign. */
+function Gate({ r }: { r: Rect }) {
+  const cx = r.x + r.w / 2;
+  return (
+    <g>
+      <rect x={r.x - 30} y={-10} width={r.w + 60} height={r.h + 10} fill="#2a1f3d" />
+      <ellipse cx={cx} cy={r.h - 6} rx={r.w * 0.9} ry="26" fill="#9aa0b4" opacity="0.35" className="fog" />
+      <ellipse cx={cx - 40} cy={r.h + 4} rx={r.w * 0.5} ry="16" fill="#c0c7d6" opacity="0.3" className="fog fog-2" />
+      <g stroke={INK} strokeWidth="4" strokeLinejoin="round">
+        <rect x={r.x - 26} y={-6} width="30" height={r.h + 4} rx="4" fill="#6c757d" />
+        <rect x={r.x + r.w - 4} y={-6} width="30" height={r.h + 4} rx="4" fill="#6c757d" />
+        <rect x={r.x - 30} y={-12} width="38" height="14" rx="3" fill="#8d96a8" />
+        <rect x={r.x + r.w - 8} y={-12} width="38" height="14" rx="3" fill="#8d96a8" />
+        {Array.from({ length: 7 }, (_, i) => (
+          <path key={i} d={`M${r.x + 10 + i * ((r.w - 20) / 6)} 0 V${r.h - 4}`} stroke="#3a3a4a" strokeWidth="6" />
+        ))}
+        <path d={`M${r.x + 4} ${r.h * 0.35} H${r.x + r.w - 4} M${r.x + 4} ${r.h * 0.75} H${r.x + r.w - 4}`} stroke="#3a3a4a" strokeWidth="6" />
+        <path d={`M${r.x + 6} ${r.h * 0.2} L${r.x + r.w - 6} ${r.h * 0.8} M${r.x + r.w - 6} ${r.h * 0.2} L${r.x + 6} ${r.h * 0.8}`} stroke="#b08d57" strokeWidth="5" strokeDasharray="8 4" />
+        <circle cx={cx} cy={r.h * 0.5} r="11" fill="#b08d57" />
+      </g>
+      <g transform={`translate(${cx - 70} ${r.h + 22})`}>
+        <rect width="140" height="40" rx="4" fill="#ffd23f" stroke={INK} strokeWidth="4" transform="rotate(-3 70 20)" />
+        <text x="70" y="19" textAnchor="middle" fontFamily="Bangers, Impact, sans-serif" fontSize="19" fill="#e63946" transform="rotate(-3 70 20)">DANGER</text>
+        <text x="70" y="34" textAnchor="middle" fontFamily="Bangers, Impact, sans-serif" fontSize="13" fill={INK} transform="rotate(-3 70 20)">DO NOT ENTER</text>
+      </g>
     </g>
   );
 }
@@ -254,6 +289,7 @@ export const CityArt = memo(function CityArt({ layout, houses, cityName }: { lay
         const info = byId.get(p.buildingId);
         return info ? <House key={p.buildingId} r={p.house} info={info} door={p.door} /> : null;
       })}
+      <Gate r={L.gate} />
       {L.lamps.map((l, i) => (
         <Lamp key={i} x={l.x} y={l.y} />
       ))}
