@@ -12,7 +12,10 @@ import { Hero, Kit } from "../characters";
 import { Icon } from "../icons";
 import { Btn } from "../ui";
 import Dialogue, { type Talk } from "./Dialogue";
-import { CityArt, CityGlow, CityLabels, InteriorArt, InteriorLabels, type HouseInfo, type InteriorInfo } from "./art";
+import Decorate from "./Decorate";
+import { CityArt, CityGlow, CityLabels, InteriorArt, InteriorLabels, type DeskStatus, type HouseInfo, type InteriorInfo } from "./art";
+import { HomeArt, HomeLabels } from "./homeArt";
+import { FURNITURE, furnitureOf, layoutHome } from "@/lib/home";
 import { picture, sprite } from "./pictures";
 import { cityWork, type Work } from "@/lib/cityWork";
 import { dueJob } from "@/lib/cityJobs";
@@ -76,23 +79,32 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   const [near, setNear] = useState<string>("");
   const [travel, setTravel] = useState(false);
   const [fade, setFade] = useState(0);
+  const [decorating, setDecorating] = useState(false);
+  const [picked, setPicked] = useState("");
+  const [badSpot, setBadSpot] = useState(false);
 
   const buildings = visibleBuildings(data);
   const bIds = buildings.map((b) => b.id).join(",");
   const studioIds = STUDIO_KINDS.map((k) => buildings.find((b) => b.kind === k)?.id).filter((x): x is string => Boolean(x));
-  const cityLayout = useMemo(() => layoutCity(bIds ? bIds.split(",") : [], studioIds), [bIds, studioIds.join(",")]);
+  const homeIds = buildings.filter((b) => b.kind === "home").map((b) => b.id);
+  const cityLayout = useMemo(() => layoutCity(bIds ? bIds.split(",") : [], studioIds, homeIds), [bIds, studioIds.join(","), homeIds.join(",")]);
   const staff = city.staff.filter((s) => buildings.some((b) => b.id === s.buildingId));
   const staffKey = staff.map((s) => `${s.id}:${s.buildingId}:${s.role}`).join("|");
 
   const inside = scene.type === "inside" ? buildings.find((b) => b.id === scene.id) : undefined;
+  const atHome = inside?.kind === "home";
+  const furnKey = atHome ? JSON.stringify(furnitureOf(inside!)) : "";
+  const homeLayout = useMemo(() => (furnKey ? layoutHome(JSON.parse(furnKey)) : null), [furnKey]);
   const insideStaff = inside ? staff.filter((s) => s.buildingId === inside.id) : [];
   const reporterId = insideStaff.find((s) => s.role === "reporter")?.id;
   const roomKey = (inside?.rooms ?? []).map((r) => r.id).join(",");
   const deskIds = insideStaff.filter((s) => s.id !== reporterId).map((s) => s.id).join(",");
-  const interior = useMemo(() => (scene.type === "inside" ? layoutInterior(deskIds ? deskIds.split(",") : [], reporterId, roomKey ? roomKey.split(",") : []) : null), [scene, deskIds, reporterId, roomKey]);
+  const interior = useMemo(() => (scene.type === "inside" && !atHome ? layoutInterior(deskIds ? deskIds.split(",") : [], reporterId, roomKey ? roomKey.split(",") : []) : null), [scene, deskIds, reporterId, roomKey, atHome]);
+  /** The room you're in (an office or your home): its size, walls and way out. */
+  const room = interior ?? homeLayout;
 
-  const W = interior?.w ?? cityLayout.w;
-  const H = interior?.h ?? cityLayout.h;
+  const W = room?.w ?? cityLayout.w;
+  const H = room?.h ?? cityLayout.h;
 
   // ---- refs the frame loop works with ----
   const viewport = useRef<HTMLDivElement>(null);
@@ -108,6 +120,8 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   const nearAct = useRef<(() => void) | null>(null);
   const talkRef = useRef<Talk | null>(null);
   const doorLock = useRef(0);
+  const decoRef = useRef(false);
+  decoRef.current = decorating;
   const spawnInside = useRef(false);
   const zoomRef = useRef(1);
   const cam = useRef({ x: 0, y: 0 });
@@ -142,13 +156,15 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   const nameOf = useCallback((id: string) => buildingName(data, buildings.find((b) => b.id === id) ?? buildings[0]), [data, bIds]);
   const shopIds = buildings.filter(isShop).map((b) => b.id);
   const kinds = useMemo(() => new Map(buildings.map((b) => [b.id, b.kind as string])), [bIds]);
-  const latest = useRef({ staffById, nameOf, keys, cityLayout, interior, shopIds, work, kinds });
-  latest.current = { staffById, nameOf, keys, cityLayout, interior, shopIds, work, kinds };
+  const latest = useRef({ staffById, nameOf, keys, cityLayout, interior, room, homeLayout, shopIds, work, kinds });
+  latest.current = { staffById, nameOf, keys, cityLayout, interior, room, homeLayout, shopIds, work, kinds };
 
   const switchScene = useCallback((next: Scene, at?: Pt) => {
     setFade((f) => f + 1);
     sfx("door");
     setTalk(null);
+    setDecorating(false);
+    setPicked("");
     setScene(next);
     doorLock.current = performance.now() + 700;
     if (at) Object.assign(player.current, at);
@@ -305,11 +321,16 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
 
   // Walking in through the door puts you just inside it.
   useEffect(() => {
-    if (interior && spawnInside.current) {
+    if (room && spawnInside.current) {
       spawnInside.current = false;
-      Object.assign(player.current, interior.spawn);
+      Object.assign(player.current, room.spawn);
     }
-  }, [interior]);
+  }, [room]);
+  // Furniture moved onto you: step back to the door.
+  useEffect(() => {
+    const P = player.current;
+    if (homeLayout && homeLayout.solids.some((r) => hits({ x: P.x - 11, y: P.y - 8, w: 22, h: 10 }, r))) Object.assign(P, homeLayout.spawn);
+  }, [homeLayout]);
 
   const talkTo = useCallback((id: string) => {
     const a = agents.current.get(id);
@@ -330,7 +351,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         else setTravel(false);
         return;
       }
-      if ((k === " " || k === "enter" || k === "e") && !talkRef.current) {
+      if ((k === " " || k === "enter" || k === "e") && !talkRef.current && !decoRef.current) {
         nearAct.current?.();
         return;
       }
@@ -359,10 +380,10 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       const L = latest.current;
-      const solids = scene.type === "city" ? L.cityLayout.solids : L.interior?.solids ?? [];
+      const solids = scene.type === "city" ? L.cityLayout.solids : L.room?.solids ?? [];
       const P = player.current;
-      // player
-      if (!talkRef.current) {
+      // player (stands still while you talk or decorate)
+      if (!talkRef.current && !decoRef.current) {
         const k = pressed.current;
         let dx = (k.has("arrowright") || k.has("d") ? 1 : 0) - (k.has("arrowleft") || k.has("a") ? 1 : 0) + joy.current.x;
         let dy = (k.has("arrowdown") || k.has("s") ? 1 : 0) - (k.has("arrowup") || k.has("w") ? 1 : 0) + joy.current.y;
@@ -400,7 +421,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
               switchScene({ type: "inside", id: p.buildingId });
               tapTo.current = null;
             }
-          } else if (L.interior && hits(foot, L.interior.exit)) {
+          } else if (L.room && hits(foot, L.room.exit)) {
             const p = L.cityLayout.plots.find((pl) => pl.buildingId === scene.id);
             switchScene({ type: "city" }, p ? { x: p.door.x + p.door.w / 2, y: p.door.y + p.door.h + 0.9 * T } : L.cityLayout.spawn);
             tapTo.current = null;
@@ -445,15 +466,19 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
       // camera
       const vp = viewport.current;
       if (vp && world.current) {
-        const vw = vp.clientWidth;
-        const vh = vp.clientHeight;
+        const fullW = vp.clientWidth;
+        const fullH = vp.clientHeight;
+        // While decorating, the room fits in the space the decorate panel leaves free.
+        const vw = decoRef.current && fullW >= 640 ? fullW - 400 : fullW;
+        const vh = decoRef.current && fullW < 640 ? fullH * 0.55 : fullH;
         // Close enough to see faces and read signs; a bit wider on big screens.
         const base = vw < 700 ? 1.05 : Math.min(1.75, Math.max(1.35, Math.min(vw, vh * 1.6) / 1100));
         // Inside, zoom in so the room fills the screen.
-        const z = scene.type === "inside" && L.interior ? Math.max(base, Math.min(2, vw / L.interior.w, (vh - 40) / L.interior.h)) : base;
+        const fit = L.room ? Math.min(2, vw / L.room.w, (vh - 40) / L.room.h) : base;
+        const z = scene.type === "inside" && L.room ? (decoRef.current ? fit : Math.max(base, fit)) : base;
         zoomRef.current = z;
-        const ww = (scene.type === "city" ? L.cityLayout.w : L.interior?.w ?? 0) * z;
-        const wh = (scene.type === "city" ? L.cityLayout.h : L.interior?.h ?? 0) * z;
+        const ww = (scene.type === "city" ? L.cityLayout.w : L.room?.w ?? 0) * z;
+        const wh = (scene.type === "city" ? L.cityLayout.h : L.room?.h ?? 0) * z;
         const cx = ww <= vw ? -(vw - ww) / 2 : Math.min(Math.max(P.x * z - vw / 2, 0), ww - vw);
         const cy = wh <= vh ? -(vh - wh) / 2 : Math.min(Math.max(P.y * z - vh / 2, 0), wh - vh);
         cam.current = { x: cx, y: cy };
@@ -528,6 +553,12 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
             if (room) best = { key: `r:${room.id}`, label: "Look around this room", go: () => setTalk({ kind: "room", buildingId: scene.id, roomId: room.id }), d: 0 };
           }
         }
+        if (!best && scene.type === "inside" && L.homeLayout) {
+          // Walk up to any piece of furniture to start decorating.
+          const near = L.homeLayout.items.find((f) => !FURNITURE[f.kind].walk && hits({ x: P.x - 30, y: P.y - 30, w: 60, h: 50 }, f.rect));
+          if (near) best = { key: `h:${near.id}`, label: "Decorate your home", go: () => (setPicked(near.id), setDecorating(true)), d: 0 };
+        }
+        if (decoRef.current) best = null;
         nearAct.current = best?.go ?? null;
         const label = best ? `${best.key}|${best.label}` : "";
         if (label !== lastNear) {
@@ -581,22 +612,29 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
             const r = insideStaff.find((s) => s.id === reporterId);
             return r ? { name: r.name, title: titleOf(r) } : undefined;
           })(),
-          desks: insideStaff.filter((s) => s.id !== reporterId).map((s) => ({ staffId: s.id, name: s.name, title: titleOf(s), color: roleOf(s).color, ready: !setupProgress(s, keys).missing.length })),
+          kind: inside.kind,
+          desks: insideStaff.filter((s) => s.id !== reporterId).map((s) => ({ staffId: s.id, name: s.name, title: titleOf(s), role: s.role, color: roleOf(s).color, ready: !setupProgress(s, keys).missing.length })),
         };
       })()
     : null;
   const interiorKey = JSON.stringify(interiorInfo);
   const interiorMemo = useMemo(() => interiorInfo, [interiorKey]);
+  // Each desk's nameplate shows whether they're working, done, free or waiting on you.
+  const deskStatus = useMemo(() => Object.fromEntries(insideStaff.map((s) => [s.id, work.get(s.id) ?? { state: "idle" as const, line: "" }])) as DeskStatus, [workKey, scene, staffKey]);
 
   // The scenery as one picture; it's redrawn only when the town or the room changes.
   const [sceneryUrl, setSceneryUrl] = useState("");
   useEffect(() => {
-    const url = scene.type === "city" ? picture(<CityArt layout={cityLayout} houses={housesMemo} />) : interior && interiorMemo ? picture(<InteriorArt layout={interior} info={interiorMemo} />) : "";
+    const url =
+      scene.type === "city" ? picture(<CityArt layout={cityLayout} houses={housesMemo} />)
+      : homeLayout ? picture(<HomeArt layout={homeLayout} />)
+      : interior && interiorMemo ? picture(<InteriorArt layout={interior} info={interiorMemo} />)
+      : "";
     setSceneryUrl(url);
     return () => {
       if (url) setTimeout(() => URL.revokeObjectURL(url), 2000);
     };
-  }, [scene.type, cityLayout, housesMemo, interior, interiorMemo]);
+  }, [scene.type, cityLayout, housesMemo, interior, interiorMemo, homeLayout]);
 
   const heroItems = Object.values(data.game?.equipped ?? {}).filter((x): x is string => Boolean(x));
   const heroGear = Object.keys(data.heroGear ?? {});
@@ -615,7 +653,13 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
       <div ref={viewport} className="absolute inset-0 overflow-hidden" onPointerDown={onPointer}>
         <div ref={world} className="absolute left-0 top-0 origin-top-left will-change-transform" style={{ width: W, height: H }}>
           {sceneryUrl && <img src={sceneryUrl} alt="" width={W} height={H} className="absolute left-0 top-0 block max-w-none" draggable={false} />}
-          {scene.type === "city" ? <CityLabels layout={cityLayout} houses={housesMemo} cityName={city.name} /> : interior && interiorMemo && <InteriorLabels layout={interior} info={interiorMemo} />}
+          {scene.type === "city" ? (
+            <CityLabels layout={cityLayout} houses={housesMemo} cityName={city.name} />
+          ) : homeLayout ? (
+            <HomeLabels layout={homeLayout} selected={decorating ? picked : undefined} problem={badSpot} />
+          ) : (
+            interior && interiorMemo && <InteriorLabels layout={interior} info={interiorMemo} status={deskStatus} />
+          )}
           {scene.type === "city" && <KitNpc layout={cityLayout} />}
           {sceneStaff.map((s) => (
             <Npc key={`${scene.type}-${s.id}`} id={s.id} name={s.name} color={roleOf(s).color} look={s.look} refFn={(el) => (el ? els.current.set(s.id, el) : els.current.delete(s.id))} onTalk={talkTo} />
@@ -656,6 +700,11 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
           </span>
         </div>
         <div className="ml-auto flex gap-2 pointer-events-auto">
+          {atHome && !decorating && (
+            <Btn kind="primary" onClick={() => (setTalk(null), setDecorating(true))} className="flex items-center gap-1.5">
+              <Icon name="palette" size={20} /> Decorate
+            </Btn>
+          )}
           <Btn onClick={() => setTravel((v) => !v)} className="flex items-center gap-1.5">
             <Icon name="pin" size={20} /> <span className="max-sm:hidden">Go to</span>
           </Btn>
@@ -691,7 +740,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
       )}
 
       {/* talk prompt */}
-      {nearLabel && !talk && (
+      {nearLabel && !talk && !decorating && (
         <div className="absolute bottom-8 left-1/2 max-sm:bottom-48 city-prompt z-30">
           <button type="button" onClick={() => nearAct.current?.()} className="hud px-4 py-2.5 flex items-center gap-2 text-lg font-extrabold whitespace-nowrap">
             <span className="max-sm:hidden font-display bg-gold text-outline border-2 border-outline rounded px-2 pt-0.5">SPACE</span>
@@ -701,7 +750,16 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
       )}
       {!talk && <div className="absolute bottom-2 left-3 text-sm font-bold text-ink/80 max-sm:hidden pointer-events-none [text-shadow:0_1px_0_#000]">Arrows or WASD to walk · Shift to run · Space to talk · Tap the ground to walk there</div>}
 
-      <TouchPad joy={joy} onA={() => nearAct.current?.()} hidden={Boolean(talk)} />
+      <TouchPad joy={joy} onA={() => nearAct.current?.()} hidden={Boolean(talk) || decorating} />
+      {decorating && inside && (
+        <Decorate
+          buildingId={inside.id}
+          selected={picked}
+          onSelect={setPicked}
+          onProblem={setBadSpot}
+          onClose={() => (setDecorating(false), setPicked(""), setBadSpot(false))}
+        />
+      )}
 
       {talk && <Dialogue talk={talk} onClose={() => setTalk(null)} goTo={goTo} />}
     </div>

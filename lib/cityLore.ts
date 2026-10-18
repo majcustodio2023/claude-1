@@ -1,13 +1,14 @@
 // The city's townspeople, their gossip, the quests they hand out, and the small talk the
 // staff make. Something is stirring beyond the Danger gate in the north...
 //
-// Lore in short: Nova City was built on the ruins of the old ad market. North of the gate
+// Lore in short: Dawnterra was built on the ruins of the old ad market. North of the gate
 // lie the Hollow Wilds, home of the Ghosted: monsters born from leads that went cold,
 // invoices nobody paid and scope that crept. Lately the Static, a grey fog, has been
 // seeping under the gate, and the old-timers say the Algorithm Beast is waking.
 
 import { isWriter } from "./cityPrompts";
 import { setupProgress } from "./city";
+import { addedFurniture } from "./home";
 import type { TrackerData } from "./types";
 
 export interface Reply {
@@ -49,18 +50,30 @@ export const QUESTS: Quest[] = [
   {
     id: "first-words",
     title: "Words that sell",
-    goal: "Have one of the Ad Creatives writers write something for you.",
+    goal: "Have one of the Ad Creative Studio writers write something for you.",
     coins: 40,
     need: 1,
-    progress: (d) => (d.city?.staff ?? []).filter((s) => isWriter(s.role)).reduce((a, s) => a + (s.outputs?.length ?? 0), 0),
+    progress: (d) => {
+      const writers = new Set((d.city?.staff ?? []).filter((s) => isWriter(s.role)).map((s) => s.id));
+      const old = (d.city?.staff ?? []).filter((s) => writers.has(s.id)).reduce((a, s) => a + (s.outputs?.length ?? 0), 0);
+      return old + (d.staffWork ?? []).filter((w) => writers.has(w.staffId) && w.status !== "queued" && w.text).length;
+    },
   },
   {
     id: "moving-picture",
     title: "A moving picture",
-    goal: "Get a video made at the AI Video Maker (an AI video, or an edit marked done).",
+    goal: "Get a video made at the Video Production House (an AI video, or an edit marked done).",
     coins: 70,
     need: 1,
     progress: (d) => (d.creatives ?? []).filter((c) => c.kind === "video" && c.status === "ready").length + (d.city?.videoRequests ?? []).filter((r) => r.status === "done").length,
+  },
+  {
+    id: "house-home",
+    title: "A House to Call Home",
+    goal: "Go into your home, press Decorate and add a new piece of furniture.",
+    coins: 30,
+    need: 1,
+    progress: (d) => (d.city?.buildings ?? []).filter((b) => b.kind === "home").reduce((a, b) => a + addedFurniture(b), 0),
   },
 ];
 
@@ -80,7 +93,7 @@ export const questProgress = (d: TrackerData, id: string) => {
   return Math.min(q.need, Math.max(0, q.progress(d) - (taken?.base ?? 0)));
 };
 
-export type Spot = "gate" | "plaza-left" | "plaza-right" | "corner";
+export type Spot = "gate" | "plaza-left" | "plaza-right" | "corner" | "home";
 
 export interface Citizen {
   id: string;
@@ -233,14 +246,14 @@ export const CITIZENS: Citizen[] = [
       },
       strange: { text: "The best ones are, dear. Now, are you going to help an old woman or just stand there looking heroic?", replies: [{ label: "Help, of course.", next: "offer" }, { label: "Looking heroic, mostly.", next: "" }] },
       offer: {
-        text: "Your writers at the Ad Creatives building are good with words. Have one of them write something real for you. Bring words that would've survived the old market, and I'll give you a little something.",
+        text: "Your writers at the Ad Creative Studio are good with words. Have one of them write something real for you. Bring words that would've survived the old market, and I'll give you a little something.",
         replies: [
           { label: "I'll get them writing.", quest: "first-words", next: "accepted" },
           { label: "Another time.", next: "" },
         ],
       },
       accepted: { text: "Mind you give them a proper landing page. Writers are like soup: they're only as good as what you put in.", replies: [{ label: "Yes, Granny.", next: "" }] },
-      waiting: { text: "No words yet? The writers are in the Ad Creatives building, the orange one. Go on.", replies: [{ label: "On my way.", next: "" }] },
+      waiting: { text: "No words yet? The writers are in the Ad Creative Studio, the purple one. Go on.", replies: [{ label: "On my way.", next: "" }] },
       after: {
         text: "Now THAT would have sold soap. Keep words like these and the Static will never find you. Here, for your trouble. Don't spend it all at the smith's.",
         replies: [
@@ -277,12 +290,52 @@ export const CITIZENS: Citizen[] = [
           { label: "I don't negotiate with beasts.", next: "" },
         ],
       },
-      offer: { text: "Make one. At the Video Maker. Bring me proof it moves, and I'll make it worth your while.", replies: [{ label: "Fine. One video.", quest: "moving-picture", next: "accepted" }, { label: "Not yet.", next: "" }] },
+      offer: { text: "Make one. At the Video Production House, the red roof. Bring me proof it moves, and I'll make it worth your while.", replies: [{ label: "Fine. One video.", quest: "moving-picture", next: "accepted" }, { label: "Not yet.", next: "" }] },
       accepted: { text: "…Good. Don't keep it waiting.", replies: [{ label: "…Okay.", next: "" }] },
       waiting: { text: "Still nothing that moves. The purple building. The director there shoots with Higgsfield. The editor takes your own footage.", replies: [{ label: "Going.", next: "" }] },
       after: {
         text: "It moved. It noticed. You've bought yourself time, hero. When the gate opens, come find me. I'll be the one not running.",
         replies: [{ label: "That's not reassuring.", next: "" }, { label: "See you at the gate.", next: "" }],
+      },
+    },
+  },
+  {
+    id: "hazel",
+    name: "Hazel",
+    title: "Town carpenter",
+    color: "#c9774a",
+    spot: "home",
+    seed: "hazel-carpenter-dawn",
+    quest: "house-home",
+    bubbles: ["Mind the sawdust!", "Every hero needs a home.", "Measure twice, cut once."],
+    nodes: {
+      start: {
+        text: "Oi, you're the one who moved into the little cottage! I built it, you know. Every beam. The old folks call this place Dawnterra because the first light hits it before anywhere else.",
+        replies: [
+          { label: "Why does that matter?", next: "dawn" },
+          { label: "Got any work for me?", next: "offer" },
+          { label: "Nice to meet you, Hazel.", next: "" },
+        ],
+      },
+      dawn: {
+        text: "Because the Dawnlight keeps the Static out. Homes with a fire lit and a bit of life in them hold the light longest. Empty houses go grey first.",
+        replies: [
+          { label: "Then I'd better make mine feel lived in.", next: "offer" },
+          { label: "Sounds like a story for kids.", next: "" },
+        ],
+      },
+      offer: {
+        text: "Here's a job, then. Go inside, press Decorate, and put in something new. A table, a sofa, a plant, whatever you like. Move things around too. Make it yours, and I'll pay you for the trouble.",
+        replies: [
+          { label: "Deal. I'll make it mine.", quest: "house-home", next: "accepted" },
+          { label: "Maybe later.", next: "" },
+        ],
+      },
+      accepted: { text: "That's the spirit! Mind the doorway, though. Nothing goes in front of the door, or you'll never get back out.", replies: [{ label: "Got it.", next: "" }] },
+      waiting: { text: "Nothing new in there yet? Walk in, press Decorate, then Add. Easy as that.", replies: [{ label: "On it.", next: "" }] },
+      after: {
+        text: "Now THAT looks like a home. You can see the light in the windows from here. Here's your pay, carpenter's honour.",
+        replies: [{ label: "Thanks, Hazel.", next: "" }],
       },
     },
   },

@@ -500,9 +500,18 @@ export interface KitMessage {
 
 export type StaffRoleId =
   | "reporter" | "social" | "content" | "insights" | "ads" | "email" | "discord" | "webinar" | "app" | "store"
-  | "videoAI" | "videoEdit" | "funnel" | "adsTracker" | "imageAI" | "scriptWriter" | "copyWriter" | "imageCopy" | "custom";
+  | "videoAI" | "videoEdit" | "funnel" | "adsTracker" | "imageAI" | "scriptWriter" | "copyWriter" | "imageCopy" | "storyboard" | "videoScript" | "custom";
 
-export type BuildingKind = "client" | "video" | "acquisition" | "creative" | "weapons" | "armor" | "custom";
+export type BuildingKind = "client" | "video" | "acquisition" | "creative" | "weapons" | "armor" | "home" | "custom";
+
+/** A piece of furniture in the player's home, on the room's tile grid. */
+export interface PlacedFurniture {
+  id: string;
+  /** lib/home.ts FURNITURE key */
+  kind: string;
+  x: number;
+  y: number;
+}
 
 export interface CityRoom {
   id: string;
@@ -533,6 +542,8 @@ export interface CityBuilding {
   progressNote?: string;
   /** Mission Room list for buildings with no client (client buildings use the client's tasks). */
   todos?: CityTodo[];
+  /** The player's home: furniture as placed. */
+  furniture?: PlacedFurniture[];
   createdAt: string;
 }
 
@@ -612,4 +623,6 @@ export interface CityState {
   freeShops?: boolean;
   /** Set once client buildings of the same company have been merged automatically. */
   merged?: boolean;
+  /** Set once the town was moved to Dawnterra (renamed studios, new video staff). */
+  dawnterra?: boolean;
 }
