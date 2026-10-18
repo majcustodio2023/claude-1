@@ -12,7 +12,7 @@ import type { AutopilotEntry, Creative, TrackerData } from "./types";
 
 interface StoredDoc {
   data: TrackerData;
-  secrets?: { tokens?: Record<string, string>; higgsfield?: string; anthropic?: string; openai?: string; calendar?: string; feed?: string };
+  secrets?: { tokens?: Record<string, string>; higgsfield?: string; anthropic?: string; openai?: string; calendar?: string; feed?: string; staff?: Record<string, string> };
 }
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -92,6 +92,7 @@ function withTokenFlags(doc: StoredDoc): TrackerData {
       kit: Boolean(process.env.ANTHROPIC_API_KEY || doc.secrets?.anthropic),
       voice: Boolean(process.env.OPENAI_API_KEY || doc.secrets?.openai),
       calendar: Boolean(doc.secrets?.calendar),
+      staffKeys: Object.keys(doc.secrets?.staff ?? {}),
     },
   };
 }
@@ -271,4 +272,14 @@ export async function dataForFeed(token: string): Promise<TrackerData | null> {
   const a = createHash("sha256").update(decrypt(doc.secrets.feed)).digest();
   const b = createHash("sha256").update(token).digest();
   return timingSafeEqual(a, b) ? doc.data : null;
+}
+
+/** A city staff member's key or password (e.g. a Discord bot token), saved under "staffId:need". Encrypted; never sent back. */
+export async function setStaffSecret(key: string, value: string | null): Promise<string[]> {
+  const doc = await loadDoc();
+  const staff = { ...(doc.secrets?.staff ?? {}) };
+  if (value) staff[key] = encrypt(value.trim());
+  else delete staff[key];
+  await writeDoc({ ...doc, secrets: { ...doc.secrets, staff } });
+  return Object.keys(staff);
 }

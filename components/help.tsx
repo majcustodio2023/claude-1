@@ -252,6 +252,14 @@ export const HELP = {
       <li>Prefer things still? Set Motion to &ldquo;Still&rdquo; to stop the animations.</li>
     </ul>
   ),
+  city: (
+    <ul>
+      <li>Every client gets a building (a department) the moment you add them in Clients. The studios (AI Video Maker, Client Acquisition, Ad Creatives) are built for you.</li>
+      <li>Inside each building: the Progress Room reports real numbers, the Mission Room holds the to-do list (a client&apos;s tasks from the Clients tab), plus any rooms you add.</li>
+      <li>Each AI staff member tells you what they need. Links and handles are saved with your data; keys and passwords are encrypted on the server and never shown again.</li>
+      <li>Hire more staff, add rooms, rename the city or knock a building down here. Press Edit on a building to change it.</li>
+    </ul>
+  ),
   settings: (
     <ul>
       <li>Your name, business, currency, date format and time zone. Everything in the app uses these.</li>

@@ -481,8 +481,10 @@ export interface TrackerData {
   autopilotLog?: AutopilotEntry[];
   /** Ad creatives: AI-generated (Higgsfield) or added by link. Owned by the server. */
   creatives?: Creative[];
+  /** The virtual city: buildings (one per client plus studios), their rooms and AI staff. */
+  city?: CityState;
   /** Set by the server: which integrations have a saved key (keys never reach the browser). */
-  integrations?: { higgsfield?: boolean; kit?: boolean; voice?: boolean; calendar?: boolean };
+  integrations?: { higgsfield?: boolean; kit?: boolean; voice?: boolean; calendar?: boolean; staffKeys?: string[] };
   updatedAt?: string;
 }
 
@@ -490,4 +492,88 @@ export interface KitMessage {
   role: "user" | "assistant";
   text: string;
   at: string;
+}
+
+// ---- The city ----
+
+export type StaffRoleId =
+  | "reporter" | "social" | "content" | "insights" | "ads" | "email" | "discord" | "webinar" | "app" | "store"
+  | "videoAI" | "videoEdit" | "funnel" | "adsTracker" | "imageAI" | "scriptWriter" | "copyWriter" | "imageCopy" | "custom";
+
+export type BuildingKind = "client" | "video" | "acquisition" | "creative" | "weapons" | "armor" | "custom";
+
+export interface CityRoom {
+  id: string;
+  name: string;
+  notes?: string;
+}
+
+export interface CityTodo {
+  id: string;
+  title: string;
+  done: boolean;
+  doneOn?: string;
+}
+
+export interface CityBuilding {
+  id: string;
+  kind: BuildingKind;
+  name: string;
+  /** Client buildings: the client this is the department for. */
+  clientId?: string;
+  /** Roof colour (#rrggbb). Blank = picked from the id. */
+  color?: string;
+  /** Extra rooms beside the built-in Progress Room and Mission Room. */
+  rooms?: CityRoom[];
+  /** What the reporter says on top of the automatic numbers. */
+  progressNote?: string;
+  /** Mission Room list for buildings with no client (client buildings use the client's tasks). */
+  todos?: CityTodo[];
+  createdAt: string;
+}
+
+export interface CityStaff {
+  id: string;
+  buildingId: string;
+  role: StaffRoleId;
+  name: string;
+  /** Job title shown instead of the role's (custom staff). */
+  title?: string;
+  look?: HeroLook;
+  /** Answers to what the role needs (links, handles, schedule). Keys and passwords go to the server, not here. */
+  setup?: Record<string, string>;
+  /** Writers: how they write (their system prompt). Blank = the role's starting instructions. */
+  instructions?: string;
+  /** Writers: examples to copy the style of (pasted text or links to sample ads). */
+  samples?: { id: string; text: string }[];
+  /** Writers: what they wrote, newest first (kept short). */
+  outputs?: { id: string; input: string; target?: string; text: string; at: string }[];
+  createdAt: string;
+}
+
+export interface VideoRequest {
+  id: string;
+  buildingId: string;
+  /** Link to the raw video (Drive, Dropbox…). */
+  videoUrl: string;
+  style: string;
+  prompt: string;
+  status: "requested" | "editing" | "done";
+  resultUrl?: string;
+  createdAt: string;
+}
+
+export interface CityState {
+  name: string;
+  buildings: CityBuilding[];
+  staff: CityStaff[];
+  /** Clients whose building was knocked down on purpose, so it isn't rebuilt. */
+  skipClients?: string[];
+  /** Studios (video, acquisition, creative) knocked down on purpose. */
+  skipKinds?: BuildingKind[];
+  videoRequests?: VideoRequest[];
+  /** Quests taken from townspeople: when, and the count their goal is measured from. */
+  quests?: Record<string, { at: string; base: number }>;
+  /** Shops give gear away while this is on (default). Off = items cost coins. */
+  freeShops?: boolean;
 }
