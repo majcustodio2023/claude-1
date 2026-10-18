@@ -521,6 +521,8 @@ export interface CityBuilding {
   name: string;
   /** Client buildings: the client this is the department for. */
   clientId?: string;
+  /** More clients this building also covers: income lines of the same company, e.g. a commission and a second-half payment. */
+  clientIds?: string[];
   /** Roof colour (#rrggbb). Blank = picked from the id. */
   color?: string;
   /** Extra rooms beside the built-in Progress Room and Mission Room. */
@@ -554,8 +556,10 @@ export interface CityStaff {
 export interface VideoRequest {
   id: string;
   buildingId: string;
-  /** Link to the raw video (Drive, Dropbox…). */
+  /** Link to the raw video (Drive, Dropbox…). Blank when uploaded or prompt-only. */
   videoUrl: string;
+  /** Uploaded raw video: its path in the tracker's file storage, and the file name. */
+  file?: { path: string; name: string; size: number };
   style: string;
   prompt: string;
   status: "requested" | "editing" | "done";
@@ -576,4 +580,6 @@ export interface CityState {
   quests?: Record<string, { at: string; base: number }>;
   /** Shops give gear away while this is on (default). Off = items cost coins. */
   freeShops?: boolean;
+  /** Set once client buildings of the same company have been merged automatically. */
+  merged?: boolean;
 }

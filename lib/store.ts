@@ -283,3 +283,39 @@ export async function setStaffSecret(key: string, value: string | null): Promise
   await writeDoc({ ...doc, secrets: { ...doc.secrets, staff } });
   return Object.keys(staff);
 }
+
+// ---------- uploaded files (raw videos for the city's video editors) ----------
+
+/** The private folder uploads go in. Only callers with the database key can learn it. */
+async function mediaFolder(): Promise<string> {
+  return (await rpc("tracker_media_folder", { p_key: DB_KEY })) as string;
+}
+
+async function storage(pathname: string, body: unknown) {
+  const res = await fetch(`${SUPABASE_URL}/storage/v1/${pathname}`, {
+    method: "POST",
+    headers: { apikey: SUPABASE_KEY!, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`File storage said ${res.status}: ${await res.text()}`);
+  return res.json();
+}
+
+export const VIDEO_BUCKET = "city-videos";
+export const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
+
+/** A one-time address the browser uploads a video straight to (it skips our server, so big files work). */
+export async function videoUploadUrl(fileName: string): Promise<{ uploadUrl: string; path: string }> {
+  const safe = fileName.replace(/[^\w.-]+/g, "-").slice(-80) || "video.mp4";
+  const path = `${await mediaFolder()}/${Date.now().toString(36)}-${randomBytes(4).toString("hex")}-${safe}`;
+  const r = (await storage(`object/upload/sign/${VIDEO_BUCKET}/${path}`, {})) as { url: string };
+  return { uploadUrl: `${SUPABASE_URL}/storage/v1${r.url}`, path };
+}
+
+/** A link to watch an uploaded video, good for an hour. */
+export async function videoViewUrl(path: string): Promise<string | null> {
+  if (!path.startsWith(`${await mediaFolder()}/`)) return null;
+  const r = (await storage(`object/sign/${VIDEO_BUCKET}/${path}`, { expiresIn: 3600 })) as { signedURL: string };
+  return `${SUPABASE_URL}/storage/v1${r.signedURL}`;
+}

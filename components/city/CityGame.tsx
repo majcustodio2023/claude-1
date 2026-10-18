@@ -12,7 +12,9 @@ import { Hero, Kit } from "../characters";
 import { Icon } from "../icons";
 import { Btn } from "../ui";
 import Dialogue, { type Talk } from "./Dialogue";
-import { CityArt, CityGlow, InteriorArt, type HouseInfo, type InteriorInfo } from "./art";
+import { CityArt, CityGlow, CityLabels, InteriorArt, InteriorLabels, type HouseInfo, type InteriorInfo } from "./art";
+import { picture, sprite } from "./pictures";
+import { cityWork, type Work } from "@/lib/cityWork";
 import {
   T, buildingName, hits, layoutCity, layoutInterior, moveBox, roadRoute, roleOf, roofColor, setupProgress, titleOf, visibleBuildings,
   STUDIO_KINDS, isShop, type CityLayout, type InteriorLayout, type Pt, type Rect,
@@ -44,9 +46,21 @@ interface Agent {
 
 const SPRITE = 58;
 const SPRITE_H = SPRITE * 1.125;
-const WALK = 68;
+const WALK = 62;
 const RUN_PLAYER = 290;
 const WALK_PLAYER = 190;
+
+/** Moves a character, touching the page only when something changed. */
+function place(el: HTMLElement, x: number, y: number, depth: number, moving: boolean, face: number) {
+  const tf = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+  if (el.style.transform !== tf) el.style.transform = tf;
+  const z = String(Math.round(depth));
+  if (el.style.zIndex !== z) el.style.zIndex = z;
+  const m = moving ? "1" : "0";
+  if (el.dataset.moving !== m) el.dataset.moving = m;
+  const f = String(face);
+  if (el.dataset.face !== f) el.dataset.face = f;
+}
 
 const randIn = (r: Rect, rand: () => number, pad = 10): Pt => ({ x: r.x + pad + rand() * Math.max(1, r.w - pad * 2), y: r.y + pad + rand() * Math.max(1, r.h - pad * 2) });
 const pick = <X,>(list: X[], rand: () => number) => list[Math.floor(rand() * list.length)];
@@ -98,10 +112,13 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   talkRef.current = talk;
 
   const staffById = useMemo(() => new Map(staff.map((s) => [s.id, s])), [staffKey, city.staff]);
+  const work = useMemo(() => cityWork(data, buildings, today), [data, bIds, today]);
+  const workKey = [...work].map(([k, w]) => `${k}:${w.state}:${w.line}`).join("|");
   const nameOf = useCallback((id: string) => buildingName(data, buildings.find((b) => b.id === id) ?? buildings[0]), [data, bIds]);
   const shopIds = buildings.filter(isShop).map((b) => b.id);
-  const latest = useRef({ staffById, nameOf, keys, cityLayout, interior, shopIds });
-  latest.current = { staffById, nameOf, keys, cityLayout, interior, shopIds };
+  const kinds = useMemo(() => new Map(buildings.map((b) => [b.id, b.kind as string])), [bIds]);
+  const latest = useRef({ staffById, nameOf, keys, cityLayout, interior, shopIds, work, kinds });
+  latest.current = { staffById, nameOf, keys, cityLayout, interior, shopIds, work, kinds };
 
   const switchScene = useCallback((next: Scene, at?: Pt) => {
     setFade((f) => f + 1);
@@ -113,61 +130,55 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   }, []);
 
   // ---- people: what each one is up to ----
+  // Staff only move when there's real work behind it (lib/cityWork). With no open missions
+  // they sit at their desks inside; waiting on setup, they wait at their desk for you.
   useEffect(() => {
     const map = new Map<string, Agent>();
     const rand = rng(Date.now() % 100000);
     const L = latest.current;
-    const jobLine = (s: CityStaff) => {
-      const prog = setupProgress(s, L.keys);
-      if (prog.missing.length && rand() < 0.45) return `Waiting on you: ${prog.missing[0].label}`;
-      return pick(roleOf(s).jobs, rand) + "…";
-    };
+    const workOf = (id: string): Work => latest.current.work.get(id) ?? { state: "idle", line: "" };
     if (scene.type === "city") {
       const layout = L.cityLayout;
       const plot = (id: string) => layout.plots.find((p) => p.buildingId === id);
       const doorPt = (id: string) => {
         const p = plot(id)!;
-        return { x: p.door.x + p.door.w / 2, y: p.door.y + p.door.h + 6 };
+        return { x: p.door.x + p.door.w / 2, y: p.door.y + p.door.h + 10 };
       };
-      const yardPt = (id: string) => randIn(plot(id)!.yard, rand, 16);
-      const plazaPt = () => {
-        const f = layout.fountain;
-        const side = rand() < 0.5 ? -1 : 1;
-        return { x: f.x + side * f.r * (1.4 + rand() * 0.8), y: f.y + f.r * (0.8 + rand() * 0.9) };
+      const yardPt = (id: string) => randIn(plot(id)!.yard, rand, 20);
+      const studioFor = (s: CityStaff) => {
+        const kind = ["content", "social"].includes(s.role) ? "video" : ["ads", "insights"].includes(s.role) ? "acquisition" : ["scriptWriter", "copyWriter", "imageCopy", "imageAI"].includes(s.role) ? "acquisition" : "creative";
+        return layout.plots.find((p) => p.buildingId !== s.buildingId && latest.current.kinds.get(p.buildingId) === kind)?.buildingId;
       };
       const decide = (a: Agent) => {
         const s = latest.current.staffById.get(a.id);
         if (!s || !plot(s.buildingId)) return;
         const home = s.buildingId;
+        const w = workOf(s.id);
         if (!a.visible) {
+          // Inside. Only busy people come out now and then.
+          if (w.state !== "busy" || rand() < 0.7) {
+            a.wait = 20 + rand() * 30;
+            return;
+          }
           const at = a.inside && plot(a.inside) ? a.inside : home;
           Object.assign(a, doorPt(at));
           a.visible = true;
           a.inside = undefined;
           a.path = at === home ? [yardPt(home)] : roadRoute(doorPt(at), yardPt(home), layout);
-          a.act = at === home ? jobLine(s) : `Heading back to ${latest.current.nameOf(home)}`;
-          a.onArrive = () => (a.wait = 2 + rand() * 4);
+          a.act = at === home ? w.line : `Back to ${latest.current.nameOf(home)}`;
+          a.onArrive = () => (a.wait = 4 + rand() * 6);
           return;
         }
-        const r = rand();
-        const others = layout.plots.filter((p) => p.buildingId !== home);
-        if (r < 0.48) {
-          a.path = [yardPt(home)];
-          a.act = jobLine(s);
-          a.onArrive = () => (a.wait = 2 + rand() * 5);
-        } else if (r < 0.66) {
-          a.path = [doorPt(home)];
-          a.act = pick(["Back to my desk", "Taking this inside", "Got an idea, heading in"], rand);
-          a.onArrive = () => Object.assign(a, { visible: false, inside: home, wait: 5 + rand() * 10 });
-        } else if (r < 0.86 && others.length) {
-          const q = pick(others, rand).buildingId;
+        // Outside: an errand that fits the job, or back in to keep working.
+        const q = studioFor(s);
+        if (w.state === "busy" && q && rand() < 0.35) {
           a.path = roadRoute(a, doorPt(q), layout);
-          a.act = `${pick(["Dropping off a report at", "Meeting the team at", "Picking up files from", "Syncing with"], rand)} ${latest.current.nameOf(q)}`;
-          a.onArrive = () => Object.assign(a, { visible: false, inside: q, wait: 3 + rand() * 6 });
+          a.act = `${w.line.replace(/^Working on: /, "Taking ")} to ${latest.current.nameOf(q)}`;
+          a.onArrive = () => Object.assign(a, { visible: false, inside: q, wait: 8 + rand() * 10 });
         } else {
-          a.path = roadRoute(a, plazaPt(), layout);
-          a.act = pick(["Coffee break at the plaza", "Stand-up meeting at the fountain", "Getting some air"], rand);
-          a.onArrive = () => (a.wait = 3 + rand() * 5);
+          a.path = [doorPt(home)];
+          a.act = w.state === "busy" ? "Back to my desk" : "Heading in";
+          a.onArrive = () => Object.assign(a, { visible: false, inside: home, wait: 15 + rand() * 25 });
         }
       };
       for (const c of CITIZENS) {
@@ -176,15 +187,16 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         (a as Agent & { decide: () => void }).decide = () => {
           a.path = [{ x: home.x + (rand() - 0.5) * (c.spot === "plaza-left" ? 10 : 90), y: home.y + (rand() - 0.5) * (c.spot === "plaza-left" ? 4 : 40) }];
           a.act = pick(c.bubbles, rand);
-          a.onArrive = () => (a.wait = 3 + rand() * 5);
+          a.onArrive = () => (a.wait = 4 + rand() * 6);
         };
         map.set(a.id, a);
       }
       for (const s of latest.current.staffById.values()) {
         if (!plot(s.buildingId)) continue;
-        const out = rand() < (s.role === "reporter" ? 0.25 : 0.5);
+        const w = workOf(s.id);
+        const out = w.state === "busy" && s.role !== "reporter" && rand() < 0.3;
         const p = out ? yardPt(s.buildingId) : doorPt(s.buildingId);
-        const a: Agent = { id: s.id, ...p, path: [], wait: out ? rand() * 3 : 1 + rand() * 9, act: jobLine(s), visible: out, face: rand() < 0.5 ? 1 : -1, moving: false, inside: out ? undefined : s.buildingId };
+        const a: Agent = { id: s.id, ...p, path: [], wait: out ? 3 + rand() * 4 : 5 + rand() * 25, act: w.line, visible: out, face: rand() < 0.5 ? 1 : -1, moving: false, inside: out ? undefined : s.buildingId };
         (a as Agent & { decide: () => void }).decide = () => decide(a);
         map.set(s.id, a);
       }
@@ -193,30 +205,28 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
       const corridor = I.progress.y + I.progress.h + 0.35 * T;
       const via = (from: Pt, to: Pt): Pt[] => [{ x: from.x, y: corridor }, { x: to.x, y: corridor }, to];
       const deskOf = new Map(I.stations.map((st) => [st.staffId, st]));
-      const roomsArr = I.rooms;
       const insideNow = [...latest.current.staffById.values()].filter((s) => deskOf.has(s.id) || s.id === I.reporter?.staffId);
       const decide = (a: Agent) => {
         const s = latest.current.staffById.get(a.id);
         if (!s) return;
+        const w = workOf(s.id);
         if (I.reporter?.staffId === a.id) {
-          if (rand() < 0.3 && I.stations.length) {
-            const st = pick(I.stations, rand);
+          const busyDesks = I.stations.filter((st) => workOf(st.staffId).state === "busy");
+          a.act = w.line;
+          if (w.state === "busy" && busyDesks.length && rand() < 0.4) {
+            const st = pick(busyDesks, rand);
             a.path = via(a, { x: st.x + 0.9 * T, y: st.y });
-            a.act = `Collecting updates from ${latest.current.staffById.get(st.staffId)?.name ?? "the team"}`;
+            a.act = `Collecting an update from ${latest.current.staffById.get(st.staffId)?.name ?? "the team"}`;
             a.onArrive = () => {
-              a.wait = 2.5;
+              a.wait = 3;
               a.onArrive = undefined;
               setTimeout(() => {
                 a.path = via(a, { x: I.reporter!.x, y: I.reporter!.y });
-                a.act = "Updating the scoreboard…";
-                a.onArrive = () => (a.wait = 4 + rand() * 4);
-              }, 2500);
+                a.act = "Updating the scoreboard";
+                a.onArrive = () => (a.wait = 15 + rand() * 15);
+              }, 3000);
             };
-          } else {
-            a.path = [{ x: I.progress.x + T + rand() * (I.progress.w - 2 * T), y: I.progress.y + 0.6 * T + rand() * 1.2 * T }];
-            a.act = pick(["Updating the scoreboard…", "Writing today's report…", "Checking the numbers…"], rand);
-            a.onArrive = () => (a.wait = 3 + rand() * 5);
-          }
+          } else a.wait = 15 + rand() * 20;
           return;
         }
         const desk = deskOf.get(a.id);
@@ -224,36 +234,34 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         const home = { x: desk.x, y: desk.y };
         if (a.phase === "away") {
           a.path = via(a, home);
-          a.act = jobLine(s);
-          a.onArrive = () => Object.assign(a, { phase: "desk", wait: 6 + rand() * 9 });
+          a.act = w.line;
+          a.onArrive = () => Object.assign(a, { phase: "desk", wait: 18 + rand() * 20 });
           return;
         }
-        const r = rand();
-        const coworkers = I.stations.filter((x) => x.staffId !== a.id);
+        a.act = w.line;
+        if (w.state !== "busy") {
+          // Nothing to do: they stay put. Waiting on setup, they keep reminding you.
+          a.wait = 30 + rand() * 30;
+          return;
+        }
         const away = (to: Pt, act: string, stay: number) => {
           a.path = via(a, to);
           a.act = act;
           a.onArrive = () => Object.assign(a, { phase: "away", wait: stay });
         };
-        if (r < 0.34) away({ x: I.progress.x + T + rand() * (I.progress.w - 2 * T), y: I.progress.y + 0.7 * T + rand() * T }, `Posting results: ${pick(roleOf(s).jobs, rand).toLowerCase()}`, 2.5 + rand() * 2);
-        else if (r < 0.54) away({ x: I.mission.x + T + rand() * (I.mission.w - 2 * T), y: I.mission.y + 0.7 * T + rand() * T }, "Grabbing the next mission", 2 + rand() * 2);
-        else if (r < 0.76 && coworkers.length) {
-          const c = pick(coworkers, rand);
-          const other = map.get(c.staffId);
-          away({ x: c.x + 0.9 * T, y: c.y + 4 }, `Talking shop with ${latest.current.staffById.get(c.staffId)?.name ?? "a teammate"}`, 3 + rand() * 2);
-          if (other && other.phase !== "away" && !other.path.length) other.act = `Chatting with ${s.name}`;
-        } else if (r < 0.86 && roomsArr.length) {
-          const room = pick(roomsArr, rand);
-          away(randIn(room.rect, rand, 30), `Working in the ${(data.city?.buildings.find((b) => b.id === scene.id)?.rooms ?? []).find((x) => x.id === room.id)?.name ?? "back room"}`, 4 + rand() * 3);
-        } else {
-          a.act = jobLine(s);
-          a.wait = 5 + rand() * 6;
-        }
+        const r = rand();
+        const busyMates = I.stations.filter((x) => x.staffId !== a.id && workOf(x.staffId).state === "busy");
+        if (r < 0.3 && w.line.startsWith("Working on")) away({ x: I.mission.x + T + rand() * (I.mission.w - 2 * T), y: I.mission.y + 0.7 * T + rand() * T }, "Checking the mission board", 3 + rand() * 2);
+        else if (r < 0.55) away({ x: I.progress.x + T + rand() * (I.progress.w - 2 * T), y: I.progress.y + 0.7 * T + rand() * T }, "Posting an update", 3 + rand() * 2);
+        else if (r < 0.7 && busyMates.length) {
+          const c = pick(busyMates, rand);
+          away({ x: c.x + 0.9 * T, y: c.y + 4 }, `Asking ${latest.current.staffById.get(c.staffId)?.name ?? "a teammate"} something`, 4 + rand() * 2);
+        } else a.wait = 15 + rand() * 20;
       };
       for (const s of insideNow) {
         const st = deskOf.get(s.id);
         const p = st ? { x: st.x, y: st.y } : { x: I.reporter!.x, y: I.reporter!.y };
-        const a: Agent = { id: s.id, ...p, path: [], wait: 1 + rand() * 6, act: jobLine(s), visible: true, face: 1, moving: false, phase: "desk" };
+        const a: Agent = { id: s.id, ...p, path: [], wait: 4 + rand() * 12, act: workOf(s.id).line, visible: true, face: 1, moving: false, phase: "desk" };
         (a as Agent & { decide: () => void }).decide = () => decide(a);
         map.set(s.id, a);
       }
@@ -261,6 +269,14 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
     agents.current = map;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scene, staffKey, cityLayout, interior]);
+
+  // When work changes (a mission is added or finished), people pick up their new lines.
+  useEffect(() => {
+    for (const a of agents.current.values()) {
+      const w = latest.current.work.get(a.id);
+      if (w && !a.path.length) a.act = w.line;
+    }
+  }, [workKey]);
 
   // Walking in through the door puts you just inside it.
   useEffect(() => {
@@ -406,37 +422,47 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
       if (vp && world.current) {
         const vw = vp.clientWidth;
         const vh = vp.clientHeight;
-        const base = vw < 700 ? 0.78 : vw > 1400 ? 1.15 : 1;
+        // Close enough to see faces and read signs; a bit wider on big screens.
+        const base = vw < 700 ? 1.05 : Math.min(1.75, Math.max(1.35, Math.min(vw, vh * 1.6) / 1100));
         // Inside, zoom in so the room fills the screen.
-        const z = scene.type === "inside" && L.interior ? Math.max(base, Math.min(1.7, vw / L.interior.w, (vh - 40) / L.interior.h)) : base;
+        const z = scene.type === "inside" && L.interior ? Math.max(base, Math.min(2, vw / L.interior.w, (vh - 40) / L.interior.h)) : base;
         zoomRef.current = z;
         const ww = (scene.type === "city" ? L.cityLayout.w : L.interior?.w ?? 0) * z;
         const wh = (scene.type === "city" ? L.cityLayout.h : L.interior?.h ?? 0) * z;
         const cx = ww <= vw ? -(vw - ww) / 2 : Math.min(Math.max(P.x * z - vw / 2, 0), ww - vw);
         const cy = wh <= vh ? -(vh - wh) / 2 : Math.min(Math.max(P.y * z - vh / 2, 0), wh - vh);
         cam.current = { x: cx, y: cy };
-        world.current.style.transform = `translate(${-cx}px, ${-cy}px) scale(${z})`;
+        const tf = `translate(${Math.round(-cx)}px, ${Math.round(-cy)}px) scale(${z})`;
+        if (world.current.style.transform !== tf) world.current.style.transform = tf;
       }
       // draw
-      if (playerEl.current) {
-        playerEl.current.style.transform = `translate(${P.x - 32}px, ${P.y - 70}px)`;
-        playerEl.current.style.zIndex = String(Math.round(P.y));
-        playerEl.current.dataset.moving = P.moving ? "1" : "0";
-        playerEl.current.dataset.face = String(P.face);
+      if (playerEl.current) place(playerEl.current, P.x - 32, P.y - 70, P.y, P.moving, P.face);
+      // Only the person nearest you (and anyone right beside you) shows a speech bubble;
+      // everyone else shows a small badge for what they're up to.
+      let nearest = "";
+      let nd = scene.type === "city" ? 240 : 170;
+      for (const a of agents.current.values()) {
+        if (!a.visible) continue;
+        const d = Math.hypot(a.x - P.x, a.y - P.y);
+        if (d < nd) {
+          nd = d;
+          nearest = a.id;
+        }
       }
       for (const a of agents.current.values()) {
         const el = els.current.get(a.id);
         if (!el) continue;
-        el.style.display = a.visible ? "" : "none";
+        const show = a.visible ? "" : "none";
+        if (el.style.display !== show) el.style.display = show;
         if (!a.visible) continue;
-        el.style.transform = `translate(${a.x - SPRITE / 2}px, ${a.y - SPRITE_H * 0.95}px)`;
-        el.style.zIndex = String(Math.round(a.y));
-        el.dataset.moving = a.moving ? "1" : "0";
-        el.dataset.face = String(a.face);
+        place(el, a.x - SPRITE / 2, a.y - SPRITE_H * 0.95, a.y, a.moving, a.face);
         const b = el.firstElementChild as HTMLElement | null;
         if (b) {
           if (b.textContent !== a.act) b.textContent = a.act;
-          b.style.opacity = Math.hypot(a.x - P.x, a.y - P.y) < 300 ? "1" : "0";
+          const op = a.id === nearest || Math.hypot(a.x - P.x, a.y - P.y) < 55 ? "1" : "0";
+          if (b.style.opacity !== op) b.style.opacity = op;
+          const st = L.work.get(a.id)?.state ?? "";
+          if (el.dataset.state !== st) el.dataset.state = st;
         }
       }
       if (miniDot.current && scene.type === "city") {
@@ -462,8 +488,8 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         }
         if (!best && scene.type === "city") {
           const f = L.cityLayout.fountain;
-          const kx = f.x - f.r * 1.9;
-          const ky = f.y + f.r * 1.6;
+          const kx = f.x - f.r * 1.15;
+          const ky = f.y + f.r * 1.85;
           if (Math.hypot(kx - P.x, ky - P.y) < 80) best = { key: "kit", label: "Talk to Kit · City guide", go: () => setTalk({ kind: "kit" }), d: 0 };
         }
         if (!best && scene.type === "inside" && L.interior) {
@@ -512,7 +538,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
 
   const houses: HouseInfo[] = buildings.map((b) => {
     const client = b.clientId ? data.clients?.find((c) => c.id === b.clientId) : undefined;
-    return { id: b.id, name: buildingName(data, b), color: roofColor(b), kind: b.kind, avatar: client?.avatar, alert: staff.filter((s) => s.buildingId === b.id && setupProgress(s, keys).missing.length).length };
+    return { id: b.id, name: buildingName(data, b), color: roofColor(b), kind: b.kind, avatar: client?.avatar, alert: staff.filter((s) => s.buildingId === b.id && setupProgress(s, keys).missing.length).length, busy: staff.filter((s) => s.buildingId === b.id && work.get(s.id)?.state === "busy").length };
   });
   const houseKey = JSON.stringify(houses);
   const housesMemo = useMemo(() => houses, [houseKey]);
@@ -526,24 +552,45 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
           screen: { title: rep.title, stats: rep.stats, pct: rep.pct, feed: rep.feed },
           notes: missions(data, inside).map((m) => ({ text: m.title, done: m.done })),
           rooms: (inside.rooms ?? []).map((r) => ({ id: r.id, name: r.name })),
-          desks: insideStaff.filter((s) => s.id !== reporterId).map((s) => ({ staffId: s.id, name: s.name, color: roleOf(s).color, ready: !setupProgress(s, keys).missing.length })),
+          reporter: (() => {
+            const r = insideStaff.find((s) => s.id === reporterId);
+            return r ? { name: r.name, title: titleOf(r) } : undefined;
+          })(),
+          desks: insideStaff.filter((s) => s.id !== reporterId).map((s) => ({ staffId: s.id, name: s.name, title: titleOf(s), color: roleOf(s).color, ready: !setupProgress(s, keys).missing.length })),
         };
       })()
     : null;
   const interiorKey = JSON.stringify(interiorInfo);
   const interiorMemo = useMemo(() => interiorInfo, [interiorKey]);
 
+  // The scenery as one picture; it's redrawn only when the town or the room changes.
+  const [sceneryUrl, setSceneryUrl] = useState("");
+  useEffect(() => {
+    const url = scene.type === "city" ? picture(<CityArt layout={cityLayout} houses={housesMemo} />) : interior && interiorMemo ? picture(<InteriorArt layout={interior} info={interiorMemo} />) : "";
+    setSceneryUrl(url);
+    return () => {
+      if (url) setTimeout(() => URL.revokeObjectURL(url), 2000);
+    };
+  }, [scene.type, cityLayout, housesMemo, interior, interiorMemo]);
+
+  const heroItems = Object.values(data.game?.equipped ?? {}).filter((x): x is string => Boolean(x));
+  const heroGear = Object.keys(data.heroGear ?? {});
+  const playerKey = JSON.stringify([data.game?.look, heroItems, heroGear]);
+  const playerUrl = sprite(`p:${playerKey}`, () => <Hero size={64} mood="ready" look={data.game?.look} items={heroItems} gear={heroGear} />);
+
   const hour = new Date().getHours();
   const tint = scene.type === "inside" ? null : hour >= 19 || hour < 5 ? "night" : hour >= 17 || hour < 7 ? "dusk" : null;
   const sceneStaff = scene.type === "city" ? staff : insideStaff;
   const nearLabel = near.split("|")[1] ?? "";
-  const online = staff.length;
+  const counts = { busy: 0, idle: 0, setup: 0 };
+  for (const s of staff) counts[work.get(s.id)?.state ?? "idle"]++;
 
   return (
     <div className="fixed inset-0 z-[60] bg-outline select-none touch-none" role="application" aria-label={`${city.name}: walk with the arrow keys, talk with Space`}>
       <div ref={viewport} className="absolute inset-0 overflow-hidden" onPointerDown={onPointer}>
         <div ref={world} className="absolute left-0 top-0 origin-top-left will-change-transform" style={{ width: W, height: H }}>
-          {scene.type === "city" ? <CityArt layout={cityLayout} houses={housesMemo} cityName={city.name} /> : interior && interiorMemo && <InteriorArt layout={interior} info={interiorMemo} />}
+          {sceneryUrl && <img src={sceneryUrl} alt="" width={W} height={H} className="absolute left-0 top-0 block max-w-none" draggable={false} />}
+          {scene.type === "city" ? <CityLabels layout={cityLayout} houses={housesMemo} cityName={city.name} /> : interior && interiorMemo && <InteriorLabels layout={interior} info={interiorMemo} />}
           {scene.type === "city" && <KitNpc layout={cityLayout} />}
           {sceneStaff.map((s) => (
             <Npc key={`${scene.type}-${s.id}`} id={s.id} name={s.name} color={roleOf(s).color} look={s.look} refFn={(el) => (el ? els.current.set(s.id, el) : els.current.delete(s.id))} onTalk={talkTo} />
@@ -556,7 +603,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
             <div className="city-shadow" />
             <div className="city-flip">
               <div className="city-body">
-                <Hero size={64} mood="ready" gear={Object.keys(data.heroGear ?? {})} />
+                <img src={playerUrl} alt="" width={64} height={72} className="block" draggable={false} />
               </div>
             </div>
             <div className="city-tag" style={{ background: "#ff5fae" }}>{data.settings.playerName || "You"}</div>
@@ -564,7 +611,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
           {tint && <div className={`absolute inset-0 pointer-events-none city-tint-${tint}`} style={{ zIndex: 100000 }} />}
           {tint && (
             <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 100001 }}>
-              <CityGlow layout={cityLayout} />
+              <CityGlow layout={cityLayout} houses={housesMemo} />
             </div>
           )}
         </div>
@@ -578,8 +625,10 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
           <div className="text-sm font-extrabold text-muted truncate">{inside ? buildingName(data, inside) : "Downtown"}</div>
         </div>
         <div className="hud px-3 py-2 flex items-center gap-2 pointer-events-auto max-sm:hidden">
-          <span className="w-3 h-3 rounded-full bg-good city-blink" />
-          <span className="font-extrabold">{online} staff online</span>
+          <span className={`w-3 h-3 rounded-full ${counts.busy ? "bg-good city-blink" : "bg-muted"}`} />
+          <span className="font-extrabold">
+            {counts.busy} working · {counts.idle} free{counts.setup ? ` · ${counts.setup} need you` : ""}
+          </span>
         </div>
         <div className="ml-auto flex gap-2 pointer-events-auto">
           <Btn onClick={() => setTravel((v) => !v)} className="flex items-center gap-1.5">
@@ -652,10 +701,11 @@ const Npc = memo(
     return (
       <div ref={refFn} className="absolute left-0 top-0 city-walker city-npc" style={{ width: SPRITE, display: "none" }} onClick={() => onTalk(id)}>
         <div className="city-bubble" />
+        <div className="city-badge" aria-hidden />
         <div className="city-shadow" />
         <div className="city-flip">
           <div className="city-body">
-            <Hero size={SPRITE} look={look} items={[]} mood="ready" />
+            <img src={sprite(JSON.stringify(look ?? null), () => <Hero size={SPRITE} look={look} items={[]} mood="ready" />)} alt="" width={SPRITE} height={SPRITE_H} className="block" draggable={false} />
           </div>
         </div>
         <div className="city-tag" style={{ background: color }}>
@@ -669,8 +719,8 @@ const Npc = memo(
 
 const KitNpc = memo(function KitNpc({ layout }: { layout: CityLayout }) {
   const f = layout.fountain;
-  const x = f.x - f.r * 1.9;
-  const y = f.y + f.r * 1.6;
+  const x = f.x - f.r * 1.15;
+  const y = f.y + f.r * 1.85;
   return (
     <div className="absolute left-0 top-0" style={{ transform: `translate(${x - 32}px, ${y - 62}px)`, zIndex: Math.round(y) }}>
       <div className="city-bubble" style={{ opacity: 1 }}>
