@@ -162,8 +162,9 @@ function Toggle({ label, value, options, onChange }: { label: string; value: str
 /** A tiny panel drawn the way each style draws it. */
 function StyleSample({ id }: { id: StyleId }) {
   const box = "h-20 rounded-[8px] bg-bg p-2.5 flex flex-col justify-between overflow-hidden";
-  const font = { comic: "var(--font-display)", sleek: "Inter, sans-serif", cyber: "Orbitron, sans-serif", retro: '"Press Start 2P", monospace', minimal: "Inter, sans-serif" }[id];
+  const font = { pixel: '"Pixelify Sans", sans-serif', comic: "Bangers, sans-serif", sleek: "Inter, sans-serif", cyber: "Orbitron, sans-serif", retro: '"Press Start 2P", monospace', minimal: "Inter, sans-serif" }[id];
   const panel: Record<StyleId, React.CSSProperties> = {
+    pixel: { border: "3px solid var(--color-outline)", background: "var(--color-card)", boxShadow: "3px 3px 0 rgb(40 22 10 / .55)" },
     comic: { border: "3px solid var(--color-outline)", boxShadow: "3px 3px 0 var(--color-outline)", borderRadius: 6, background: "var(--color-card)" },
     sleek: { border: "1px solid var(--color-line)", borderRadius: 12, background: "var(--color-card)", boxShadow: "0 6px 14px -6px rgb(0 0 0 / .45)" },
     cyber: { border: "1px solid var(--color-accent)", background: "var(--color-card)", clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))", boxShadow: "inset 0 0 14px rgb(var(--rgb-accent) / .25)" },
@@ -171,6 +172,7 @@ function StyleSample({ id }: { id: StyleId }) {
     minimal: { border: "1px solid var(--color-line)", borderRadius: 4, background: "var(--color-card)" },
   };
   const bar: Record<StyleId, React.CSSProperties> = {
+    pixel: { border: "2px solid #3b2416", background: "repeating-linear-gradient(90deg, #d9603b 0 8px, #b4482a 8px 10px)", height: 9 },
     comic: { border: "2px solid var(--color-outline)", borderRadius: 99, background: "var(--color-hero)", height: 9 },
     sleek: { borderRadius: 99, background: "linear-gradient(90deg, var(--color-accent), var(--color-hero))", height: 6 },
     cyber: { background: "repeating-linear-gradient(90deg, var(--color-accent) 0 6px, transparent 6px 8px)", height: 7, boxShadow: "0 0 8px var(--color-accent)" },
