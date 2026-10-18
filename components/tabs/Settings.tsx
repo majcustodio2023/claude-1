@@ -9,6 +9,7 @@ import LookSettings from "../LookSettings";
 import { Glyph, Icon } from "../icons";
 import { PERSONAS } from "@/lib/personas";
 import { DEFAULT_FUN_PERCENT } from "@/lib/fun";
+import { DEFAULT_CUSTOM_COVER_PRICE } from "@/lib/covers";
 import { sfx, startMusic, stopMusic } from "@/lib/sound";
 
 function Volume({ label, value, onChange, onTest }: { label: string; value: number; onChange: (v: number) => void; onTest: () => void }) {
@@ -181,6 +182,13 @@ export default function SettingsTab() {
           <Volume label="Sound effects" value={data.settings.sound?.sfx ?? 0.7} onChange={(sfxVol) => set({ sound: { ...data.settings.sound, sfx: sfxVol } })} onTest={() => (sfx("crit"), setTimeout(() => sfx("heal"), 450), setTimeout(() => sfx("coin"), 900))} />
         </div>
         <p className="text-sm text-muted mt-2">Plays in boss battles and when you get coins or loot. Slide to 0 to turn it off. All sounds are made by the app itself.</p>
+      </Card>
+
+      <Card icon={<Icon name="coin" size={24} />} title="Shop prices">
+        <label className="text-sm text-muted flex flex-col gap-1 max-w-xs">
+          Unlock your own banner picture (coins)
+          <NumInput value={data.settings.customCoverPrice ?? DEFAULT_CUSTOM_COVER_PRICE} onChange={(v) => set({ customCoverPrice: v == null ? undefined : Math.max(0, Math.round(v)) })} />
+        </label>
       </Card>
 
       <div id="set-connections" className="scroll-mt-4" />

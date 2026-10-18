@@ -73,7 +73,7 @@ export const HELP = {
     <ul>
       <li>Pick the background your hero stands on in the banner at the top.</li>
       <li>Three are free. The rest are bought with coins, like gear.</li>
-      <li>Or upload your own picture. Wide pictures look best; it&apos;s shrunk to save space.</li>
+      <li>Your own picture is the priciest unlock (1,500 coins unless changed in Settings, Shop prices). Pay once, then upload or change it any time. Wide pictures look best.</li>
       <li>The name, XP and stats get a dark layer behind them so they stay easy to read.</li>
     </ul>
   ),

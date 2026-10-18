@@ -15,7 +15,7 @@ import { Glyph, Icon } from "../icons";
 import BossFight, { useHeroLevel } from "../BossFight";
 import { PASSIVE_DESC, SKILLS, STAT_LABEL, itemPowerText, loadoutFor, statText, type StatKey } from "@/lib/battle";
 import { sfx } from "@/lib/sound";
-import { COVERS, CUSTOM_COVER, activeCover, buyCover, ownsCover, type Cover } from "@/lib/covers";
+import { COVERS, CUSTOM_COVER, activeCover, buyCover, customCoverPrice, customCoverUnlocked, ownsCover, unlockCustomCover, type Cover } from "@/lib/covers";
 import { CoverArt, shrinkCover } from "../covers";
 import { useRef } from "react";
 
@@ -460,6 +460,15 @@ function CoverShop() {
   const current = activeCover(data);
   const coins = data.game?.coins ?? 0;
   const image = data.game?.coverImage;
+  const unlocked = customCoverUnlocked(data);
+  const unlockPrice = customCoverPrice(data);
+  const unlock = () => {
+    const err = unlockCustomCover(structuredClone(data), today);
+    if (err) return toast(err);
+    update((d) => void unlockCustomCover(d, today));
+    sfx("coin");
+    toast("Unlocked! Now upload your picture.");
+  };
 
   const pick = (c: Cover) => {
     const err = buyCover(structuredClone(data), c.id, today);
@@ -516,8 +525,12 @@ function CoverShop() {
             </div>
           );
         })}
-        <div className={`bg-card-2 border-[3px] rounded-[12px] p-2 shadow-[3px_3px_0_var(--color-outline)] ${current === CUSTOM_COVER ? "border-gold" : "border-outline border-dashed"}`}>
-          {image ? (
+        <div className={`bg-card-2 border-[3px] rounded-[12px] p-2 shadow-[3px_3px_0_var(--color-outline)] ${current === CUSTOM_COVER ? "border-gold" : unlocked ? "border-outline border-dashed" : ""}`} style={unlocked ? undefined : { borderColor: RARITY.legendary.color }}>
+          {!unlocked ? (
+            <div className="w-full aspect-[4/1] rounded-[8px] border-2 border-dashed grid place-items-center font-bold text-center px-2" style={{ borderColor: RARITY.legendary.color, color: RARITY.legendary.color }}>
+              <span className="flex items-center gap-2"><Icon name="lock" size={22} /> Put any picture you want behind your hero</span>
+            </div>
+          ) : image ? (
             <CoverArt id={CUSTOM_COVER} image={image} className="w-full aspect-[4/1] rounded-[8px] border-2 border-outline block" />
           ) : (
             <button className="w-full aspect-[4/1] rounded-[8px] border-2 border-dashed border-line grid place-items-center text-muted font-bold" onClick={() => file.current?.click()}>
@@ -527,8 +540,17 @@ function CoverShop() {
           <div className="flex items-center justify-between gap-2 mt-2 flex-wrap">
             <div className="min-w-0">
               <div className="font-display text-lg tracking-wide leading-tight">Your own picture</div>
-              <div className="text-sm font-extrabold text-muted">Free · wide pictures look best</div>
+              {unlocked ? (
+                <div className="text-sm font-extrabold text-muted">Unlocked · wide pictures look best</div>
+              ) : (
+                <div className="text-sm font-extrabold" style={{ color: RARITY.legendary.color }}>Legendary · one-time unlock</div>
+              )}
             </div>
+            {!unlocked ? (
+              <Btn kind={coins < unlockPrice ? "ghost" : "primary"} disabled={coins < unlockPrice} onClick={unlock} title={coins < unlockPrice ? `You need ${unlockPrice - coins} more coins` : `Unlock for ${unlockPrice} coins`}>
+                {unlockPrice} <Icon name="coin" size={20} />
+              </Btn>
+            ) : (
             <div className="flex gap-1.5 flex-wrap">
               {image && current !== CUSTOM_COVER && <Btn onClick={() => update((d) => void (ensureGame(d, today).cover = CUSTOM_COVER))}>Use</Btn>}
               {current === CUSTOM_COVER && <Badge tone="gold">In use</Badge>}
@@ -543,6 +565,7 @@ function CoverShop() {
                 </Btn>
               )}
             </div>
+            )}
           </div>
           <input ref={file} type="file" accept="image/*" className="hidden" onChange={(e) => (e.target.files?.[0] && upload(e.target.files[0]), (e.target.value = ""))} />
         </div>
