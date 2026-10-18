@@ -28,13 +28,16 @@ export const COVERS: Cover[] = [
   { id: "vault", name: "Gold vault", price: 900, rarity: "legendary" },
 ];
 
-/** Your own uploaded picture. */
+/** Your own uploaded picture. Unlocked once in the shop, for more than any ready-made cover. */
 export const CUSTOM_COVER = "custom";
+export const DEFAULT_CUSTOM_COVER_PRICE = 1500;
+export const customCoverPrice = (data: TrackerData) => data.settings.customCoverPrice ?? DEFAULT_CUSTOM_COVER_PRICE;
+export const customCoverUnlocked = (data: TrackerData) => Boolean(data.game?.covers?.includes(CUSTOM_COVER));
 
 export const coverById = (id: string | undefined) => COVERS.find((c) => c.id === id);
 
 export const ownsCover = (data: TrackerData, id: string) => {
-  if (id === CUSTOM_COVER) return Boolean(data.game?.coverImage);
+  if (id === CUSTOM_COVER) return customCoverUnlocked(data) && Boolean(data.game?.coverImage);
   const c = coverById(id);
   return Boolean(c && (c.price === 0 || data.game?.covers?.includes(id)));
 };
@@ -59,5 +62,17 @@ export function buyCover(d: TrackerData, id: string, today: string): string | nu
   game.covers = [...(game.covers ?? []), id];
   game.cover = id;
   game.log = [{ at: today, text: `Bought the ${cover.name} cover`, coins: -cover.price }, ...game.log].slice(0, 40);
+  return null;
+}
+
+/** Unlocks uploading your own banner picture. Returns an error message, or null when it worked. */
+export function unlockCustomCover(d: TrackerData, today: string): string | null {
+  const game = ensureGame(d, today);
+  if (customCoverUnlocked(d)) return null;
+  const price = customCoverPrice(d);
+  if (game.coins < price) return `You need ${price - game.coins} more coins.`;
+  game.coins -= price;
+  game.covers = [...(game.covers ?? []), CUSTOM_COVER];
+  game.log = [{ at: today, text: "Unlocked your own banner picture", coins: -price }, ...game.log].slice(0, 40);
   return null;
 }

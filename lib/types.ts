@@ -321,6 +321,8 @@ export interface AutopilotEntry {
 }
 
 export interface Settings {
+  /** Coins it costs to unlock uploading your own banner picture. Blank = 1500. */
+  customCoverPrice?: number;
   /** Shown on the hero card and used by Kit. */
   playerName?: string;
   businessName?: string;

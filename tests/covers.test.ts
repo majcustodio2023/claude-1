@@ -27,8 +27,32 @@ test("a custom cover needs a picture; a missing one falls back to classic", () =
   const d = sampleData();
   const g = ensureGame(d, today);
   g.cover = "custom";
+  g.covers = ["custom"];
   assert.equal(ownsCover(d, "custom"), false);
   assert.equal(activeCover(d), "classic");
   g.coverImage = "data:image/jpeg;base64,AAAA";
   assert.equal(activeCover(d), "custom");
+});
+
+test("your own picture must be unlocked with coins first", async () => {
+  const { unlockCustomCover, customCoverUnlocked } = await import("../lib/covers");
+  const d = sampleData();
+  const g = ensureGame(d, today);
+  g.coins = 1499;
+  assert.match(unlockCustomCover(d, today)!, /1 more coins/);
+  g.coverImage = "data:image/jpeg;base64,AAAA";
+  g.cover = "custom";
+  assert.equal(activeCover(d), "classic", "not used until unlocked");
+  g.coins = 1600;
+  assert.equal(unlockCustomCover(d, today), null);
+  assert.equal(g.coins, 100);
+  assert.ok(customCoverUnlocked(d));
+  assert.equal(activeCover(d), "custom");
+  assert.equal(unlockCustomCover(d, today), null, "never charged twice");
+  assert.equal(g.coins, 100);
+  d.settings.customCoverPrice = 50;
+  const d2 = sampleData();
+  d2.settings.customCoverPrice = 50;
+  ensureGame(d2, today).coins = 60;
+  assert.equal(unlockCustomCover(d2, today), null);
 });
