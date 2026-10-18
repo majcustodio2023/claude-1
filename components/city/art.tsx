@@ -14,9 +14,11 @@ import { hashString, rng } from "@/lib/avatar";
 import { shade } from "../characters";
 import { Avatar } from "../avatars";
 import { Icon } from "../icons";
+import { snapHex } from "@/lib/palette";
 
 /** Outline colour: a warm dark plum, like ink on paper. */
 export const LINE = "#2b1d2e";
+const KIND_ICON: Record<string, string> = { video: "film", acquisition: "megaphone", creative: "palette", weapons: "swords", armor: "shield", custom: "home" };
 const SW = 4;
 
 export interface HouseInfo {
@@ -60,12 +62,19 @@ export function Defs() {
         <rect x="32" y="12" width="6" height="6" fill="#d98252" />
       </pattern>
       <pattern id="a-mosaic" width="48" height="48" patternUnits="userSpaceOnUse">
-        <rect width="48" height="48" fill="#efc7a4" />
-        <rect x="0" y="0" width="24" height="24" fill="#e9b593" />
-        <rect x="24" y="24" width="24" height="24" fill="#e9b593" />
-        <rect x="6" y="30" width="10" height="10" fill="#7cc6c0" />
-        <rect x="30" y="6" width="10" height="10" fill="#f19aa8" />
-        <path d="M0 24 H48 M24 0 V48" stroke="#d29a78" strokeWidth="2" />
+        <rect width="48" height="48" fill="#a3998f" />
+        <rect x="2" y="2" width="20" height="10" fill="#c8bdae" />
+        <rect x="26" y="2" width="20" height="10" fill="#bdb1a2" />
+        <rect x="-10" y="14" width="20" height="10" fill="#bdb1a2" />
+        <rect x="14" y="14" width="20" height="10" fill="#c8bdae" />
+        <rect x="38" y="14" width="20" height="10" fill="#c8bdae" />
+        <rect x="2" y="26" width="20" height="10" fill="#bdb1a2" />
+        <rect x="26" y="26" width="20" height="10" fill="#c8bdae" />
+        <rect x="-10" y="38" width="20" height="10" fill="#c8bdae" />
+        <rect x="14" y="38" width="20" height="10" fill="#bdb1a2" />
+        <rect x="38" y="38" width="20" height="10" fill="#bdb1a2" />
+        <rect x="4" y="4" width="6" height="2" fill="#e4dacb" />
+        <rect x="28" y="28" width="6" height="2" fill="#e4dacb" />
       </pattern>
       <pattern id="a-road" width="80" height="80" patternUnits="userSpaceOnUse">
         <rect width="80" height="80" fill="#6f6878" />
@@ -92,14 +101,16 @@ export function Defs() {
         <path d="M0 18 L18 0 L36 18 L18 36 Z" fill="none" stroke="#e8799a" strokeWidth="3" />
         <circle cx="18" cy="18" r="3" fill="#f6e7cf" />
       </pattern>
-      <pattern id="a-carpet" width="24" height="24" patternUnits="userSpaceOnUse">
-        <rect width="24" height="24" fill="#e7b85a" />
-        <circle cx="6" cy="6" r="2" fill="#d6a244" />
-        <circle cx="18" cy="18" r="2" fill="#d6a244" />
+      {/* woven rugs: a soft diamond motif on a warm ground */}
+      <pattern id="a-carpet" width="48" height="48" patternUnits="userSpaceOnUse">
+        <rect width="48" height="48" fill="#c0502f" />
+        <path d="M24 6 L42 24 L24 42 L6 24 Z" fill="none" stroke="#93392a" strokeWidth="4" />
+        <rect x="21" y="21" width="6" height="6" fill="#d9703b" />
       </pattern>
-      <pattern id="a-carpet2" width="24" height="24" patternUnits="userSpaceOnUse">
-        <rect width="24" height="24" fill="#6fb7c2" />
-        <path d="M0 12 H24 M12 0 V24" stroke="#5fa3ae" strokeWidth="2" />
+      <pattern id="a-carpet2" width="48" height="48" patternUnits="userSpaceOnUse">
+        <rect width="48" height="48" fill="#2a6a6e" />
+        <path d="M24 6 L42 24 L24 42 L6 24 Z" fill="none" stroke="#1f4a52" strokeWidth="4" />
+        <rect x="21" y="21" width="6" height="6" fill="#2f8f83" />
       </pattern>
       <pattern id="a-wallpaper" width="36" height="36" patternUnits="userSpaceOnUse">
         <rect width="36" height="36" fill="#cbb3ee" />
@@ -452,8 +463,10 @@ function House({ r, info, door }: { r: Rect; info: HouseInfo; door: Rect }) {
       <path d={`M${r.x + 6} ${r.y + 8} H${r.x + r.w - 6}`} stroke={shade(roof, 0.35)} strokeWidth="5" strokeLinecap="round" />
       <rect x={r.x - 10} y={fy - 10} width={r.w + 20} height="12" rx="3" fill={shade(roof, -0.3)} />
       <RoofClutter r={r} roofH={roofH} id={info.id} kind={info.kind} roof={roof} />
-      {/* rooftop billboard for the emblem (drawn as a picture on top) */}
-      <rect x={cx - 34} y={r.y + 6} width="68" height="56" rx="6" fill="#f6e7cf" />
+      {/* rooftop board for the emblem (a client's emblem portrait is drawn on top) */}
+      <rect x={cx - 34} y={r.y + 6} width="68" height="56" fill="#a8743f" />
+      <rect x={cx - 28} y={r.y + 12} width="56" height="44" fill="#f3e2c0" strokeWidth="2.5" />
+      {info.kind !== "client" && <Icon name={KIND_ICON[info.kind] ?? "home"} x={cx - 19} y={r.y + 15} size={38} color={shade(info.color, -0.4)} strokeWidth={2.6} />}
       <path d={`M${cx - 20} ${r.y + 62} v8 M${cx + 20} ${r.y + 62} v8`} strokeWidth="4" />
       {info.kind === "video" && (
         <g transform={`translate(${r.x + 44} ${r.y + roofH * 0.42})`} strokeWidth="3.5">
@@ -680,7 +693,7 @@ export const CityArt = memo(function CityArt({ layout, houses }: { layout: CityL
       ))}
       {/* plaza */}
       <rect x={P.x} y={P.y} width={P.w} height={P.h + 14} rx="16" fill="url(#a-mosaic)" stroke={LINE} strokeWidth="4" />
-      <ellipse cx={f.x} cy={f.y + 8} rx={f.r * 2.1} ry={f.r * 1.45} fill="none" stroke="#d29a78" strokeWidth="12" />
+      <ellipse cx={f.x} cy={f.y + 8} rx={f.r * 2.1} ry={f.r * 1.45} fill="none" stroke="#7d7574" strokeWidth="12" />
       <Fountain f={f} />
       <Stall x={P.x + 18} y={P.y + P.h - 26} color="#e2453c" seed={0} />
       <Stall x={P.x + P.w - 106} y={P.y + P.h - 26} color="#2f8f9a" seed={2} />
@@ -692,10 +705,16 @@ export const CityArt = memo(function CityArt({ layout, houses }: { layout: CityL
         const y = P.y + 70 + 4 * t * (1 - t) * 40;
         return <path key={i} d={`M${x - 7} ${y} h14 l-7 13 z`} fill={["#e2453c", "#ffd166", "#2f8f9a", "#f19aa8"][i % 4]} stroke={LINE} strokeWidth="2" />;
       })}
-      {/* city name billboard (the name is text on top) */}
+      {/* city name: a carved wooden sign on two posts (the name is text on top) */}
       <g stroke={LINE} strokeWidth="4">
-        <rect x={P.x + P.w / 2 - 150} y={P.y + 6} width="300" height="54" rx="8" fill="#ffd166" />
-        <rect x={P.x + P.w / 2 - 143} y={P.y + 12} width="286" height="42" rx="5" fill="none" stroke="#d9a73f" strokeWidth="2.5" />
+        <rect x={P.x + P.w / 2 - 130} y={P.y + 30} width="10" height="40" fill="#6e4425" />
+        <rect x={P.x + P.w / 2 + 120} y={P.y + 30} width="10" height="40" fill="#6e4425" />
+        <rect x={P.x + P.w / 2 - 150} y={P.y + 6} width="300" height="54" fill="#a8743f" />
+        <path d={`M${P.x + P.w / 2 - 146} ${P.y + 24} H${P.x + P.w / 2 + 146} M${P.x + P.w / 2 - 146} ${P.y + 42} H${P.x + P.w / 2 + 146}`} stroke="#8a5a32" strokeWidth="3" />
+        <rect x={P.x + P.w / 2 - 150} y={P.y + 6} width="300" height="6" fill="#c9955a" strokeWidth="0" />
+        {[-1, 1].map((k) => (
+          <circle key={k} cx={P.x + P.w / 2 + k * 138} cy={P.y + 33} r="3" fill="#e4dacb" strokeWidth="1.5" />
+        ))}
       </g>
       {[-1, 1].map((s) => (
         <Bench key={s} x={f.x + s * f.r * 2.4} y={f.y + 22} />
@@ -723,7 +742,7 @@ export const CityArt = memo(function CityArt({ layout, houses }: { layout: CityL
   );
 });
 
-const display: CSSProperties = { fontFamily: "var(--font-display)", letterSpacing: "0.04em", lineHeight: 1 };
+const display: CSSProperties = { fontFamily: "var(--font-display)", fontWeight: 600, letterSpacing: "0.02em", lineHeight: 1 };
 
 /** Everything you read outside: building signs, emblems, the city name, the danger sign. */
 export const CityLabels = memo(function CityLabels({ layout, houses, cityName }: { layout: CityLayout; houses: HouseInfo[]; cityName: string }) {
@@ -739,7 +758,7 @@ export const CityLabels = memo(function CityLabels({ layout, houses, cityName }:
         const cx = r.x + r.w / 2;
         if (info.kind === "home")
           return (
-            <div key={p.buildingId} className="absolute text-center px-2 pt-1 pb-0.5 rounded-md border-[3px] whitespace-nowrap" style={{ left: cx, top: r.y - 40, transform: "translateX(-50%)", background: "#f6e7cf", borderColor: LINE, color: LINE, boxShadow: `3px 3px 0 ${LINE}`, ...display, fontSize: 18 }}>
+            <div key={p.buildingId} className="absolute text-center px-2 pt-1 pb-0.5 rounded-md border-[3px] whitespace-nowrap" style={{ left: cx, top: r.y - 40, transform: "translateX(-50%)", background: "#f3e2c0", borderColor: LINE, color: LINE, boxShadow: `3px 3px 0 rgb(40 22 10 / 0.5)`, ...display, fontWeight: 600, fontSize: 18 }}>
               {short(info.name.toUpperCase(), 22)}
             </div>
           );
@@ -748,35 +767,33 @@ export const CityLabels = memo(function CityLabels({ layout, houses, cityName }:
         const fy = r.y + roofH;
         return (
           <div key={p.buildingId}>
-            <div className="absolute grid place-content-center text-center overflow-hidden whitespace-nowrap" style={{ left: cx - signW / 2, top: fy + signDrop(info.kind) - 2, width: signW, height: 32, ...display, fontSize: Math.max(13, Math.min(22, (signW - 14) / (Math.min(info.name.length, 24) * 0.5))), color: LINE }}>
+            <div className="absolute grid place-content-center text-center overflow-hidden whitespace-nowrap" style={{ left: cx - signW / 2, top: fy + signDrop(info.kind) - 2, width: signW, height: 32, ...display, fontSize: Math.max(13, Math.min(22, (signW - 14) / (Math.min(info.name.length, 24) * 0.62))), color: LINE }}>
               {short(info.name.toUpperCase(), 24)}
             </div>
-            <div className="absolute grid place-content-center" style={{ left: cx - 28, top: r.y + 10, width: 56, height: 48 }}>
-              {info.kind === "client" ? (
-                <Avatar value={info.avatar} seed={info.id} kind="emblem" size={46} />
-              ) : (
-                <Icon name={info.kind === "video" ? "film" : info.kind === "acquisition" ? "megaphone" : info.kind === "creative" ? "palette" : info.kind === "weapons" ? "swords" : info.kind === "armor" ? "shield" : "home"} size={38} style={{ color: shade(info.color, -0.4) }} strokeWidth={2.4} />
-              )}
-            </div>
+            {info.kind === "client" && (
+              <div className="absolute grid place-content-center" style={{ left: cx - 28, top: r.y + 10, width: 56, height: 48 }}>
+                <Avatar value={info.avatar} seed={info.id} kind="emblem" size={44} />
+              </div>
+            )}
             <div className="absolute text-center" style={{ left: r.x + r.w + 2, top: fy + 3, width: 22, height: 80, ...display, fontSize: 12.5, lineHeight: "13px", color: LINE, writingMode: "vertical-rl", textOrientation: "upright", letterSpacing: "-0.2em" }}>
               {info.kind === "client" ? "OFFICE" : info.kind === "weapons" || info.kind === "armor" ? "SHOP" : info.kind === "custom" ? "HALL" : "STUDIO"}
             </div>
             {info.alert > 0 && (
-              <div className="absolute alert-pop grid place-content-center rounded-full border-[3px]" style={{ left: cx + signW / 2 - 12, top: fy - 4, width: 30, height: 30, background: "#ff4d5e", borderColor: LINE, color: "#fff", ...display, fontSize: 20 }} title="Staff waiting on setup">
+              <div className="absolute alert-pop grid place-content-center rounded-full border-[3px]" style={{ left: cx + signW / 2 - 12, top: fy - 4, width: 30, height: 30, background: "#c0392b", borderColor: LINE, color: "#fff", ...display, fontSize: 20 }} title="Staff waiting on setup">
                 {info.alert}
               </div>
             )}
-            {info.kind === "video" && <Tag left={r.x + r.w - 96} top={r.y - 26} bg="#d62839" fg="#fff">ON AIR</Tag>}
-            {info.kind === "creative" && <Tag left={r.x + 12} top={r.y - 26} bg="#b388ff" fg={LINE}>ADS LAB</Tag>}
-            {info.kind === "acquisition" && <Tag left={r.x + 12} top={r.y - 26} bg="#ff6b6b" fg="#fff">HIRING</Tag>}
-            {(info.kind === "weapons" || info.kind === "armor") && <Tag left={r.x + 12} top={r.y - 26} bg="#ffd166" fg={LINE}>OPEN</Tag>}
+            {info.kind === "video" && <Tag left={r.x + r.w - 96} top={r.y - 26} bg="#c0392b" fg="#fffaf0">ON AIR</Tag>}
+            {info.kind === "creative" && <Tag left={r.x + 12} top={r.y - 26} bg="#a996d6" fg={LINE}>ADS LAB</Tag>}
+            {info.kind === "acquisition" && <Tag left={r.x + 12} top={r.y - 26} bg="#d9703b" fg="#fffaf0">HIRING</Tag>}
+            {(info.kind === "weapons" || info.kind === "armor") && <Tag left={r.x + 12} top={r.y - 26} bg="#f4c95d" fg={LINE}>OPEN</Tag>}
           </div>
         );
       })}
-      <div className="absolute grid place-content-center text-center" style={{ left: P.x + P.w / 2 - 143, top: P.y + 12, width: 286, height: 42, ...display, fontSize: 32, color: LINE }}>
+      <div className="absolute grid place-content-center text-center" style={{ left: P.x + P.w / 2 - 143, top: P.y + 12, width: 286, height: 42, ...display, fontWeight: 700, fontSize: 32, color: "#fbf1dc", textShadow: "3px 3px 0 #4e2f1d" }}>
         {short(cityName.toUpperCase(), 18)}
       </div>
-      <div className="absolute text-center -rotate-3" style={{ left: g.x + g.w / 2 - 76, top: g.h + 20, width: 152, ...display, color: "#d62839" }}>
+      <div className="absolute text-center -rotate-3" style={{ left: g.x + g.w / 2 - 76, top: g.h + 20, width: 152, ...display, fontWeight: 700, color: "#c0392b" }}>
         <div style={{ fontSize: 24 }}>DANGER</div>
         <div style={{ fontSize: 14, color: LINE }}>DO NOT ENTER</div>
       </div>
@@ -786,7 +803,7 @@ export const CityLabels = memo(function CityLabels({ layout, houses, cityName }:
 
 function Tag({ left, top, bg, fg, children }: { left: number; top: number; bg: string; fg: string; children: ReactNode }) {
   return (
-    <div className="absolute px-2 pt-1 pb-0.5 rounded-md border-[3px]" style={{ left, top, background: bg, color: fg, borderColor: LINE, boxShadow: `3px 3px 0 ${LINE}`, ...display, fontSize: 18 }}>
+    <div className="absolute px-2 pt-1 pb-0.5 border-[3px]" style={{ left, top, background: bg, color: fg, borderColor: LINE, boxShadow: `3px 3px 0 rgb(40 22 10 / 0.5)`, ...display, fontWeight: 600, fontSize: 18 }}>
       {children}
     </div>
   );
@@ -1069,14 +1086,16 @@ export const InteriorArt = memo(function InteriorArt({ layout, info }: { layout:
       <MiddleSet L={L} kind={info.kind} />
       {/* Progress Room */}
       <rect x={L.progress.x} y={L.progress.y} width={L.progress.w} height={L.progress.h} rx="12" fill="url(#a-carpet)" stroke={LINE} strokeWidth="4" />
-      <rect x={L.progress.x + 8} y={L.progress.y + 8} width={L.progress.w - 16} height={L.progress.h - 16} rx="8" fill="none" stroke="#c8913a" strokeWidth="3" strokeDasharray="10 7" />
+      <rect x={L.progress.x + 6} y={L.progress.y + 6} width={L.progress.w - 12} height={L.progress.h - 12} fill="none" stroke="#f2b866" strokeWidth="8" />
+      <rect x={L.progress.x + 14} y={L.progress.y + 14} width={L.progress.w - 28} height={L.progress.h - 28} fill="none" stroke="#93392a" strokeWidth="4" />
       <g transform={`translate(${L.screen.x} ${L.screen.y})`} stroke={LINE} strokeWidth="4">
         <rect x="-10" y="-10" width={L.screen.w + 20} height={L.screen.h + 20} rx="8" fill="#4a3b4f" />
         <rect width={L.screen.w} height={L.screen.h} rx="4" fill="#1d2440" strokeWidth="3" />
       </g>
       {/* Mission Room */}
       <rect x={L.mission.x} y={L.mission.y} width={L.mission.w} height={L.mission.h} rx="12" fill="url(#a-carpet2)" stroke={LINE} strokeWidth="4" />
-      <rect x={L.mission.x + 8} y={L.mission.y + 8} width={L.mission.w - 16} height={L.mission.h - 16} rx="8" fill="none" stroke="#4d8f99" strokeWidth="3" strokeDasharray="10 7" />
+      <rect x={L.mission.x + 6} y={L.mission.y + 6} width={L.mission.w - 12} height={L.mission.h - 12} fill="none" stroke="#c4ead9" strokeWidth="8" />
+      <rect x={L.mission.x + 14} y={L.mission.y + 14} width={L.mission.w - 28} height={L.mission.h - 28} fill="none" stroke="#1f4a52" strokeWidth="4" />
       <g transform={`translate(${L.board.x} ${L.board.y})`} stroke={LINE} strokeWidth="4">
         <rect x="-10" y="-10" width={L.board.w + 20} height={L.board.h + 20} rx="6" fill="#8a5636" />
         <rect width={L.board.w} height={L.board.h} fill="#d6a46b" strokeWidth="3" />
@@ -1289,13 +1308,13 @@ export const InteriorLabels = memo(function InteriorLabels({ layout, info, statu
 
 function Zone({ r, text, right = false }: { r: Rect; text: string; right?: boolean }) {
   return (
-    <div className="absolute" style={{ left: r.x + 16, top: r.y + 14, width: r.w - 32, textAlign: right ? "right" : "left", ...display, fontSize: 22, color: LINE, opacity: 0.7 }}>
+    <div className="absolute" style={{ left: r.x + 16, top: r.y + 14, width: r.w - 32, textAlign: right ? "right" : "left", ...display, fontSize: 22, color: "#fbf1dc", textShadow: "2px 2px 0 rgb(40 22 10 / 0.6)" }}>
       {text}
     </div>
   );
 }
 
-const STATE_DOT = { busy: "#2fbf5a", idle: "#9aa0b4", setup: "#e2453c" };
+const STATE_DOT = { busy: "#6aa645", idle: "#a3998f", setup: "#c0392b" };
 const STATE_WORD = { busy: "Working", idle: "Free", setup: "Needs you" };
 
 /** The nameplate on the front of a desk: who sits here, their job, and whether they're working, free or waiting on you (and on what). */
@@ -1303,12 +1322,12 @@ function Plate({ x, y, name, title, color, status }: { x: number; y: number; nam
   const done = status?.line.startsWith("Done today");
   const line = status?.line.replace(/^(Working on|Done today|Waiting on you): /, "").replace(/…$/, "");
   return (
-    <div className="absolute text-center rounded-md border-[2.5px] px-1 py-0.5 shadow-[2px_2px_0_#2b1d2e]" style={{ left: x - 70, top: y + 0.15 * T + 0.9 * T - 4, width: 140, background: "#f6e7cf", borderColor: LINE, color: LINE, zIndex: 2 }} title={status?.line}>
-      <div className="font-extrabold leading-none truncate" style={{ fontSize: 13 }}>{name}</div>
-      <div className="font-extrabold mt-0.5 rounded-sm px-1" style={{ fontSize: 10.5, lineHeight: "12px", background: color }}>{title.toUpperCase()}</div>
+    <div className="absolute text-center border-[2.5px] px-1 py-0.5 shadow-[2px_2px_0_rgb(40_22_10/0.5)]" style={{ left: x - 70, top: y + 0.15 * T + 0.9 * T - 4, width: 140, background: "#f3e2c0", borderColor: LINE, color: LINE, zIndex: 2 }} title={status?.line}>
+      <div className="leading-none truncate" style={{ ...display, fontSize: 15 }}>{name}</div>
+      <div className="mt-0.5 px-1" style={{ ...display, fontSize: 12, lineHeight: "14px", background: snapHex(shade(color, 0.35)) }}>{title}</div>
       {status && (
-        <div className="flex items-center justify-center gap-1 mt-0.5 font-extrabold leading-none" style={{ fontSize: 10.5 }}>
-          <span className="inline-block rounded-full shrink-0" style={{ width: 8, height: 8, background: done ? "#ffd166" : STATE_DOT[status.state], border: `1.5px solid ${LINE}` }} />
+        <div className="flex items-center justify-center gap-1 mt-0.5 leading-none" style={{ ...display, fontWeight: 500, fontSize: 12 }}>
+          <span className="inline-block shrink-0" style={{ width: 8, height: 8, background: done ? "#f4c95d" : STATE_DOT[status.state], border: `1.5px solid ${LINE}` }} />
           <span className="truncate">{done ? "Done" : STATE_WORD[status.state]}{line && status.state !== "idle" ? `: ${line}` : ""}</span>
         </div>
       )}

@@ -8,6 +8,7 @@ import type { HeroLook } from "@/lib/types";
 import { ItemAura, ItemBack, ItemFace, ItemHat, ItemPet, ItemWeapon } from "./heroItems";
 import { HERO_DEFAULTS, HERO_HAIR } from "@/lib/heroLook";
 import { Extra, Eyes, HairBack, HairFront, Mouth } from "./avatars";
+import { PixelHero, usePixelStyle } from "./pixelate";
 
 export type HeroMood = "ready" | "focus" | "hype";
 
@@ -44,6 +45,7 @@ export function Hero({
   attacking?: boolean;
 }) {
   const ctx = useContext(HeroStyleContext);
+  const pixel = usePixelStyle();
   const L = { ...HERO_DEFAULTS, ...(lookProp ?? ctx.look) };
   const items = itemsProp ?? ctx.items ?? [];
   const hype = mood === "hype" || attacking;
@@ -59,6 +61,8 @@ export function Hero({
   const classicHair = ["spiky", "long", "mohawk", "bob"].includes(L.hair) ? L.hair : null;
   // Right hand: raised when hyped (weapon held up), at the side otherwise.
   const handAt: [number, number] = hype ? [151, 98] : [138, 201];
+  // Dawnterra pixel style: the same pixel sprite that walks around the city.
+  if (pixel) return <PixelHero look={lookProp ?? ctx.look} size={size} className={className} lively={hype} />;
   return (
     <svg viewBox="-20 -24 240 270" width={size} height={size * 1.125} className={className} role="img" aria-label="Hero">
       <ellipse cx="100" cy="236" rx="62" ry="9" fill="#000" opacity="0.28" />

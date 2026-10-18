@@ -8,7 +8,6 @@
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTracker } from "../App";
-import { Hero, Kit } from "../characters";
 import { Icon } from "../icons";
 import { Btn } from "../ui";
 import Dialogue, { type Talk } from "./Dialogue";
@@ -16,7 +15,11 @@ import Decorate from "./Decorate";
 import { CityArt, CityGlow, CityLabels, InteriorArt, InteriorLabels, type DeskStatus, type HouseInfo, type InteriorInfo } from "./art";
 import { HomeArt, HomeLabels } from "./homeArt";
 import { FURNITURE, furnitureOf, layoutHome } from "@/lib/home";
-import { picture, sprite } from "./pictures";
+import { SPRITE_H, SPRITE_W, kitUrl, sheetUrl } from "./pixelSprite";
+import { pixelPicture } from "./pixel";
+import { snapHex } from "@/lib/palette";
+import { shade } from "../characters";
+import { PixelForce } from "../pixelate";
 import { cityWork, type Work } from "@/lib/cityWork";
 import { dueJob } from "@/lib/cityJobs";
 import { onRunning, runJob, runningJobs } from "./workRunner";
@@ -42,6 +45,8 @@ interface Agent {
   act: string;
   visible: boolean;
   face: 1 | -1;
+  /** Which way they look: toward you, away, or sideways (face says left or right) */
+  dir: Dir;
   moving: boolean;
   /** Building they're inside (city scene), when hidden */
   inside?: string;
@@ -49,14 +54,15 @@ interface Agent {
   onArrive?: () => void;
 }
 
-const SPRITE = 58;
-const SPRITE_H = SPRITE * 1.125;
+type Dir = "down" | "up" | "side";
+/** Which way someone walking by (dx, dy) looks. */
+const dirOf = (dx: number, dy: number): Dir => (Math.abs(dy) > Math.abs(dx) * 1.2 ? (dy > 0 ? "down" : "up") : "side");
 const WALK = 62;
 const RUN_PLAYER = 290;
 const WALK_PLAYER = 190;
 
 /** Moves a character, touching the page only when something changed. */
-function place(el: HTMLElement, x: number, y: number, depth: number, moving: boolean, face: number) {
+function place(el: HTMLElement, x: number, y: number, depth: number, moving: boolean, face: number, dir: Dir) {
   const tf = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
   if (el.style.transform !== tf) el.style.transform = tf;
   const z = String(Math.round(depth));
@@ -65,6 +71,7 @@ function place(el: HTMLElement, x: number, y: number, depth: number, moving: boo
   if (el.dataset.moving !== m) el.dataset.moving = m;
   const f = String(face);
   if (el.dataset.face !== f) el.dataset.face = f;
+  if (el.dataset.dir !== dir) el.dataset.dir = dir;
 }
 
 const randIn = (r: Rect, rand: () => number, pad = 10): Pt => ({ x: r.x + pad + rand() * Math.max(1, r.w - pad * 2), y: r.y + pad + rand() * Math.max(1, r.h - pad * 2) });
@@ -113,7 +120,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   const miniDot = useRef<SVGCircleElement>(null);
   const els = useRef(new Map<string, HTMLDivElement>());
   const agents = useRef(new Map<string, Agent>());
-  const player = useRef({ x: cityLayout.spawn.x, y: cityLayout.spawn.y, face: 1 as 1 | -1, moving: false });
+  const player = useRef({ x: cityLayout.spawn.x, y: cityLayout.spawn.y, face: 1 as 1 | -1, dir: "down" as Dir, moving: false });
   const pressed = useRef(new Set<string>());
   const joy = useRef({ x: 0, y: 0 });
   const tapTo = useRef<Pt | null>(null);
@@ -224,7 +231,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
       };
       for (const c of CITIZENS) {
         const home = layout.spots[c.spot];
-        const a: Agent = { id: `cit:${c.id}`, ...home, path: [], wait: rand() * 3, act: pick(c.bubbles, rand), visible: true, face: 1, moving: false };
+        const a: Agent = { id: `cit:${c.id}`, ...home, path: [], wait: rand() * 3, act: pick(c.bubbles, rand), visible: true, face: 1, dir: "down", moving: false };
         (a as Agent & { decide: () => void }).decide = () => {
           a.path = [{ x: home.x + (rand() - 0.5) * (c.spot === "plaza-left" ? 10 : 90), y: home.y + (rand() - 0.5) * (c.spot === "plaza-left" ? 4 : 40) }];
           a.act = pick(c.bubbles, rand);
@@ -237,7 +244,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         const w = workOf(s.id);
         const out = w.state === "busy" && s.role !== "reporter" && rand() < 0.3;
         const p = out ? yardPt(s.buildingId) : doorPt(s.buildingId);
-        const a: Agent = { id: s.id, ...p, path: [], wait: out ? 3 + rand() * 4 : 5 + rand() * 25, act: w.line, visible: out, face: rand() < 0.5 ? 1 : -1, moving: false, inside: out ? undefined : s.buildingId };
+        const a: Agent = { id: s.id, ...p, path: [], wait: out ? 3 + rand() * 4 : 5 + rand() * 25, act: w.line, visible: out, face: rand() < 0.5 ? 1 : -1, dir: "down", moving: false, inside: out ? undefined : s.buildingId };
         (a as Agent & { decide: () => void }).decide = () => decide(a);
         map.set(s.id, a);
       }
@@ -302,7 +309,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
       for (const s of insideNow) {
         const st = deskOf.get(s.id);
         const p = st ? { x: st.x, y: st.y } : { x: I.reporter!.x, y: I.reporter!.y };
-        const a: Agent = { id: s.id, ...p, path: [], wait: 4 + rand() * 12, act: workOf(s.id).line, visible: true, face: 1, moving: false, phase: "desk" };
+        const a: Agent = { id: s.id, ...p, path: [], wait: 4 + rand() * 12, act: workOf(s.id).line, visible: true, face: 1, dir: "down", moving: false, phase: "desk" };
         (a as Agent & { decide: () => void }).decide = () => decide(a);
         map.set(s.id, a);
       }
@@ -399,6 +406,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
           dx = (dx / len) * sp;
           dy = (dy / len) * sp;
           if (dx) P.face = dx > 0 ? 1 : -1;
+          P.dir = dirOf(dx, dy);
           const box = { x: P.x - 11, y: P.y - 8, w: 22, h: 10 };
           const moved = moveBox(box, dx, dy, solids);
           if (tapTo.current && moved.x === box.x && moved.y === box.y) tapTo.current = null;
@@ -434,6 +442,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         if (talking) {
           a.moving = false;
           a.face = P.x > a.x ? 1 : -1;
+          a.dir = dirOf(P.x - a.x, P.y - a.y);
           continue;
         }
         if (a.path.length) {
@@ -455,6 +464,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
             a.x += (ddx / d) * step;
             a.y += (ddy / d) * step;
             if (Math.abs(ddx) > 1) a.face = ddx > 0 ? 1 : -1;
+            a.dir = dirOf(ddx, ddy);
           }
           a.moving = a.path.length > 0;
         } else {
@@ -486,7 +496,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         if (world.current.style.transform !== tf) world.current.style.transform = tf;
       }
       // draw
-      if (playerEl.current) place(playerEl.current, P.x - 32, P.y - 70, P.y, P.moving, P.face);
+      if (playerEl.current) place(playerEl.current, P.x - SPRITE_W / 2, P.y - SPRITE_H + 4, P.y, P.moving, P.face, P.dir);
       // Only the person nearest you (and anyone right beside you) shows a speech bubble;
       // everyone else shows a small badge for what they're up to.
       let nearest = "";
@@ -505,7 +515,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         const show = a.visible ? "" : "none";
         if (el.style.display !== show) el.style.display = show;
         if (!a.visible) continue;
-        place(el, a.x - SPRITE / 2, a.y - SPRITE_H * 0.95, a.y, a.moving, a.face);
+        place(el, a.x - SPRITE_W / 2, a.y - SPRITE_H + 4, a.y, a.moving, a.face, a.dir);
         const b = el.firstElementChild as HTMLElement | null;
         if (b) {
           if (b.textContent !== a.act) b.textContent = a.act;
@@ -625,21 +635,26 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   // The scenery as one picture; it's redrawn only when the town or the room changes.
   const [sceneryUrl, setSceneryUrl] = useState("");
   useEffect(() => {
-    const url =
-      scene.type === "city" ? picture(<CityArt layout={cityLayout} houses={housesMemo} />)
-      : homeLayout ? picture(<HomeArt layout={homeLayout} />)
-      : interior && interiorMemo ? picture(<InteriorArt layout={interior} info={interiorMemo} />)
-      : "";
-    setSceneryUrl(url);
+    const art =
+      scene.type === "city" ? <CityArt layout={cityLayout} houses={housesMemo} />
+      : homeLayout ? <HomeArt layout={homeLayout} />
+      : interior && interiorMemo ? <InteriorArt layout={interior} info={interiorMemo} />
+      : null;
+    if (!art) return setSceneryUrl("");
+    let url = "";
+    let gone = false;
+    pixelPicture(art, W, H).then((u) => {
+      if (gone) return URL.revokeObjectURL(u);
+      url = u;
+      setSceneryUrl(u);
+    });
     return () => {
+      gone = true;
       if (url) setTimeout(() => URL.revokeObjectURL(url), 2000);
     };
-  }, [scene.type, cityLayout, housesMemo, interior, interiorMemo, homeLayout]);
+  }, [scene.type, cityLayout, housesMemo, interior, interiorMemo, homeLayout, W, H]);
 
-  const heroItems = Object.values(data.game?.equipped ?? {}).filter((x): x is string => Boolean(x));
-  const heroGear = Object.keys(data.heroGear ?? {});
-  const playerKey = JSON.stringify([data.game?.look, heroItems, heroGear]);
-  const playerUrl = sprite(`p:${playerKey}`, () => <Hero size={64} mood="ready" look={data.game?.look} items={heroItems} gear={heroGear} />);
+  const playerUrl = sheetUrl(data.game?.look);
 
   const hour = new Date().getHours();
   const tint = scene.type === "inside" ? null : hour >= 19 || hour < 5 ? "night" : hour >= 17 || hour < 7 ? "dusk" : null;
@@ -649,10 +664,11 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   for (const s of staff) counts[work.get(s.id)?.state ?? "idle"]++;
 
   return (
-    <div className="fixed inset-0 z-[60] bg-outline select-none touch-none" role="application" aria-label={`${city.name}: walk with the arrow keys, talk with Space`}>
+    <PixelForce.Provider value={true}>
+    <div className="dawn fixed inset-0 z-[60] bg-outline select-none touch-none" role="application" aria-label={`${city.name}: walk with the arrow keys, talk with Space`}>
       <div ref={viewport} className="absolute inset-0 overflow-hidden" onPointerDown={onPointer}>
         <div ref={world} className="absolute left-0 top-0 origin-top-left will-change-transform" style={{ width: W, height: H }}>
-          {sceneryUrl && <img src={sceneryUrl} alt="" width={W} height={H} className="absolute left-0 top-0 block max-w-none" draggable={false} />}
+          {sceneryUrl && <img src={sceneryUrl} alt="" width={W} height={H} className="absolute left-0 top-0 block max-w-none pixelated" draggable={false} />}
           {scene.type === "city" ? (
             <CityLabels layout={cityLayout} houses={housesMemo} cityName={city.name} />
           ) : homeLayout ? (
@@ -668,14 +684,12 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
             CITIZENS.map((c) => (
               <Npc key={c.id} id={`cit:${c.id}`} name={c.name} color={c.color} look={citizenLook(c.id, c.seed)} refFn={(el) => (el ? els.current.set(`cit:${c.id}`, el) : els.current.delete(`cit:${c.id}`))} onTalk={talkTo} />
             ))}
-          <div ref={playerEl} className="absolute left-0 top-0 city-walker" style={{ width: 64 }}>
+          <div ref={playerEl} className="absolute left-0 top-0 city-walker" style={{ width: SPRITE_W }}>
             <div className="city-shadow" />
             <div className="city-flip">
-              <div className="city-body">
-                <img src={playerUrl} alt="" width={64} height={72} className="block" draggable={false} />
-              </div>
+              <PixelBody url={playerUrl} />
             </div>
-            <div className="city-tag" style={{ background: "#ff5fae" }}>{data.settings.playerName || "You"}</div>
+            <div className="city-tag" style={{ background: "#f2b866" }}>{data.settings.playerName || "You"}</div>
           </div>
           {tint && <div className={`absolute inset-0 pointer-events-none city-tint-${tint}`} style={{ zIndex: 100000 }} />}
           {tint && (
@@ -725,16 +739,16 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
       )}
       {scene.type === "city" && (
         <div className="absolute bottom-3 right-3 w-44 pointer-events-none max-sm:hidden"><div className="hud p-1">
-        <svg viewBox={`0 0 ${cityLayout.w} ${cityLayout.h}`} className="block w-full h-auto" aria-hidden>
-          <rect width={cityLayout.w} height={cityLayout.h} fill="#3f9a4a" />
+        <svg viewBox={`0 0 ${cityLayout.w} ${cityLayout.h}`} className="block w-full h-auto" shapeRendering="crispEdges" aria-hidden>
+          <rect width={cityLayout.w} height={cityLayout.h} fill="#6aa645" />
           {cityLayout.roads.map((r, i) => (
-            <rect key={i} x={r.x} y={r.y} width={r.w} height={r.h} fill="#454861" />
+            <rect key={i} x={r.x} y={r.y} width={r.w} height={r.h} fill="#7d7574" />
           ))}
-          <rect x={cityLayout.plaza.x} y={cityLayout.plaza.y} width={cityLayout.plaza.w} height={cityLayout.plaza.h} fill="#e3dcef" />
+          <rect x={cityLayout.plaza.x} y={cityLayout.plaza.y} width={cityLayout.plaza.w} height={cityLayout.plaza.h} fill="#c8bdae" />
           {cityLayout.plots.map((p) => (
-            <rect key={p.buildingId} x={p.house.x} y={p.house.y} width={p.house.w} height={p.house.h} fill={housesMemo.find((h) => h.id === p.buildingId)?.color ?? "#fff"} />
+            <rect key={p.buildingId} x={p.house.x} y={p.house.y} width={p.house.w} height={p.house.h} fill={snapHex(housesMemo.find((h) => h.id === p.buildingId)?.color ?? "#fffaf0")} />
           ))}
-          <circle ref={miniDot} r="60" fill="#ff5fae" stroke="#fff" strokeWidth="24" />
+          <circle ref={miniDot} r="60" fill="#d9603b" stroke="#fffaf0" strokeWidth="24" />
         </svg>
         </div></div>
       )}
@@ -748,7 +762,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
           </button>
         </div>
       )}
-      {!talk && <div className="absolute bottom-2 left-3 text-sm font-bold text-ink/80 max-sm:hidden pointer-events-none [text-shadow:0_1px_0_#000]">Arrows or WASD to walk · Shift to run · Space to talk · Tap the ground to walk there</div>}
+      {!talk && <div className="absolute bottom-2 left-3 text-[15px] text-[#fbf1dc] max-sm:hidden pointer-events-none [text-shadow:2px_2px_0_#2b1d2e]">Arrows or WASD to walk · Shift to run · Space to talk · Tap the ground to walk there</div>}
 
       <TouchPad joy={joy} onA={() => nearAct.current?.()} hidden={Boolean(talk) || decorating} />
       {decorating && inside && (
@@ -763,6 +777,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
 
       {talk && <Dialogue talk={talk} onClose={() => setTalk(null)} goTo={goTo} />}
     </div>
+    </PixelForce.Provider>
   );
 }
 
@@ -782,16 +797,14 @@ function citizenLook(id: string, seed: string): HeroLook {
 const Npc = memo(
   function Npc({ id, name, color, look, refFn, onTalk }: { id: string; name: string; color: string; look?: HeroLook; refFn: (el: HTMLDivElement | null) => void; onTalk: (id: string) => void }) {
     return (
-      <div ref={refFn} className="absolute left-0 top-0 city-walker city-npc" style={{ width: SPRITE, display: "none" }} onClick={() => onTalk(id)}>
+      <div ref={refFn} className="absolute left-0 top-0 city-walker city-npc" style={{ width: SPRITE_W, display: "none" }} onClick={() => onTalk(id)}>
         <div className="city-bubble" />
         <div className="city-badge" aria-hidden />
         <div className="city-shadow" />
         <div className="city-flip">
-          <div className="city-body">
-            <img src={sprite(JSON.stringify(look ?? null), () => <Hero size={SPRITE} look={look} items={[]} mood="ready" />)} alt="" width={SPRITE} height={SPRITE_H} className="block" draggable={false} />
-          </div>
+          <PixelBody url={sheetUrl(look)} />
         </div>
-        <div className="city-tag" style={{ background: color }}>
+        <div className="city-tag" style={{ background: snapHex(shade(color, 0.4)) }}>
           {name}
         </div>
       </div>
@@ -805,17 +818,22 @@ const KitNpc = memo(function KitNpc({ layout }: { layout: CityLayout }) {
   const x = f.x - f.r * 1.15;
   const y = f.y + f.r * 1.85;
   return (
-    <div className="absolute left-0 top-0" style={{ transform: `translate(${x - 32}px, ${y - 62}px)`, zIndex: Math.round(y) }}>
+    <div className="absolute left-0 top-0" style={{ transform: `translate(${x - SPRITE_W / 2}px, ${y - SPRITE_H + 4}px)`, zIndex: Math.round(y), width: SPRITE_W }}>
       <div className="city-bubble" style={{ opacity: 1 }}>
         Welcome! Talk to me
       </div>
       <div className="city-shadow" />
-      <div className="bob">
-        <Kit size={64} />
+      <div className="pix-bob">
+        <div className="pix" style={{ width: SPRITE_W, height: SPRITE_H, backgroundImage: `url(${kitUrl()})`, backgroundSize: `${SPRITE_W}px ${SPRITE_H}px` }} />
       </div>
     </div>
   );
 });
+
+/** A pixel character: the sheet shows the frame for where they're looking and whether they walk. */
+function PixelBody({ url }: { url: string }) {
+  return <div className="city-body pix" style={{ width: SPRITE_W, height: SPRITE_H, backgroundImage: `url(${url})` }} />;
+}
 
 function TouchPad({ joy, onA, hidden }: { joy: React.RefObject<{ x: number; y: number }>; onA: () => void; hidden: boolean }) {
   const set = (x: number, y: number) => () => void Object.assign(joy.current!, { x, y });

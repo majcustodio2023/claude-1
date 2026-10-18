@@ -1,7 +1,7 @@
 // How the app looks: color theme, design style, layout, size and header.
 // Saved in settings.appearance; applied as CSS variables and data-* attributes on <html>.
 
-export type StyleId = "comic" | "sleek" | "cyber" | "retro" | "minimal";
+export type StyleId = "comic" | "sleek" | "cyber" | "retro" | "minimal" | "pixel";
 export type LayoutId = "tabs" | "sidebar" | "dock";
 export type DensityId = "compact" | "comfy" | "large";
 export type HeaderId = "hero" | "slim";
@@ -54,12 +54,14 @@ export const THEMES: Theme[] = [
   { id: "matrix", name: "Matrix", bg: "#020a04", card: "#07160b", card2: "#0c2112", ink: "#e9ffef", muted: "#9fd4ae", line: "#1d4a2a", accent: "#39ff88", hero: "#00e676", gold: "#c6ff00", field: "#020904", ...dark },
   { id: "mono", name: "Midnight Mono", bg: "#101012", card: "#1b1b1f", card2: "#25252b", ink: "#f5f5f7", muted: "#b3b3bb", line: "#3a3a42", accent: "#e9e9ee", hero: "#a8a8b3", gold: "#ffffff", field: "#0c0c0e", ...dark },
   { id: "arctic", name: "Arctic", bg: "#0c1620", card: "#142331", card2: "#1b2e3f", ink: "#f2f8fc", muted: "#b4c7d6", line: "#2d4a60", accent: "#8fe3ff", hero: "#c2a8ff", gold: "#e8f6ff", field: "#09121a", ...dark },
+  { id: "dawn", name: "Dawnterra Parchment", light: true, bg: "#dcc39a", card: "#f6e8c8", card2: "#ecd6ab", ink: "#3b2416", muted: "#76563c", line: "#c9a978", outline: "#3b2416", accent: "#2f8f83", hero: "#d9603b", gold: "#cf8a1f", good: "#4f9a3a", warn: "#d9822b", bad: "#c0392b", field: "#fdf5e3" },
   { id: "paper", name: "Manga Paper", light: true, bg: "#f2ecdf", card: "#fffaf0", card2: "#f3ead7", ink: "#1d1a2e", muted: "#5c5770", line: "#d9cfb8", outline: "#1d1a2e", accent: "#0a84d6", hero: "#e0306f", gold: "#f2b705", good: "#1e9e52", warn: "#e07b00", bad: "#d62839", field: "#ffffff" },
   { id: "daylight", name: "Daylight", light: true, bg: "#eef2f8", card: "#ffffff", card2: "#f1f4f9", ink: "#101828", muted: "#5a6474", line: "#d6dde8", outline: "#1b2333", accent: "#2f6fec", hero: "#9b51e0", gold: "#f5a623", good: "#17a05d", warn: "#e3780c", bad: "#e5383b", field: "#ffffff" },
   { id: "candy", name: "Candy Pop", light: true, bg: "#fdeef6", card: "#ffffff", card2: "#fff1f8", ink: "#2b1638", muted: "#76618a", line: "#f0cfe2", outline: "#2b1638", accent: "#00b3e6", hero: "#ff4fa0", gold: "#ffc400", good: "#13b36b", warn: "#ff8a00", bad: "#f0254d", field: "#ffffff" },
 ];
 
 export const STYLES: { id: StyleId; name: string; about: string }[] = [
+  { id: "pixel", name: "Dawnterra pixel", about: "Cozy pixel-art RPG: parchment cards, square corners, pixel font. Matches the city." },
   { id: "comic", name: "Comic hero", about: "Thick ink outlines, tilted captions, punchy comic font." },
   { id: "sleek", name: "Sleek pro", about: "Soft rounded cards, clean type, no outlines. Calm and modern." },
   { id: "cyber", name: "Cyber HUD", about: "Cut corners, glowing edges and a sci-fi font, like a game HUD." },
@@ -81,6 +83,7 @@ export const DENSITIES: { id: DensityId; name: string; px: number }[] = [
 
 /** Ready-made looks that set everything at once. */
 export const PRESETS: { id: string; name: string; about: string; look: Appearance }[] = [
+  { id: "dawnterra", name: "Dawnterra", about: "The cozy pixel-art look of the city, everywhere.", look: { theme: "dawn", style: "pixel", layout: "tabs", density: "comfy", header: "hero", width: "normal" } },
   { id: "hero", name: "Comic Hero", about: "The original anime comic look.", look: { theme: "comic", style: "comic", layout: "tabs", density: "comfy", header: "hero", width: "normal" } },
   { id: "ops", name: "Cyber Ops", about: "Neon HUD with a side menu and a slim header.", look: { theme: "neon", style: "cyber", layout: "sidebar", density: "comfy", header: "slim", width: "wide" } },
   { id: "pro", name: "Clean Pro", about: "Bright, calm dashboard for work mode.", look: { theme: "daylight", style: "sleek", layout: "sidebar", density: "compact", header: "slim", width: "wide" } },
@@ -89,7 +92,7 @@ export const PRESETS: { id: string; name: string; about: string; look: Appearanc
   { id: "zen", name: "Zen", about: "Minimal, big text, nothing moving.", look: { theme: "arctic", style: "minimal", layout: "tabs", density: "large", header: "slim", width: "normal", calm: true } },
 ];
 
-export const DEFAULT_LOOK: Required<Omit<Appearance, "calm">> & { calm: boolean } = { theme: "comic", style: "comic", layout: "tabs", density: "comfy", header: "hero", width: "normal", calm: false };
+export const DEFAULT_LOOK: Required<Omit<Appearance, "calm">> & { calm: boolean } = { theme: "dawn", style: "pixel", layout: "tabs", density: "comfy", header: "hero", width: "normal", calm: false };
 
 export function resolveLook(a: Appearance | undefined) {
   return { ...DEFAULT_LOOK, ...Object.fromEntries(Object.entries(a ?? {}).filter(([, v]) => v !== undefined)) } as typeof DEFAULT_LOOK;

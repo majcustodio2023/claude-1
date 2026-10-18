@@ -58,6 +58,8 @@ async function writeDoc(doc: StoredDoc): Promise<void> {
 // Installs from before v4 used pesos, Manila time and showed the daily verse, so they keep that.
 // v5 turned bills ticked as paid into dated payments (bills can now be paid in parts).
 // v6 moved team base pay onto a payroll bill (linking an existing matching bill) so it's counted once.
+// v7 switched the look once to Dawnterra (pixel art, parchment) so the app matches the city.
+//    Any other look can still be picked in Settings > Look.
 function migrate(doc: StoredDoc): StoredDoc {
   let data = doc.data;
   if ((data.version ?? 1) < 3) data = { ...foldOneTimeIntoDeals(data), version: 3 };
@@ -71,6 +73,10 @@ function migrate(doc: StoredDoc): StoredDoc {
   }
   if (data.version < 5) data = { ...upgradeBillPayments(data), version: 5 };
   if (data.version < 6) data = { ...upgradeTeamPay(data), version: 6 };
+  if (data.version < 7) {
+    const s = data.settings;
+    data = { ...data, version: 7, settings: { ...s, appearance: { ...s.appearance, theme: "dawn", style: "pixel" } } };
+  }
   return data === doc.data ? doc : { ...doc, data };
 }
 
