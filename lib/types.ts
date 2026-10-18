@@ -576,6 +576,10 @@ export interface StaffWork {
   at: string;
   /** Set when it was posted somewhere for real (e.g. "Posted to Discord"). */
   sent?: string;
+  /** queued = waiting for Claude in the project to do it (no API key); text is blank until then. */
+  status?: "queued";
+  /** The brief, kept only while queued. */
+  prompt?: { system: string; user: string };
 }
 
 export interface VideoRequest {

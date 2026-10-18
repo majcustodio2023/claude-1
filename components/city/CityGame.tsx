@@ -122,7 +122,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   // does the same when you don't), a couple at a time so you can watch them get to it.
   const started = useRef(false);
   useEffect(() => {
-    if (started.current || !data.integrations?.kit) return;
+    if (started.current) return;
     started.current = true;
     const due = (data.city?.staff ?? []).filter((s) => dueJob(data, s, today));
     let i = 0;
@@ -137,7 +137,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
     };
     next();
     next();
-  }, [data.integrations?.kit]);
+  }, []);
   const workKey = [...work].map(([k, w]) => `${k}:${w.state}:${w.line}`).join("|");
   const nameOf = useCallback((id: string) => buildingName(data, buildings.find((b) => b.id === id) ?? buildings[0]), [data, bIds]);
   const shopIds = buildings.filter(isShop).map((b) => b.id);

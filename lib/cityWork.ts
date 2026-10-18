@@ -41,7 +41,7 @@ export function buildingWork(data: TrackerData, b: CityBuilding, staff: CityStaf
       continue;
     }
     const made = (data.staffWork ?? []).find((x) => x.staffId === s.id && x.day === today);
-    let w: Work | null = made ? { state: "busy", line: `Done today: ${made.label}` } : null;
+    let w: Work | null = made ? { state: "busy", line: made.status === "queued" ? `Working on: ${made.label} (ready within the hour)` : `Done today: ${made.label}` } : null;
     if (!w) switch (s.role) {
       case "reporter":
         w = open.length || (data.clientTasks ?? []).some((t) => ids.includes(t.clientId) && t.doneOn === today) ? { state: "busy", line: "Updating the scoreboard" } : null;

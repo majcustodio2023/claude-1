@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { doJob, postToDiscord } from "@/lib/cityJobs-server";
-import { updateStaffWork } from "@/lib/store";
+import { getData, updateStaffWork } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -23,4 +23,9 @@ export async function DELETE(req: Request) {
   const id = new URL(req.url).searchParams.get("id");
   if (!id) return NextResponse.json({ error: "Which one?" }, { status: 400 });
   return NextResponse.json({ work: await updateStaffWork((list) => list.filter((w) => w.id !== id)) });
+}
+
+/** The latest work list (to see queued jobs come back done). */
+export async function GET() {
+  return NextResponse.json({ work: (await getData()).staffWork ?? [] });
 }
