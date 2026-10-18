@@ -17,6 +17,8 @@ import { blip, sfx } from "@/lib/sound";
 import { ROLES, buildingName, clientsOf, roleOf, say, secretKey, setupProgress, titleOf, type StaffRole } from "@/lib/city";
 import { buildingReport, missions } from "@/lib/cityReport";
 import { WRITER_PROMPTS } from "@/lib/cityPrompts";
+import { NOT_LIVE, dueJob, jobsOf, workOf } from "@/lib/cityJobs";
+import { onRunning, runJob, runningJobs } from "./workRunner";
 import { GATE, SHOPKEEPERS, STAFF_CHATS, citizenById, citizenStart, questById, questProgress, questState } from "@/lib/cityLore";
 import { ITEMS, RARITY, SLOT_LABEL } from "@/lib/items";
 import { ITEM_POWER } from "@/lib/battle";
@@ -25,7 +27,7 @@ import { hashString, rng } from "@/lib/avatar";
 import { randomHeroLook } from "@/lib/heroLook";
 import type { HeroLook, ItemSlot } from "@/lib/types";
 import { toast } from "../ui";
-import type { CityBuilding, CityStaff, Creative, TrackerData } from "@/lib/types";
+import type { CityBuilding, CityStaff, Creative, StaffWork, TrackerData, VideoRequest } from "@/lib/types";
 
 export type Talk =
   | { kind: "staff"; staffId: string }
@@ -37,7 +39,7 @@ export type Talk =
   | { kind: "gate" }
   | { kind: "shop"; buildingId: string };
 
-type Page = "greet" | "jobs" | "panel" | "setup" | "chat" | "news" | `reply:${number}` | `node:${string}`;
+type Page = "greet" | "jobs" | "panel" | "setup" | "work" | "chat" | "news" | `reply:${number}` | `node:${string}`;
 
 /** Each speaker gets their own voice pitch. */
 const pitchOf = (id: string) => 62 + (id.split("").reduce((a, c) => a + c.charCodeAt(0), 0) % 18);
@@ -130,7 +132,10 @@ export default function Dialogue({ talk, onClose, goTo }: { talk: Talk; onClose:
     if (page === "greet") {
       text = `${say(role.greet, place)} ${prog.missing.length ? `I'm waiting on ${prog.missing.length} thing${prog.missing.length === 1 ? "" : "s"} from you before I can start.` : role.needs.length ? "I'm all set up." : ""}`.trim();
       choices = [
-        { label: role.action, go: () => setPage(role.panel === "setup" ? "setup" : "panel"), primary: true },
+        prog.missing.length && role.panel === "work"
+          ? { label: "Here's what I need", go: () => setPage("setup"), primary: true }
+          : { label: role.action, go: () => setPage(role.panel === "setup" ? "setup" : role.panel === "work" ? "work" : "panel"), primary: true },
+        ...(jobsOf(staff).length && role.panel !== "work" ? [{ label: "My work", go: () => setPage("work") }] : []),
         { label: "What do you do?", go: () => setPage("jobs") },
         { label: "How's it going?", go: () => setPage("chat") },
         ...(role.needs.length && role.panel !== "setup" ? [{ label: "My setup", go: () => setPage("setup") }] : []),
@@ -146,10 +151,21 @@ export default function Dialogue({ talk, onClose, goTo }: { talk: Talk; onClose:
     } else if (page === "jobs") {
       text = `My day looks like this: ${role.jobs.map((j) => j.toLowerCase()).join(", ")}.${prog.missing.length ? ` First I need: ${prog.missing.map((m) => m.label.toLowerCase()).join(", ")}.` : ""}`;
       choices = [back, bye];
+    } else if (page === "work") {
+      const mine = workOf(data, staff.id);
+      text = !data.integrations?.kit
+        ? "I work with Claude, the same key Kit uses. Add it in Kit's chat on HQ and I'll get going."
+        : mine.length
+          ? `Here's what I've made. ${mine[0].day === today ? `Today I did: ${mine[0].label.toLowerCase()}.` : ""} Want something else? Pick a job.`
+          : prog.missing.length
+            ? "Give me what I need first, or pick a job and I'll do my best with what I have."
+            : "Pick a job and I'll do it now.";
+      panel = <WorkPanel staff={staff} goTo={goTo} />;
+      choices = [{ label: "My setup", go: () => setPage("setup") }, back, bye];
     } else if (page === "setup") {
       text = prog.missing.length ? "Here's my checklist. Fill in the red ones and I'm good to go." : "All green! Here's what I'm working with.";
       panel = <SetupPanel staff={staff} role={role} />;
-      choices = [back, bye];
+      choices = jobsOf(staff).length ? [{ label: "See my work", go: () => setPage("work"), primary: !prog.missing.length }, back, bye] : [back, bye];
     } else {
       const p = rolePanel(role, staff, building, data, month, today, goTo, place);
       text = p.text;
@@ -355,6 +371,7 @@ function ReportPanel({ building }: { building: CityBuilding }) {
           ))}
         </ul>
       )}
+      <StaffWorkFeed buildingId={building.id} />
       <div className="mt-4 border-t-2 border-line pt-3">
         <div className="text-sm font-extrabold uppercase text-muted mb-1">Reporter&apos;s note</div>
         {editing || !building.progressNote ? (
@@ -368,6 +385,34 @@ function ReportPanel({ building }: { building: CityBuilding }) {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/** What the building's staff made lately, in the Progress Room. */
+function StaffWorkFeed({ buildingId }: { buildingId: string }) {
+  const { data, today } = useTracker();
+  const [open, setOpen] = useState("");
+  const list = (data.staffWork ?? []).filter((w) => w.buildingId === buildingId).slice(0, 6);
+  if (!list.length) return null;
+  const who = (id: string) => data.city?.staff.find((s) => s.id === id)?.name ?? "Someone";
+  return (
+    <div className="mt-4 border-t-2 border-line pt-3">
+      <div className="text-sm font-extrabold uppercase text-muted mb-1">What the team made</div>
+      <ul className="space-y-1.5">
+        {list.map((w) => (
+          <li key={w.id} className="bg-card-2 border-2 border-outline rounded-[8px] px-3 py-2">
+            <button type="button" className="w-full flex items-center gap-2 text-left" onClick={() => setOpen(open === w.id ? "" : w.id)}>
+              <Icon name="check" size={18} className="text-good shrink-0" />
+              <span className="font-bold flex-1 min-w-0 truncate">
+                {who(w.staffId)}: {w.label}
+              </span>
+              <Badge tone={w.day === today ? "gold" : "muted"}>{w.day === today ? "Today" : w.day}</Badge>
+            </button>
+            {open === w.id && <div className="text-base whitespace-pre-wrap leading-relaxed mt-2 max-h-72 overflow-y-auto">{w.text}</div>}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -515,7 +560,7 @@ function SetupPanel({ staff, role }: { staff: CityStaff; role: StaffRole }) {
           <Btn onClick={() => setEditing(false)}>Cancel</Btn>
         </div>
       )}
-      <p className="text-sm text-muted mt-3">Keys and passwords are encrypted on the server and never shown again. {staff.name} keeps these details ready for when their live connection is switched on; for now they hold the checklist and your missions in one place.</p>
+      <p className="text-sm text-muted mt-3">Keys and passwords are encrypted on the server and never shown again. {jobsOf(staff).length ? `${staff.name} works from these: open their work to see what they've made.` : `${staff.name} keeps these details ready for their job.`}</p>
     </div>
   );
 }
@@ -743,20 +788,43 @@ function VideoEditPanel({ building }: { building: CityBuilding }) {
   const link = url.trim();
   const ok = (Boolean(file) || /^https?:\/\//.test(link) || prompt.trim().length > 3) && pct == null;
 
-  const upload = async (f: File): Promise<{ path: string; name: string; size: number }> => {
-    const res = await fetch("/api/city/video", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: f.name, type: f.type, size: f.size }) });
-    const j = (await res.json()) as { uploadUrl?: string; path?: string; error?: string };
-    if (!res.ok || !j.uploadUrl || !j.path) throw new Error(j.error ?? "Couldn't start the upload");
-    await new Promise<void>((resolve, reject) => {
-      const x = new XMLHttpRequest();
-      x.open("PUT", j.uploadUrl!);
-      x.setRequestHeader("Content-Type", f.type);
-      x.upload.onprogress = (e) => e.lengthComputable && setPct(e.loaded / e.total);
-      x.onload = () => (x.status < 300 ? resolve() : reject(new Error(`Upload failed (${x.status})`)));
-      x.onerror = () => reject(new Error("Upload failed. Check your connection."));
-      x.send(f);
-    });
-    return { path: j.path, name: f.name, size: f.size };
+  // Straight from your computer to storage, in 40 MB pieces (three at a time, each retried),
+  // so any size goes up and a dropped connection only costs one piece.
+  const upload = async (f: File): Promise<{ path: string; name: string; size: number; parts?: number }> => {
+    const res = await fetch("/api/city/video", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: f.name, type: f.type || "video/mp4", size: f.size }) });
+    const j = (await res.json()) as { uploadUrls?: string[]; path?: string; partBytes?: number; error?: string };
+    if (!res.ok || !j.uploadUrls?.length || !j.path) throw new Error(j.error ?? "Couldn't start the upload");
+    const urls = j.uploadUrls;
+    const size = j.partBytes ?? f.size;
+    const sent = new Array<number>(urls.length).fill(0);
+    const show = () => setPct(sent.reduce((a, b) => a + b, 0) / f.size);
+    const put = (i: number) =>
+      new Promise<void>((resolve, reject) => {
+        const x = new XMLHttpRequest();
+        x.open("PUT", urls[i]);
+        x.setRequestHeader("Content-Type", f.type || "video/mp4");
+        x.upload.onprogress = (e) => ((sent[i] = e.loaded), show());
+        x.onload = () => (x.status < 300 ? resolve() : reject(new Error(`Upload failed (${x.status}): ${x.responseText.slice(0, 160)}`)));
+        x.onerror = () => reject(new Error("Upload failed. Check your connection."));
+        x.send(urls.length > 1 ? f.slice(i * size, (i + 1) * size) : f);
+      });
+    let next = 0;
+    const worker = async () => {
+      while (next < urls.length) {
+        const i = next++;
+        for (let tries = 0; ; tries++) {
+          try {
+            await put(i);
+            break;
+          } catch (e) {
+            sent[i] = 0;
+            if (tries >= 2) throw e;
+          }
+        }
+      }
+    };
+    await Promise.all([worker(), worker(), worker()]);
+    return { path: j.path, name: f.name, size: f.size, parts: urls.length > 1 ? urls.length : undefined };
   };
 
   const send = async () => {
@@ -788,7 +856,7 @@ function VideoEditPanel({ building }: { building: CityBuilding }) {
       <p className="text-base font-bold text-muted mb-2">Upload your raw video, paste a link to it, or just describe the video you want.</p>
       <label className="flex items-center gap-3 bg-card-2 border-[3px] border-dashed border-outline rounded-[10px] px-3 py-3 cursor-pointer">
         <Icon name="film" size={26} />
-        <span className="flex-1 min-w-0 font-bold text-lg truncate">{file ? `${file.name} (${(file.size / 1048576).toFixed(1)} MB)` : "Upload a video (up to 50 MB)"}</span>
+        <span className="flex-1 min-w-0 font-bold text-lg truncate">{file ? `${file.name} (${(file.size / 1048576).toFixed(1)} MB)` : "Upload a video from your computer (any size)"}</span>
         {file && (
           <button type="button" className="text-bad font-extrabold" onClick={(e) => (e.preventDefault(), setFile(null))}>
             Remove
@@ -822,7 +890,7 @@ function VideoEditPanel({ building }: { building: CityBuilding }) {
                 <Badge tone={r.status === "done" ? "good" : r.status === "editing" ? "gold" : "accent"}>{r.status === "done" ? "Done" : r.status === "editing" ? "Editing" : "Requested"}</Badge>
                 <span className="font-bold">{r.style}</span>
                 {r.file ? (
-                  <a href={`/api/city/video?path=${encodeURIComponent(r.file.path)}`} target="_blank" rel="noreferrer" className="text-accent font-bold underline ml-auto truncate max-w-[50%]">{r.file.name}</a>
+                  <VideoFileLink file={r.file} />
                 ) : r.videoUrl ? (
                   <a href={r.videoUrl} target="_blank" rel="noreferrer" className="text-accent font-bold underline ml-auto">Raw video</a>
                 ) : (
@@ -838,8 +906,173 @@ function VideoEditPanel({ building }: { building: CityBuilding }) {
           ))}
         </ul>
       )}
-      <p className="text-sm text-muted mt-3">Requests wait here with the style and notes for whoever edits them. Automatic AI editing of your own footage isn&apos;t connected yet.</p>
+      <p className="text-sm text-muted mt-3">Any size and any length goes up. Requests wait here with the style and notes. To get one edited, ask Claude in the project: it downloads the full video from here and edits the whole thing.</p>
     </div>
+  );
+}
+
+function WorkPanel({ staff, goTo }: { staff: CityStaff; goTo: (t: string) => void }) {
+  const { data, update, today } = useTracker();
+  const live = data.city?.staff.find((s) => s.id === staff.id) ?? staff;
+  const jobs = jobsOf(live);
+  const [jobId, setJobId] = useState(jobs[0]?.id ?? "");
+  const [input, setInput] = useState("");
+  const [err, setErr] = useState("");
+  const [open, setOpen] = useState<string | null>(null);
+  const [copied, setCopied] = useState("");
+  const [, tick] = useState(0);
+  useEffect(() => onRunning(() => tick((n) => n + 1)), []);
+  const doing = runningJobs().get(live.id);
+  const job = jobs.find((j) => j.id === jobId) ?? jobs[0];
+  const mine = workOf(data, live.id);
+  const keys = data.integrations?.staffKeys ?? [];
+  const canPost = live.role === "discord" && Boolean(live.setup?.channel) && keys.includes(secretKey(live.id, "botToken"));
+  const due = dueJob(data, live, today);
+  if (!job) return null;
+  const go = async () => {
+    setErr("");
+    try {
+      const j = await runJob(live.id, job.doing, { jobId: job.id, input });
+      update((d) => void (d.staffWork = j.work));
+      setInput("");
+      setOpen(j.work[0]?.id ?? null);
+      sfx("loot");
+    } catch (e) {
+      setErr((e as Error).message);
+    }
+  };
+  const call = async (method: "POST" | "DELETE", body?: unknown, q = "") => {
+    setErr("");
+    try {
+      const r = await fetch(`/api/city/work${q}`, { method, headers: { "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error ?? "Something went wrong");
+      update((d) => void (d.staffWork = j.work));
+      return true;
+    } catch (e) {
+      setErr((e as Error).message);
+      return false;
+    }
+  };
+  const copy = async (id: string, text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(id);
+      setTimeout(() => setCopied(""), 1500);
+    } catch {}
+  };
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
+        <div className="flex items-center gap-2">
+          <Icon name="pencil" size={26} className="text-gold" />
+          <h3 className="font-display text-2xl tracking-wide">{live.name}&apos;s work</h3>
+        </div>
+        <button
+          type="button"
+          className={`btn text-sm ${live.autoWork === false ? "btn-ghost" : "btn-primary"}`}
+          onClick={() => update((d) => void (d.city!.staff.find((x) => x.id === live.id)!.autoWork = live.autoWork === false ? undefined : false))}
+          title="When on, they do their daily job on their own (when you open the city, and every morning at 9:00)"
+        >
+          Works on their own: {live.autoWork === false ? "Off" : "On"}
+        </button>
+      </div>
+      {!data.integrations?.kit && (
+        <div className="bg-card-2 border-[3px] border-bad rounded-[10px] p-3 mb-3">
+          <p className="text-lg font-bold">Staff work with Claude, the same key Kit uses. It isn&apos;t added yet.</p>
+          <Btn kind="primary" className="mt-2" onClick={() => goTo("today")}>Add it in Kit&apos;s chat on HQ</Btn>
+        </div>
+      )}
+      {NOT_LIVE[live.role] && <p className="text-base font-bold text-muted mb-3">{NOT_LIVE[live.role]}</p>}
+      <div className="flex gap-2 flex-wrap">
+        {jobs.map((j) => (
+          <button key={j.id} type="button" onClick={() => setJobId(j.id)} className={`btn text-base ${j.id === job.id ? "btn-primary" : "btn-ghost"}`}>
+            {j.label}
+          </button>
+        ))}
+      </div>
+      {job.input && <textarea className="w-full min-h-24 mt-2" placeholder={`${job.input.label}: ${job.input.placeholder}`} value={input} onChange={(e) => setInput(e.target.value)} />}
+      <Btn kind="primary" className="mt-2" disabled={Boolean(doing) || !data.integrations?.kit || (job.input?.required && input.trim().length < 10)} onClick={go}>
+        <Icon name="rocket" size={20} /> {doing ? `${doing}…` : "Do it now"}
+      </Btn>
+      {doing && <p className="text-base font-bold text-good mt-2 city-blink">{live.name} is on it. This takes up to a minute.</p>}
+      {!doing && due && live.autoWork !== false && data.integrations?.kit && <p className="text-sm font-bold text-muted mt-2">Up next on their own: {due.label.toLowerCase()}.</p>}
+      {err && <p className="text-bad font-bold mt-2">{err}</p>}
+      <ul className="mt-4 space-y-2">
+        {mine.map((w, i) => {
+          const shown = open === w.id || (open == null && i === 0);
+          return (
+            <li key={w.id} className={`bg-card-2 border-[3px] border-outline rounded-[10px] p-3 ${i === 0 ? "city-pop" : ""}`}>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button type="button" className="font-display text-xl tracking-wide text-left flex-1 min-w-0 truncate" onClick={() => setOpen(shown ? "" : w.id)}>
+                  {w.label}
+                </button>
+                <Badge tone={w.day === today ? "gold" : "muted"}>{w.day === today ? "Today" : w.day}</Badge>
+                {w.auto && <Badge tone="accent">On their own</Badge>}
+                {w.sent && <Badge tone="good">{w.sent}</Badge>}
+              </div>
+              {shown && (
+                <>
+                  {w.input && <p className="text-sm text-muted mt-1 truncate">From: {w.input}</p>}
+                  <div className="text-base whitespace-pre-wrap leading-relaxed mt-2 max-h-96 overflow-y-auto">{w.text}</div>
+                  <div className="flex gap-2 mt-2 flex-wrap">
+                    <Btn className="text-sm py-1" onClick={() => copy(w.id, w.text)}>{copied === w.id ? "Copied" : "Copy"}</Btn>
+                    {canPost && !w.sent && (
+                      <Btn kind="primary" className="text-sm py-1" onClick={async () => (await call("POST", { workId: w.id, post: "discord" })) && sfx("coin")}>
+                        Post to Discord
+                      </Btn>
+                    )}
+                    <Btn kind="danger" className="text-sm py-1 ml-auto" onClick={() => call("DELETE", undefined, `?id=${encodeURIComponent(w.id)}`)}>
+                      Remove
+                    </Btn>
+                  </div>
+                </>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+      {!mine.length && <p className="text-base text-muted mt-3">Nothing made yet.</p>}
+    </div>
+  );
+}
+
+/** Opens an uploaded video. A video stored in pieces is joined back together in the browser first. */
+function VideoFileLink({ file }: { file: NonNullable<VideoRequest["file"]> }) {
+  const [pct, setPct] = useState<number | null>(null);
+  const [err, setErr] = useState("");
+  const href = `/api/city/video?path=${encodeURIComponent(file.path)}`;
+  const cls = "text-accent font-bold underline ml-auto truncate max-w-[50%]";
+  if (!file.parts) return <a href={href} target="_blank" rel="noreferrer" className={cls}>{file.name}</a>;
+  const get = async () => {
+    setErr("");
+    setPct(0);
+    try {
+      const r = await fetch(`${href}&parts=${file.parts}`, { cache: "no-store" });
+      const { urls } = (await r.json()) as { urls: string[] };
+      const pieces: Blob[] = [];
+      for (const [i, u] of urls.entries()) {
+        const res = await fetch(u);
+        if (!res.ok) throw new Error(`Piece ${i + 1} is missing (${res.status})`);
+        pieces.push(await res.blob());
+        setPct((i + 1) / urls.length);
+      }
+      const url = URL.createObjectURL(new Blob(pieces, { type: pieces[0]?.type || "video/mp4" }));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = file.name;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+    } catch (e) {
+      setErr((e as Error).message);
+    } finally {
+      setPct(null);
+    }
+  };
+  return (
+    <button type="button" className={cls} onClick={get} disabled={pct != null} title={err || `${(file.size / 1048576).toFixed(0)} MB`}>
+      {pct != null ? `Downloading ${Math.round(pct * 100)}%` : err ? "Retry download" : file.name}
+    </button>
   );
 }
 

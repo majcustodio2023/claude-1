@@ -21,7 +21,7 @@ export interface Need {
   optional?: boolean;
 }
 
-export type PanelKind = "report" | "tasks" | "setup" | "videoAI" | "imageAI" | "writer" | "videoEdit" | "funnel" | "ads" | "webinar";
+export type PanelKind = "report" | "tasks" | "setup" | "work" | "videoAI" | "imageAI" | "writer" | "videoEdit" | "funnel" | "ads" | "webinar";
 
 export interface StaffRole {
   id: StaffRoleId;
@@ -49,7 +49,7 @@ export const ROLES: Record<StaffRoleId, StaffRole> = {
     needs: [],
   },
   social: {
-    id: "social", title: "Social Media Manager", color: "#ff5fae", icon: "megaphone", panel: "setup", action: "Here's what I need",
+    id: "social", title: "Social Media Manager", color: "#ff5fae", icon: "megaphone", panel: "work", action: "Show me your work",
     greet: "I run {client}'s social pages. Hook me up to the pages and I'll keep them posting.",
     jobs: ["Scheduling posts", "Replying to comments", "Planning this week's content"],
     needs: [
@@ -58,11 +58,11 @@ export const ROLES: Record<StaffRoleId, StaffRole> = {
       { key: "tiktok", label: "TikTok handle", placeholder: "@handle", optional: true },
       { key: "perWeek", label: "Posts per week", placeholder: "5" },
       { key: "voice", label: "Brand voice", placeholder: "Friendly, bold, no jargon…" },
-      { key: "metaToken", label: "Meta Page access token", placeholder: "Paste the page token", secret: true },
+      { key: "metaToken", label: "Meta Page access token (for posting, later)", placeholder: "Paste the page token", secret: true, optional: true },
     ],
   },
   content: {
-    id: "content", title: "Content Creator", color: "#ff9f1c", icon: "pencil", panel: "setup", action: "Here's what I need",
+    id: "content", title: "Content Creator", color: "#ff9f1c", icon: "pencil", panel: "work", action: "Show me your work",
     greet: "Captions, carousels, scripts: I write {client}'s posts. Tell me what they're about.",
     jobs: ["Drafting captions", "Writing a reel script", "Designing a carousel"],
     needs: [
@@ -72,13 +72,13 @@ export const ROLES: Record<StaffRoleId, StaffRole> = {
     ],
   },
   insights: {
-    id: "insights", title: "Page Insights Analyst", color: "#3fd0ff", icon: "radar", panel: "setup", action: "Here's what I need",
+    id: "insights", title: "Page Insights Analyst", color: "#3fd0ff", icon: "radar", panel: "work", action: "Show me your work",
     greet: "I watch {client}'s page numbers: reach, engagement and follower growth.",
     jobs: ["Checking yesterday's reach", "Finding the best post", "Tracking follower growth"],
     needs: [
-      { key: "pageId", label: "Facebook page ID", placeholder: "1234567890" },
+      { key: "pageId", label: "Facebook page ID", placeholder: "1234567890", optional: true },
       { key: "igId", label: "Instagram business ID", placeholder: "1784…", optional: true },
-      { key: "metaToken", label: "Meta access token (read insights)", placeholder: "Paste the token", secret: true },
+      { key: "metaToken", label: "Meta access token (to read the page)", placeholder: "Paste the token", secret: true, optional: true },
     ],
   },
   ads: {
@@ -91,24 +91,25 @@ export const ROLES: Record<StaffRoleId, StaffRole> = {
     ],
   },
   email: {
-    id: "email", title: "Inbox Reader", color: "#c4bfe6", icon: "mail", panel: "setup", action: "Here's what I need",
+    id: "email", title: "Inbox Reader", color: "#c4bfe6", icon: "mail", panel: "work", action: "Show me your work",
     greet: "I read {client}'s emails so you don't have to, and flag what needs you.",
     jobs: ["Reading new emails", "Flagging the urgent ones", "Drafting replies"],
     needs: [
       { key: "address", label: "Email address to watch", placeholder: "client@example.com" },
       { key: "watch", label: "Flag emails about", placeholder: "Invoices, approvals, complaints…" },
-      { key: "appPassword", label: "Gmail app password", placeholder: "16 letters from Google", secret: true },
+      { key: "appPassword", label: "Gmail app password (for when inbox reading is switched on)", placeholder: "16 letters from Google", secret: true, optional: true },
     ],
   },
   discord: {
-    id: "discord", title: "Discord Community Manager", color: "#7c5cff", icon: "chat", panel: "setup", action: "Here's what I need",
+    id: "discord", title: "Discord Community Manager", color: "#7c5cff", icon: "chat", panel: "work", action: "Show me your work",
     greet: "I keep {client}'s Discord alive: welcomes, answers, events and keeping it clean.",
     jobs: ["Welcoming new members", "Answering questions", "Planning a community event"],
     needs: [
       { key: "invite", label: "Server invite link", placeholder: "https://discord.gg/…" },
       { key: "rules", label: "Tone and rules", placeholder: "Hype but respectful, no spam…" },
       { key: "hours", label: "Hours I'm on duty", placeholder: "9am to 11pm" },
-      { key: "botToken", label: "Discord bot token", placeholder: "From the Discord developer portal", secret: true },
+      { key: "botToken", label: "Discord bot token (to post for you)", placeholder: "From the Discord developer portal", secret: true, optional: true },
+      { key: "channel", label: "Channel ID to post in", placeholder: "Right-click the channel, Copy Channel ID", optional: true },
     ],
   },
   webinar: {
@@ -124,7 +125,7 @@ export const ROLES: Record<StaffRoleId, StaffRole> = {
     ],
   },
   app: {
-    id: "app", title: "App Growth Manager", color: "#2ec4b6", icon: "phone", panel: "setup", action: "Here's what I need",
+    id: "app", title: "App Growth Manager", color: "#2ec4b6", icon: "phone", panel: "work", action: "Show me your work",
     greet: "I look after {client}: store listing, reviews, releases and installs.",
     jobs: ["Reading new reviews", "Writing release notes", "Checking installs"],
     needs: [
@@ -134,7 +135,7 @@ export const ROLES: Record<StaffRoleId, StaffRole> = {
     ],
   },
   store: {
-    id: "store", title: "Store Manager", color: "#f15bb5", icon: "shop", panel: "setup", action: "Here's what I need",
+    id: "store", title: "Store Manager", color: "#f15bb5", icon: "shop", panel: "work", action: "Show me your work",
     greet: "I watch {client}'s store: orders, best sellers and abandoned carts.",
     jobs: ["Checking today's orders", "Spotting best sellers", "Chasing abandoned carts"],
     needs: [
@@ -194,7 +195,7 @@ export const ROLES: Record<StaffRoleId, StaffRole> = {
     needs: [],
   },
   custom: {
-    id: "custom", title: "Assistant", color: "#c4bfe6", icon: "robot", panel: "setup", action: "Here's what I need",
+    id: "custom", title: "Assistant", color: "#c4bfe6", icon: "robot", panel: "work", action: "Show me your work",
     greet: "Reporting for duty at {client}. Tell me what my job is.",
     jobs: ["Working on it", "Taking notes", "Getting things done"],
     needs: [

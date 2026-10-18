@@ -14,7 +14,7 @@ export interface Work {
 const done = (today: string, at?: string) => Boolean(at && at.slice(0, 10) === today);
 
 /** Every staff member of one building and what they're up to. Open missions are shared out in turn. */
-export function buildingWork(data: TrackerData, b: CityBuilding, staff: CityStaff[], today: string): Map<string, Work> {
+export function buildingWork(data: TrackerData, b: CityBuilding, staff: CityStaff[], today: string, running?: Map<string, string>): Map<string, Work> {
   const out = new Map<string, Work>();
   const keys = data.integrations?.staffKeys ?? [];
   const ids = clientsOf(b);
@@ -29,13 +29,20 @@ export function buildingWork(data: TrackerData, b: CityBuilding, staff: CityStaf
   let turn = 0;
   const general = staff.filter((s) => s.role !== "reporter");
   for (const s of staff) {
+    // Doing a job for you right now, or already finished one today (lib/cityJobs).
+    const now = running?.get(s.id);
+    if (now) {
+      out.set(s.id, { state: "busy", line: `${now}…` });
+      continue;
+    }
     const prog = setupProgress(s, keys);
     if (prog.missing.length) {
       out.set(s.id, { state: "setup", line: `Waiting on you: ${prog.missing[0].label}` });
       continue;
     }
-    let w: Work | null = null;
-    switch (s.role) {
+    const made = (data.staffWork ?? []).find((x) => x.staffId === s.id && x.day === today);
+    let w: Work | null = made ? { state: "busy", line: `Done today: ${made.label}` } : null;
+    if (!w) switch (s.role) {
       case "reporter":
         w = open.length || (data.clientTasks ?? []).some((t) => ids.includes(t.clientId) && t.doneOn === today) ? { state: "busy", line: "Updating the scoreboard" } : null;
         break;
@@ -78,9 +85,9 @@ function idleLine(s: CityStaff, team: number): string {
 }
 
 /** Everyone in the city at once. */
-export function cityWork(data: TrackerData, buildings: CityBuilding[], today: string): Map<string, Work> {
+export function cityWork(data: TrackerData, buildings: CityBuilding[], today: string, running?: Map<string, string>): Map<string, Work> {
   const all = new Map<string, Work>();
   const staff = data.city?.staff ?? [];
-  for (const b of buildings) for (const [k, v] of buildingWork(data, b, staff.filter((s) => s.buildingId === b.id), today)) all.set(k, v);
+  for (const b of buildings) for (const [k, v] of buildingWork(data, b, staff.filter((s) => s.buildingId === b.id), today, running)) all.set(k, v);
   return all;
 }
