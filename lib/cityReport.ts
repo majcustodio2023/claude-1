@@ -3,7 +3,7 @@
 import { clientMoney, clientStats } from "./clients";
 import { money, weekLogs } from "./finance";
 import type { CityBuilding, TrackerData } from "./types";
-import { buildingName } from "./city";
+import { buildingName, clientsOf } from "./city";
 
 export interface BuildingReport {
   title: string;
@@ -27,8 +27,9 @@ export interface Mission {
 /** The Mission Room list: the client's tasks for a client building, its own list otherwise. */
 export function missions(data: TrackerData, b: CityBuilding): Mission[] {
   if (b.clientId) {
+    const ids = clientsOf(b);
     return (data.clientTasks ?? [])
-      .filter((t) => t.clientId === b.clientId)
+      .filter((t) => ids.includes(t.clientId))
       .map((t) => ({ id: t.id, title: t.title, done: t.status === "done", status: t.status, dueDate: t.dueDate }))
       .sort((a, b2) => Number(a.done) - Number(b2.done));
   }
@@ -39,19 +40,25 @@ export function buildingReport(data: TrackerData, b: CityBuilding, month: string
   const place = buildingName(data, b);
   const note = b.progressNote?.trim();
   if (b.kind === "client" && b.clientId) {
-    const client = data.clients?.find((c) => c.id === b.clientId);
-    const st = clientStats(data, b.clientId, today);
+    const ids = clientsOf(b);
+    const st = ids.map((id) => clientStats(data, id, today)).reduce((a, x) => ({ open: a.open + x.open, doing: a.doing + x.doing, done: a.done + x.done, overdue: a.overdue + x.overdue }), { open: 0, doing: 0, done: 0, overdue: 0 });
     const feed = (data.clientTasks ?? [])
-      .filter((t) => t.clientId === b.clientId && t.status === "done")
+      .filter((t) => ids.includes(t.clientId) && t.status === "done")
       .sort((x, y) => (y.doneOn ?? "").localeCompare(x.doneOn ?? ""))
       .slice(0, 4)
       .map((t) => `Done: ${t.title}`);
-    let moneyLine = "";
-    if (client) {
-      const m = clientMoney(data, client, month);
-      if (m.kind === "project") moneyLine = m.income ? `Project ${money(m.income)}: ${money(m.collected)} collected, ${money(m.toCollect)} to go.` : "";
-      else if (m.income) moneyLine = m.collected ? `${money(m.collected)} of ${money(m.income)} collected this month.` : `${money(m.income)} due this month, not collected yet.`;
-    }
+    const moneyLine = ids
+      .map((id) => {
+        const client = data.clients?.find((c) => c.id === id);
+        if (!client) return "";
+        const m = clientMoney(data, client, month);
+        const who = ids.length > 1 ? `${client.name}: ` : "";
+        if (m.kind === "project") return m.income ? `${who}project ${money(m.income)}, ${money(m.collected)} collected, ${money(m.toCollect)} to go.` : "";
+        if (m.income) return m.collected ? `${who}${money(m.collected)} of ${money(m.income)} collected this month.` : `${who}${money(m.income)} due this month, not collected yet.`;
+        return "";
+      })
+      .filter(Boolean)
+      .join(" ");
     const total = st.done + st.open;
     const said = total
       ? `${place}: ${st.done} mission${st.done === 1 ? "" : "s"} done, ${st.open} still open${st.overdue ? `, and ${st.overdue} overdue` : ""}.`

@@ -11,7 +11,7 @@ import { Hero } from "../characters";
 import { Icon } from "../icons";
 import CityGame from "../city/CityGame";
 import { HELP } from "../help";
-import { ROLE_LIST, buildingName, ensureCity, newBuilding, newStaff, removeBuilding, roleOf, roofColor, setupProgress, titleOf, visibleBuildings } from "@/lib/city";
+import { ROLE_LIST, buildingName, clientsOf, companyName, ensureCity, mergeBuildings, splitClient, newBuilding, newStaff, removeBuilding, roleOf, roofColor, setupProgress, titleOf, visibleBuildings } from "@/lib/city";
 import { uid } from "@/lib/finance";
 import { sfx } from "@/lib/sound";
 import type { CityBuilding, StaffRoleId } from "@/lib/types";
@@ -141,7 +141,8 @@ function BuildingCard({ building }: { building: CityBuilding }) {
       )}
       {editing && (
         <div className="mt-3 space-y-3 border-t-2 border-line pt-3">
-          {building.kind !== "client" && <EditableText label="Building name" value={building.name} onChange={(v) => edit((b) => void (b.name = v.trim() || b.name))} />}
+          {(building.kind !== "client" || (building.clientIds?.length ?? 0) > 0) && <EditableText label="Building name" value={building.name} onChange={(v) => edit((b) => void (b.name = v.trim() || b.name))} />}
+          {building.kind === "client" && <ClientsIn building={building} />}
           <label className="flex items-center gap-2 font-bold">
             Roof colour
             <input type="color" value={roofColor(building)} onChange={(e) => edit((b) => void (b.color = e.target.value))} className="w-12 h-9 p-0 border-2 border-outline rounded" />
@@ -190,6 +191,53 @@ function BuildingCard({ building }: { building: CityBuilding }) {
             }}
           >
             Knock down building
+          </Btn>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Which client records a department covers, with merge and split. */
+function ClientsIn({ building }: { building: CityBuilding }) {
+  const { data, update, today } = useTracker();
+  const [into, setInto] = useState("");
+  const ids = clientsOf(building);
+  const others = visibleBuildings(data).filter((b) => b.kind === "client" && b.id !== building.id);
+  const nameOf = (id: string) => data.clients?.find((c) => c.id === id)?.name ?? "Removed client";
+  return (
+    <div>
+      <div className="text-sm font-extrabold uppercase text-muted mb-1">Clients in this building</div>
+      <ul className="space-y-1 mb-2">
+        {ids.map((id) => (
+          <li key={id} className="flex items-center gap-2 font-bold">
+            <span className="flex-1 truncate">{nameOf(id)}</span>
+            {id !== building.clientId && (
+              <Btn className="text-sm py-1" onClick={() => update((d) => splitClient(d, building.id, id, today))}>
+                Own building
+              </Btn>
+            )}
+          </li>
+        ))}
+      </ul>
+      {others.length > 0 && (
+        <div className="flex gap-2 flex-wrap items-center">
+          <select value={into} onChange={(e) => setInto(e.target.value)} className="flex-1 min-w-44">
+            <option value="">Same company as…</option>
+            {others.map((b) => (
+              <option key={b.id} value={b.id}>{buildingName(data, b)}</option>
+            ))}
+          </select>
+          <Btn
+            disabled={!into}
+            onClick={() => {
+              const target = others.find((b) => b.id === into);
+              if (!target || !confirm(`Move ${buildingName(data, building)} into ${buildingName(data, target)}? Staff doing the same job there are let go.`)) return;
+              update((d) => mergeBuildings(d.city!, into, building.id, companyName([...clientsOf(target), ...ids].map(nameOf))));
+              setInto("");
+            }}
+          >
+            Merge
           </Btn>
         </div>
       )}

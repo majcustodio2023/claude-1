@@ -285,23 +285,94 @@ export function ensureCity(data: TrackerData, today: string): boolean {
     newBuilding(city, { kind: s.kind, name: s.name, color: s.color }, s.roles, today);
     changed = true;
   }
+  // Once: buildings of the same company (two income lines of one client) become one.
+  if (!city.merged) {
+    city.merged = true;
+    changed = true;
+    const names = new Map((data.clients ?? []).map((c) => [c.id, c.name]));
+    const byKey = new Map<string, CityBuilding>();
+    for (const b of [...city.buildings]) {
+      if (b.kind !== "client" || !b.clientId || !names.has(b.clientId)) continue;
+      const key = companyKey(names.get(b.clientId)!);
+      const first = byKey.get(key);
+      if (first) mergeBuildings(city, first.id, b.id, companyName([names.get(first.clientId!)!, ...(first.clientIds ?? []).map((id) => names.get(id) ?? ""), names.get(b.clientId)!]));
+      else byKey.set(key, b);
+    }
+  }
   const skip = new Set(city.skipClients ?? []);
   for (const c of data.clients ?? []) {
-    if (c.archived || skip.has(c.id) || city.buildings.some((b) => b.clientId === c.id)) continue;
-    newBuilding(city, { kind: "client", name: c.name, clientId: c.id }, suggestedRoles(c), today);
+    if (c.archived || skip.has(c.id) || city.buildings.some((b) => clientsOf(b).includes(c.id))) continue;
+    // A new income line of a company that already has a building moves in there.
+    const key = companyKey(c.name);
+    const same = city.buildings.find((b) => b.kind === "client" && clientsOf(b).some((id) => companyKey(data.clients?.find((x) => x.id === id)?.name ?? "") === key));
+    if (same) {
+      const names = clientsOf(same).map((id) => data.clients?.find((x) => x.id === id)?.name ?? "");
+      same.clientIds = [...(same.clientIds ?? []), c.id];
+      same.name = companyName([...names, c.name]);
+    } else newBuilding(city, { kind: "client", name: c.name, clientId: c.id }, suggestedRoles(c), today);
     changed = true;
   }
   return changed;
 }
 
+/** Every client a building covers: its own and any merged in. */
+export const clientsOf = (b: Pick<CityBuilding, "clientId" | "clientIds">): string[] => (b.clientId ? [b.clientId, ...(b.clientIds ?? [])] : []);
+
+const words = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim().split(" ").filter((w) => w && w !== "the");
+
+/** Two client records with the same key are the same company: the first two words of the name. */
+export function companyKey(name: string): string {
+  return words(name).slice(0, 2).join(" ");
+}
+
+/** The words every name starts with ("Zeta Community Manager"), or the first name when they share none. */
+export function companyName(names: string[]): string {
+  const list = names.filter(Boolean);
+  if (list.length < 2) return list[0] ?? "";
+  const split = list.map((n) => n.replace(/[^A-Za-z0-9]+/g, " ").trim().split(" "));
+  const out: string[] = [];
+  for (let i = 0; i < split[0].length; i++) {
+    const w = split[0][i];
+    if (split.every((s) => s[i]?.toLowerCase() === w.toLowerCase())) out.push(w);
+    else break;
+  }
+  return out.join(" ") || list[0];
+}
+
+/** Moves building `fromId`'s clients and staff into `intoId` and removes it. Staff in a role the target already has go. */
+export function mergeBuildings(city: CityState, intoId: string, fromId: string, name?: string) {
+  const into = city.buildings.find((b) => b.id === intoId);
+  const from = city.buildings.find((b) => b.id === fromId);
+  if (!into || !from || into === from) return;
+  into.clientIds = Array.from(new Set([...(into.clientIds ?? []), ...clientsOf(from)])).filter((id) => id !== into.clientId);
+  into.rooms = [...(into.rooms ?? []), ...(from.rooms ?? [])];
+  into.todos = [...(into.todos ?? []), ...(from.todos ?? [])];
+  if (name) into.name = name;
+  const roles = new Set(city.staff.filter((s) => s.buildingId === intoId).map((s) => s.role));
+  city.staff = city.staff.filter((s) => s.buildingId !== fromId || s.role === "custom" || !roles.has(s.role)).map((s) => (s.buildingId === fromId ? { ...s, buildingId: intoId } : s));
+  city.buildings = city.buildings.filter((b) => b.id !== fromId);
+  for (const r of city.videoRequests ?? []) if (r.buildingId === fromId) r.buildingId = intoId;
+}
+
+/** Gives one of a merged building's clients its own building again. */
+export function splitClient(data: TrackerData, buildingId: string, clientId: string, today: string) {
+  const city = data.city!;
+  const b = city.buildings.find((x) => x.id === buildingId);
+  const c = data.clients?.find((x) => x.id === clientId);
+  if (!b || !c || !b.clientIds?.includes(clientId)) return;
+  b.clientIds = b.clientIds.filter((id) => id !== clientId);
+  newBuilding(city, { kind: "client", name: c.name, clientId: c.id }, suggestedRoles(c), today);
+}
+
 /** Buildings that stand in the city now: studios and custom ones, and departments of clients still active. */
 export function visibleBuildings(data: TrackerData): CityBuilding[] {
   const clients = new Map((data.clients ?? []).map((c) => [c.id, c]));
-  return (data.city?.buildings ?? []).filter((b) => !b.clientId || (clients.has(b.clientId) && !clients.get(b.clientId)!.archived));
+  return (data.city?.buildings ?? []).filter((b) => !b.clientId || clientsOf(b).some((id) => clients.has(id) && !clients.get(id)!.archived));
 }
 
 /** A client building shows the client's current name. */
 export function buildingName(data: TrackerData, b: CityBuilding): string {
+  if (b.clientIds?.length) return b.name;
   return (b.clientId && data.clients?.find((c) => c.id === b.clientId)?.name) || b.name;
 }
 
@@ -311,7 +382,7 @@ export function removeBuilding(city: CityState, id: string) {
   if (!b) return;
   city.buildings = city.buildings.filter((x) => x.id !== id);
   city.staff = city.staff.filter((s) => s.buildingId !== id);
-  if (b.clientId) city.skipClients = Array.from(new Set([...(city.skipClients ?? []), b.clientId]));
+  if (b.clientId) city.skipClients = Array.from(new Set([...(city.skipClients ?? []), ...clientsOf(b)]));
   if (STUDIO_KINDS.includes(b.kind)) city.skipKinds = Array.from(new Set([...(city.skipKinds ?? []), b.kind]));
 }
 
@@ -499,7 +570,7 @@ export function layoutInterior(staffIds: string[], reporterId: string | undefine
     return { id, rect, sign: { x: x + rw / 2 - 1.5 * T, y: roomsTop + 0.3 * T, w: 3 * T, h: 0.9 * T } };
   });
   const exit = { x: w / 2 - T, y: h - 0.9 * T, w: 2 * T, h: 0.9 * T };
-  const reporter = reporterId ? { staffId: reporterId, x: progress.x + progress.w / 2, y: progress.y + 2.2 * T } : undefined;
+  const reporter = reporterId ? { staffId: reporterId, x: progress.x + progress.w * 0.66, y: progress.y + 1.7 * T } : undefined;
   if (reporter) solids.push({ x: reporter.x - 1.3 * T, y: reporter.y + 0.15 * T, w: 2.6 * T, h: 0.8 * T });
   return { w, h, wall, progress, mission, board, screen, stations, reporter, rooms, exit, solids, spawn: { x: w / 2, y: h - 1.6 * T } };
 }

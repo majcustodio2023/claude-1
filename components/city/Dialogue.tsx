@@ -4,7 +4,7 @@
 // with voice blips, answer choices, and a pop-up that shows what they're talking about
 // (the progress report, the mission board, what they need from you, a video request…).
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useTracker } from "../App";
 import { Hero, Kit } from "../characters";
 import { Icon } from "../icons";
@@ -14,7 +14,7 @@ import { ME, nextStatus } from "@/lib/clients";
 import { uid, weekLogs } from "@/lib/finance";
 import { groupOf } from "@/lib/adgroups";
 import { blip, sfx } from "@/lib/sound";
-import { ROLES, buildingName, roleOf, say, secretKey, setupProgress, titleOf, type StaffRole } from "@/lib/city";
+import { ROLES, buildingName, clientsOf, roleOf, say, secretKey, setupProgress, titleOf, type StaffRole } from "@/lib/city";
 import { buildingReport, missions } from "@/lib/cityReport";
 import { WRITER_PROMPTS } from "@/lib/cityPrompts";
 import { GATE, SHOPKEEPERS, STAFF_CHATS, citizenById, citizenStart, questById, questProgress, questState } from "@/lib/cityLore";
@@ -187,6 +187,26 @@ export default function Dialogue({ talk, onClose, goTo }: { talk: Talk; onClose:
   const typed = useTyped(text, voice);
   useEffect(() => sfx("open"), [page]);
 
+  // Skip: the first press shows the whole line, the next one moves on to what comes next.
+  const nextChoice = choices.find((c) => c.primary) ?? choices.find((c) => c !== bye) ?? choices[0];
+  const skip = () => {
+    if (!typed.done) typed.skip();
+    else nextChoice?.go();
+  };
+  const skipRef = useRef(skip);
+  skipRef.current = skip;
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      if ((e.target as HTMLElement).closest("input, textarea, select, button")) return;
+      if (e.key === " " || e.key === "Enter") {
+        e.preventDefault();
+        skipRef.current();
+      }
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  }, []);
+
   return (
     <div className="absolute inset-0 z-40 flex flex-col justify-end items-center p-2 sm:p-4 gap-3 bg-[radial-gradient(ellipse_at_center,rgba(11,10,20,0.15),rgba(11,10,20,0.6))]" onClick={(e) => e.target === e.currentTarget && onClose()}>
       {panel && (
@@ -211,6 +231,17 @@ export default function Dialogue({ talk, onClose, goTo }: { talk: Talk; onClose:
               {!typed.done && <span className="opacity-60">▌</span>}
             </p>
             <div className={`flex flex-wrap gap-2 mt-3 transition-opacity ${typed.done ? "opacity-100" : "opacity-40"}`}>
+              <Btn
+                kind="ghost"
+                className="text-base order-last ml-auto flex items-center gap-1"
+                title={typed.done ? `Skip to: ${nextChoice?.label ?? "close"}` : "Show the whole line"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  skip();
+                }}
+              >
+                Skip <Icon name="skip" size={18} />
+              </Btn>
               {choices.map((c) => (
                 <Btn
                   key={c.label}
@@ -255,7 +286,7 @@ function rolePanel(role: StaffRole, staff: CityStaff, building: CityBuilding, da
         panel: <WriterPanel staff={staff} />,
       };
     case "videoEdit":
-      return { text: "Paste a link to your raw video, pick a style, and tell me how you want it cut. It joins my edit queue.", panel: <VideoEditPanel building={building} /> };
+      return { text: "Upload your raw video or paste a link, pick a style, and tell me how you want it cut. No footage? Just describe the video you want. It all joins my edit queue.", panel: <VideoEditPanel building={building} /> };
     case "funnel": {
       const w = weekLogs(data, today);
       return { text: `This week ${w.leads} leads came in, ${w.bookedCalls} booked a call and ${w.closes} closed. Here's every deal in the funnel.`, panel: <FunnelPanel goTo={goTo} /> };
@@ -281,7 +312,7 @@ function rolePanel(role: StaffRole, staff: CityStaff, building: CityBuilding, da
 }
 
 function adsFor(data: TrackerData, b: CityBuilding, all: boolean) {
-  return data.trackedCampaigns.filter((t) => all || (b.clientId && groupOf(data, t).key === `client:${b.clientId}`));
+  return data.trackedCampaigns.filter((t) => all || clientsOf(b).some((id) => groupOf(data, t).key === `client:${id}`));
 }
 
 // ---------- panels ----------
@@ -703,23 +734,69 @@ const STYLES = ["Anime", "Cinematic", "TikTok fast cuts", "Talking head + captio
 function VideoEditPanel({ building }: { building: CityBuilding }) {
   const { data, update, today } = useTracker();
   const [url, setUrl] = useState("");
+  const [file, setFile] = useState<File | null>(null);
   const [style, setStyle] = useState(STYLES[2]);
   const [prompt, setPrompt] = useState("");
+  const [pct, setPct] = useState<number | null>(null);
+  const [error, setError] = useState("");
   const reqs = (data.city?.videoRequests ?? []).filter((r) => r.buildingId === building.id);
-  const send = () => {
-    if (!/^https?:\/\//.test(url.trim())) return;
-    update((d) => {
-      d.city!.videoRequests = [{ id: uid("vid"), buildingId: building.id, videoUrl: url.trim(), style, prompt: prompt.trim(), status: "requested", createdAt: today }, ...(d.city!.videoRequests ?? [])];
+  const link = url.trim();
+  const ok = (Boolean(file) || /^https?:\/\//.test(link) || prompt.trim().length > 3) && pct == null;
+
+  const upload = async (f: File): Promise<{ path: string; name: string; size: number }> => {
+    const res = await fetch("/api/city/video", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: f.name, type: f.type, size: f.size }) });
+    const j = (await res.json()) as { uploadUrl?: string; path?: string; error?: string };
+    if (!res.ok || !j.uploadUrl || !j.path) throw new Error(j.error ?? "Couldn't start the upload");
+    await new Promise<void>((resolve, reject) => {
+      const x = new XMLHttpRequest();
+      x.open("PUT", j.uploadUrl!);
+      x.setRequestHeader("Content-Type", f.type);
+      x.upload.onprogress = (e) => e.lengthComputable && setPct(e.loaded / e.total);
+      x.onload = () => (x.status < 300 ? resolve() : reject(new Error(`Upload failed (${x.status})`)));
+      x.onerror = () => reject(new Error("Upload failed. Check your connection."));
+      x.send(f);
     });
-    setUrl("");
-    setPrompt("");
-    sfx("loot");
+    return { path: j.path, name: f.name, size: f.size };
+  };
+
+  const send = async () => {
+    if (!ok) return;
+    setError("");
+    try {
+      let saved: { path: string; name: string; size: number } | undefined;
+      if (file) {
+        setPct(0);
+        saved = await upload(file);
+      }
+      update((d) => {
+        d.city!.videoRequests = [{ id: uid("vid"), buildingId: building.id, videoUrl: /^https?:\/\//.test(link) ? link : "", file: saved, style, prompt: prompt.trim(), status: "requested", createdAt: today }, ...(d.city!.videoRequests ?? [])];
+      });
+      setUrl("");
+      setFile(null);
+      setPrompt("");
+      sfx("loot");
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setPct(null);
+    }
   };
   const setStatus = (id: string, status: "requested" | "editing" | "done") => update((d) => void (d.city!.videoRequests!.find((r) => r.id === id)!.status = status));
   return (
     <div>
-      <PanelTitle icon="image">New edit request</PanelTitle>
-      <input className="w-full" placeholder="Link to your raw video (Google Drive, Dropbox…)" value={url} onChange={(e) => setUrl(e.target.value)} />
+      <PanelTitle icon="film">New edit request</PanelTitle>
+      <p className="text-base font-bold text-muted mb-2">Upload your raw video, paste a link to it, or just describe the video you want.</p>
+      <label className="flex items-center gap-3 bg-card-2 border-[3px] border-dashed border-outline rounded-[10px] px-3 py-3 cursor-pointer">
+        <Icon name="film" size={26} />
+        <span className="flex-1 min-w-0 font-bold text-lg truncate">{file ? `${file.name} (${(file.size / 1048576).toFixed(1)} MB)` : "Upload a video (up to 50 MB)"}</span>
+        {file && (
+          <button type="button" className="text-bad font-extrabold" onClick={(e) => (e.preventDefault(), setFile(null))}>
+            Remove
+          </button>
+        )}
+        <input type="file" accept="video/*" className="sr-only" onChange={(e) => (setFile(e.target.files?.[0] ?? null), setError(""))} />
+      </label>
+      {!file && <input className="w-full mt-2" placeholder="Or a link to it (Google Drive, Dropbox…)" value={url} onChange={(e) => setUrl(e.target.value)} />}
       <div className="flex flex-wrap gap-2 mt-2">
         {STYLES.map((s) => (
           <button key={s} type="button" onClick={() => setStyle(s)} className={`btn text-base ${style === s ? "btn-primary" : "btn-ghost"}`}>
@@ -728,8 +805,14 @@ function VideoEditPanel({ building }: { building: CityBuilding }) {
         ))}
       </div>
       <textarea className="w-full min-h-20 mt-2" placeholder="How should it be edited? e.g. Cut to 30s, hook in the first 2 seconds, captions in yellow, upbeat music" value={prompt} onChange={(e) => setPrompt(e.target.value)} />
-      <Btn kind="primary" className="mt-2" onClick={send} disabled={!/^https?:\/\//.test(url.trim())}>
-        <Icon name="film" size={20} /> Send to the edit queue
+      {pct != null && (
+        <div className="mt-2 h-3 rounded-full bg-card-2 border-2 border-outline overflow-hidden">
+          <div className="h-full bg-good" style={{ width: `${Math.round(pct * 100)}%` }} />
+        </div>
+      )}
+      {error && <p className="text-bad font-bold mt-2">{error}</p>}
+      <Btn kind="primary" className="mt-2" onClick={send} disabled={!ok}>
+        <Icon name="film" size={20} /> {pct != null ? `Uploading ${Math.round(pct * 100)}%` : "Send to the edit queue"}
       </Btn>
       {reqs.length > 0 && (
         <ul className="mt-4 space-y-2">
@@ -738,7 +821,13 @@ function VideoEditPanel({ building }: { building: CityBuilding }) {
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge tone={r.status === "done" ? "good" : r.status === "editing" ? "gold" : "accent"}>{r.status === "done" ? "Done" : r.status === "editing" ? "Editing" : "Requested"}</Badge>
                 <span className="font-bold">{r.style}</span>
-                <a href={r.videoUrl} target="_blank" rel="noreferrer" className="text-accent font-bold underline ml-auto">Raw video</a>
+                {r.file ? (
+                  <a href={`/api/city/video?path=${encodeURIComponent(r.file.path)}`} target="_blank" rel="noreferrer" className="text-accent font-bold underline ml-auto truncate max-w-[50%]">{r.file.name}</a>
+                ) : r.videoUrl ? (
+                  <a href={r.videoUrl} target="_blank" rel="noreferrer" className="text-accent font-bold underline ml-auto">Raw video</a>
+                ) : (
+                  <span className="ml-auto text-sm font-bold text-muted">Prompt only</span>
+                )}
               </div>
               {r.prompt && <p className="text-base mt-1">{r.prompt}</p>}
               <div className="flex gap-2 mt-2">

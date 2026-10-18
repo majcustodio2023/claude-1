@@ -469,6 +469,12 @@ const P: Record<string, ReactNode> = {
       <path d="M4.5 20.5c1-4 3.8-6 7.5-6s6.5 2 7.5 6" />
     </>
   ),
+  skip: (
+    <>
+      <path {...tone} d="M4 5l9 7-9 7z" />
+      <path d="M4 5l9 7-9 7z M19 5v14" />
+    </>
+  ),
   key: (
     <>
       <circle {...tone} cx="8" cy="15" r="5" />

@@ -116,3 +116,54 @@ test("shops hand gear out free unless turned off", async () => {
   d.city!.freeShops = false;
   assert.match(takeShopItem(d, "hammer", "2026-10-18")!, /more coins/);
 });
+
+test("two income lines of one company share one building, and can be split again", async () => {
+  const { clientsOf, companyName, splitClient } = await import("../lib/city");
+  const d = sampleData();
+  d.clients = [
+    { id: "z1", name: "Zeta-Community Manager Commission", createdAt: "2026-10-01" },
+    { id: "o", name: "Opsified", createdAt: "2026-10-01" },
+  ];
+  ensureCity(d, "2026-10-18");
+  // An older city that already has a building per record gets merged once.
+  d.clients.push({ id: "z2", name: "Zeta Community Manager Second Half Pay", createdAt: "2026-10-02" });
+  d.city!.buildings.push({ id: "bz2", kind: "client", name: "x", clientId: "z2", createdAt: "2026-10-02" });
+  d.city!.staff.push({ id: "dup", buildingId: "bz2", role: "reporter", name: "Dup", createdAt: "2026-10-02" });
+  d.city!.merged = false;
+  ensureCity(d, "2026-10-18");
+  const zeta = d.city!.buildings.filter((b) => b.kind === "client" && clientsOf(b).some((id) => id.startsWith("z")));
+  assert.equal(zeta.length, 1);
+  assert.deepEqual(clientsOf(zeta[0]).sort(), ["z1", "z2"]);
+  assert.equal(zeta[0].name, "Zeta Community Manager");
+  assert.equal(d.city!.staff.filter((s) => s.buildingId === zeta[0].id && s.role === "reporter").length, 1);
+  d.clientTasks = [{ id: "t", clientId: "z2", title: "Pay day post", assignees: [], status: "todo", createdAt: "2026-10-18" }];
+  assert.equal(missions(d, zeta[0]).length, 1);
+  splitClient(d, zeta[0].id, "z2", "2026-10-18");
+  assert.equal(d.city!.buildings.filter((b) => b.clientId === "z2").length, 1);
+  assert.equal(companyName(["Opsified"]), "Opsified");
+});
+
+test("staff only work when there's real work", async () => {
+  const { buildingWork } = await import("../lib/cityWork");
+  const { roleOf } = await import("../lib/city");
+  const d = withClients();
+  ensureCity(d, "2026-10-18");
+  const b = d.city!.buildings.find((x) => x.clientId === "z")!;
+  const staff = d.city!.staff.filter((s) => s.buildingId === b.id);
+  // Everyone fully set up.
+  const keys: string[] = [];
+  for (const s of staff) {
+    s.setup = {};
+    for (const n of roleOf(s).needs) {
+      if (n.secret) keys.push(secretKey(s.id, n.key));
+      else s.setup[n.key] = "x";
+    }
+  }
+  d.integrations = { ...(d.integrations ?? {}), staffKeys: keys } as typeof d.integrations;
+  const idle = buildingWork(d, b, staff, "2026-10-18");
+  assert.ok([...idle.values()].every((w) => w.state === "idle"));
+  d.clientTasks = [{ id: "t1", clientId: "z", title: "Launch event", assignees: [], status: "doing", createdAt: "2026-10-18" }];
+  const busy = [...buildingWork(d, b, staff, "2026-10-18").values()];
+  assert.equal(busy.filter((w) => w.line === "Working on: Launch event").length, 1);
+  assert.ok(busy.some((w) => w.line === "Updating the scoreboard"));
+});
