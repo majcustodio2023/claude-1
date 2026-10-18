@@ -1,4 +1,4 @@
-// Starting instructions for the Ad Creatives writers. Each writer's instructions are
+// Starting instructions for the Ad Creative Studio writers. Each writer's instructions are
 // editable in the game (CityStaff.instructions); these are only what a new writer starts with.
 
 import type { StaffRoleId } from "./types";

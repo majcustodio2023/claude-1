@@ -41,7 +41,7 @@ const soft = (hex: string, k = 0.55) => {
   return `#${((1 << 24) | (m(16) << 16) | (m(8) << 8) | m(0)).toString(16).slice(1)}`;
 };
 
-function Defs() {
+export function Defs() {
   return (
     <defs>
       <pattern id="a-grass" width="120" height="120" patternUnits="userSpaceOnUse">
@@ -101,6 +101,32 @@ function Defs() {
         <rect width="24" height="24" fill="#6fb7c2" />
         <path d="M0 12 H24 M12 0 V24" stroke="#5fa3ae" strokeWidth="2" />
       </pattern>
+      <pattern id="a-wallpaper" width="36" height="36" patternUnits="userSpaceOnUse">
+        <rect width="36" height="36" fill="#cbb3ee" />
+        <rect x="0" width="6" height="36" fill="#bea2e6" />
+        <path d="M21 8 l5 6 l-5 6 l-5 -6 z" fill="#f2d48a" />
+        <circle cx="21" cy="28" r="1.8" fill="#f6e7cf" />
+      </pattern>
+      <pattern id="a-foam" width="32" height="32" patternUnits="userSpaceOnUse">
+        <rect width="32" height="32" fill="#3c3148" />
+        <path d="M0 0 L16 16 L0 32 Z M32 0 L16 16 L32 32 Z" fill="#46395a" />
+        <path d="M0 0 L32 32 M32 0 L0 32" stroke="#2f2639" strokeWidth="1.5" />
+      </pattern>
+      <pattern id="a-plank-dark" width="160" height="32" patternUnits="userSpaceOnUse">
+        <rect width="160" height="32" fill="#8f6748" />
+        <rect y="16" width="160" height="16" fill="#86603f" />
+        <path d="M0 0.5 H160 M0 16 H160 M56 0 V16 M120 16 V32 M10 16 V32" stroke="#6b4a31" strokeWidth="2" />
+      </pattern>
+      <pattern id="a-rug-purple" width="36" height="36" patternUnits="userSpaceOnUse">
+        <rect width="36" height="36" fill="#6c4ab6" />
+        <path d="M0 18 L18 0 L36 18 L18 36 Z" fill="none" stroke="#a98ae6" strokeWidth="3" />
+        <circle cx="18" cy="18" r="3" fill="#f2d48a" />
+      </pattern>
+      <pattern id="a-rug-red" width="36" height="36" patternUnits="userSpaceOnUse">
+        <rect width="36" height="36" fill="#a8323a" />
+        <path d="M0 9 H36 M0 27 H36" stroke="#d65a5f" strokeWidth="4" />
+        <circle cx="18" cy="18" r="2.6" fill="#f2d48a" />
+      </pattern>
       <radialGradient id="a-glow">
         <stop offset="0" stopColor="#ffe3a3" stopOpacity="0.9" />
         <stop offset="1" stopColor="#ffe3a3" stopOpacity="0" />
@@ -145,7 +171,7 @@ function Lamp({ x, y }: { x: number; y: number }) {
   );
 }
 
-function Plant({ x, y, s = 1, seed = 0 }: { x: number; y: number; s?: number; seed?: number }) {
+export function Plant({ x, y, s = 1, seed = 0 }: { x: number; y: number; s?: number; seed?: number }) {
   const pot = ["#c96f45", "#7cc6c0", "#f19aa8", "#e7b85a"][seed % 4];
   return (
     <g transform={`translate(${x} ${y}) scale(${s})`} stroke={LINE} strokeWidth="3" strokeLinejoin="round">
@@ -321,13 +347,20 @@ function RoofClutter({ r, roofH, id, kind, roof }: { r: Rect; roofH: number; id:
   return <g>{items}</g>;
 }
 
-const SIGN: Record<string, string> = { client: "#ffd166", video: "#a78bfa", acquisition: "#ff6b6b", creative: "#ffb347", weapons: "#ffd166", armor: "#7cc6c0", custom: "#f6e7cf" };
+const SIGN: Record<string, string> = { client: "#ffd166", video: "#ffd166", acquisition: "#ff6b6b", creative: "#e9d5ff", weapons: "#ffd166", armor: "#7cc6c0", custom: "#f6e7cf" };
+
+/** How much of a building's height is roof (seen from above). The Ad Creative Studio has two storeys, so less roof. */
+export const roofFrac = (kind: string) => (kind === "creative" ? 0.3 : 0.44);
+/** Where the sign board sits below the top of the front wall. */
+const signDrop = (kind: string) => (kind === "creative" ? 44 : 10);
 
 /** A building from above with its front wall showing. */
 function House({ r, info, door }: { r: Rect; info: HouseInfo; door: Rect }) {
-  const roofH = Math.round(r.h * 0.44);
+  if (info.kind === "home") return <Cottage r={r} info={info} door={door} />;
+  const roofH = Math.round(r.h * roofFrac(info.kind));
   const fy = r.y + roofH; // top of the front wall
   const fh = r.h - roofH;
+  const storey = info.kind === "creative";
   const stone = info.kind === "weapons";
   const roof = info.kind === "custom" || info.kind === "client" ? shade(info.color, -0.08) : info.color;
   const wall = stone ? "#b8a9a8" : soft(info.color, 0.62);
@@ -338,8 +371,9 @@ function House({ r, info, door }: { r: Rect; info: HouseInfo; door: Rect }) {
   const awning = shade(info.color, -0.05);
   const cx = r.x + r.w / 2;
   const signW = Math.min(r.w - 120, 190);
-  const upperY = fy + 10;
-  const lowerY = fy + 52;
+  const upperY = fy + signDrop(info.kind);
+  const lowerY = upperY + 42;
+  const shopH = r.y + r.h - 4 - (lowerY + 14);
   const winW = 40;
   const win = (x: number, y: number, k: string, h = 30) => (
     <g key={k}>
@@ -354,8 +388,8 @@ function House({ r, info, door }: { r: Rect; info: HouseInfo; door: Rect }) {
   );
   const shopWin = (x: number, w: number, k: string) => (
     <g key={k}>
-      <rect x={x} y={lowerY + 14} width={w} height={fh - 70} rx="2" fill={winFill} />
-      <path d={`M${x + w / 2} ${lowerY + 14} V${lowerY + fh - 56}`} strokeWidth="2.4" />
+      <rect x={x} y={lowerY + 14} width={w} height={shopH} rx="2" fill={winFill} />
+      <path d={`M${x + w / 2} ${lowerY + 14} V${lowerY + 14 + shopH}`} strokeWidth="2.4" />
       <path d={`M${x + 6} ${lowerY + 24} l12 -8 M${x + 6} ${lowerY + 34} l8 -6`} stroke={lit ? "#fff3cf" : "#a9bfe3"} strokeWidth="3" />
       {/* striped awning */}
       <path d={`M${x - 6} ${lowerY + 14} L${x + 2} ${lowerY} H${x + w - 2} L${x + w + 6} ${lowerY + 14} Z`} fill={awning} />
@@ -371,7 +405,22 @@ function House({ r, info, door }: { r: Rect; info: HouseInfo; door: Rect }) {
       <rect x={r.x + 14} y={r.y + 14} width={r.w} height={r.h} rx="6" fill="#000" opacity="0.2" stroke="none" />
       {/* front wall */}
       <rect x={r.x} y={fy - 6} width={r.w} height={fh + 6} fill={stone ? "url(#a-stone)" : wall} />
-      {!stone && <path d={`M${r.x} ${fy + 44} H${r.x + r.w}`} stroke={wallDark} strokeWidth="3" />}
+      {!stone && <path d={`M${r.x} ${upperY + 34} H${r.x + r.w}`} stroke={wallDark} strokeWidth="3" />}
+      {/* the Ad Creative Studio's upper floor: a row of windows over a balcony with string lights */}
+      {storey && (
+        <g>
+          {[0, 1, 2, 3].map((i) => win(r.x + 18 + i * ((r.w - 36 - winW) / 3), fy + 6, `u${i}`, 20))}
+          <rect x={r.x + 6} y={fy + 36} width={r.w - 12} height="6" fill={shade(info.color, -0.3)} />
+          {Array.from({ length: 14 }, (_, i) => (
+            <path key={`rail${i}`} d={`M${r.x + 10 + i * ((r.w - 20) / 13)} ${fy + 36} v-8`} strokeWidth="2.4" />
+          ))}
+          <path d={`M${r.x + 4} ${fy + 2} Q${r.x + r.w / 2} ${fy + 22} ${r.x + r.w - 4} ${fy + 2}`} fill="none" strokeWidth="2" />
+          {Array.from({ length: 9 }, (_, i) => {
+            const t = (i + 0.5) / 9;
+            return <circle key={`bulb${i}`} cx={r.x + 4 + t * (r.w - 8)} cy={fy + 2 + 4 * t * (1 - t) * 10 + 3} r="3.6" fill={["#ffd166", "#f19aa8", "#9ad8d2", "#c5e5a5"][i % 4]} strokeWidth="1.8" />;
+          })}
+        </g>
+      )}
       <rect x={r.x} y={r.y + r.h - 12} width={r.w} height="12" fill={shade(wall, -0.35)} />
       {/* upper windows either side of the sign */}
       {win(r.x + 16, upperY, "w1")}
@@ -406,6 +455,18 @@ function House({ r, info, door }: { r: Rect; info: HouseInfo; door: Rect }) {
       {/* rooftop billboard for the emblem (drawn as a picture on top) */}
       <rect x={cx - 34} y={r.y + 6} width="68" height="56" rx="6" fill="#f6e7cf" />
       <path d={`M${cx - 20} ${r.y + 62} v8 M${cx + 20} ${r.y + 62} v8`} strokeWidth="4" />
+      {info.kind === "video" && (
+        <g transform={`translate(${r.x + 44} ${r.y + roofH * 0.42})`} strokeWidth="3.5">
+          <path d="M-20 22 L-30 36 M20 22 L30 36" strokeWidth="4" />
+          <circle r="25" fill="#2b2d42" />
+          <circle r="21" fill="#4a4e69" strokeWidth="2.5" />
+          {[0, 1, 2, 3, 4].map((i) => (
+            <circle key={i} cx={Math.cos((i * 2 * Math.PI) / 5) * 12} cy={Math.sin((i * 2 * Math.PI) / 5) * 12} r="5" fill="#ffd166" strokeWidth="2" />
+          ))}
+          <circle r="3.5" fill="#f6e7cf" strokeWidth="2" />
+          <path d="M22 8 C40 10 46 24 62 18 L64 30 C46 36 40 22 22 20 Z" fill="#2b2d42" strokeWidth="2.5" />
+        </g>
+      )}
       {/* hanging side banner */}
       <rect x={r.x + r.w + 2} y={fy - 2} width="22" height="86" rx="3" fill={SIGN[info.kind] ?? "#f6e7cf"} />
       <path d={`M${r.x + r.w} ${fy + 4} h4 M${r.x + r.w} ${fy + 76} h4`} strokeWidth="4" />
@@ -424,6 +485,85 @@ function House({ r, info, door }: { r: Rect; info: HouseInfo; door: Rect }) {
           <circle cx="0" cy="-50" r="8" fill="#cfd6d3" />
         </g>
       )}
+    </g>
+  );
+}
+
+/** Your home: a small timber cottage with a gabled roof, a smoking chimney and flower boxes. */
+function Cottage({ r, info, door }: { r: Rect; info: HouseInfo; door: Rect }) {
+  const roofH = Math.round(r.h * 0.5);
+  const fy = r.y + roofH;
+  const cx = r.x + r.w / 2;
+  const roof = info.color;
+  const beam = "#6b4226";
+  const winFill = info.busy > 0 ? "#ffe3a3" : "#ffe9b8";
+  const pane = (x: number, k: string) => (
+    <g key={k}>
+      <rect x={x - 10} y={fy + 22} width="10" height="34" fill="#5e8f4e" strokeWidth="2.5" />
+      <rect x={x + 36} y={fy + 22} width="10" height="34" fill="#5e8f4e" strokeWidth="2.5" />
+      <rect x={x} y={fy + 22} width="36" height="34" rx="3" fill={winFill} />
+      <path d={`M${x + 18} ${fy + 22} V${fy + 56} M${x} ${fy + 39} H${x + 36}`} strokeWidth="2.4" />
+      <rect x={x - 4} y={fy + 57} width="44" height="8" rx="2" fill="#a86a43" />
+      <path d={`M${x} ${fy + 57} q4 -8 8 0 q4 -9 8 0 q4 -8 8 0 q4 -9 8 0 q4 -8 8 0`} fill="#6fae52" strokeWidth="2" />
+      <circle cx={x + 8} cy={fy + 53} r="3" fill="#f19aa8" strokeWidth="1.5" />
+      <circle cx={x + 26} cy={fy + 52} r="3" fill="#ffd166" strokeWidth="1.5" />
+    </g>
+  );
+  return (
+    <g stroke={LINE} strokeWidth={SW} strokeLinejoin="round">
+      <rect x={r.x + 12} y={r.y + 14} width={r.w} height={r.h} rx="6" fill="#000" opacity="0.2" stroke="none" />
+      {/* chimney behind the roof, with smoke */}
+      <rect x={r.x + r.w - 54} y={r.y - 26} width="26" height="50" fill="url(#a-stone)" />
+      <rect x={r.x + r.w - 58} y={r.y - 30} width="34" height="8" fill="#837474" />
+      {[0, 1, 2].map((i) => (
+        <circle key={i} cx={r.x + r.w - 40 + i * 9} cy={r.y - 44 - i * 16} r={9 + i * 3} fill="#f6efe6" opacity={0.85 - i * 0.2} strokeWidth="2.5" className="fog" />
+      ))}
+      {/* front wall: plaster with timber beams */}
+      <rect x={r.x} y={fy - 4} width={r.w} height={r.h - roofH + 4} fill="#f3e2c4" />
+      <path d={`M${r.x + 4} ${fy} V${r.y + r.h} M${r.x + r.w - 4} ${fy} V${r.y + r.h} M${r.x} ${fy + 14} H${r.x + r.w}`} stroke={beam} strokeWidth="7" />
+      <path d={`M${r.x + 4} ${fy} V${r.y + r.h} M${r.x + r.w - 4} ${fy} V${r.y + r.h} M${r.x} ${fy + 14} H${r.x + r.w}`} strokeWidth="2" strokeOpacity="0.6" fill="none" />
+      <rect x={r.x} y={r.y + r.h - 12} width={r.w} height="12" fill="url(#a-stone)" />
+      {pane(r.x + 22, "wl")}
+      {pane(r.x + r.w - 58, "wr")}
+      {/* door with a round top, the house sign above it, and a step */}
+      <path d={`M${door.x - 4} ${r.y + r.h - 6} V${fy + 40} Q${door.x + door.w / 2} ${fy + 18} ${door.x + door.w + 4} ${fy + 40} V${r.y + r.h - 6} Z`} fill="#8a5636" />
+      <path d={`M${door.x + door.w / 2} ${fy + 30} V${r.y + r.h - 8}`} strokeWidth="2.4" />
+      <circle cx={door.x + door.w - 10} cy={r.y + r.h - 30} r="3" fill="#ffd166" strokeWidth="2" />
+      <rect x={door.x - 10} y={r.y + r.h - 8} width={door.w + 20} height="10" fill="#c9b9a5" />
+      {/* gabled roof */}
+      <path d={`M${r.x - 14} ${fy + 2} L${r.x + 26} ${r.y} H${r.x + r.w - 26} L${r.x + r.w + 14} ${fy + 2} Z`} fill={roof} />
+      <path d={`M${r.x - 14} ${fy + 2} L${r.x + 26} ${r.y} H${r.x + r.w - 26} L${r.x + r.w + 14} ${fy + 2} Z`} fill="url(#a-tile)" strokeWidth="0" />
+      <path d={`M${r.x + 30} ${r.y + 6} H${r.x + r.w - 30}`} stroke={shade(roof, 0.35)} strokeWidth="5" strokeLinecap="round" />
+      <rect x={r.x - 16} y={fy - 4} width={r.w + 32} height="10" rx="3" fill={shade(roof, -0.3)} />
+      {/* round attic window */}
+      <circle cx={cx} cy={r.y + roofH * 0.5} r="15" fill={winFill} />
+      <path d={`M${cx - 15} ${r.y + roofH * 0.5} H${cx + 15} M${cx} ${r.y + roofH * 0.5 - 15} V${r.y + roofH * 0.5 + 15}`} strokeWidth="2.4" />
+    </g>
+  );
+}
+
+/** The cottage's picket fence (with a gap for the path) and its mailbox. */
+function Fence({ area, door }: { area: Rect; door: Rect }) {
+  const y = area.y + area.h - 20;
+  const gapL = door.x - 22;
+  const gapR = door.x + door.w + 22;
+  const run = (x0: number, x1: number, k: string) => (
+    <g key={k}>
+      <rect x={x0} y={y - 14} width={x1 - x0} height="6" fill="#f6efe6" strokeWidth="2.4" />
+      {Array.from({ length: Math.max(1, Math.floor((x1 - x0) / 16)) }, (_, i) => (
+        <path key={i} d={`M${x0 + 4 + i * 16} ${y + 4} V${y - 22} l4 -6 l4 6 V${y + 4} Z`} fill="#f6efe6" strokeWidth="2.4" />
+      ))}
+    </g>
+  );
+  return (
+    <g stroke={LINE} strokeWidth="3" strokeLinejoin="round">
+      {run(area.x + 12, gapL, "l")}
+      {run(gapR, area.x + area.w - 12, "r")}
+      <g transform={`translate(${gapR + 30} ${y - 30})`}>
+        <path d="M0 30 V4" strokeWidth="5" />
+        <path d="M-14 4 V-10 Q-14 -20 0 -20 Q14 -20 14 -10 V4 Z" fill="#4f86c6" />
+        <path d="M14 -16 h8 v8 h-8" fill="#e2453c" strokeWidth="2.4" />
+      </g>
     </g>
   );
 }
@@ -571,6 +711,7 @@ export const CityArt = memo(function CityArt({ layout, houses }: { layout: CityL
         const info = byId.get(p.buildingId);
         return info ? <House key={p.buildingId} r={p.house} info={info} door={p.door} /> : null;
       })}
+      {L.plots.map((p) => (byId.get(p.buildingId)?.kind === "home" ? <Fence key={`f${p.buildingId}`} area={p.area} door={p.door} /> : null))}
       <Gate r={L.gate} />
       {L.lamps.map((l, i) => (
         <Lamp key={i} x={l.x} y={l.y} />
@@ -595,13 +736,19 @@ export const CityLabels = memo(function CityLabels({ layout, houses, cityName }:
         const info = byId.get(p.buildingId);
         if (!info) return null;
         const r = p.house;
-        const roofH = Math.round(r.h * 0.44);
         const cx = r.x + r.w / 2;
+        if (info.kind === "home")
+          return (
+            <div key={p.buildingId} className="absolute text-center px-2 pt-1 pb-0.5 rounded-md border-[3px] whitespace-nowrap" style={{ left: cx, top: r.y - 40, transform: "translateX(-50%)", background: "#f6e7cf", borderColor: LINE, color: LINE, boxShadow: `3px 3px 0 ${LINE}`, ...display, fontSize: 18 }}>
+              {short(info.name.toUpperCase(), 22)}
+            </div>
+          );
+        const roofH = Math.round(r.h * roofFrac(info.kind));
         const signW = Math.min(r.w - 120, 190);
         const fy = r.y + roofH;
         return (
           <div key={p.buildingId}>
-            <div className="absolute grid place-content-center text-center overflow-hidden whitespace-nowrap" style={{ left: cx - signW / 2, top: fy + 8, width: signW, height: 32, ...display, fontSize: Math.max(13, Math.min(22, (signW - 14) / (Math.min(info.name.length, 24) * 0.5))), color: LINE }}>
+            <div className="absolute grid place-content-center text-center overflow-hidden whitespace-nowrap" style={{ left: cx - signW / 2, top: fy + signDrop(info.kind) - 2, width: signW, height: 32, ...display, fontSize: Math.max(13, Math.min(22, (signW - 14) / (Math.min(info.name.length, 24) * 0.5))), color: LINE }}>
               {short(info.name.toUpperCase(), 24)}
             </div>
             <div className="absolute grid place-content-center" style={{ left: cx - 28, top: r.y + 10, width: 56, height: 48 }}>
@@ -619,8 +766,8 @@ export const CityLabels = memo(function CityLabels({ layout, houses, cityName }:
                 {info.alert}
               </div>
             )}
-            {info.kind === "video" && <Tag left={r.x + 12} top={r.y - 26} bg="#a78bfa" fg="#fff">ON AIR</Tag>}
-            {info.kind === "creative" && <Tag left={r.x + 12} top={r.y - 26} bg="#ffb347" fg={LINE}>ADS LAB</Tag>}
+            {info.kind === "video" && <Tag left={r.x + r.w - 96} top={r.y - 26} bg="#d62839" fg="#fff">ON AIR</Tag>}
+            {info.kind === "creative" && <Tag left={r.x + 12} top={r.y - 26} bg="#b388ff" fg={LINE}>ADS LAB</Tag>}
             {info.kind === "acquisition" && <Tag left={r.x + 12} top={r.y - 26} bg="#ff6b6b" fg="#fff">HIRING</Tag>}
             {(info.kind === "weapons" || info.kind === "armor") && <Tag left={r.x + 12} top={r.y - 26} bg="#ffd166" fg={LINE}>OPEN</Tag>}
           </div>
@@ -678,11 +825,13 @@ export interface InteriorInfo {
   /** Sticky notes on the mission board */
   notes: { text: string; done: boolean }[];
   rooms: { id: string; name: string }[];
-  desks: { staffId: string; name: string; title: string; color: string; ready: boolean }[];
+  /** Building kind: studios get their own look inside */
+  kind: string;
+  desks: { staffId: string; name: string; title: string; role: string; color: string; ready: boolean }[];
   reporter?: { name: string; title: string };
 }
 
-function Bookshelf({ x, y, seed }: { x: number; y: number; seed: number }) {
+export function Bookshelf({ x, y, seed }: { x: number; y: number; seed: number }) {
   const rand = rng(seed);
   const books = ["#e2453c", "#2f8f9a", "#ffd166", "#a78bfa", "#8fbf68", "#f19aa8"];
   return (
@@ -711,39 +860,213 @@ function WallLamp({ x, y }: { x: number; y: number }) {
   );
 }
 
-export const InteriorArt = memo(function InteriorArt({ layout, info }: { layout: InteriorLayout; info: InteriorInfo }) {
-  const L = layout;
-  const wallC = soft(info.color, 0.7);
-  const trim = shade(info.color, -0.25);
-  const noteC = ["#ffd166", "#f19aa8", "#9ad8d2", "#c5e5a5", "#ffc078"];
+/** Things along the back wall of an office: windows, bookshelves and lamps. */
+function OfficeWall({ L, seed }: { L: InteriorLayout; seed: number }) {
   const decor: ReactNode[] = [];
-  // things along the back wall, keeping clear of the screen and board
-  const busy = (x: number, w: number) => (x + w > L.screen.x - 30 && x < L.screen.x + L.screen.w + 30) || (x + w > L.board.x - 30 && x < L.board.x + L.board.w + 30);
   let k = 0;
   for (let x = T * 0.8; x < L.w - T * 2; x += T * 2.4) {
-    if (busy(x, 70)) continue;
+    if (wallBusy(L, x, 70)) continue;
     const kind = k++ % 3;
-    if (kind === 0)
-      decor.push(
-        <g key={x} stroke={LINE} strokeWidth="3.5">
-          <rect x={x} y={18} width="64" height="52" rx="4" fill="#9fd3e6" />
-          <path d={`M${x + 32} 18 V70 M${x} 44 H${x + 64}`} strokeWidth="2.5" />
-          <path d={`M${x + 8} 34 l12 -10 M${x + 40} 60 l10 -8`} stroke="#fff" strokeWidth="4" />
-          <rect x={x - 4} y={68} width="72" height="8" rx="2" fill="#a86a43" />
-        </g>,
-      );
-    else if (kind === 1) decor.push(<Bookshelf key={x} x={x} y={L.wall - 84} seed={hashString(info.name) + x} />);
+    if (kind === 0) decor.push(<WallWindow key={x} x={x} />);
+    else if (kind === 1) decor.push(<Bookshelf key={x} x={x} y={L.wall - 84} seed={seed + x} />);
     else decor.push(<WallLamp key={x} x={x + 30} y={30} />);
   }
+  return <g>{decor}</g>;
+}
+
+/** Keeps decorations clear of the results screen and the mission board. */
+const wallBusy = (L: InteriorLayout, x: number, w: number) => (x + w > L.screen.x - 30 && x < L.screen.x + L.screen.w + 30) || (x + w > L.board.x - 30 && x < L.board.x + L.board.w + 30);
+
+function WallWindow({ x }: { x: number }) {
+  return (
+    <g stroke={LINE} strokeWidth="3.5">
+      <rect x={x} y={18} width="64" height="52" rx="4" fill="#9fd3e6" />
+      <path d={`M${x + 32} 18 V70 M${x} 44 H${x + 64}`} strokeWidth="2.5" />
+      <path d={`M${x + 8} 34 l12 -10 M${x + 40} 60 l10 -8`} stroke="#fff" strokeWidth="4" />
+      <rect x={x - 4} y={68} width="72" height="8" rx="2" fill="#a86a43" />
+    </g>
+  );
+}
+
+/** A framed ad poster: a headline bar, a picture and a button, like the studio's own work. */
+function AdPoster({ x, y, tone }: { x: number; y: number; tone: number }) {
+  const c = [["#ff7a59", "#ffd166"], ["#3fd0ff", "#f19aa8"], ["#5cf28b", "#b388ff"], ["#ffd166", "#ff5fae"]][tone % 4];
+  return (
+    <g transform={`translate(${x} ${y})`} stroke={LINE} strokeWidth="3">
+      <rect x="-3" y="-3" width="50" height="64" rx="3" fill="#6b4226" />
+      <rect width="44" height="58" fill="#f6e7cf" strokeWidth="2" />
+      <rect x="5" y="5" width="34" height="8" fill={c[0]} strokeWidth="1.8" />
+      <circle cx="22" cy="28" r="10" fill={c[1]} strokeWidth="1.8" />
+      <rect x="10" y="44" width="24" height="8" rx="4" fill={c[0]} strokeWidth="1.8" />
+    </g>
+  );
+}
+
+/** Coloured bulbs strung along the top of the wall. */
+function StringLights({ w, y = 10 }: { w: number; y?: number }) {
+  const n = Math.floor(w / 46);
+  const bulbs = ["#ffd166", "#f19aa8", "#9ad8d2", "#c5e5a5", "#ffb347"];
+  return (
+    <g stroke={LINE}>
+      {Array.from({ length: n }, (_, i) => {
+        const x0 = (i * w) / n;
+        const x1 = ((i + 1) * w) / n;
+        return <path key={`w${i}`} d={`M${x0} ${y} Q${(x0 + x1) / 2} ${y + 16} ${x1} ${y}`} fill="none" strokeWidth="2" />;
+      })}
+      {Array.from({ length: n }, (_, i) => {
+        const x = ((i + 0.5) * w) / n;
+        return (
+          <g key={`b${i}`}>
+            <circle cx={x} cy={y + 14} r="10" fill="url(#a-glow)" stroke="none" />
+            <path d={`M${x - 3} ${y + 7} h6 v4 h-6 z`} fill="#6b5a70" strokeWidth="1.5" />
+            <ellipse cx={x} cy={y + 15} rx="4.5" ry="6" fill={bulbs[i % bulbs.length]} strokeWidth="2" />
+          </g>
+        );
+      })}
+    </g>
+  );
+}
+
+/** Ad Creative Studio: wallpaper, string lights, framed ads and a mood board. */
+function CreativeWall({ L }: { L: InteriorLayout }) {
+  const decor: ReactNode[] = [];
+  let k = 0;
+  for (let x = T * 0.7; x < L.w - T * 1.8; x += T * 1.9) {
+    if (wallBusy(L, x, 56)) continue;
+    const kind = k++ % 3;
+    if (kind === 1) decor.push(<WallWindow key={x} x={x - 4} />);
+    else decor.push(<AdPoster key={x} x={x} y={26 + (k % 2) * 6} tone={k} />);
+  }
+  return (
+    <g>
+      <rect width={L.w} height={L.wall - 30} fill="url(#a-wallpaper)" />
+      {decor}
+      <StringLights w={L.w} />
+    </g>
+  );
+}
+
+/** Video Production House: acoustic foam, film reels and a storyboard wall. */
+function VideoWall({ L }: { L: InteriorLayout }) {
+  const decor: ReactNode[] = [];
+  let k = 0;
+  for (let x = T * 0.7; x < L.w - T * 2; x += T * 2.3) {
+    if (wallBusy(L, x, 76)) continue;
+    const kind = k++ % 2;
+    if (kind === 0)
+      decor.push(
+        <g key={x} stroke={LINE} strokeWidth="3" transform={`translate(${x + 34} 46)`}>
+          {[-18, 18].map((dx) => (
+            <g key={dx} transform={`translate(${dx} 0)`}>
+              <circle r="17" fill="#2b2d42" />
+              {[0, 1, 2, 3, 4].map((i) => (
+                <circle key={i} cx={Math.cos((i * 2 * Math.PI) / 5) * 8.5} cy={Math.sin((i * 2 * Math.PI) / 5) * 8.5} r="3.6" fill="#9aa0b4" strokeWidth="1.6" />
+              ))}
+            </g>
+          ))}
+          <path d="M-18 17 C-10 32 10 32 18 17" fill="none" stroke="#2b2d42" strokeWidth="7" />
+        </g>,
+      );
+    else
+      decor.push(
+        <g key={x} stroke={LINE} strokeWidth="3">
+          {/* a storyboard: six sketched frames pinned to cork */}
+          <rect x={x - 4} y={14} width="84" height="62" rx="3" fill="#c99862" />
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <g key={i}>
+              <rect x={x + 2 + (i % 3) * 26} y={20 + Math.floor(i / 3) * 27} width="22" height="22" fill="#f6e7cf" strokeWidth="2" />
+              <path d={`M${x + 6 + (i % 3) * 26} ${36 + Math.floor(i / 3) * 27} l5 -7 l4 4 l5 -6`} fill="none" strokeWidth="1.8" />
+              <circle cx={x + 13 + (i % 3) * 26} cy={21 + Math.floor(i / 3) * 27} r="2.4" fill="#e2453c" strokeWidth="1.2" />
+            </g>
+          ))}
+        </g>,
+      );
+  }
+  return (
+    <g>
+      <rect width={L.w} height={L.wall - 30} fill="url(#a-foam)" />
+      {decor}
+      <StringLights w={L.w} y={6} />
+    </g>
+  );
+}
+
+/** The set piece in the middle of the floor: a green screen with a camera, or a mood-board easel. */
+function MiddleSet({ L, kind }: { L: InteriorLayout; kind: string }) {
+  const m = L.middle;
+  if (m.w < 90) return null;
+  const cx = m.x + m.w / 2;
+  if (kind === "video") {
+    const gw = Math.min(m.w - 20, 170);
+    return (
+      <g stroke={LINE} strokeWidth="3.5" strokeLinejoin="round">
+        {/* green screen hanging from the wall and curving onto the floor */}
+        <rect x={cx - gw / 2 - 6} y={L.wall - 96} width={gw + 12} height="12" rx="3" fill="#4a3b4f" />
+        <path d={`M${cx - gw / 2} ${L.wall - 86} H${cx + gw / 2} V${m.y + m.h * 0.55} H${cx - gw / 2} Z`} fill="#3cbf5a" />
+        <path d={`M${cx - gw / 2 + 10} ${L.wall - 70} V${m.y + m.h * 0.5} M${cx + gw / 2 - 10} ${L.wall - 70} V${m.y + m.h * 0.5}`} stroke="#2f9c48" strokeWidth="3" />
+        {/* softbox lights either side */}
+        {[-1, 1].map((sd) => (
+          <g key={sd} transform={`translate(${cx + sd * (gw / 2 - 4)} ${m.y + m.h - 6})`}>
+            <path d="M0 0 V-46 M-12 0 L0 -18 L12 0" strokeWidth="3" />
+            <rect x="-16" y="-70" width="32" height="26" rx="3" fill="#fff6dc" />
+            <circle cx="0" cy="-57" r="20" fill="url(#a-glow)" stroke="none" />
+          </g>
+        ))}
+        {/* camera on a tripod */}
+        <g transform={`translate(${cx} ${m.y + m.h + 6})`}>
+          <path d="M0 -26 L-14 0 M0 -26 L14 0 M0 -26 V0" strokeWidth="3" />
+          <rect x="-16" y="-44" width="30" height="20" rx="3" fill="#2b2d42" />
+          <rect x="14" y="-40" width="10" height="12" rx="2" fill="#4a4e69" />
+          <circle cx="-2" cy="-34" r="5" fill="#9ad8d2" strokeWidth="2" />
+          <circle cx="-12" cy="-40" r="2.5" fill="#e2453c" strokeWidth="1.2" />
+        </g>
+      </g>
+    );
+  }
+  if (kind === "creative")
+    return (
+      <g stroke={LINE} strokeWidth="3.5" strokeLinejoin="round">
+        {/* mood board on an easel, a beanbag and a plant */}
+        <g transform={`translate(${cx} ${m.y + m.h - 4})`}>
+          <path d="M-30 0 L-10 -100 M30 0 L10 -100 M0 -100 V6" strokeWidth="4" stroke="#6b4226" />
+          <rect x="-40" y="-104" width="80" height="62" rx="3" fill="#c99862" />
+          {[0, 1, 2, 3].map((i) => (
+            <rect key={i} x={-34 + (i % 2) * 36} y={-98 + Math.floor(i / 2) * 28} width="30" height="24" fill={["#f19aa8", "#9ad8d2", "#ffd166", "#c5e5a5"][i]} strokeWidth="2" transform={`rotate(${(i % 2 ? 3 : -3)} ${-19 + (i % 2) * 36} ${-86 + Math.floor(i / 2) * 28})`} />
+          ))}
+        </g>
+        {m.w > 150 && <ellipse cx={m.x + 26} cy={m.y + m.h - 18} rx="24" ry="17" fill="#ff9fc8" />}
+        {m.w > 150 && <Plant x={m.x + m.w - 20} y={m.y + m.h - 6} s={1.1} seed={3} />}
+      </g>
+    );
+  return (
+    <g stroke={LINE} strokeWidth="3.5" strokeLinejoin="round">
+      {/* a water cooler and a plant */}
+      <g transform={`translate(${cx} ${m.y + m.h - 6})`}>
+        <rect x="-14" y="-34" width="28" height="34" rx="3" fill="#cfd6d3" />
+        <path d="M-12 -34 Q-12 -62 0 -62 Q12 -62 12 -34 Z" fill="#9fd3e6" />
+        <rect x="-4" y="-22" width="8" height="5" fill="#4f86c6" strokeWidth="1.5" />
+      </g>
+      {m.w > 150 && <Plant x={m.x + 22} y={m.y + m.h - 6} s={1.1} seed={1} />}
+    </g>
+  );
+}
+
+export const InteriorArt = memo(function InteriorArt({ layout, info }: { layout: InteriorLayout; info: InteriorInfo }) {
+  const L = layout;
+  const wallC = info.kind === "video" ? "#3c3148" : info.kind === "creative" ? "#cbb3ee" : soft(info.color, 0.7);
+  const trim = shade(info.color, -0.25);
+  const noteC = ["#ffd166", "#f19aa8", "#9ad8d2", "#c5e5a5", "#ffc078"];
+  const rugFill = info.kind === "creative" ? "url(#a-rug-purple)" : info.kind === "video" ? "url(#a-rug-red)" : "url(#a-rug)";
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width={L.w} height={L.h} viewBox={`0 0 ${L.w} ${L.h}`}>
       <Defs />
-      <rect width={L.w} height={L.h} fill="url(#a-plank)" />
-      {/* back wall: painted plaster over a stone base */}
+      <rect width={L.w} height={L.h} fill={info.kind === "video" ? "url(#a-plank-dark)" : "url(#a-plank)"} />
+      {/* back wall over a stone base */}
       <rect width={L.w} height={L.wall} fill={wallC} />
+      {info.kind === "creative" ? <CreativeWall L={L} /> : info.kind === "video" ? <VideoWall L={L} /> : <OfficeWall L={L} seed={hashString(info.name)} />}
       <rect y={L.wall - 34} width={L.w} height="34" fill="url(#a-stone)" stroke={LINE} strokeWidth="4" />
       <rect y={L.wall - 4} width={L.w} height="10" fill={trim} stroke={LINE} strokeWidth="3" />
-      {decor}
+      <MiddleSet L={L} kind={info.kind} />
       {/* Progress Room */}
       <rect x={L.progress.x} y={L.progress.y} width={L.progress.w} height={L.progress.h} rx="12" fill="url(#a-carpet)" stroke={LINE} strokeWidth="4" />
       <rect x={L.progress.x + 8} y={L.progress.y + 8} width={L.progress.w - 16} height={L.progress.h - 16} rx="8" fill="none" stroke="#c8913a" strokeWidth="3" strokeDasharray="10 7" />
@@ -772,7 +1095,7 @@ export const InteriorArt = memo(function InteriorArt({ layout, info }: { layout:
         const y1 = Math.max(...xs.map((d) => d.y + d.h)) + 40;
         return (
           <g stroke={LINE} strokeWidth="4">
-            <rect x={x0} y={y0} width={x1 - x0} height={y1 - y0} rx="10" fill="url(#a-rug)" />
+            <rect x={x0} y={y0} width={x1 - x0} height={y1 - y0} rx="10" fill={rugFill} />
             <rect x={x0 + 10} y={y0 + 10} width={x1 - x0 - 20} height={y1 - y0 - 20} rx="6" fill="none" stroke="#f6e7cf" strokeWidth="3" />
           </g>
         );
@@ -780,7 +1103,7 @@ export const InteriorArt = memo(function InteriorArt({ layout, info }: { layout:
       {L.reporter && <Desk x={L.reporter.x} y={L.reporter.y} color="#ffd166" ready wide />}
       {L.stations.map((s) => {
         const d = info.desks.find((x) => x.staffId === s.staffId);
-        return <Desk key={s.staffId} x={s.x} y={s.y} color={d?.color ?? "#7cc6c0"} ready={d?.ready ?? true} />;
+        return <Desk key={s.staffId} x={s.x} y={s.y} color={d?.color ?? "#7cc6c0"} ready={d?.ready ?? true} role={d?.role} />;
       })}
       {/* extra rooms */}
       {L.rooms.map((r) => (
@@ -806,29 +1129,110 @@ export const InteriorArt = memo(function InteriorArt({ layout, info }: { layout:
   );
 });
 
-function Desk({ x, y, color, ready, wide = false }: { x: number; y: number; color: string; ready: boolean; wide?: boolean }) {
+function Desk({ x, y, color, ready, wide = false, role }: { x: number; y: number; color: string; ready: boolean; wide?: boolean; role?: string }) {
   const w = wide ? 2.6 * T : 2.4 * T;
   const h = 0.9 * T;
+  const screen = ready ? color : "#ff6b6b";
+  const monitor = (dx: number, k: string, mw = 48) => (
+    <g key={k}>
+      <rect x={dx - mw / 2} y="-30" width={mw} height="32" rx="4" fill="#3a3346" />
+      <rect x={dx - mw / 2 + 5} y="-25" width={mw - 10} height="22" rx="2" fill={screen} strokeWidth="0" opacity="0.92" />
+      <rect x={dx - 6} y="2" width="12" height="5" fill="#3a3346" strokeWidth="0" />
+    </g>
+  );
+  let props: ReactNode;
+  if (role === "videoEdit")
+    // two screens with an edit timeline, and a jog wheel
+    props = (
+      <g>
+        {monitor(-22, "m1", 40)}
+        {monitor(22, "m2", 40)}
+        {[0, 1, 2].map((i) => (
+          <rect key={i} x={6 + i * 2} y={-22 + i * 6} width={22 - i * 4} height="4" fill={["#ffd166", "#9ad8d2", "#f19aa8"][i]} strokeWidth="0" />
+        ))}
+        <circle cx={w / 2 - 22} cy="14" r="8" fill="#4a4e69" strokeWidth="2.4" />
+      </g>
+    );
+  else if (role === "videoAI")
+    // a render tower with glowing lights next to the screen
+    props = (
+      <g>
+        {monitor(-8, "m")}
+        <rect x={w / 2 - 34} y="-36" width="22" height="44" rx="3" fill="#2b2d42" />
+        <circle cx={w / 2 - 23} cy="-26" r="3" fill="#5cf28b" strokeWidth="1.2" />
+        <circle cx={w / 2 - 23} cy="-16" r="3" fill="#3fd0ff" strokeWidth="1.2" />
+        <path d={`M${w / 2 - 30} -4 h14`} stroke="#b388ff" strokeWidth="3" />
+      </g>
+    );
+  else if (role === "imageAI")
+    // a drawing tablet with a stylus
+    props = (
+      <g>
+        {monitor(-14, "m")}
+        <rect x={w / 2 - 40} y="4" width="30" height="20" rx="3" fill="#3a3346" strokeWidth="2.4" />
+        <rect x={w / 2 - 36} y="8" width="22" height="12" rx="1" fill="#f19aa8" strokeWidth="0" />
+        <path d={`M${w / 2 - 12} 2 l8 -10`} strokeWidth="3" />
+      </g>
+    );
+  else if (role === "storyboard")
+    // a sketch pad with three frames, and a pot of pencils
+    props = (
+      <g>
+        <rect x="-40" y="-12" width="64" height="26" fill="#f6e7cf" strokeWidth="2.4" transform="rotate(-4 -8 1)" />
+        {[0, 1, 2].map((i) => (
+          <rect key={i} x={-36 + i * 20} y="-8" width="16" height="16" fill="none" strokeWidth="1.8" transform="rotate(-4 -8 1)" />
+        ))}
+        <rect x={w / 2 - 30} y="-14" width="14" height="20" rx="2" fill="#7cc6c0" strokeWidth="2.4" />
+        <path d={`M${w / 2 - 27} -14 l-3 -12 M${w / 2 - 23} -14 v-14 M${w / 2 - 19} -14 l3 -12`} stroke="#e2453c" strokeWidth="3" />
+      </g>
+    );
+  else if (role === "videoScript" || role === "scriptWriter")
+    // a script with a highlighter
+    props = (
+      <g>
+        {monitor(-16, "m")}
+        <rect x={w / 2 - 44} y="-6" width="26" height="30" fill="#f6e7cf" strokeWidth="2.2" transform={`rotate(6 ${w / 2 - 31} 9)`} />
+        <path d={`M${w / 2 - 40} 2 h16 M${w / 2 - 40} 8 h12 M${w / 2 - 40} 14 h16`} strokeWidth="1.6" transform={`rotate(6 ${w / 2 - 31} 9)`} />
+        <rect x={w / 2 - 16} y="2" width="6" height="18" rx="2" fill="#ffd166" strokeWidth="2" />
+      </g>
+    );
+  else if (role === "imageCopy" || role === "copyWriter")
+    // sticky notes stuck round the screen
+    props = (
+      <g>
+        {monitor(0, "m")}
+        <rect x="26" y="-30" width="12" height="12" fill="#ffd166" strokeWidth="1.8" />
+        <rect x="26" y="-16" width="12" height="12" fill="#f19aa8" strokeWidth="1.8" />
+        <rect x="-38" y="-24" width="12" height="12" fill="#9ad8d2" strokeWidth="1.8" />
+        <rect x={w / 2 - 26} y="4" width="12" height="14" rx="2" fill="#e2453c" strokeWidth="2.4" />
+      </g>
+    );
+  else
+    props = (
+      <g>
+        {monitor(0, "m")}
+        <path d="M-13 -18 h18 M-13 -12 h12" stroke="#fff" strokeOpacity="0.7" strokeWidth="2.5" />
+        <rect x={-w / 2 + 10} y="6" width="22" height="16" fill="#f6e7cf" strokeWidth="2.2" transform={`rotate(-8 ${-w / 2 + 21} 14)`} />
+        <rect x={w / 2 - 26} y="4" width="12" height="14" rx="2" fill="#e2453c" strokeWidth="2.4" />
+        <path d={`M${w / 2 - 14} 8 q6 0 6 4 q0 4 -6 4`} fill="none" strokeWidth="2.4" />
+      </g>
+    );
   return (
     <g transform={`translate(${x} ${y + 0.15 * T})`} stroke={LINE} strokeWidth="3.5" strokeLinejoin="round">
       <rect x={-w / 2 + 8} y="8" width={w} height={h} rx="5" fill="#000" opacity="0.2" stroke="none" />
       <rect x={-w / 2} y="0" width={w} height={h - 6} rx="5" fill="#a86a43" />
       <rect x={-w / 2} y={h - 16} width={w} height="10" fill="#7d4c2e" strokeWidth="0" />
-      {/* monitor, keyboard, papers, a mug */}
-      <rect x="-24" y="-30" width="48" height="32" rx="4" fill="#3a3346" />
-      <rect x="-19" y="-25" width="38" height="22" rx="2" fill={ready ? color : "#ff6b6b"} strokeWidth="0" opacity="0.92" />
-      <path d="M-13 -18 h18 M-13 -12 h12" stroke="#fff" strokeOpacity="0.7" strokeWidth="2.5" />
-      <rect x="-6" y="2" width="12" height="5" fill="#3a3346" strokeWidth="0" />
       <rect x="-20" y="10" width="40" height="8" rx="2" fill="#e8e1d5" strokeWidth="2.4" />
-      <rect x={-w / 2 + 10} y="6" width="22" height="16" fill="#f6e7cf" strokeWidth="2.2" transform={`rotate(-8 ${-w / 2 + 21} 14)`} />
-      <rect x={w / 2 - 26} y="4" width="12" height="14" rx="2" fill="#e2453c" strokeWidth="2.4" />
-      <path d={`M${w / 2 - 14} 8 q6 0 6 4 q0 4 -6 4`} fill="none" strokeWidth="2.4" />
+      {props}
     </g>
   );
 }
 
 /** Everything you read inside: the results screen, mission notes, room signs, and each desk's nameplate with the person's position. */
-export const InteriorLabels = memo(function InteriorLabels({ layout, info }: { layout: InteriorLayout; info: InteriorInfo }) {
+/** What a desk's person is doing now, for their nameplate. */
+export type DeskStatus = Record<string, { state: "busy" | "idle" | "setup"; line: string }>;
+
+export const InteriorLabels = memo(function InteriorLabels({ layout, info, status }: { layout: InteriorLayout; info: InteriorInfo; status?: DeskStatus }) {
   const L = layout;
   const rooms = new Map(info.rooms.map((r) => [r.id, r.name]));
   const desks = new Map(info.desks.map((d) => [d.staffId, d]));
@@ -874,7 +1278,7 @@ export const InteriorLabels = memo(function InteriorLabels({ layout, info }: { l
       {L.reporter && <Plate x={L.reporter.x} y={L.reporter.y} name={info.reporter?.name ?? "Reports"} title={info.reporter?.title ?? "Progress reporter"} color="#ffd166" />}
       {L.stations.map((s) => {
         const d = desks.get(s.staffId);
-        return d ? <Plate key={s.staffId} x={s.x} y={s.y} name={d.name} title={d.title} color={d.color} /> : null;
+        return d ? <Plate key={s.staffId} x={s.x} y={s.y} name={d.name} title={d.title} color={d.color} status={status?.[s.staffId]} /> : null;
       })}
       <div className="absolute grid place-content-center" style={{ left: L.exit.x, top: L.exit.y, width: L.exit.w, height: L.exit.h + 6, ...display, fontSize: 22, color: "#fff" }}>
         EXIT
@@ -891,12 +1295,23 @@ function Zone({ r, text, right = false }: { r: Rect; text: string; right?: boole
   );
 }
 
-/** The nameplate on the front of a desk: who sits here and what their job is. */
-function Plate({ x, y, name, title, color }: { x: number; y: number; name: string; title: string; color: string }) {
+const STATE_DOT = { busy: "#2fbf5a", idle: "#9aa0b4", setup: "#e2453c" };
+const STATE_WORD = { busy: "Working", idle: "Free", setup: "Needs you" };
+
+/** The nameplate on the front of a desk: who sits here, their job, and whether they're working, free or waiting on you (and on what). */
+function Plate({ x, y, name, title, color, status }: { x: number; y: number; name: string; title: string; color: string; status?: DeskStatus[string] }) {
+  const done = status?.line.startsWith("Done today");
+  const line = status?.line.replace(/^(Working on|Done today|Waiting on you): /, "").replace(/…$/, "");
   return (
-    <div className="absolute text-center rounded-md border-[2.5px] px-1 py-0.5 shadow-[2px_2px_0_#2b1d2e]" style={{ left: x - 64, top: y + 0.15 * T + 0.9 * T - 4, width: 128, background: "#f6e7cf", borderColor: LINE, color: LINE, zIndex: 2 }}>
+    <div className="absolute text-center rounded-md border-[2.5px] px-1 py-0.5 shadow-[2px_2px_0_#2b1d2e]" style={{ left: x - 70, top: y + 0.15 * T + 0.9 * T - 4, width: 140, background: "#f6e7cf", borderColor: LINE, color: LINE, zIndex: 2 }} title={status?.line}>
       <div className="font-extrabold leading-none truncate" style={{ fontSize: 13 }}>{name}</div>
       <div className="font-extrabold mt-0.5 rounded-sm px-1" style={{ fontSize: 10.5, lineHeight: "12px", background: color }}>{title.toUpperCase()}</div>
+      {status && (
+        <div className="flex items-center justify-center gap-1 mt-0.5 font-extrabold leading-none" style={{ fontSize: 10.5 }}>
+          <span className="inline-block rounded-full shrink-0" style={{ width: 8, height: 8, background: done ? "#ffd166" : STATE_DOT[status.state], border: `1.5px solid ${LINE}` }} />
+          <span className="truncate">{done ? "Done" : STATE_WORD[status.state]}{line && status.state !== "idle" ? `: ${line}` : ""}</span>
+        </div>
+      )}
     </div>
   );
 }

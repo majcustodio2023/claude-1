@@ -204,6 +204,49 @@ export const JOBS: Partial<Record<StaffRoleId, Job[]>> = {
       input: { label: "Numbers (optional)", placeholder: "Paste spend, results and cost per result so I can tell what's working" },
     }),
   ],
+  storyboard: [
+    J({
+      id: "board",
+      label: "Storyboard",
+      doing: "Drawing up the storyboard",
+      brief:
+        "Turn the script or idea below into a shot-by-shot storyboard for a short vertical video (9:16). Number every shot and give: length in seconds, framing (wide, medium, close-up, over-the-shoulder, screen recording, B-roll), what we see, camera movement, on-screen text, the spoken line, and the transition to the next shot. Then a one-line shoot list (locations, props, people) and an edit note for the video editor (pace, music mood, where the captions go).",
+      input: { label: "Script or idea", placeholder: "Paste the script, or describe the video in a few lines", required: true },
+    }),
+    J({
+      id: "shots",
+      label: "B-roll shot list",
+      doing: "Listing B-roll shots",
+      brief:
+        "Write a B-roll shot list for the topic below: 15 short shots that can be filmed on a phone in a day, each with what to film, where, the framing and how many seconds to get. Group them by location so the shoot is quick.",
+      input: { label: "Topic", placeholder: "What the video is about", required: true },
+    }),
+  ],
+  videoScript: [
+    J({
+      id: "script",
+      label: "Video script",
+      doing: "Writing the script",
+      brief:
+        "Write a short-form video script (30 to 60 seconds) for the topic below. Give 3 hook options (first 3 seconds, spoken and on-screen text), then the full script in beats with timings, what's on screen for each beat, and one clear call to action at the end. Write it the way people talk, short lines, no jargon.",
+      input: { label: "Topic, offer or link", placeholder: "What the video is about, who it's for, or a sales page link", required: true },
+    }),
+    J({
+      id: "long",
+      label: "YouTube script",
+      doing: "Outlining a long video",
+      brief:
+        "Write a YouTube video script for the topic below (8 to 12 minutes): a title and thumbnail text (3 options each), a cold open hook, the intro, 4 to 6 chapters with talking points and examples, a mid-roll call to action, and the outro. Mark where B-roll or screen recordings go.",
+      input: { label: "Topic", placeholder: "What the video is about and who it's for", required: true },
+    }),
+    J({
+      id: "hooks",
+      label: "20 video hooks",
+      doing: "Writing hooks",
+      brief: "Write 20 scroll-stopping hooks for short videos on the topic below, mixed across angles (pain, curiosity, contrarian, proof, story, list). Give each the spoken line and the on-screen text.",
+      input: { label: "Topic", placeholder: "What the videos are about", required: true },
+    }),
+  ],
   custom: [
     J({
       id: "job",

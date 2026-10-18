@@ -7,7 +7,7 @@ import { randomHeroLook } from "./heroLook";
 import { uid } from "./finance";
 import type { BuildingKind, CityBuilding, CityStaff, CityState, Client, StaffRoleId, TrackerData } from "./types";
 
-export const DEFAULT_CITY_NAME = "Nova City";
+export const DEFAULT_CITY_NAME = "Dawnterra";
 
 // ---------- staff roles ----------
 
@@ -194,6 +194,18 @@ export const ROLES: Record<StaffRoleId, StaffRole> = {
     jobs: ["Studying sample ads", "Picking the target market", "Writing the headline"],
     needs: [],
   },
+  storyboard: {
+    id: "storyboard", title: "Storyboard Artist", color: "#ff7a59", icon: "image", panel: "work", action: "Show me your work",
+    greet: "Give me a script or an idea and I'll break it into shots: framing, what's on screen, the words and the cut.",
+    jobs: ["Sketching the opening shot", "Pinning frames to the wall", "Planning the cuts"],
+    needs: [],
+  },
+  videoScript: {
+    id: "videoScript", title: "Video Script Specialist", color: "#ffd23f", icon: "scroll", panel: "work", action: "Show me your work",
+    greet: "Reels, YouTube, talking-head videos: tell me what it's about and I'll write the script, hook first.",
+    jobs: ["Writing a hook", "Timing the script", "Tightening the call to action"],
+    needs: [],
+  },
   custom: {
     id: "custom", title: "Assistant", color: "#c4bfe6", icon: "robot", panel: "work", action: "Show me your work",
     greet: "Reporting for duty at {client}. Tell me what my job is.",
@@ -238,10 +250,13 @@ export function suggestedRoles(c: Pick<Client, "name" | "notes">): StaffRoleId[]
   return roles;
 }
 
+// The first district sits around the square: the Ad Creative Studio, the Video Production
+// House and your home, then the rest of the studios and the shops.
 const STUDIOS: { kind: BuildingKind; name: string; roles: StaffRoleId[]; color: string }[] = [
-  { kind: "video", name: "AI Video Maker", roles: ["reporter", "videoAI", "videoEdit"], color: "#7c5cff" },
+  { kind: "creative", name: "Ad Creative Studio", roles: ["reporter", "scriptWriter", "copyWriter", "imageCopy", "imageAI"], color: "#8e5cd9" },
+  { kind: "video", name: "Video Production House", roles: ["reporter", "videoEdit", "videoAI", "storyboard", "videoScript"], color: "#d9443a" },
+  { kind: "home", name: "Your Home", roles: [], color: "#c9774a" },
   { kind: "acquisition", name: "Client Acquisition", roles: ["reporter", "funnel", "adsTracker", "videoEdit"], color: "#ff4d5e" },
-  { kind: "creative", name: "Ad Creatives", roles: ["reporter", "scriptWriter", "copyWriter", "imageCopy", "imageAI"], color: "#ff9f1c" },
   { kind: "weapons", name: "Blade & Bolt", roles: [], color: "#e63946" },
   { kind: "armor", name: "Iron Threads", roles: [], color: "#2ec4b6" },
 ];
@@ -249,7 +264,14 @@ const STUDIOS: { kind: BuildingKind; name: string; roles: StaffRoleId[]; color: 
 /** Shops: walking in opens the shop counter instead of an interior. */
 export const isShop = (b: Pick<CityBuilding, "kind">) => b.kind === "weapons" || b.kind === "armor";
 
+/** In the order they're placed around the square. */
 export const STUDIO_KINDS: BuildingKind[] = STUDIOS.map((s) => s.kind);
+
+/** Older towns: the names and colours studios used to start with, swapped for the new ones once. */
+const OLD_STUDIO: Partial<Record<BuildingKind, { name: string; color: string }>> = {
+  creative: { name: "Ad Creatives", color: "#ff9f1c" },
+  video: { name: "AI Video Maker", color: "#7c5cff" },
+};
 
 export function newStaff(city: CityState, buildingId: string, role: StaffRoleId, today: string): CityStaff {
   const id = uid("staff");
@@ -280,6 +302,23 @@ export function ensureCity(data: TrackerData, today: string): boolean {
     changed = true;
   }
   const city = data.city;
+  // Once: the town becomes Dawnterra. Only names and colours still at their old defaults change,
+  // and the Video Production House gets its storyboard and script staff.
+  if (!city.dawnterra) {
+    city.dawnterra = true;
+    changed = true;
+    if (city.name === "Nova City") city.name = DEFAULT_CITY_NAME;
+    for (const s of STUDIOS) {
+      const b = city.buildings.find((x) => x.kind === s.kind);
+      const old = OLD_STUDIO[s.kind];
+      if (!b || !old) continue;
+      if (b.name === old.name) b.name = s.name;
+      if (!b.color || b.color === old.color) b.color = s.color;
+      if (s.kind === "video")
+        for (const role of ["storyboard", "videoScript"] as StaffRoleId[])
+          if (!city.staff.some((x) => x.buildingId === b.id && x.role === role)) city.staff.push(newStaff(city, b.id, role, today));
+    }
+  }
   // Studios are built once each (a newer version of the app can add one to an older city).
   for (const s of STUDIOS) {
     if (city.buildings.some((b) => b.kind === s.kind) || city.skipKinds?.includes(s.kind)) continue;
@@ -428,7 +467,7 @@ export interface CityLayout {
   /** The sealed gate to the Hollow Wilds, in the north wall */
   gate: Rect;
   /** Where townspeople hang out */
-  spots: Record<"gate" | "plaza-left" | "plaza-right" | "corner", Pt>;
+  spots: Record<"gate" | "plaza-left" | "plaza-right" | "corner" | "home", Pt>;
 }
 
 export const COLS = 3;
@@ -438,16 +477,20 @@ const ROAD = 2 * T;
 const MARGIN = 2 * T;
 
 /**
- * Lays the city out on a grid: the plaza in the middle of the top row, the studios beside it,
- * then client buildings row by row. More buildings simply add rows, so the city grows.
+ * Lays the city out on a grid: the plaza in the middle of the top row, the first two studios
+ * beside it and the third (your home) just below it, then the other studios and the client
+ * buildings row by row. More buildings simply add rows, so the city grows.
+ * `smallIds` are cottages (your home): a smaller house on the same size of plot.
  */
-export function layoutCity(buildingIds: string[], studioIds: string[] = []): CityLayout {
+export function layoutCity(buildingIds: string[], studioIds: string[] = [], smallIds: string[] = []): CityLayout {
   const slots: (string | "plaza")[] = [];
-  const studios = buildingIds.filter((id) => studioIds.includes(id));
+  const studios = studioIds.filter((id) => buildingIds.includes(id));
   const rest = buildingIds.filter((id) => !studioIds.includes(id));
-  // Row 0: studio, plaza, studio.
-  slots.push(studios[0] ?? rest.shift() ?? "", "plaza", studios[1] ?? rest.shift() ?? "");
-  for (const id of studios.slice(2)) rest.unshift(id);
+  const next = (id?: string) => id ?? rest.shift() ?? "";
+  // Row 0: studio, plaza, studio. Row 1: studio, the third studio under the plaza, studio.
+  slots.push(next(studios[0]), "plaza", next(studios[1]));
+  if (studios.length > 2) slots.push(next(studios[3]), studios[2], next(studios[4]));
+  rest.unshift(...studios.slice(5));
   slots.push(...rest);
   const rows = Math.max(2, Math.ceil(slots.length / COLS));
   const w = MARGIN * 2 + ROAD + COLS * (PLOT_W + ROAD);
@@ -474,11 +517,18 @@ export function layoutCity(buildingIds: string[], studioIds: string[] = []): Cit
       for (let k = 0; k < 5; k++) trees.push({ x: area.x + T + rand() * (area.w - 2 * T), y: area.y + T * 1.5 + rand() * (area.h - 2.5 * T), s: 0.8 + rand() * 0.5 });
       return;
     }
-    const house = { x: area.x + T, y: area.y + T * 0.5, w: 7 * T, h: 4.6 * T };
+    const small = smallIds.includes(id);
+    const house = small ? { x: area.x + 2.2 * T, y: area.y + T * 1.1, w: 4.6 * T, h: 3.8 * T } : { x: area.x + T, y: area.y + T * 0.5, w: 7 * T, h: 4.6 * T };
     const door = { x: house.x + house.w / 2 - 0.6 * T, y: house.y + house.h - 0.4 * T, w: 1.2 * T, h: 0.7 * T };
-    const yard = { x: area.x + 0.6 * T, y: house.y + house.h + 0.7 * T, w: area.w - 1.2 * T, h: area.h - house.h - 1.4 * T };
+    const yardY = house.y + house.h + 0.7 * T;
+    const yard = { x: area.x + 0.6 * T, y: yardY, w: area.w - 1.2 * T, h: area.y + area.h - 0.2 * T - yardY };
     plots.push({ buildingId: id, area, house, door, yard });
     solids.push({ x: house.x, y: house.y, w: house.w, h: house.h - 0.35 * T });
+    // The cottage's picket fence, with a gap for the path (drawn in components/city/art.tsx).
+    if (small) {
+      const fy = area.y + area.h - 28;
+      solids.push({ x: area.x + 12, y: fy, w: door.x - 22 - area.x - 12, h: 14 }, { x: door.x + door.w + 22, y: fy, w: area.x + area.w - 12 - door.x - door.w - 22, h: 14 });
+    }
     // Corner trees
     trees.push({ x: area.x + 0.35 * T, y: area.y + 0.9 * T, s: 0.85 }, { x: area.x + area.w - 0.35 * T, y: area.y + 0.9 * T, s: 0.85 });
   });
@@ -501,6 +551,10 @@ export function layoutCity(buildingIds: string[], studioIds: string[] = []): Cit
     "plaza-left": { x: fountain.x - fountain.r * 2.4, y: fountain.y + 26 },
     "plaza-right": { x: fountain.x + fountain.r * 2.1, y: fountain.y + fountain.r * 1.3 },
     corner: { x: w - MARGIN - ROAD / 2, y: h - MARGIN - ROAD / 2 - 1.5 * T },
+    home: (() => {
+      const p = plots.find((x) => smallIds.includes(x.buildingId));
+      return p ? { x: p.yard.x + 1.4 * T, y: p.yard.y + p.yard.h * 0.5 } : { x: MARGIN + ROAD / 2, y: h - MARGIN - ROAD / 2 - 1.5 * T };
+    })(),
   };
   return { w, h, plots, roads, plaza, fountain, trees, lamps, solids, spawn: { x: fountain.x, y: plaza.y + plaza.h - T * 0.8 }, gate, spots };
 }
@@ -524,6 +578,8 @@ export interface InteriorLayout {
   stations: Station[];
   reporter?: { staffId: string; x: number; y: number };
   rooms: { id: string; rect: Rect; sign: Rect }[];
+  /** The floor between the Progress Room and the Mission Room (a studio's set piece goes here) */
+  middle: Rect;
   exit: Rect;
   solids: Rect[];
   spawn: { x: number; y: number };
@@ -573,7 +629,8 @@ export function layoutInterior(staffIds: string[], reporterId: string | undefine
   const exit = { x: w / 2 - T, y: h - 0.9 * T, w: 2 * T, h: 0.9 * T };
   const reporter = reporterId ? { staffId: reporterId, x: progress.x + progress.w * 0.66, y: progress.y + 1.7 * T } : undefined;
   if (reporter) solids.push({ x: reporter.x - 1.3 * T, y: reporter.y + 0.15 * T, w: 2.6 * T, h: 0.8 * T });
-  return { w, h, wall, progress, mission, board, screen, stations, reporter, rooms, exit, solids, spawn: { x: w / 2, y: h - 1.6 * T } };
+  const middle = { x: progress.x + progress.w + 0.3 * T, y: wall + 0.2 * T, w: mission.x - progress.x - progress.w - 0.6 * T, h: progress.h - 0.4 * T };
+  return { w, h, wall, progress, mission, board, screen, stations, reporter, rooms, middle, exit, solids, spawn: { x: w / 2, y: h - 1.6 * T } };
 }
 
 /** True when two rectangles overlap. */

@@ -971,14 +971,14 @@ function WorkPanel({ staff, goTo }: { staff: CityStaff; goTo: (t: string) => voi
           <Icon name="pencil" size={26} className="text-gold" />
           <h3 className="font-display text-2xl tracking-wide">{live.name}&apos;s work</h3>
         </div>
-        <button
+        {jobs.some((j) => j.every && !j.input?.required) && <button
           type="button"
           className={`btn text-sm ${live.autoWork === false ? "btn-ghost" : "btn-primary"}`}
           onClick={() => update((d) => void (d.city!.staff.find((x) => x.id === live.id)!.autoWork = live.autoWork === false ? undefined : false))}
           title="When on, they do their daily job on their own (when you open the city, and every morning at 9:00)"
         >
           Works on their own: {live.autoWork === false ? "Off" : "On"}
-        </button>
+        </button>}
       </div>
       <QueuePoll staffId={live.id} />
       {NOT_LIVE[live.role] && <p className="text-base font-bold text-muted mb-3">{NOT_LIVE[live.role]}</p>}

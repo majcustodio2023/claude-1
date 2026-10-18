@@ -17,7 +17,8 @@ test("the city is built with the studios and a department per client, once", () 
   const d = withClients();
   assert.equal(ensureCity(d, "2026-10-18"), true);
   const kinds = d.city!.buildings.map((b) => b.kind);
-  assert.deepEqual(kinds.filter((k) => k !== "client"), ["video", "acquisition", "creative", "weapons", "armor"]);
+  assert.deepEqual(kinds.filter((k) => k !== "client"), ["creative", "video", "home", "acquisition", "weapons", "armor"]);
+  assert.equal(d.city!.name, "Dawnterra");
   assert.equal(kinds.filter((k) => k === "client").length, 2);
   assert.equal(ensureCity(d, "2026-10-18"), false);
   const names = d.city!.staff.map((s) => s.name);
