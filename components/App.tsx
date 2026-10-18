@@ -15,6 +15,7 @@ import Clients from "./tabs/Clients";
 import Team from "./tabs/Team";
 import Ads from "./tabs/Ads";
 import Creatives from "./tabs/Creatives";
+import City from "./tabs/City";
 import SettingsTab from "./tabs/Settings";
 import HeroTab from "./tabs/HeroTab";
 import BossFight from "./BossFight";
@@ -50,6 +51,7 @@ export const useTracker = () => {
 
 const TABS = [
   ["today", "HQ", "home"],
+  ["city", "City", "globe"],
   ["hero", "Hero & Shop", "shop"],
   ["income", "Income", "income"],
   ["pipeline", "Boss Deals", "swords"],
@@ -179,6 +181,7 @@ export default function App() {
           </nav>
         )}
         {tab === "today" && <Today goTo={go} />}
+        {tab === "city" && <City goTo={(t) => go(t as TabId)} />}
         {tab === "income" && <Income goTo={go} />}
         {tab === "pipeline" && <Pipeline />}
         {tab === "expenses" && <Expenses />}
