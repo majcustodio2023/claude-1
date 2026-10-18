@@ -481,6 +481,8 @@ export interface TrackerData {
   autopilotLog?: AutopilotEntry[];
   /** Ad creatives: AI-generated (Higgsfield) or added by link. Owned by the server. */
   creatives?: Creative[];
+  /** What city staff made, newest first. Owned by the server (like creatives). */
+  staffWork?: StaffWork[];
   /** The virtual city: buildings (one per client plus studios), their rooms and AI staff. */
   city?: CityState;
   /** Set by the server: which integrations have a saved key (keys never reach the browser). */
@@ -550,7 +552,30 @@ export interface CityStaff {
   samples?: { id: string; text: string }[];
   /** Writers: what they wrote, newest first (kept short). */
   outputs?: { id: string; input: string; target?: string; text: string; at: string }[];
+  /** false = don't do the daily job on their own (they still work when asked). */
+  autoWork?: boolean;
   createdAt: string;
+}
+
+/** Something a city staff member made (posts, a calendar, reply drafts…). Kept by the server. */
+export interface StaffWork {
+  id: string;
+  staffId: string;
+  buildingId: string;
+  /** lib/cityJobs.ts job id */
+  jobId: string;
+  /** e.g. "This week's posts" */
+  label: string;
+  text: string;
+  /** What you gave them for this job (a pasted email, reviews…), shortened. */
+  input?: string;
+  /** Done on their own (daily job) rather than asked. */
+  auto?: boolean;
+  /** Day it was done (business time zone), YYYY-MM-DD */
+  day: string;
+  at: string;
+  /** Set when it was posted somewhere for real (e.g. "Posted to Discord"). */
+  sent?: string;
 }
 
 export interface VideoRequest {
@@ -559,7 +584,8 @@ export interface VideoRequest {
   /** Link to the raw video (Drive, Dropbox…). Blank when uploaded or prompt-only. */
   videoUrl: string;
   /** Uploaded raw video: its path in the tracker's file storage, and the file name. */
-  file?: { path: string; name: string; size: number };
+  /** parts: stored in that many pieces (path.part0…) when it was too big for one upload. */
+  file?: { path: string; name: string; size: number; parts?: number };
   style: string;
   prompt: string;
   status: "requested" | "editing" | "done";

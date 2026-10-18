@@ -5,7 +5,7 @@ import path from "node:path";
 import { foldOneTimeIntoDeals, upgradeBillPayments } from "./finance";
 import { upgradeTeamPay } from "./clients";
 import { seedData } from "./seed";
-import type { AutopilotEntry, Creative, TrackerData } from "./types";
+import type { AutopilotEntry, Creative, StaffWork, TrackerData } from "./types";
 
 // The whole tracker lives in one JSON document. Meta tokens are kept beside it,
 // encrypted, and are never sent to the browser.
@@ -119,6 +119,7 @@ export async function saveData(data: TrackerData): Promise<TrackerData> {
       // The server owns the Autopilot log and creatives; a browser tab with older data mustn't overwrite them.
       autopilotLog: doc.data.autopilotLog,
       creatives: doc.data.creatives,
+      staffWork: doc.data.staffWork,
       updatedAt: new Date().toISOString(),
     },
     secrets: { ...doc.secrets, tokens },
@@ -284,6 +285,34 @@ export async function setStaffSecret(key: string, value: string | null): Promise
   return Object.keys(staff);
 }
 
+/** A staff member's saved key or password (e.g. a Discord bot token), or null. */
+export async function getStaffSecret(key: string): Promise<string | null> {
+  const blob = (await loadDoc()).secrets?.staff?.[key];
+  return blob ? decrypt(blob) : null;
+}
+
+/** Changes the city staff's work list (server-owned, so a stale browser tab can't overwrite it). */
+let workQueue: Promise<unknown> = Promise.resolve();
+export function updateStaffWork(fn: (list: StaffWork[]) => StaffWork[]): Promise<StaffWork[]> {
+  // One change at a time, so staff finishing together in the daily run don't overwrite each other.
+  const run = workQueue.then(() => writeStaffWork(fn));
+  workQueue = run.catch(() => {});
+  return run;
+}
+
+async function writeStaffWork(fn: (list: StaffWork[]) => StaffWork[]): Promise<StaffWork[]> {
+  const doc = await loadDoc();
+  // Keep the newest 15 per staff member so the document stays small.
+  const counts = new Map<string, number>();
+  const list = fn(doc.data.staffWork ?? []).filter((w) => {
+    const n = (counts.get(w.staffId) ?? 0) + 1;
+    counts.set(w.staffId, n);
+    return n <= 15;
+  });
+  await writeDoc({ ...doc, data: { ...doc.data, staffWork: list } });
+  return list;
+}
+
 // ---------- uploaded files (raw videos for the city's video editors) ----------
 
 /** The private folder uploads go in. Only callers with the database key can learn it. */
@@ -303,19 +332,22 @@ async function storage(pathname: string, body: unknown) {
 }
 
 export const VIDEO_BUCKET = "city-videos";
-export const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
+/** Big videos go up in pieces of this size, so no single upload hits the storage's per-file limit. */
+export const VIDEO_PART_BYTES = 40 * 1024 * 1024;
 
-/** A one-time address the browser uploads a video straight to (it skips our server, so big files work). */
-export async function videoUploadUrl(fileName: string): Promise<{ uploadUrl: string; path: string }> {
+/** One-time addresses the browser uploads a video straight to (it skips our server, so any size works).
+ *  A video bigger than one piece is stored as path.part0, path.part1, … */
+export async function videoUploadUrl(fileName: string, parts = 1): Promise<{ uploadUrls: string[]; path: string }> {
   const safe = fileName.replace(/[^\w.-]+/g, "-").slice(-80) || "video.mp4";
   const path = `${await mediaFolder()}/${Date.now().toString(36)}-${randomBytes(4).toString("hex")}-${safe}`;
-  const r = (await storage(`object/upload/sign/${VIDEO_BUCKET}/${path}`, {})) as { url: string };
-  return { uploadUrl: `${SUPABASE_URL}/storage/v1${r.url}`, path };
+  const names = parts > 1 ? Array.from({ length: parts }, (_, i) => `${path}.part${i}`) : [path];
+  const uploadUrls = await Promise.all(names.map(async (n) => `${SUPABASE_URL}/storage/v1${((await storage(`object/upload/sign/${VIDEO_BUCKET}/${n}`, {})) as { url: string }).url}`));
+  return { uploadUrls, path };
 }
 
 /** A link to watch an uploaded video, good for an hour. */
-export async function videoViewUrl(path: string): Promise<string | null> {
-  if (!path.startsWith(`${await mediaFolder()}/`)) return null;
-  const r = (await storage(`object/sign/${VIDEO_BUCKET}/${path}`, { expiresIn: 3600 })) as { signedURL: string };
-  return `${SUPABASE_URL}/storage/v1${r.signedURL}`;
+export async function videoViewUrl(path: string, parts = 1): Promise<string[] | null> {
+  if (!path.startsWith(`${await mediaFolder()}/`) || path.includes("..")) return null;
+  const names = parts > 1 ? Array.from({ length: parts }, (_, i) => `${path}.part${i}`) : [path];
+  return Promise.all(names.map(async (n) => `${SUPABASE_URL}/storage/v1${((await storage(`object/sign/${VIDEO_BUCKET}/${n}`, { expiresIn: 6 * 3600 })) as { signedURL: string }).signedURL}`));
 }

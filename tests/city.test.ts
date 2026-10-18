@@ -45,10 +45,12 @@ test("setup progress counts what's filled in and which keys are saved", () => {
   const d = withClients();
   ensureCity(d, "2026-10-18");
   const discord = d.city!.staff.find((s) => s.role === "discord")!;
-  assert.equal(setupProgress(discord).missing.length, 4);
-  discord.setup = { invite: "https://discord.gg/x", rules: "be nice", hours: "9-5" };
-  assert.deepEqual(setupProgress(discord).missing.map((n) => n.key), ["botToken"]);
-  assert.equal(setupProgress(discord, [secretKey(discord.id, "botToken")]).missing.length, 0);
+  assert.equal(setupProgress(discord).missing.length, 3);
+  discord.setup = { invite: "https://discord.gg/x", rules: "be nice" };
+  assert.deepEqual(setupProgress(discord).missing.map((n) => n.key), ["hours"]);
+  // A secret that's needed counts only once it's saved.
+  const custom = { ...discord, role: "insights" as const, setup: {} };
+  assert.equal(setupProgress(custom, [secretKey(discord.id, "metaToken")]).missing.length, 0);
 });
 
 test("the map grows with buildings and nothing overlaps the streets", () => {
@@ -166,4 +168,35 @@ test("staff only work when there's real work", async () => {
   const busy = [...buildingWork(d, b, staff, "2026-10-18").values()];
   assert.equal(busy.filter((w) => w.line === "Working on: Launch event").length, 1);
   assert.ok(busy.some((w) => w.line === "Updating the scoreboard"));
+});
+
+test("set-up staff have a real job due, once a day", async () => {
+  const { dueJob, jobContext, chunks } = await import("../lib/cityJobs");
+  const { buildingWork } = await import("../lib/cityWork");
+  const d = withClients();
+  ensureCity(d, "2026-10-18");
+  const b = d.city!.buildings.find((x) => x.clientId === "z")!;
+  const content = { id: "c1", buildingId: b.id, role: "content" as const, name: "Kaito", createdAt: "2026-10-18", setup: {} as Record<string, string> };
+  d.city!.staff.push(content);
+  d.integrations = { ...(d.integrations ?? {}), staffKeys: [] } as typeof d.integrations;
+  assert.equal(dueJob(d, content, "2026-10-18"), null, "not set up yet");
+  content.setup = { pillars: "Tips, wins", offer: "Community management" };
+  assert.equal(dueJob(d, content, "2026-10-18")?.id, "week", "first day: the week's posts");
+  d.staffWork = [{ id: "w1", staffId: "c1", buildingId: b.id, jobId: "week", label: "This week's posts", text: "…", day: "2026-10-18", at: "" }];
+  assert.equal(dueJob(d, content, "2026-10-18"), null, "already worked today");
+  assert.equal(buildingWork(d, b, [content], "2026-10-18").get("c1")?.state, "busy");
+  assert.equal(dueJob(d, content, "2026-10-19")?.id, "today", "next day: today's post");
+  content.autoWork = false;
+  assert.equal(dueJob(d, content, "2026-10-19"), null, "switched off");
+  // Running right now shows as busy with what they're doing.
+  assert.equal(buildingWork(d, b, [content], "2026-10-19", new Map([["c1", "Writing today's post"]])).get("c1")?.line, "Writing today's post…");
+  // The brief carries setup and client, never secrets.
+  const ctx = jobContext(d, content, b, "2026-10-18");
+  assert.ok(ctx.includes("Community management") && ctx.includes("Zetaverse"));
+  // An email reader needs pasted emails, so never works on their own.
+  const email = { id: "e1", buildingId: b.id, role: "email" as const, name: "Mia", createdAt: "2026-10-18", setup: { address: "a@b.c", watch: "invoices" } };
+  assert.equal(dueJob(d, email, "2026-10-18"), null);
+  // Discord posts are split under the limit.
+  const parts = chunks(Array.from({ length: 300 }, (_, i) => `line ${i} ${"x".repeat(20)}`).join("\n"), 1900);
+  assert.ok(parts.length > 3 && parts.every((p) => p.length <= 1900));
 });

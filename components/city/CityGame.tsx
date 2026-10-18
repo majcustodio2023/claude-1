@@ -15,6 +15,8 @@ import Dialogue, { type Talk } from "./Dialogue";
 import { CityArt, CityGlow, CityLabels, InteriorArt, InteriorLabels, type HouseInfo, type InteriorInfo } from "./art";
 import { picture, sprite } from "./pictures";
 import { cityWork, type Work } from "@/lib/cityWork";
+import { dueJob } from "@/lib/cityJobs";
+import { onRunning, runJob, runningJobs } from "./workRunner";
 import {
   T, buildingName, hits, layoutCity, layoutInterior, moveBox, roadRoute, roleOf, roofColor, setupProgress, titleOf, visibleBuildings,
   STUDIO_KINDS, isShop, type CityLayout, type InteriorLayout, type Pt, type Rect,
@@ -66,7 +68,7 @@ const randIn = (r: Rect, rand: () => number, pad = 10): Pt => ({ x: r.x + pad + 
 const pick = <X,>(list: X[], rand: () => number) => list[Math.floor(rand() * list.length)];
 
 export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (tab: string) => void }) {
-  const { data, month, today } = useTracker();
+  const { data, update, month, today } = useTracker();
   const city = data.city!;
   const keys = data.integrations?.staffKeys;
   const [scene, setScene] = useState<Scene>({ type: "city" });
@@ -112,7 +114,30 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   talkRef.current = talk;
 
   const staffById = useMemo(() => new Map(staff.map((s) => [s.id, s])), [staffKey, city.staff]);
-  const work = useMemo(() => cityWork(data, buildings, today), [data, bIds, today]);
+  const [runKey, setRunKey] = useState("");
+  useEffect(() => onRunning(() => setRunKey([...runningJobs()].join("|"))), []);
+  const work = useMemo(() => cityWork(data, buildings, today, runningJobs()), [data, bIds, today, runKey]);
+
+  // Set-up staff do the day's job on their own when you open the city (the daily run at 9:00
+  // does the same when you don't), a couple at a time so you can watch them get to it.
+  const started = useRef(false);
+  useEffect(() => {
+    if (started.current || !data.integrations?.kit) return;
+    started.current = true;
+    const due = (data.city?.staff ?? []).filter((s) => dueJob(data, s, today));
+    let i = 0;
+    const next = async (): Promise<void> => {
+      const s = due[i++];
+      if (!s) return;
+      try {
+        const j = await runJob(s.id, dueJob(data, s, today)!.doing, { auto: true });
+        if (!j.skipped) update((d) => void (d.staffWork = j.work));
+      } catch {}
+      return next();
+    };
+    next();
+    next();
+  }, [data.integrations?.kit]);
   const workKey = [...work].map(([k, w]) => `${k}:${w.state}:${w.line}`).join("|");
   const nameOf = useCallback((id: string) => buildingName(data, buildings.find((b) => b.id === id) ?? buildings[0]), [data, bIds]);
   const shopIds = buildings.filter(isShop).map((b) => b.id);
