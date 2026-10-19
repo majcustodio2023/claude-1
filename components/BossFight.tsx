@@ -1,6 +1,8 @@
 "use client";
 
 import { PixelArena } from "./pixelScenes";
+import { FoePortrait } from "./city/trainingArt";
+import { practiceItems, practiceLoadout, type PracticeFoe } from "@/lib/training";
 import { themeById, themeVars } from "@/lib/appearance";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -20,6 +22,7 @@ import {
   bossTier,
   loadoutFor,
   makeBoss,
+  moveName,
   playRound,
   skillBlocked,
   startBattle,
@@ -77,14 +80,16 @@ export function useHeroLevel() {
   return levelFor(s.moneyMade, s.goal).level;
 }
 
-export default function BossFight({ dealId, practice, rematch, onClose }: { dealId?: string; practice?: boolean; rematch?: boolean; onClose: () => void }) {
+export default function BossFight({ dealId, practice: practiceProp, rematch, foe, weapon = "", onClose }: { dealId?: string; practice?: boolean; rematch?: boolean; foe?: PracticeFoe; weapon?: string; onClose: () => void }) {
+  // A Training Hall monster is always a practice fight.
+  const practice = practiceProp || Boolean(foe);
   const { data, update, today } = useTracker();
   const deal = dealId ? data.deals.find((d) => d.id === dealId) : undefined;
   const level = useHeroLevel();
-  const loadout = useMemo(() => loadoutFor(data, level), [data, level]);
+  const loadout = useMemo(() => (foe ? practiceLoadout(data, level, weapon) : loadoutFor(data, level)), [data, level, foe, weapon]);
   const spec: BossSpec = useMemo(
-    () => (deal ? makeBoss(deal.name, deal.id, bossTier(deal.value, data.settings.monthlyGoal)) : makeBoss("Training Dummy", "practice", 3)),
-    [deal, data.settings.monthlyGoal],
+    () => (foe ? foe.spec : deal ? makeBoss(deal.name, deal.id, bossTier(deal.value, data.settings.monthlyGoal)) : makeBoss("Training Dummy", "practice", 3)),
+    [deal, data.settings.monthlyGoal, foe],
   );
 
   const [phase, setPhase] = useState<Phase>("intro");
@@ -124,7 +129,7 @@ export default function BossFight({ dealId, practice, rematch, onClose }: { deal
     sfx("click");
     startMusic();
     setPhase("battle");
-    say(`${spec.name} appears! Next it will use ${BOSS_MOVES[battle.boss.intent].name}.`);
+    say(`${spec.name} appears! Next it will use ${moveName(spec, battle.boss.intent)}.`);
   };
 
   const restart = () => {
@@ -260,7 +265,7 @@ export default function BossFight({ dealId, practice, rematch, onClose }: { deal
       } else if (next.over === "lose") {
         setPhase("lost");
       } else {
-        say(`Round ${next.round}. Next ${spec.name} will use ${BOSS_MOVES[next.boss.intent].name}.`);
+        say(`Round ${next.round}. Next ${spec.name} will use ${moveName(spec, next.boss.intent)}.`);
       }
       setBusy(false);
     },
@@ -319,7 +324,7 @@ export default function BossFight({ dealId, practice, rematch, onClose }: { deal
 
   const screen = (
     <div
-      className="fixed inset-0 z-[60] bg-[#1a1218] text-ink overflow-y-auto overflow-x-hidden"
+      className="fixed inset-0 z-[70] bg-[#1a1218] text-ink overflow-y-auto overflow-x-hidden"
       style={ARENA_THEME}
       role="dialog"
       aria-modal="true"
@@ -364,7 +369,7 @@ export default function BossFight({ dealId, practice, rematch, onClose }: { deal
               {phase === "battle" && (
                 <div className={`border-[3px] rounded-[10px] px-3 py-2 text-base font-bold ${danger ? "border-bad bg-bad/20 animate-pulse" : "border-outline bg-card-2"}`}>
                   <span className="text-muted uppercase text-sm font-extrabold">Next boss move: </span>
-                  <span className={danger ? "text-bad" : ""}>{intent.name}</span> <span className="text-muted">· {intent.desc}</span>
+                  <span className={danger ? "text-bad" : ""}>{moveName(spec, intent.id)}</span> <span className="text-muted">· {intent.desc}</span>
                   {intent.id === "unleash" && <span className="block text-gold">Guard, dodge or shield now!</span>}
                 </div>
               )}
@@ -374,7 +379,7 @@ export default function BossFight({ dealId, practice, rematch, onClose }: { deal
             <div className="relative flex items-end justify-between mt-2 min-h-[230px] sm:min-h-[280px] select-none overflow-x-clip">
               <div className="relative">
                 <div key={`h${anim.n}`} className={anim.hero ?? ""} style={{ ["--fx" as string]: "#ffd23f" }}>
-                  <Hero mood={phase === "won" ? "hype" : "focus"} attacking={phase === "battle"} size={190} gear={Object.keys(data.heroGear ?? {})} className="drop-shadow-[5px_5px_0_var(--color-outline)] max-sm:w-[130px] max-sm:h-auto" />
+                  <Hero mood={phase === "won" ? "hype" : "focus"} attacking={phase === "battle"} size={190} gear={Object.keys(data.heroGear ?? {})} items={foe ? practiceItems(data, weapon) : undefined} className="drop-shadow-[5px_5px_0_var(--color-outline)] max-sm:w-[130px] max-sm:h-auto" />
                 </div>
                 <div className="absolute -left-2 bottom-0 max-sm:w-[54px]">
                   <Kit size={72} talking={busy} className="max-w-full h-auto" />
@@ -385,7 +390,11 @@ export default function BossFight({ dealId, practice, rematch, onClose }: { deal
               <div className="relative">
                 <div key={`b${anim.n}`} className={anim.boss ?? ""}>
                   <div className={b.boss.intent === "unleash" && phase === "battle" ? "boss-charging" : b.boss.enraged ? "boss-enraged" : "bob"}>
-                    <Avatar value={deal?.avatar} seed={dealId ?? "practice"} kind="monster" size={230} title={spec.name} className="max-sm:w-[150px] max-sm:h-auto" />
+                    {foe ? (
+                      <FoePortrait id={foe.id} size={230} className="max-sm:w-[150px] max-sm:h-auto" />
+                    ) : (
+                      <Avatar value={deal?.avatar} seed={dealId ?? "practice"} kind="monster" size={230} title={spec.name} className="max-sm:w-[150px] max-sm:h-auto" />
+                    )}
                   </div>
                 </div>
                 {burst?.side === "boss" && <div key={burst.id} className="fx-burst absolute left-1/4 top-1/4 w-1/2 h-1/2 pointer-events-none" style={{ background: burst.color }} />}
@@ -569,9 +578,9 @@ function Intro({ battle: b, spec, practice, onFight, onSkip, coins }: { battle: 
           <StatRow stats={[["HP", b.boss.maxHp], ["ATK", Math.round(spec.stats.atk)], ["DEF", Math.round(spec.stats.def)], ["SPD", spec.stats.spd], ["CRIT", `${spec.stats.crit}%`]]} />
           <div className="text-sm font-extrabold uppercase text-muted">Moves</div>
           <ul className="text-base space-y-0.5">
-            {[...spec.moves, "unleash" as const].map((m) => (
+            {[...spec.moves, ...(spec.moves.includes("charge") ? ["unleash" as const] : [])].map((m) => (
               <li key={m}>
-                <b>{BOSS_MOVES[m].name}</b> <span className="text-muted">· {BOSS_MOVES[m].desc}</span>
+                <b>{moveName(spec, m)}</b> <span className="text-muted">· {BOSS_MOVES[m].desc}</span>
               </li>
             ))}
             <li className="text-muted">Below 35% HP it gets enraged and hits harder.</li>

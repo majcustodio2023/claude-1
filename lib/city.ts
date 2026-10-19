@@ -259,6 +259,7 @@ const STUDIOS: { kind: BuildingKind; name: string; roles: StaffRoleId[]; color: 
   { kind: "acquisition", name: "Client Acquisition", roles: ["reporter", "funnel", "adsTracker", "videoEdit"], color: "#ff4d5e" },
   { kind: "weapons", name: "Blade & Bolt", roles: [], color: "#e63946" },
   { kind: "armor", name: "Iron Threads", roles: [], color: "#2ec4b6" },
+  { kind: "training", name: "Training Hall", roles: [], color: "#7d7574" },
 ];
 
 /** Shops: walking in opens the shop counter instead of an interior. */
@@ -565,7 +566,17 @@ export interface Station {
   x: number;
   y: number;
   desk: Rect;
+  /** Their own office: walls all round, with a doorway in the top wall onto the hall. */
+  office: Rect;
+  door: Rect;
 }
+
+/** Office size and wall thickness, in world units. */
+export const OFFICE_W = 4.3 * T;
+export const OFFICE_H = 4.2 * T;
+export const OFFICE_WALL = 10;
+const OFFICE_GAP = 0.25 * T;
+const OFFICE_DOOR = 1.6 * T;
 
 export interface InteriorLayout {
   w: number;
@@ -585,16 +596,17 @@ export interface InteriorLayout {
   spawn: { x: number; y: number };
 }
 
-/** Inside a building: Progress Room top left, Mission Room top right, staff desks across the middle, extra rooms below. */
+/** Inside a building: Progress Room top left, Mission Room top right, a row of private offices (one per worker) across the middle, extra rooms below. */
 export function layoutInterior(staffIds: string[], reporterId: string | undefined, roomIds: string[]): InteriorLayout {
-  const perRow = Math.max(4, Math.min(7, staffIds.length));
+  const perRow = Math.max(4, Math.min(6, staffIds.length));
   const deskRows = Math.max(1, Math.ceil(staffIds.length / perRow));
   const roomCols = Math.ceil(roomIds.length / 2);
-  const wTiles = Math.max(20, perRow * 3.4 + 4, roomCols * 5.6 * 2 + 4);
+  const wTiles = Math.max(20, (perRow * (OFFICE_W + OFFICE_GAP)) / T + 2, roomCols * 5.6 * 2 + 4);
   const w = wTiles * T;
   const wall = 2.6 * T;
-  const deskTop = wall + 5.6 * T;
-  const roomsTop = deskTop + deskRows * 2.6 * T + 0.6 * T;
+  // Offices start just below the hall that runs under the Progress and Mission Rooms.
+  const officeTop = wall + 5.6 * T;
+  const roomsTop = officeTop + deskRows * (OFFICE_H + OFFICE_GAP) + 0.5 * T;
   const h = roomsTop + (roomIds.length ? 4.2 * T : 0.4 * T) + 1.4 * T;
   const progress = { x: T * 0.6, y: wall + 0.3 * T, w: 7.5 * T, h: 4.6 * T };
   const mission = { x: w - 8.1 * T, y: wall + 0.3 * T, w: 7.5 * T, h: 4.6 * T };
@@ -611,12 +623,22 @@ export function layoutInterior(staffIds: string[], reporterId: string | undefine
   staffIds.forEach((id, i) => {
     const row = Math.floor(i / perRow);
     const inRow = Math.min(perRow, staffIds.length - row * perRow);
-    const span = inRow * 3.4 * T;
-    const x = w / 2 - span / 2 + (i % perRow) * 3.4 * T + 1.7 * T;
-    const y = deskTop + row * 2.6 * T;
+    const span = inRow * OFFICE_W + (inRow - 1) * OFFICE_GAP;
+    const office = { x: w / 2 - span / 2 + (i % perRow) * (OFFICE_W + OFFICE_GAP), y: officeTop + row * (OFFICE_H + OFFICE_GAP), w: OFFICE_W, h: OFFICE_H };
+    const x = office.x + office.w / 2;
+    const y = office.y + 1.15 * T;
     const desk = { x: x - 1.2 * T, y: y + 0.15 * T, w: 2.4 * T, h: 0.9 * T };
-    stations.push({ staffId: id, x, y, desk });
-    solids.push(desk);
+    const door = { x: x - OFFICE_DOOR / 2, y: office.y, w: OFFICE_DOOR, h: OFFICE_WALL };
+    stations.push({ staffId: id, x, y, desk, office, door });
+    const k = OFFICE_WALL;
+    solids.push(
+      desk,
+      { x: office.x, y: office.y, w: door.x - office.x, h: k },
+      { x: door.x + door.w, y: office.y, w: office.x + office.w - door.x - door.w, h: k },
+      { x: office.x, y: office.y, w: k, h: office.h },
+      { x: office.x + office.w - k, y: office.y, w: k, h: office.h },
+      { x: office.x, y: office.y + office.h - k, w: office.w, h: k },
+    );
   });
   const rooms = roomIds.map((id, i) => {
     const left = i % 2 === 0;

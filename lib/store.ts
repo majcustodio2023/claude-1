@@ -308,12 +308,12 @@ export function updateStaffWork(fn: (list: StaffWork[]) => StaffWork[]): Promise
 
 async function writeStaffWork(fn: (list: StaffWork[]) => StaffWork[]): Promise<StaffWork[]> {
   const doc = await loadDoc();
-  // Keep the newest 15 per staff member so the document stays small.
+  // Keep the newest 30 per staff member (their Outputs cabinet) so the document stays small.
   const counts = new Map<string, number>();
   const list = fn(doc.data.staffWork ?? []).filter((w) => {
     const n = (counts.get(w.staffId) ?? 0) + 1;
     counts.set(w.staffId, n);
-    return n <= 15;
+    return n <= 30;
   });
   await writeDoc({ ...doc, data: { ...doc.data, staffWork: list } });
   return list;
