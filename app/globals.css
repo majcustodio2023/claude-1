@@ -567,12 +567,31 @@ html[data-light="1"] .speed-lines { opacity: 0.4; filter: invert(1); }
   --rgb-good: 79 154 58;
   color-scheme: light;
 }
-.dawn, html[data-style="pixel"] { --font-display: "Pixelify Sans", "Nunito", sans-serif; }
+.dawn, html[data-style="pixel"] {
+  --font-display: "Pixelify Sans", "Nunito", sans-serif;
+  /* Frame shading, tuned per light or dark theme so frames read on both. */
+  --pix-shadow: rgb(40 22 10 / 0.55);
+  --pix-hi: rgb(255 248 230 / 0.55);
+  --pix-lo: rgb(150 100 55 / 0.25);
+  --pix-sheen: rgb(255 255 255 / 0.28);
+  --pix-dither: rgb(0 0 0 / 0.035);
+  --pix-ghost: #e8cfa2;
+  --pix-ghost-ink: #3b2416;
+}
+html[data-style="pixel"][data-light="0"] {
+  --pix-shadow: rgb(0 0 0 / 0.65);
+  --pix-hi: rgb(255 255 255 / 0.07);
+  --pix-lo: rgb(0 0 0 / 0.3);
+  --pix-sheen: rgb(255 255 255 / 0.06);
+  --pix-dither: rgb(255 255 255 / 0.025);
+  --pix-ghost: var(--color-card-2);
+  --pix-ghost-ink: var(--color-ink);
+}
 html[data-style="pixel"] body {
   letter-spacing: 0.01em;
   background-image:
-    linear-gradient(45deg, rgb(0 0 0 / 0.035) 25%, transparent 25% 75%, rgb(0 0 0 / 0.035) 75%),
-    linear-gradient(45deg, rgb(0 0 0 / 0.035) 25%, transparent 25% 75%, rgb(0 0 0 / 0.035) 75%);
+    linear-gradient(45deg, var(--pix-dither) 25%, transparent 25% 75%, var(--pix-dither) 75%),
+    linear-gradient(45deg, var(--pix-dither) 25%, transparent 25% 75%, var(--pix-dither) 75%);
   background-size: 8px 8px; background-position: 0 0, 4px 4px;
 }
 .dawn { font-family: var(--font-display); letter-spacing: 0.01em; }
@@ -580,10 +599,10 @@ html[data-style="pixel"] body {
   border-radius: 0;
   border: 3px solid var(--color-outline);
   background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.28), transparent 18%),
-    linear-gradient(0deg, rgb(120 70 30 / 0.10), transparent 22%),
+    linear-gradient(180deg, var(--pix-sheen), transparent 18%),
+    linear-gradient(0deg, var(--pix-lo), transparent 22%),
     var(--color-card);
-  box-shadow: inset 0 0 0 3px rgb(255 248 230 / 0.55), inset 0 0 0 5px rgb(150 100 55 / 0.25), 4px 4px 0 rgb(40 22 10 / 0.55);
+  box-shadow: inset 0 0 0 3px var(--pix-hi), inset 0 0 0 5px var(--pix-lo), 4px 4px 0 var(--pix-shadow);
   clip-path: polygon(0 3px, 3px 3px, 3px 0, calc(100% - 3px) 0, calc(100% - 3px) 3px, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 3px calc(100% - 3px), 0 calc(100% - 3px));
 }
 :is(.dawn, html[data-style="pixel"]) .hud-hero { background: linear-gradient(180deg, rgb(var(--rgb-hero) / 0.16), transparent 45%), var(--color-card); }
@@ -591,7 +610,7 @@ html[data-style="pixel"] body {
 :is(.dawn, html[data-style="pixel"]) .hud-good { background: linear-gradient(180deg, rgb(var(--rgb-good) / 0.15), transparent 45%), var(--color-card); }
 :is(.dawn, html[data-style="pixel"]) .caption {
   transform: none; border-radius: 0; letter-spacing: 0.02em; font-weight: 700;
-  border: 3px solid var(--color-outline); box-shadow: 3px 3px 0 rgb(40 22 10 / 0.55);
+  border: 3px solid var(--color-outline); box-shadow: 3px 3px 0 var(--pix-shadow);
   background: linear-gradient(180deg, #8a5a32, #6e4425); color: #fbefd6;
 }
 :is(.dawn, html[data-style="pixel"]) .caption-hero { background: linear-gradient(180deg, #d9603b, #b4482a); }
@@ -600,21 +619,33 @@ html[data-style="pixel"] body {
 :is(.dawn, html[data-style="pixel"]) .btn {
   border-radius: 0; font-weight: 600; letter-spacing: 0.02em;
   border: 3px solid var(--color-outline);
-  box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.18), inset 0 3px 0 rgb(255 255 255 / 0.3), 3px 3px 0 rgb(40 22 10 / 0.55);
+  box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.18), inset 0 3px 0 rgb(255 255 255 / 0.3), 3px 3px 0 var(--pix-shadow);
 }
-:is(.dawn, html[data-style="pixel"]) .btn:hover { transform: translateY(-1px); box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.18), inset 0 3px 0 rgb(255 255 255 / 0.3), 3px 4px 0 rgb(40 22 10 / 0.55); }
+:is(.dawn, html[data-style="pixel"]) .btn:hover { transform: translateY(-1px); box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.18), inset 0 3px 0 rgb(255 255 255 / 0.3), 3px 4px 0 var(--pix-shadow); }
 :is(.dawn, html[data-style="pixel"]) .btn:active { transform: translate(2px, 2px); box-shadow: inset 0 3px 0 rgb(0 0 0 / 0.2); }
 :is(.dawn, html[data-style="pixel"]) .btn-primary { background: #e8a33d; color: #3b2416; }
 :is(.dawn, html[data-style="pixel"]) .btn-hero { background: #d9603b; color: #fff4e2; }
-:is(.dawn, html[data-style="pixel"]) .btn-ghost { background: #e8cfa2; color: #3b2416; }
+:is(.dawn, html[data-style="pixel"]) .btn-ghost { background: var(--pix-ghost); color: var(--pix-ghost-ink); }
 :is(.dawn, html[data-style="pixel"]) .btn-danger { background: #f1c7b8; color: #8f2a1d; }
 :is(.dawn, html[data-style="pixel"]) .bar { border-radius: 0; }
 :is(.dawn, html[data-style="pixel"]) .bar > .fill { background: repeating-linear-gradient(90deg, var(--bar-to) 0 10px, var(--bar-from) 10px 12px); animation: none; }
 :is(.dawn, html[data-style="pixel"]) .bar > .fill::after { display: none; }
-:is(.dawn, html[data-style="pixel"]) .comic-num { -webkit-text-stroke: 0; text-shadow: 2px 2px 0 rgb(40 22 10 / 0.25); }
+:is(.dawn, html[data-style="pixel"]) .comic-num { -webkit-text-stroke: 0; text-shadow: 2px 2px 0 var(--pix-lo); }
 :is(.dawn, html[data-style="pixel"]) :is(input, select, textarea) { border-radius: 0; border-color: var(--color-outline); }
 :is(.dawn, html[data-style="pixel"]) [class*="rounded"]:not(.rounded-full) { border-radius: 0 !important; }
 html[data-style="pixel"] .font-display { letter-spacing: 0.01em; }
+html[data-style="pixel"] .speed-lines { display: none; }
+
+/* Clean: the pixel font and square corners, with thin borders and no frames or drop shadows. */
+html[data-pix="pixel-clean"] .hud { border: 2px solid var(--color-line); box-shadow: none; background: var(--color-card); clip-path: none; }
+html[data-pix="pixel-clean"] :is(.hud-hero, .hud-gold, .hud-good) { background: var(--color-card); }
+html[data-pix="pixel-clean"] .btn { border-width: 2px; box-shadow: none; }
+html[data-pix="pixel-clean"] .btn:hover { box-shadow: none; }
+html[data-pix="pixel-clean"] .caption { border-width: 2px; box-shadow: none; }
+/* Chunky: thick borders and big stepped shadows, like an old console menu. */
+html[data-pix="pixel-chunky"] .hud { border-width: 4px; box-shadow: inset 0 0 0 3px var(--pix-hi), 7px 7px 0 var(--pix-shadow); }
+html[data-pix="pixel-chunky"] .btn { border-width: 4px; box-shadow: inset 0 -4px 0 rgb(0 0 0 / 0.2), 4px 4px 0 var(--pix-shadow); }
+html[data-pix="pixel-chunky"] .caption { border-width: 4px; box-shadow: 4px 4px 0 var(--pix-shadow); }
 
 /* City name tags, speech bubbles and status badges in the same parchment. */
 .dawn .city-tag {

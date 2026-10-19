@@ -62,7 +62,7 @@ export function Hero({
   // Right hand: raised when hyped (weapon held up), at the side otherwise.
   const handAt: [number, number] = hype ? [151, 98] : [138, 201];
   // Dawnterra pixel style: the same pixel sprite that walks around the city.
-  if (pixel) return <PixelHero look={lookProp ?? ctx.look} size={size} className={className} lively={hype} />;
+  if (pixel) return <PixelHero look={lookProp ?? ctx.look} items={items} gear={L.achievementGear ? gear : []} size={size} className={className} lively={hype} />;
   return (
     <svg viewBox="-20 -24 240 270" width={size} height={size * 1.125} className={className} role="img" aria-label="Hero">
       <ellipse cx="100" cy="236" rx="62" ry="9" fill="#000" opacity="0.28" />
