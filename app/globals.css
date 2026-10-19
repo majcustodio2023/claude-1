@@ -594,7 +594,9 @@ html[data-style="pixel"] body {
     linear-gradient(45deg, var(--pix-dither) 25%, transparent 25% 75%, var(--pix-dither) 75%);
   background-size: 8px 8px; background-position: 0 0, 4px 4px;
 }
-.dawn { font-family: var(--font-display); letter-spacing: 0.01em; }
+/* The city sets its own parchment palette, so its text has to use that palette's ink too
+   (otherwise it keeps the page's colour, which is near-white on a dark theme). */
+.dawn { font-family: var(--font-display); letter-spacing: 0.01em; color: var(--color-ink); }
 :is(.dawn, html[data-style="pixel"]) .hud {
   border-radius: 0;
   border: 3px solid var(--color-outline);
