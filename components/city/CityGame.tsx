@@ -29,7 +29,7 @@ import { cityWork, type Work } from "@/lib/cityWork";
 import { dueJob } from "@/lib/cityJobs";
 import { onRunning, runJob, runningJobs } from "./workRunner";
 import {
-  T, buildingName, hits, layoutCity, layoutInterior, moveBox, roadRoute, roleOf, roofColor, setupProgress, titleOf, visibleBuildings,
+  T, buildingName, hits, interiorRoute, layoutCity, layoutInterior, moveBox, roadRoute, roleOf, roofColor, setupProgress, titleOf, visibleBuildings,
   STUDIO_KINDS, isShop, type CityLayout, type InteriorLayout, type Pt, type Rect,
 } from "@/lib/city";
 import { buildingReport, missions } from "@/lib/cityReport";
@@ -261,8 +261,10 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
       }
     } else if (L.interior) {
       const I = L.interior;
-      const corridor = I.progress.y + I.progress.h + 0.35 * T;
-      const via = (from: Pt, to: Pt): Pt[] => [{ x: from.x, y: corridor }, { x: to.x, y: corridor }, to];
+      // Out through their door, along the halls, in through the other door.
+      const via = (from: Pt, to: Pt): Pt[] => interiorRoute(I, from, to);
+      // A spot just inside a room's doorway, a little to one side.
+      const inRoom = (r: Rect, door: Rect) => ({ x: door.x + door.w / 2 + (rand() - 0.5) * Math.min(r.w - 3 * T, 4 * T), y: r.y + r.h - 0.9 * T - rand() * 0.8 * T });
       const deskOf = new Map(I.stations.map((st) => [st.staffId, st]));
       const insideNow = [...latest.current.staffById.values()].filter((s) => deskOf.has(s.id) || s.id === I.reporter?.staffId);
       const decide = (a: Agent) => {
@@ -274,7 +276,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
           a.act = w.line;
           if (w.state === "busy" && busyDesks.length && rand() < 0.4) {
             const st = pick(busyDesks, rand);
-            a.path = via(a, { x: st.x + 0.55 * T, y: st.y });
+            a.path = via(a, { x: st.x + 0.7 * T, y: st.y + 1.5 * T });
             a.act = `Collecting an update from ${latest.current.staffById.get(st.staffId)?.name ?? "the team"}`;
             a.onArrive = () => {
               a.wait = 3;
@@ -310,11 +312,11 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         };
         const r = rand();
         const busyMates = I.stations.filter((x) => x.staffId !== a.id && workOf(x.staffId).state === "busy");
-        if (r < 0.3 && w.line.startsWith("Working on")) away({ x: I.mission.x + T + rand() * (I.mission.w - 2 * T), y: I.mission.y + 0.7 * T + rand() * T }, "Checking the mission board", 3 + rand() * 2);
-        else if (r < 0.55) away({ x: I.progress.x + T + rand() * (I.progress.w - 2 * T), y: I.progress.y + 0.7 * T + rand() * T }, "Posting an update", 3 + rand() * 2);
+        if (r < 0.3 && w.line.startsWith("Working on")) away(inRoom(I.mission, I.missionDoor), "Checking the mission board", 3 + rand() * 2);
+        else if (r < 0.55) away(inRoom(I.progress, I.progressDoor), "Posting an update", 3 + rand() * 2);
         else if (r < 0.7 && busyMates.length) {
           const c = pick(busyMates, rand);
-          away({ x: c.x + 0.55 * T, y: c.y + 4 }, `Asking ${latest.current.staffById.get(c.staffId)?.name ?? "a teammate"} something`, 4 + rand() * 2);
+          away({ x: c.x + 0.7 * T, y: c.y + 1.5 * T }, `Asking ${latest.current.staffById.get(c.staffId)?.name ?? "a teammate"} something`, 4 + rand() * 2);
         } else a.wait = 15 + rand() * 20;
       };
       for (const s of insideNow) {

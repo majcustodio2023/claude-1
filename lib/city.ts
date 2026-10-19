@@ -562,21 +562,29 @@ export function layoutCity(buildingIds: string[], studioIds: string[] = [], smal
 
 export interface Station {
   staffId: string;
-  /** Where they stand */
+  /** Where they stand, behind their desk */
   x: number;
   y: number;
   desk: Rect;
-  /** Their own office: walls all round, with a doorway in the top wall onto the hall. */
+  /** Their own office: walls all round, with a doorway in the bottom wall onto the hall below. */
   office: Rect;
   door: Rect;
+  /** Where their nameplate sits on the office floor (centre x, top y). */
+  plate: { x: number; y: number };
+  /** The hall in front of their door. */
+  hall: number;
 }
 
-/** Office size and wall thickness, in world units. */
-export const OFFICE_W = 4.3 * T;
-export const OFFICE_H = 4.2 * T;
-export const OFFICE_WALL = 10;
-const OFFICE_GAP = 0.25 * T;
-const OFFICE_DOOR = 1.6 * T;
+/** Office size and wall thickness, in world units. Big enough for a desk, visitor chairs, shelves and a rug. */
+export const OFFICE_W = 8 * T;
+export const OFFICE_H = 6.4 * T;
+export const OFFICE_WALL = 12;
+const OFFICE_GAP = 0.4 * T;
+const OFFICE_DOOR = 1.8 * T;
+/** The walkways: a hall along the front of each row of offices, and an aisle down each side joining them. */
+const HALL = 1.9 * T;
+const AISLE = 2 * T;
+const ROOM_DOOR = 3 * T;
 
 export interface InteriorLayout {
   w: number;
@@ -584,75 +592,148 @@ export interface InteriorLayout {
   wall: number;
   progress: Rect;
   mission: Rect;
+  /** The doorways into the Progress Room and the Mission Room (bottom walls). */
+  progressDoor: Rect;
+  missionDoor: Rect;
   board: Rect;
   screen: Rect;
   stations: Station[];
   reporter?: { staffId: string; x: number; y: number };
   rooms: { id: string; rect: Rect; sign: Rect }[];
-  /** The floor between the Progress Room and the Mission Room (a studio's set piece goes here) */
+  /** The lobby between the Progress Room and the Mission Room (a studio's set piece goes here) */
   middle: Rect;
+  /** The y of every hall, top to bottom, and the x of the two side aisles. */
+  halls: number[];
+  /** Office furniture against the side walls (copier, water cooler…), each solid. */
+  decor: { kind: "copier" | "cooler" | "vending" | "cabinet" | "plant" | "notice"; x: number; y: number }[];
+  aisles: [number, number];
   exit: Rect;
   solids: Rect[];
   spawn: { x: number; y: number };
 }
 
-/** Inside a building: Progress Room top left, Mission Room top right, a row of private offices (one per worker) across the middle, extra rooms below. */
+/** The walls of a room with one doorway in its bottom wall (the top is the building's back wall or another wall). */
+function roomWalls(r: Rect, door: Rect, k: number, top = true): Rect[] {
+  return [
+    ...(top ? [{ x: r.x, y: r.y, w: r.w, h: k }] : []),
+    { x: r.x, y: r.y, w: k, h: r.h },
+    { x: r.x + r.w - k, y: r.y, w: k, h: r.h },
+    { x: r.x, y: r.y + r.h - k, w: door.x - r.x, h: k },
+    { x: door.x + door.w, y: r.y + r.h - k, w: r.x + r.w - door.x - door.w, h: k },
+  ];
+}
+
+/**
+ * Inside a building, laid out like an office floor: the Progress Room and the Mission Room
+ * along the back wall with a lobby between, then rows of private offices (one per worker),
+ * each with its door onto a hall, and aisles down both sides joining the halls. Extra rooms
+ * go at the bottom, by the exit.
+ */
 export function layoutInterior(staffIds: string[], reporterId: string | undefined, roomIds: string[]): InteriorLayout {
-  const perRow = Math.max(4, Math.min(6, staffIds.length));
-  const deskRows = Math.max(1, Math.ceil(staffIds.length / perRow));
+  const n = staffIds.length;
+  const perRow = n <= 2 ? Math.max(1, n) : Math.min(4, Math.ceil(n / 2));
+  const rows = Math.max(1, Math.ceil(n / perRow));
   const roomCols = Math.ceil(roomIds.length / 2);
-  const wTiles = Math.max(20, (perRow * (OFFICE_W + OFFICE_GAP)) / T + 2, roomCols * 5.6 * 2 + 4);
+  const span = perRow * OFFICE_W + (perRow - 1) * OFFICE_GAP;
+  const wTiles = Math.max(26, Math.ceil((span + 2 * AISLE + 0.6 * T) / T), roomCols * 5.6 * 2 + 4);
   const w = wTiles * T;
   const wall = 2.6 * T;
-  // Offices start just below the hall that runs under the Progress and Mission Rooms.
-  const officeTop = wall + 5.6 * T;
-  const roomsTop = officeTop + deskRows * (OFFICE_H + OFFICE_GAP) + 0.5 * T;
-  const h = roomsTop + (roomIds.length ? 4.2 * T : 0.4 * T) + 1.4 * T;
-  const progress = { x: T * 0.6, y: wall + 0.3 * T, w: 7.5 * T, h: 4.6 * T };
-  const mission = { x: w - 8.1 * T, y: wall + 0.3 * T, w: 7.5 * T, h: 4.6 * T };
-  const screen = { x: progress.x + 1.2 * T, y: wall - 1.9 * T, w: 5 * T, h: 1.7 * T };
-  const board = { x: mission.x + 1.2 * T, y: wall - 1.9 * T, w: 5 * T, h: 1.7 * T };
+  const k = OFFICE_WALL;
+  const progress = { x: T * 0.3, y: wall, w: 9 * T, h: 5.4 * T };
+  const mission = { x: w - 9.3 * T, y: wall, w: 9 * T, h: 5.4 * T };
+  const progressDoor = { x: progress.x + progress.w / 2 - ROOM_DOOR / 2, y: progress.y + progress.h - k, w: ROOM_DOOR, h: k };
+  const missionDoor = { x: mission.x + mission.w / 2 - ROOM_DOOR / 2, y: mission.y + mission.h - k, w: ROOM_DOOR, h: k };
+  const screen = { x: progress.x + 2 * T, y: wall - 1.9 * T, w: 5 * T, h: 1.7 * T };
+  const board = { x: mission.x + 2 * T, y: wall - 1.9 * T, w: 5 * T, h: 1.7 * T };
+  const firstRow = progress.y + progress.h + HALL;
+  const rowY = (r: number) => firstRow + r * (OFFICE_H + HALL);
+  const halls = [firstRow - HALL / 2, ...Array.from({ length: rows }, (_, r) => rowY(r) + OFFICE_H + HALL / 2)];
+  const roomsTop = rowY(rows) + 0.2 * T;
+  const h = roomsTop + (roomIds.length ? 4.2 * T : 0) + 2.2 * T;
   const solids: Rect[] = [
     { x: -50, y: -50, w: w + 100, h: wall + 50 },
     { x: -50, y: 0, w: 50 + T * 0.25, h },
     { x: w - T * 0.25, y: 0, w: 50, h },
     { x: -50, y: h - T * 0.3, w: w / 2 - T + 50, h: 50 },
     { x: w / 2 + T, y: h - T * 0.3, w: w / 2 + 50, h: 50 },
+    ...roomWalls(progress, progressDoor, k, false),
+    ...roomWalls(mission, missionDoor, k, false),
   ];
   const stations: Station[] = [];
   staffIds.forEach((id, i) => {
     const row = Math.floor(i / perRow);
-    const inRow = Math.min(perRow, staffIds.length - row * perRow);
-    const span = inRow * OFFICE_W + (inRow - 1) * OFFICE_GAP;
-    const office = { x: w / 2 - span / 2 + (i % perRow) * (OFFICE_W + OFFICE_GAP), y: officeTop + row * (OFFICE_H + OFFICE_GAP), w: OFFICE_W, h: OFFICE_H };
-    const x = office.x + office.w / 2;
-    const y = office.y + 1.15 * T;
+    const inRow = Math.min(perRow, n - row * perRow);
+    const rowSpan = inRow * OFFICE_W + (inRow - 1) * OFFICE_GAP;
+    const office = { x: w / 2 - rowSpan / 2 + (i % perRow) * (OFFICE_W + OFFICE_GAP), y: rowY(row), w: OFFICE_W, h: OFFICE_H };
+    // Desk in the back half facing the door; the door sits right of centre so the nameplate fits on the left.
+    const x = office.x + office.w * 0.42;
+    const y = office.y + k + 1.3 * T;
     const desk = { x: x - 1.2 * T, y: y + 0.15 * T, w: 2.4 * T, h: 0.9 * T };
-    const door = { x: x - OFFICE_DOOR / 2, y: office.y, w: OFFICE_DOOR, h: OFFICE_WALL };
-    stations.push({ staffId: id, x, y, desk, office, door });
-    const k = OFFICE_WALL;
-    solids.push(
-      desk,
-      { x: office.x, y: office.y, w: door.x - office.x, h: k },
-      { x: door.x + door.w, y: office.y, w: office.x + office.w - door.x - door.w, h: k },
-      { x: office.x, y: office.y, w: k, h: office.h },
-      { x: office.x + office.w - k, y: office.y, w: k, h: office.h },
-      { x: office.x, y: office.y + office.h - k, w: office.w, h: k },
-    );
+    const dc = office.x + office.w * 0.74;
+    const door = { x: dc - OFFICE_DOOR / 2, y: office.y + office.h - k, w: OFFICE_DOOR, h: k };
+    stations.push({ staffId: id, x, y, desk, office, door, plate: { x: office.x + office.w * 0.3, y: office.y + office.h - k - 66 }, hall: halls[row + 1] });
+    solids.push(desk, ...roomWalls(office, door, k));
   });
   const rooms = roomIds.map((id, i) => {
     const left = i % 2 === 0;
-    const k = Math.floor(i / 2);
+    const c = Math.floor(i / 2);
     const rw = 5.2 * T;
-    const x = left ? T * 0.6 + k * (rw + 0.4 * T) : w - T * 0.6 - rw - k * (rw + 0.4 * T);
+    const x = left ? T * 0.6 + c * (rw + 0.4 * T) : w - T * 0.6 - rw - c * (rw + 0.4 * T);
     const rect = { x, y: roomsTop, w: rw, h: 3.6 * T };
     return { id, rect, sign: { x: x + rw / 2 - 1.5 * T, y: roomsTop + 0.3 * T, w: 3 * T, h: 0.9 * T } };
   });
   const exit = { x: w / 2 - T, y: h - 0.9 * T, w: 2 * T, h: 0.9 * T };
-  const reporter = reporterId ? { staffId: reporterId, x: progress.x + progress.w * 0.66, y: progress.y + 1.7 * T } : undefined;
+  const reporter = reporterId ? { staffId: reporterId, x: progress.x + progress.w * 0.66, y: progress.y + 2.2 * T } : undefined;
   if (reporter) solids.push({ x: reporter.x - 1.3 * T, y: reporter.y + 0.15 * T, w: 2.6 * T, h: 0.8 * T });
-  const middle = { x: progress.x + progress.w + 0.3 * T, y: wall + 0.2 * T, w: mission.x - progress.x - progress.w - 0.6 * T, h: progress.h - 0.4 * T };
-  return { w, h, wall, progress, mission, board, screen, stations, reporter, rooms, middle, exit, solids, spawn: { x: w / 2, y: h - 1.6 * T } };
+  const middle = { x: progress.x + progress.w + 0.3 * T, y: wall + 0.2 * T, w: mission.x - progress.x - progress.w - 0.6 * T, h: progress.h - 0.6 * T };
+  const aisles: [number, number] = [Math.max(T, (w / 2 - span / 2) / 2), Math.min(w - T, w - (w / 2 - span / 2) / 2)];
+  // Along both side walls, beside the offices: the things every office floor has.
+  const decor: InteriorLayout["decor"] = [];
+  const kinds = ["copier", "cooler", "cabinet", "plant", "vending", "notice", "cabinet", "plant"] as const;
+  if (aisles[0] - 0.7 * T > 1.4 * T)
+    for (let r = 0; r < rows; r++)
+      [0.3 * T, w - 1.5 * T].forEach((x, side) => {
+        for (let j = 0; j < 3; j++) {
+          const y = rowY(r) + 0.4 * T + j * 2 * T;
+          decor.push({ kind: kinds[(r * 6 + side * 3 + j) % kinds.length], x, y });
+          solids.push({ x, y: y + 0.6 * T, w: 1.2 * T, h: 0.8 * T });
+        }
+      });
+  return { w, h, wall, progress, mission, progressDoor, missionDoor, board, screen, stations, reporter, rooms, middle, halls, aisles, decor, exit, solids, spawn: { x: w / 2, y: h - 1.6 * T } };
+}
+
+/** A walk inside a building that goes out through doors, along the halls and aisles, and in through doors (never through walls). */
+export function interiorRoute(I: InteriorLayout, from: Pt, to: Pt): Pt[] {
+  const inside = (p: Pt, r: Rect) => p.x > r.x && p.x < r.x + r.w && p.y > r.y && p.y < r.y + r.h;
+  const where = (p: Pt): { door: Rect; hall: number } | null => {
+    const st = I.stations.find((s) => inside(p, s.office));
+    if (st) return { door: st.door, hall: st.hall };
+    if (inside(p, I.progress)) return { door: I.progressDoor, hall: I.halls[0] };
+    if (inside(p, I.mission)) return { door: I.missionDoor, hall: I.halls[0] };
+    return null;
+  };
+  const nearestHall = (y: number) => I.halls.reduce((a, v) => (Math.abs(v - y) < Math.abs(a - y) ? v : a), I.halls[0]);
+  const a = where(from);
+  const b = where(to);
+  const hallA = a ? a.hall : nearestHall(from.y);
+  const hallB = b ? b.hall : nearestHall(to.y);
+  const path: Pt[] = [];
+  if (a) {
+    const dx = a.door.x + a.door.w / 2;
+    // across the room first (behind any desk), then straight out of the door
+    path.push({ x: dx, y: from.y }, { x: dx, y: a.door.y - 0.6 * T }, { x: dx, y: hallA });
+  } else path.push({ x: from.x, y: hallA });
+  if (hallA !== hallB) {
+    const mid = (from.x + to.x) / 2;
+    const ax = Math.abs(I.aisles[0] - mid) <= Math.abs(I.aisles[1] - mid) ? I.aisles[0] : I.aisles[1];
+    path.push({ x: ax, y: hallA }, { x: ax, y: hallB });
+  }
+  if (b) {
+    const dx = b.door.x + b.door.w / 2;
+    path.push({ x: dx, y: hallB }, { x: dx, y: b.door.y - 0.6 * T }, { x: dx, y: to.y });
+  } else path.push({ x: to.x, y: hallB });
+  path.push(to);
+  return path;
 }
 
 /** True when two rectangles overlap. */
