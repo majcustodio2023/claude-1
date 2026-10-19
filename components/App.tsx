@@ -295,7 +295,7 @@ function PlayerCard({ data, month, today, saving, onSettings }: { data: TrackerD
             </div>
           </div>
         </div>
-        <div className={`flex-1 min-w-60 pb-4 ${cover === "classic" ? "" : "[text-shadow:0_2px_0_#0b0a14,0_0_10px_rgba(11,10,20,0.95)]"}`}>
+        <div className="flex-1 min-w-60 pb-4">
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="comic-num text-5xl sm:text-6xl leading-none text-ink uppercase">{data.settings.playerName || "Hero"}</h1>
             <span className={`font-display text-xl tracking-wide px-3 pt-1 pb-0.5 border-[3px] border-outline rounded-md text-outline shadow-[3px_3px_0_var(--color-outline)] rotate-[2deg] ${rankBg}`}>{rank.name}</span>

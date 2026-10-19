@@ -37,8 +37,8 @@ export function mix(a: string, b: string, k: number): string {
 
 /** Pixel outline and shadow ink: warm dark plum, the same as the scenery's lines. */
 export const INK = "#2b1d2e";
-const dark = (c: string, k = 0.28) => mix(c, INK, k);
-const light = (c: string, k = 0.28) => mix(c, "#fff4dc", k);
+export const dark = (c: string, k = 0.28) => mix(c, INK, k);
+export const light = (c: string, k = 0.28) => mix(c, "#fff4dc", k);
 
 /**
  * Tames a colour for the cozy autumn palette: very loud, saturated picks are pulled a little
@@ -137,13 +137,19 @@ function readLook(l: HeroLook | undefined): Look {
 
 // ---------- drawing ----------
 
-class Grid {
-  px: Pixels = Array.from({ length: CH }, () => Array<string | null>(CW).fill(null));
+export class Grid {
+  px: Pixels;
+  constructor(
+    readonly w = CW,
+    readonly h = CH,
+  ) {
+    this.px = Array.from({ length: h }, () => Array<string | null>(w).fill(null));
+  }
   set(x: number, y: number, c: string | null) {
-    if (x >= 0 && x < CW && y >= 0 && y < CH) this.px[y][x] = c;
+    if (x >= 0 && x < this.w && y >= 0 && y < this.h) this.px[y][x] = c;
   }
   get(x: number, y: number) {
-    return x >= 0 && x < CW && y >= 0 && y < CH ? this.px[y][x] : null;
+    return x >= 0 && x < this.w && y >= 0 && y < this.h ? this.px[y][x] : null;
   }
   rect(x: number, y: number, w: number, h: number, c: string) {
     for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) this.set(i, j, c);
@@ -155,8 +161,8 @@ class Grid {
   /** Wraps every shape in a one-pixel outline, a darker shade of what it touches. */
   outline() {
     const out: [number, number, string][] = [];
-    for (let y = 0; y < CH; y++)
-      for (let x = 0; x < CW; x++) {
+    for (let y = 0; y < this.h; y++)
+      for (let x = 0; x < this.w; x++) {
         if (this.px[y][x]) continue;
         const n = [this.get(x, y - 1), this.get(x - 1, y), this.get(x + 1, y), this.get(x, y + 1)].filter((c): c is string => Boolean(c) && c !== INK);
         if (n.length) out.push([x, y, mix(n[0], INK, 0.72)]);
@@ -446,9 +452,54 @@ function backItem(g: Grid, L: Look, dir: Dir, layer: "behind" | "over") {
   if (L.back === "backpack" && dir === "down") g.rect(5, 13, 1, 3, c), g.rect(10, 13, 1, 3, c);
 }
 
-/** One frame of one direction. */
-export function drawFrame(look: HeroLook | undefined, dir: Dir, frame: number): Pixels {
-  const L = readLook(look);
+/**
+ * Shop items and achievement gear that change the sprite itself (the rest, like wings, weapons,
+ * auras and pets, are drawn around it in lib/pixelGear.ts).
+ */
+export interface Worn {
+  items?: string[];
+  gear?: string[];
+}
+
+const WORN_HAT: Record<string, string> = { "cat-ears": "catears" };
+
+function wear(L: Look, w: Worn | undefined): Look {
+  if (!w) return L;
+  const it = new Set(w.items ?? []);
+  const gear = new Set(w.gear ?? []);
+  const out = { ...L };
+  if (gear.has("goal-crusher")) out.headwear = "crown";
+  if (gear.has("ad-commander")) out.headwear = "headset";
+  if (gear.has("closer")) out.gloves = "#e8b33d";
+  for (const [id, hw] of Object.entries(WORN_HAT)) if (it.has(id)) out.headwear = hw;
+  // A hat from the shop sits where a crown or headset would.
+  if ([...it].some((i) => HAT_ITEMS.includes(i) && !WORN_HAT[i])) out.headwear = "none";
+  if (it.has("shades")) out.eyewear = "shades";
+  if (it.has("eyepatch")) out.eyewear = "eyepatch";
+  if (it.has("scar")) out.marks = "scar";
+  if (it.has("red-cape")) (out.back = "cape"), (out.backC = "#c0392b");
+  if (it.has("jetpack") || it.has("demon-wings") || it.has("angel-wings")) out.back = "none";
+  return out;
+}
+
+/** Hats drawn over the head in lib/pixelGear.ts. */
+export const HAT_ITEMS = ["cat-ears", "devil-horns", "halo", "wizard-hat", "kabuto", "flame-crown"];
+
+/** Gear drawn onto the body, facing you. */
+function wornDetails(g: Grid, L: Look, w: Worn) {
+  const it = new Set(w.items ?? []);
+  const gear = new Set(w.gear ?? []);
+  if (it.has("oni-mask")) g.rect(8, 10, 4, 2, "#c0392b"), g.set(9, 11, "#fbf1dc"), g.set(11, 11, "#fbf1dc"), g.set(11, 9, "#c0392b");
+  if (gear.has("first-strike") && L.headwear !== "crown") g.rect(3, 5, 10, 1, "#c0392b"), g.set(13, 5, "#c0392b"), g.set(14, 6, "#93392a");
+  if (gear.has("strategist")) [[8, 7], [9, 7], [10, 7], [10, 8], [11, 8], [12, 8]].forEach(([x, y]) => g.set(x, y, "#4fb0a0"));
+  if (gear.has("giant-slayer")) [[3, 13], [4, 13], [3, 14], [11, 13], [12, 13], [12, 14]].forEach(([x, y]) => g.set(x, y, "#e8a33d"));
+  if (gear.has("full-house")) g.rect(7, 15, 2, 1, "#86d0bd"), g.rect(7, 16, 2, 1, "#2f8f83");
+  if (gear.has("quest-master")) g.rect(4, 18, 8, 1, "#6e4425"), g.rect(7, 18, 2, 1, "#f4c95d");
+}
+
+/** One frame of one direction. `worn` adds shop items and gear (facing you only). */
+export function drawFrame(look: HeroLook | undefined, dir: Dir, frame: number, worn?: Worn): Pixels {
+  const L = wear(readLook(look), dir === "down" ? worn : undefined);
   const g = new Grid();
   const dy = 0;
   backItem(g, L, dir, "behind");
@@ -460,6 +511,7 @@ export function drawFrame(look: HeroLook | undefined, dir: Dir, frame: number): 
   if (dir !== "up") face(g, L, dir, dy);
   hairFront(g, L, dir, dy);
   headwear(g, L, dir, dy);
+  if (worn && dir === "down") wornDetails(g, L, worn);
   g.outline();
   // a one-pixel hop on each step
   if (frame === 0 || frame === 2) g.px = [...g.px.slice(1), Array<string | null>(CW).fill(null)];

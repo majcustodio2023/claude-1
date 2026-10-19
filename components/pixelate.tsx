@@ -6,7 +6,7 @@
 
 import { createContext, useContext, useEffect, useState, useSyncExternalStore, type ReactElement } from "react";
 import { pixelGrid, svgText } from "./city/pixel";
-import { CH, CW, drawFrame } from "@/lib/pixelChar";
+import { PH, SPRITE_BOX, drawPortrait } from "@/lib/pixelGear";
 import { snapPixels } from "@/lib/palette";
 import type { HeroLook } from "@/lib/types";
 
@@ -59,48 +59,69 @@ export function PixelImg({ node, width, height, grid, className = "", label }: {
   );
 }
 
-const frames = new Map<string, string>();
+const frames = new Map<string, { url: string; w: number; h: number }>();
 
-/** The hero's standing pixel sprite (the same one that walks around the city). */
-function heroFrame(look: HeroLook | undefined): string {
-  const key = JSON.stringify(look ?? null);
-  let url = frames.get(key);
-  if (!url) {
-    const px = drawFrame(look, "down", 1);
+/**
+ * The hero's pixel portrait: the city sprite plus everything worn (see lib/pixelGear.ts), cropped
+ * to what's drawn (kept centred on the hero) so a plain hero shows as big as it can.
+ */
+function heroFrame(look: HeroLook | undefined, items: string[], gear: string[]) {
+  const key = JSON.stringify([look ?? null, items, gear]);
+  let f = frames.get(key);
+  if (!f) {
+    const px = drawPortrait(look, items, gear);
+    let top = PH;
+    let bottom = 0;
+    let half = 0;
+    const mid = SPRITE_BOX.x + SPRITE_BOX.w / 2;
+    px.forEach((row, y) =>
+      row.forEach((col, x) => {
+        if (!col) return;
+        top = Math.min(top, y);
+        bottom = Math.max(bottom, y);
+        half = Math.max(half, Math.abs(x + 0.5 - mid));
+      }),
+    );
+    half = Math.ceil(half);
+    const w = half * 2;
+    const h = bottom - top + 1;
     const c = document.createElement("canvas");
-    c.width = CW;
-    c.height = CH;
+    c.width = w;
+    c.height = h;
     const g = c.getContext("2d")!;
     px.forEach((row, y) =>
       row.forEach((col, x) => {
         if (!col) return;
         g.fillStyle = col;
-        g.fillRect(x, y, 1, 1);
+        g.fillRect(x - (mid - half), y - top, 1, 1);
       }),
     );
-    const img = g.getImageData(0, 0, CW, CH);
+    const img = g.getImageData(0, 0, w, h);
     snapPixels(img.data);
     g.putImageData(img, 0, 0);
-    url = c.toDataURL("image/png");
-    frames.set(key, url);
+    f = { url: c.toDataURL("image/png"), w, h };
+    frames.set(key, f);
+    if (frames.size > 200) frames.delete(frames.keys().next().value!);
   }
-  return url;
+  return f;
 }
 
-/** Pixel hero sized to fit where the drawn hero (size x size*1.125) used to go. */
-export function PixelHero({ look, size, className = "", lively = false }: { look?: HeroLook; size: number; className?: string; lively?: boolean }) {
-  const [url, setUrl] = useState("");
-  const key = JSON.stringify(look ?? null);
-  useEffect(() => setUrl(heroFrame(look)), [key]); // eslint-disable-line react-hooks/exhaustive-deps
+/**
+ * Pixel hero sized to fit where the drawn hero (size x size*1.125) used to go, wearing its shop
+ * items and achievement gear. Drawn at whole art pixels only, so every pixel is the same size.
+ */
+export function PixelHero({ look, items = [], gear = [], size, className = "", lively = false }: { look?: HeroLook; items?: string[]; gear?: string[]; size: number; className?: string; lively?: boolean }) {
+  const [f, setF] = useState<{ url: string; w: number; h: number } | null>(null);
+  const key = JSON.stringify([look ?? null, items, gear]);
+  useEffect(() => setF(heroFrame(look, items, gear)), [key]); // eslint-disable-line react-hooks/exhaustive-deps
   const h = size * 1.125;
-  // Whole art pixels only, so every pixel is the same size on screen.
-  const scale = Math.max(1, Math.floor((h * 0.92) / CH));
+  const scale = f ? Math.max(1, Math.floor(Math.min((h * 0.96) / f.h, (size * 1.2) / f.w))) : 1;
   return (
     <span className={`relative inline-flex shrink-0 items-end justify-center ${className}`} style={{ width: size, height: h }} role="img" aria-label="Hero">
-      <span className="absolute bottom-[3%] left-1/2 -translate-x-1/2 bg-black/25" style={{ width: scale * 9, height: scale * 2 }} />
-      {url && (
+      {f && <span className="absolute bottom-[1%] left-1/2 -translate-x-1/2 bg-black/25" style={{ width: scale * 10, height: scale * 2 }} />}
+      {f && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={url} alt="" width={CW * scale} height={CH * scale} className={`pixelated relative mb-[4%] ${lively ? "pix-bob" : ""}`} draggable={false} />
+        <img src={f.url} alt="" width={f.w * scale} height={f.h * scale} className={`pixelated relative mb-[2%] max-w-none ${lively ? "pix-bob" : ""}`} draggable={false} />
       )}
     </span>
   );

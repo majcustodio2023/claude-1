@@ -14,18 +14,18 @@ export interface Cover {
 }
 
 export const COVERS: Cover[] = [
-  { id: "classic", name: "Classic HUD", price: 0, rarity: "common" },
-  { id: "speed", name: "Action burst", price: 0, rarity: "common" },
-  { id: "dojo", name: "Sunset dojo", price: 0, rarity: "common" },
-  { id: "manga", name: "Manga panel", price: 250, rarity: "common" },
-  { id: "sakura", name: "Sakura storm", price: 300, rarity: "rare" },
-  { id: "neon", name: "Neon Tokyo", price: 350, rarity: "rare" },
-  { id: "ocean", name: "Great wave", price: 350, rarity: "rare" },
-  { id: "thunder", name: "Thunder sky", price: 400, rarity: "rare" },
-  { id: "synth", name: "Cyber grid", price: 500, rarity: "epic" },
-  { id: "volcano", name: "Volcano lair", price: 550, rarity: "epic" },
-  { id: "galaxy", name: "Galaxy", price: 700, rarity: "epic" },
-  { id: "vault", name: "Gold vault", price: 900, rarity: "legendary" },
+  { id: "classic", name: "Plain parchment", price: 0, rarity: "common" },
+  { id: "speed", name: "Dawnterra sunrise", price: 0, rarity: "common" },
+  { id: "dojo", name: "Autumn hills", price: 0, rarity: "common" },
+  { id: "manga", name: "Old map", price: 250, rarity: "common" },
+  { id: "sakura", name: "Sakura grove", price: 300, rarity: "rare" },
+  { id: "neon", name: "Lantern festival", price: 350, rarity: "rare" },
+  { id: "ocean", name: "Harbour lighthouse", price: 350, rarity: "rare" },
+  { id: "thunder", name: "Storm over the peaks", price: 400, rarity: "rare" },
+  { id: "synth", name: "Starry pines", price: 500, rarity: "epic" },
+  { id: "volcano", name: "Ember volcano", price: 550, rarity: "epic" },
+  { id: "galaxy", name: "Aurora sky", price: 700, rarity: "epic" },
+  { id: "vault", name: "Treasure hoard", price: 900, rarity: "legendary" },
 ];
 
 /** Your own uploaded picture. Unlocked once in the shop, for more than any ready-made cover. */

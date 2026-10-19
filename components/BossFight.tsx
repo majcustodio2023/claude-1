@@ -1,5 +1,7 @@
 "use client";
 
+import { PixelArena } from "./pixelScenes";
+import { themeById, themeVars } from "@/lib/appearance";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Avatar } from "./avatars";
@@ -58,6 +60,17 @@ type Float = { id: number; side: "hero" | "boss"; text: string; color: string; b
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /** The current level, used for stats. */
+/** The arena is always night, so the fight uses the dark Dawnterra palette whatever the app's theme. */
+const ARENA_THEME = {
+  ...themeVars(themeById("dusk")),
+  "--pix-shadow": "rgb(0 0 0 / 0.65)",
+  "--pix-hi": "rgb(255 255 255 / 0.07)",
+  "--pix-lo": "rgb(0 0 0 / 0.3)",
+  "--pix-sheen": "rgb(255 255 255 / 0.06)",
+  "--pix-ghost": "var(--color-card-2)",
+  "--pix-ghost-ink": "var(--color-ink)",
+} as React.CSSProperties;
+
 export function useHeroLevel() {
   const { data, today } = useTracker();
   const s = summarize(data, monthOf(today));
@@ -305,8 +318,16 @@ export default function BossFight({ dealId, practice, rematch, onClose }: { deal
   const bossPct = view.bossHp / b.boss.maxHp;
 
   const screen = (
-    <div className="fixed inset-0 z-[60] bg-[#06070d] overflow-y-auto overflow-x-hidden" role="dialog" aria-modal="true" aria-label={`Boss battle: ${spec.name}`}>
-      <div className="impact-lines fixed inset-0 opacity-25 pointer-events-none" />
+    <div
+      className="fixed inset-0 z-[60] bg-[#1a1218] text-ink overflow-y-auto overflow-x-hidden"
+      style={ARENA_THEME}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Boss battle: ${spec.name}`}
+    >
+      {/* Torch-lit ruins at night, dimmed so every number and button stays easy to read. */}
+      <PixelArena className="fixed inset-0 w-full h-full pointer-events-none" />
+      <div className="fixed inset-0 pointer-events-none bg-[#1a1218]/45" />
       {flash && <div key={flash.id} className="fx-flash fixed inset-0 pointer-events-none z-10" style={{ background: flash.color, opacity: 0 }} />}
       <div key={`s${shake}`} className={`relative max-w-4xl mx-auto px-3 sm:px-4 py-4 min-h-full flex flex-col overflow-x-clip ${shake ? "shake" : ""}`}>
         <div className="flex items-start justify-between gap-2">
