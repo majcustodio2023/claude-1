@@ -9,7 +9,7 @@
 // drawn on top as normal page text by CityLabels and InteriorLabels, so it stays sharp.
 
 import { memo, type CSSProperties, type ReactNode } from "react";
-import { T, type CityLayout, type InteriorLayout, type Rect } from "@/lib/city";
+import { OFFICE_WALL, T, type CityLayout, type InteriorLayout, type Rect } from "@/lib/city";
 import { hashString, rng } from "@/lib/avatar";
 import { shade } from "../characters";
 import { Avatar } from "../avatars";
@@ -1107,9 +1107,19 @@ export const InteriorArt = memo(function InteriorArt({ layout, info }: { layout:
           return <rect key={i} x={x} y={y} width={(L.board.w - 16) / 4 - 6} height="28" fill={noteC[i % noteC.length]} strokeWidth="2" opacity={n.done ? 0.55 : 1} transform={`rotate(${(i % 3) - 1} ${x} ${y})`} />;
         })}
       </g>
+      {/* carpet runners along the halls and down the side aisles, so the walkways read as corridors */}
+      <Runners L={L} c={shade(info.color, -0.15)} />
+      {L.decor.map((d, i) => (
+        <FloorDecor key={i} {...d} />
+      ))}
+      {/* the Mission Room is a meeting room: a long table with chairs round it */}
+      <MeetingTable L={L} />
+      {/* walls round the Progress and Mission Rooms, each with a wide doorway onto the hall */}
+      <RoomWalls r={L.progress} door={L.progressDoor} c={shade(info.color, 0.2)} />
+      <RoomWalls r={L.mission} door={L.missionDoor} c={shade(info.color, 0.2)} />
       {/* each worker's own office, styled for their job */}
       {L.stations.map((st) => (
-        <Office key={`o-${st.staffId}`} st={st} role={info.desks.find((x) => x.staffId === st.staffId)?.role ?? "custom"} buildingColor={info.color} seed={hashString(st.staffId)} />
+        <Office key={`o-${st.staffId}`} st={st} role={info.desks.find((x) => x.staffId === st.staffId)?.role ?? "custom"} accent={info.desks.find((x) => x.staffId === st.staffId)?.color ?? info.color} seed={hashString(st.staffId)} />
       ))}
       {L.reporter && <Desk x={L.reporter.x} y={L.reporter.y} color="#ffd166" ready wide />}
       {L.stations.map((s) => {
@@ -1129,8 +1139,8 @@ export const InteriorArt = memo(function InteriorArt({ layout, info }: { layout:
           </g>
         </g>
       ))}
-      {[T * 0.7, L.w - T * 0.7].map((x, i) => (
-        <Plant key={x} x={x} y={L.wall + 0.6 * T} s={1.3} seed={i} />
+      {[L.progress.x + L.progress.w - OFFICE_WALL - 26, L.mission.x + OFFICE_WALL + 26].map((x, i) => (
+        <Plant key={x} x={x} y={L.progress.y + L.progress.h - OFFICE_WALL - 8} s={1} seed={i} />
       ))}
       {/* exit doormat */}
       <g transform={`translate(${L.exit.x} ${L.exit.y})`} stroke={LINE} strokeWidth="4">
@@ -1139,6 +1149,126 @@ export const InteriorArt = memo(function InteriorArt({ layout, info }: { layout:
     </svg>
   );
 });
+
+function Runners({ L, c }: { L: InteriorLayout; c: string }) {
+  const rw = 1.2 * T;
+  const [a, b] = L.aisles;
+  // aisles only between the halls, so crossings aren't drawn twice
+  const strips = [
+    ...L.halls.map((y) => ({ x: a - rw / 2, y: y - rw / 2, w: b - a + rw, h: rw })),
+    ...L.halls.slice(1).flatMap((y, i) => [a, b].map((x) => ({ x: x - rw / 2, y: L.halls[i] + rw / 2, w: rw, h: y - L.halls[i] - rw }))),
+  ];
+  return (
+    <g>
+      {strips.map((r, i) => (
+        <rect key={i} x={r.x} y={r.y} width={r.w} height={r.h} fill={c} opacity="0.55" />
+      ))}
+      {strips.map((r, i) => (
+        <rect key={`e${i}`} x={r.x + 5} y={r.y + 5} width={r.w - 10} height={r.h - 10} fill="none" stroke={shade(c, 0.35)} strokeWidth="2.5" strokeDasharray="10 8" opacity="0.8" />
+      ))}
+    </g>
+  );
+}
+
+/** One piece of office furniture against a side wall, about 48 x 56, from its top-left. */
+function FloorDecor({ kind, x, y }: InteriorLayout["decor"][number]) {
+  let body: ReactNode;
+  if (kind === "copier")
+    body = (
+      <>
+        <rect x="0" y="14" width="48" height="42" rx="4" fill="#c8bdae" />
+        <rect x="4" y="4" width="40" height="16" rx="3" fill="#e8e1d5" />
+        <rect x="8" y="26" width="32" height="8" fill="#fbf1dc" strokeWidth="2" />
+        <rect x="32" y="40" width="10" height="6" fill="#6aa645" strokeWidth="1.5" />
+      </>
+    );
+  else if (kind === "cooler")
+    body = (
+      <>
+        <rect x="10" y="22" width="28" height="34" rx="3" fill="#cfd6d3" />
+        <path d="M12 22 Q12 -4 24 -4 Q36 -4 36 22 Z" fill="#9fd3e6" />
+        <rect x="20" y="32" width="8" height="5" fill="#4f86c6" strokeWidth="1.5" />
+        <rect x="40" y="38" width="8" height="18" fill="#fbf1dc" strokeWidth="1.5" />
+      </>
+    );
+  else if (kind === "vending")
+    body = (
+      <>
+        <rect x="2" y="0" width="44" height="56" rx="3" fill="#c0392b" />
+        <rect x="6" y="5" width="26" height="40" fill="#1d2440" strokeWidth="2" />
+        {[0, 1, 2].map((r) => [0, 1].map((c) => <rect key={`${r}${c}`} x={9 + c * 11} y={9 + r * 12} width="8" height="8" fill={["#f4c95d", "#86d0bd", "#e8a0a0"][(r + c) % 3]} strokeWidth="1" />))}
+        <rect x="35" y="10" width="7" height="14" fill="#e8e1d5" strokeWidth="1.5" />
+      </>
+    );
+  else if (kind === "cabinet")
+    body = (
+      <>
+        <rect x="6" y="0" width="36" height="56" fill="#a3998f" />
+        {[0, 1, 2].map((i) => (
+          <g key={i}>
+            <rect x="10" y={4 + i * 17} width="28" height="14" fill="#c8bdae" strokeWidth="1.5" />
+            <rect x="19" y={9 + i * 17} width="10" height="3" fill={LINE} stroke="none" />
+          </g>
+        ))}
+      </>
+    );
+  else if (kind === "notice")
+    body = (
+      <>
+        <rect x="0" y="4" width="48" height="40" fill="#c99862" />
+        {[0, 1, 2, 3].map((i) => (
+          <rect key={i} x={5 + (i % 2) * 21} y={9 + Math.floor(i / 2) * 17} width="17" height="13" fill={["#f4c95d", "#e8a0a0", "#86d0bd", "#fbf1dc"][i]} strokeWidth="1.5" />
+        ))}
+        <path d="M10 44 v12 M38 44 v12" strokeWidth="3" />
+      </>
+    );
+  else return <Plant x={x + 24} y={y + 54} s={1.1} seed={Math.round(x + y)} />;
+  return (
+    <g transform={`translate(${x} ${y})`} stroke={LINE} strokeWidth="2.5" strokeLinejoin="round">
+      {body}
+    </g>
+  );
+}
+
+function RoomWalls({ r, door, c }: { r: Rect; door: Rect; c: string }) {
+  const k = OFFICE_WALL;
+  return (
+    <g stroke={LINE} strokeWidth="3" strokeLinejoin="round" fill={c}>
+      <rect x={r.x} y={r.y} width={k} height={r.h} />
+      <rect x={r.x + r.w - k} y={r.y} width={k} height={r.h} />
+      <rect x={r.x} y={r.y + r.h - k} width={door.x - r.x} height={k} />
+      <rect x={door.x + door.w} y={r.y + r.h - k} width={r.x + r.w - door.x - door.w} height={k} />
+    </g>
+  );
+}
+
+function MeetingTable({ L }: { L: InteriorLayout }) {
+  const m = L.mission;
+  const tw = 5 * T;
+  const th = 1.1 * T;
+  const x = m.x + m.w / 2 - tw / 2;
+  const y = m.y + 1.9 * T;
+  const seats = 4;
+  return (
+    <g stroke={LINE} strokeWidth="3" strokeLinejoin="round">
+      {Array.from({ length: seats }, (_, i) => {
+        const cx = x + ((i + 0.5) * tw) / seats;
+        return (
+          <g key={i}>
+            <rect x={cx - 12} y={y - 22} width="24" height="20" rx="5" fill="#34507a" />
+            <rect x={cx - 12} y={y + th + 2} width="24" height="20" rx="5" fill="#34507a" />
+          </g>
+        );
+      })}
+      <rect x={x + 6} y={y + 6} width={tw} height={th} rx="10" fill="#000" opacity="0.2" stroke="none" />
+      <rect x={x} y={y} width={tw} height={th} rx="10" fill="#8a5a32" />
+      <rect x={x + 10} y={y + 8} width={tw - 20} height={th - 16} rx="6" fill="#a86a43" strokeWidth="2" />
+      <rect x={x + tw * 0.2} y={y + 12} width="22" height="16" fill="#fbf1dc" strokeWidth="2" transform={`rotate(-8 ${x + tw * 0.2 + 11} ${y + 20})`} />
+      <rect x={x + tw * 0.62} y={y + 10} width="26" height="18" fill="#fbf1dc" strokeWidth="2" transform={`rotate(6 ${x + tw * 0.62 + 13} ${y + 19})`} />
+      <circle cx={x + tw * 0.45} cy={y + th / 2} r="7" fill="#e8a33d" strokeWidth="2" />
+    </g>
+  );
+}
 
 function Desk({ x, y, color, ready, wide = false, role }: { x: number; y: number; color: string; ready: boolean; wide?: boolean; role?: string }) {
   const w = wide ? 2.6 * T : 2.4 * T;
@@ -1289,7 +1419,7 @@ export const InteriorLabels = memo(function InteriorLabels({ layout, info, statu
       {L.reporter && <Plate x={L.reporter.x} y={L.reporter.y} name={info.reporter?.name ?? "Reports"} title={info.reporter?.title ?? "Progress reporter"} color="#ffd166" />}
       {L.stations.map((s) => {
         const d = desks.get(s.staffId);
-        return d ? <Plate key={s.staffId} x={s.x} y={s.y} name={d.name} title={d.title} color={d.color} status={status?.[s.staffId]} /> : null;
+        return d ? <Plate key={s.staffId} x={s.plate.x} top={s.plate.y} name={d.name} title={d.title} color={d.color} status={status?.[s.staffId]} /> : null;
       })}
       <div className="absolute grid place-content-center" style={{ left: L.exit.x, top: L.exit.y, width: L.exit.w, height: L.exit.h + 6, ...display, fontSize: 22, color: "#fff" }}>
         EXIT
@@ -1310,11 +1440,11 @@ const STATE_DOT = { busy: "#6aa645", idle: "#a3998f", setup: "#c0392b" };
 const STATE_WORD = { busy: "Working", idle: "Free", setup: "Needs you" };
 
 /** The nameplate on the front of a desk: who sits here, their job, and whether they're working, free or waiting on you (and on what). */
-function Plate({ x, y, name, title, color, status }: { x: number; y: number; name: string; title: string; color: string; status?: DeskStatus[string] }) {
+function Plate({ x, y = 0, top, name, title, color, status }: { x: number; y?: number; top?: number; name: string; title: string; color: string; status?: DeskStatus[string] }) {
   const done = status?.line.startsWith("Done today");
   const line = status?.line.replace(/^(Working on|Done today|Waiting on you): /, "").replace(/…$/, "");
   return (
-    <div className="absolute text-center border-[2.5px] px-1 py-0.5 shadow-[2px_2px_0_rgb(40_22_10/0.5)]" style={{ left: x - 70, top: y + 0.15 * T + 0.9 * T - 4, width: 140, background: "#f3e2c0", borderColor: LINE, color: LINE, zIndex: 2 }} title={status?.line}>
+    <div className="absolute text-center border-[2.5px] px-1 py-0.5 shadow-[2px_2px_0_rgb(40_22_10/0.5)]" style={{ left: x - 70, top: top ?? y + 0.15 * T + 0.9 * T - 4, width: 140, background: "#f3e2c0", borderColor: LINE, color: LINE, zIndex: 2 }} title={status?.line}>
       <div className="leading-none truncate" style={{ ...display, fontSize: 15 }}>{name}</div>
       <div className="mt-0.5 px-1" style={{ ...display, fontSize: 12, lineHeight: "14px", background: snapHex(shade(color, 0.35)) }}>{title}</div>
       {status && (

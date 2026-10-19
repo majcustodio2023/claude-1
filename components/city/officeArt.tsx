@@ -1,8 +1,9 @@
-// Each worker's private office inside a building, seen from above: walls all round with a
-// doorway onto the hall, a floor and rug in their job's style, and two props in the back
-// corners that say what they do (a ring light for social, a server rack for the app
-// builder…). The building's colour tints the walls, and each person's own seed shifts the
-// rug and floor, so no two offices look the same.
+// Each worker's private office inside a building, seen from above, like the offices along
+// a corridor in The Office: walls all round with a glass front, a door onto the hall, a
+// desk with a chair behind it and two visitor chairs in front, a rug, a couch or cabinet,
+// and three props that say what they do (a ring light for social, a server rack for the
+// app builder…). The job picks the floor, rug and wall colour; each person's own seed
+// shifts them, so no two offices look the same.
 
 import type { ReactNode } from "react";
 import { OFFICE_WALL, T, type Station } from "@/lib/city";
@@ -19,30 +20,32 @@ interface Theme {
   floor: Floor;
   floorC: string;
   rug: string[];
-  props: [Prop, Prop];
+  props: [Prop, Prop, Prop];
+  /** What stands along the left wall. */
+  side: "couch" | "shelf" | "armchair" | "table";
 }
 
 const THEME: Record<string, Theme> = {
-  scriptWriter: { floor: "plank", floorC: "#8a5a32", rug: ["#93392a", "#c0392b"], props: ["books", "typewriter"] },
-  videoScript: { floor: "plank", floorC: "#7d4c2e", rug: ["#34507a", "#4f78a8"], props: ["books", "lamp"] },
-  copyWriter: { floor: "plank", floorC: "#b07a48", rug: ["#2f8f83", "#4fb0a0"], props: ["cork", "plant"] },
-  imageCopy: { floor: "check", floorC: "#e8cfa2", rug: ["#e8a33d", "#f4c95d"], props: ["cork", "lamp"] },
-  imageAI: { floor: "concrete", floorC: "#a3998f", rug: ["#d9603b", "#f5cfc4"], props: ["easel", "paint"] },
-  storyboard: { floor: "plank", floorC: "#a86a43", rug: ["#5a4290", "#a996d6"], props: ["easel", "books"] },
-  videoAI: { floor: "tile", floorC: "#3d3a40", rug: ["#2c2148", "#4fb0a0"], props: ["rack", "cables"] },
-  videoEdit: { floor: "carpet", floorC: "#3a2a5a", rug: ["#2c2148", "#c0392b"], props: ["reels", "speaker"] },
-  social: { floor: "check", floorC: "#f5cfc4", rug: ["#e8a0a0", "#fbf1dc"], props: ["ringlight", "tripod"] },
-  content: { floor: "plank", floorC: "#b07a48", rug: ["#6aa645", "#b5d67a"], props: ["books", "beanbag"] },
-  insights: { floor: "tile", floorC: "#c8bdae", rug: ["#34507a", "#b4d0e6"], props: ["chart", "cabinet"] },
-  ads: { floor: "tile", floorC: "#c8bdae", rug: ["#c0392b", "#e8a33d"], props: ["chart", "safe"] },
-  adsTracker: { floor: "concrete", floorC: "#a3998f", rug: ["#3c7a2c", "#b5d67a"], props: ["whiteboard", "chart"] },
-  email: { floor: "plank", floorC: "#8a5a32", rug: ["#4f78a8", "#fbf1dc"], props: ["mailbox", "cabinet"] },
-  discord: { floor: "carpet", floorC: "#2c2148", rug: ["#5a4290", "#86d0bd"], props: ["headset", "speaker"] },
-  webinar: { floor: "carpet", floorC: "#5a2034", rug: ["#93392a", "#f4c95d"], props: ["mic", "ringlight"] },
-  app: { floor: "tile", floorC: "#3d3a40", rug: ["#23716a", "#86d0bd"], props: ["rack", "whiteboard"] },
-  store: { floor: "plank", floorC: "#a86a43", rug: ["#d9703b", "#f4c95d"], props: ["boxes", "safe"] },
-  funnel: { floor: "concrete", floorC: "#c8bdae", rug: ["#5a4290", "#e8a33d"], props: ["funnel", "plant"] },
-  custom: { floor: "plank", floorC: "#a86a43", rug: ["#6e4425", "#e8cfa2"], props: ["plant", "cabinet"] },
+  scriptWriter: { floor: "plank", floorC: "#8a5a32", rug: ["#93392a", "#c0392b"], props: ["books", "typewriter", "lamp"], side: "shelf" },
+  videoScript: { floor: "plank", floorC: "#7d4c2e", rug: ["#34507a", "#4f78a8"], props: ["books", "lamp", "cork"], side: "armchair" },
+  copyWriter: { floor: "plank", floorC: "#b07a48", rug: ["#2f8f83", "#4fb0a0"], props: ["cork", "plant", "typewriter"], side: "couch" },
+  imageCopy: { floor: "check", floorC: "#e8cfa2", rug: ["#e8a33d", "#f4c95d"], props: ["cork", "lamp", "easel"], side: "armchair" },
+  imageAI: { floor: "concrete", floorC: "#a3998f", rug: ["#d9603b", "#f5cfc4"], props: ["easel", "paint", "lamp"], side: "table" },
+  storyboard: { floor: "plank", floorC: "#a86a43", rug: ["#5a4290", "#a996d6"], props: ["easel", "books", "cork"], side: "table" },
+  videoAI: { floor: "tile", floorC: "#3d3a40", rug: ["#2c2148", "#4fb0a0"], props: ["rack", "cables", "speaker"], side: "shelf" },
+  videoEdit: { floor: "carpet", floorC: "#3a2a5a", rug: ["#2c2148", "#c0392b"], props: ["reels", "speaker", "rack"], side: "couch" },
+  social: { floor: "check", floorC: "#f5cfc4", rug: ["#e8a0a0", "#fbf1dc"], props: ["ringlight", "tripod", "plant"], side: "couch" },
+  content: { floor: "plank", floorC: "#b07a48", rug: ["#6aa645", "#b5d67a"], props: ["books", "beanbag", "plant"], side: "armchair" },
+  insights: { floor: "tile", floorC: "#c8bdae", rug: ["#34507a", "#b4d0e6"], props: ["chart", "cabinet", "whiteboard"], side: "table" },
+  ads: { floor: "tile", floorC: "#c8bdae", rug: ["#c0392b", "#e8a33d"], props: ["chart", "safe", "whiteboard"], side: "couch" },
+  adsTracker: { floor: "concrete", floorC: "#a3998f", rug: ["#3c7a2c", "#b5d67a"], props: ["whiteboard", "chart", "cabinet"], side: "table" },
+  email: { floor: "plank", floorC: "#8a5a32", rug: ["#4f78a8", "#fbf1dc"], props: ["mailbox", "cabinet", "plant"], side: "shelf" },
+  discord: { floor: "carpet", floorC: "#2c2148", rug: ["#5a4290", "#86d0bd"], props: ["headset", "speaker", "beanbag"], side: "couch" },
+  webinar: { floor: "carpet", floorC: "#5a2034", rug: ["#93392a", "#f4c95d"], props: ["mic", "ringlight", "speaker"], side: "armchair" },
+  app: { floor: "tile", floorC: "#3d3a40", rug: ["#23716a", "#86d0bd"], props: ["rack", "whiteboard", "cables"], side: "table" },
+  store: { floor: "plank", floorC: "#a86a43", rug: ["#d9703b", "#f4c95d"], props: ["boxes", "safe", "cabinet"], side: "shelf" },
+  funnel: { floor: "concrete", floorC: "#c8bdae", rug: ["#5a4290", "#e8a33d"], props: ["funnel", "plant", "whiteboard"], side: "couch" },
+  custom: { floor: "plank", floorC: "#a86a43", rug: ["#6e4425", "#e8cfa2"], props: ["plant", "cabinet", "books"], side: "armchair" },
 };
 
 export const officeTheme = (role: string): Theme => THEME[role] ?? THEME.custom;
@@ -324,23 +327,90 @@ function PropArt({ kind, x, y, seed }: { kind: Prop; x: number; y: number; seed:
   );
 }
 
-/** A worker's office: floor, rug, the two job props and its four walls with a doorway at the top. */
-export function Office({ st, role, buildingColor, seed }: { st: Station; role: string; buildingColor: string; seed: number }) {
+/** Furniture along the office's left wall, about 30 wide and 70 tall. */
+function Side({ kind, x, y, c }: { kind: Theme["side"]; x: number; y: number; c: string }) {
+  let body: ReactNode;
+  if (kind === "couch")
+    body = (
+      <>
+        <rect x="0" y="0" width="30" height="72" rx="6" fill={shade(c, -0.15)} />
+        <rect x="10" y="6" width="20" height="60" rx="4" fill={c} />
+        <path d="M10 36 h20" strokeWidth="2" />
+        <rect x="14" y="12" width="12" height="14" rx="3" fill="#fbf1dc" strokeWidth="2" />
+      </>
+    );
+  else if (kind === "shelf")
+    body = (
+      <>
+        <rect x="0" y="0" width="24" height="72" fill="#6e4425" />
+        {[0, 1, 2, 3].map((i) => (
+          <g key={i}>
+            <path d={`M0 ${16 + i * 16} h24`} strokeWidth="2" />
+            {[0, 1, 2].map((j) => (
+              <rect key={j} x={4 + j * 6} y={4 + i * 16} width="5" height="11" fill={["#c0392b", "#2f8f83", "#e8a33d", "#5a4290"][(i + j) % 4]} strokeWidth="1.2" />
+            ))}
+          </g>
+        ))}
+      </>
+    );
+  else if (kind === "armchair")
+    body = (
+      <>
+        <rect x="0" y="10" width="32" height="34" rx="6" fill={shade(c, -0.15)} />
+        <rect x="8" y="16" width="20" height="22" rx="4" fill={c} />
+        <circle cx="16" cy="60" r="9" fill="#a86a43" />
+        <rect x="11" y="55" width="10" height="7" fill="#fbf1dc" strokeWidth="1.5" />
+      </>
+    );
+  else
+    body = (
+      <>
+        <rect x="0" y="6" width="30" height="58" rx="4" fill="#a86a43" />
+        <rect x="5" y="12" width="20" height="14" fill="#fbf1dc" strokeWidth="1.5" transform="rotate(-6 15 19)" />
+        <rect x="8" y="34" width="14" height="18" fill={c} strokeWidth="1.5" />
+      </>
+    );
+  return (
+    <g transform={`translate(${x} ${y})`} stroke={LINE} strokeWidth="2.5" strokeLinejoin="round">
+      {body}
+    </g>
+  );
+}
+
+/** A small office chair seen from above, back to the top unless `facing` is "up". */
+function Chair({ x, y, c, facing = "down" }: { x: number; y: number; c: string; facing?: "up" | "down" }) {
+  const back = facing === "down" ? -12 : 10;
+  return (
+    <g transform={`translate(${x} ${y})`} stroke={LINE} strokeWidth="2.5" strokeLinejoin="round">
+      <rect x="-12" y="-10" width="24" height="20" rx="5" fill={c} />
+      <rect x="-13" y={back} width="26" height="6" rx="3" fill={shade(c, -0.25)} />
+    </g>
+  );
+}
+
+/** A worker's office: floor, rug, desk chairs, furniture and job props, glass-fronted walls and an open door. */
+export function Office({ st, role, accent, seed }: { st: Station; role: string; accent: string; seed: number }) {
   const o = st.office;
   const d = st.door;
   const t = officeTheme(role);
   const r = rng(seed);
   const k = OFFICE_WALL;
-  const wallC = shade(buildingColor, 0.25);
-  const wallTop = shade(buildingColor, -0.35);
+  const wallC = shade(accent, 0.2);
+  const wallTop = shade(accent, -0.35);
   const id = `of-${st.staffId}`;
-  const rugC = t.rug[0];
+  const rugC = shade(t.rug[0], (r() - 0.5) * 0.15);
   const rugTrim = t.rug[1];
-  const rugW = o.w - 2 * k - 20 - Math.floor(r() * 3) * 6;
-  const rugH = 2.1 * T;
-  const rugX = o.x + o.w / 2 - rugW / 2;
-  const rugY = o.y + k + 0.55 * T;
+  const rugW = 4.2 * T + Math.floor(r() * 3) * 8;
+  const rugH = 2.2 * T;
+  const rugX = st.x - rugW / 2;
+  const rugY = st.desk.y + st.desk.h + 6;
   const stripes = Math.floor(r() * 3);
+  const chairC = shade(t.rug[0], -0.1);
+  const left = o.x + k;
+  const right = o.x + o.w - k;
+  const top = o.y + k;
+  // the glass panel along the front (top) wall, between two solid ends
+  const glass = { x: o.x + 0.9 * T, w: o.w - 1.8 * T };
   return (
     <g>
       <defs>
@@ -352,22 +422,35 @@ export function Office({ st, role, buildingColor, seed }: { st: Station; role: s
         <rect x={rugX + 6} y={rugY + 6} width={rugW - 12} height={rugH - 12} fill="none" stroke={rugTrim} strokeWidth="3" strokeDasharray={stripes === 1 ? "8 6" : undefined} />
         {stripes === 2 && <path d={`M${rugX + 6} ${rugY + rugH / 2} H${rugX + rugW - 6}`} stroke={rugTrim} strokeWidth="3" />}
       </g>
-      <PropArt kind={t.props[0]} x={o.x + k + 4} y={o.y + k + 6} seed={seed + 1} />
-      <PropArt kind={t.props[1]} x={o.x + o.w - k - 44} y={o.y + k + 6} seed={seed + 2} />
-      {/* walls: a coloured cap with a darker top edge, open at the doorway */}
+      {/* the worker's chair behind the desk, two visitor chairs in front of it */}
+      <Chair x={st.x} y={st.y - 6} c={chairC} />
+      <Chair x={st.x - 0.75 * T} y={st.desk.y + st.desk.h + 0.75 * T} c="#a86a43" facing="up" />
+      <Chair x={st.x + 0.75 * T} y={st.desk.y + st.desk.h + 0.75 * T} c="#a86a43" facing="up" />
+      <PropArt kind={t.props[0]} x={left + 6} y={top + 6} seed={seed + 1} />
+      <PropArt kind={t.props[1]} x={right - 46} y={top + 6} seed={seed + 2} />
+      <PropArt kind={t.props[2]} x={right - 46} y={top + 2.1 * T} seed={seed + 3} />
+      <Side kind={t.side} x={left + 4} y={top + 1.9 * T} c={t.rug[0]} />
+      {right - (d.x + d.w) > 34 && <Plant x={(d.x + d.w + right) / 2} y={o.y + o.h - k - 6} s={0.75} seed={seed} />}
+      {/* walls: a coloured cap with a darker top edge, glass along the front, open at the door */}
       <g stroke={LINE} strokeWidth="3" strokeLinejoin="round">
         {[
-          { x: o.x, y: o.y, w: d.x - o.x, h: k },
-          { x: d.x + d.w, y: o.y, w: o.x + o.w - d.x - d.w, h: k },
+          { x: o.x, y: o.y, w: o.w, h: k },
           { x: o.x, y: o.y, w: k, h: o.h },
           { x: o.x + o.w - k, y: o.y, w: k, h: o.h },
-          { x: o.x, y: o.y + o.h - k, w: o.w, h: k },
+          { x: o.x, y: o.y + o.h - k, w: d.x - o.x, h: k },
+          { x: d.x + d.w, y: o.y + o.h - k, w: o.x + o.w - d.x - d.w, h: k },
         ].map((w, i) => (
           <rect key={i} x={w.x} y={w.y} width={w.w} height={w.h} fill={wallC} />
         ))}
-        <path d={`M${o.x} ${o.y + 2} H${d.x} M${d.x + d.w} ${o.y + 2} H${o.x + o.w}`} stroke={wallTop} strokeWidth="3" />
-        {/* a doormat in the doorway */}
-        <rect x={d.x + 8} y={o.y + k + 2} width={d.w - 16} height="10" fill={rugTrim} strokeWidth="2" />
+        <rect x={glass.x} y={o.y + 2} width={glass.w} height={k - 4} fill="#b4d0e6" strokeWidth="2" />
+        <path d={`M${glass.x + 8} ${o.y + k / 2} h${glass.w * 0.3}`} stroke="#fbf1dc" strokeWidth="2" />
+        {Array.from({ length: 3 }, (_, i) => (
+          <path key={i} d={`M${glass.x + ((i + 1) * glass.w) / 4} ${o.y + 2} v${k - 4}`} strokeWidth="2" />
+        ))}
+        <path d={`M${o.x} ${o.y + o.h - k + 2} H${d.x} M${d.x + d.w} ${o.y + o.h - k + 2} H${o.x + o.w}`} stroke={wallTop} strokeWidth="3" />
+        {/* the door, swung open into the room, and a mat outside it */}
+        <rect x={d.x + d.w - 7} y={d.y - d.w + 8} width="7" height={d.w - 8} fill="#8a5a32" strokeWidth="2.5" />
+        <rect x={d.x + 6} y={d.y + k + 2} width={d.w - 12} height="10" fill={rugTrim} strokeWidth="2" />
       </g>
     </g>
   );
