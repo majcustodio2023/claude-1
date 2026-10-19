@@ -251,7 +251,12 @@ export interface BossSpec {
   tier: number;
   stats: Stats;
   moves: BossMoveId[];
+  /** Its own names for moves (practice monsters bite and splat instead of sending invoices). */
+  names?: Partial<Record<BossMoveId, string>>;
 }
+
+/** What a move is called for this foe. */
+export const moveName = (spec: Pick<BossSpec, "names">, id: BossMoveId) => spec.names?.[id] ?? BOSS_MOVES[id].name;
 
 function hash(s: string): number {
   let h = 2166136261;
@@ -309,6 +314,7 @@ export interface BossSide {
   statuses: Timed<BossStatus>[];
   defBuff: { pct: number; turns: number } | null;
   moves: BossMoveId[];
+  names?: Partial<Record<BossMoveId, string>>;
   /** What it will do next round (shown to the player). */
   intent: BossMoveId;
   enraged: boolean;
@@ -345,6 +351,7 @@ export function startBattle(loadout: Loadout, spec: BossSpec): Battle {
     statuses: [],
     defBuff: null,
     moves: spec.moves,
+    names: spec.names,
     intent: "slam",
     enraged: false,
     lastHeal: -9,
@@ -472,7 +479,7 @@ function bossAct(b: Battle, ev: BattleEvent[], rand: () => number, guarding: boo
     return;
   }
   const move = BOSS_MOVES[boss.intent];
-  ev.push({ kind: "act", who: "boss", name: move.name, fx: move.fx, special: move.id === "unleash" || move.id === "charge" });
+  ev.push({ kind: "act", who: "boss", name: moveName(boss, move.id), fx: move.fx, special: move.id === "unleash" || move.id === "charge" });
   if (move.heal) {
     const got = Math.min(Math.round(boss.maxHp * move.heal), boss.maxHp - boss.hp);
     boss.hp += got;
@@ -529,7 +536,8 @@ function chooseIntent(b: Battle, rand: () => number): BossMoveId {
   const boss = b.boss;
   if (boss.intent === "charge") return "unleash";
   const every = boss.enraged ? 3 : 4;
-  if (b.round % every === 0) return "charge";
+  // Foes without a charge move (the practice dummy) never wind up a big hit.
+  if (b.round % every === 0 && boss.moves.includes("charge")) return "charge";
   const opts = boss.moves.filter((m) => m !== "charge" && m !== "unleash");
   const usable = opts.filter((m) => {
     if (m === "heal") return boss.hp < boss.maxHp * 0.6 && b.round - boss.lastHeal >= 4;

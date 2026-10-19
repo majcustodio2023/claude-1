@@ -19,6 +19,10 @@ import { buildingReport, missions } from "@/lib/cityReport";
 import { WRITER_PROMPTS } from "@/lib/cityPrompts";
 import { NOT_LIVE, dueJob, jobsOf, workOf } from "@/lib/cityJobs";
 import { onRunning, runJob, runningJobs } from "./workRunner";
+import { allOutputs } from "@/lib/cityOutputs";
+import { PRACTICE_WEAPONS, foeById } from "@/lib/training";
+import { FoePortrait } from "./trainingArt";
+import { itemPowerText } from "@/lib/battle";
 import { GATE, SHOPKEEPERS, STAFF_CHATS, citizenById, citizenStart, questById, questProgress, questState } from "@/lib/cityLore";
 import { ITEMS, RARITY, SLOT_LABEL } from "@/lib/items";
 import { ITEM_POWER } from "@/lib/battle";
@@ -37,7 +41,9 @@ export type Talk =
   | { kind: "kit" }
   | { kind: "citizen"; id: string }
   | { kind: "gate" }
-  | { kind: "shop"; buildingId: string };
+  | { kind: "shop"; buildingId: string }
+  | { kind: "rack" }
+  | { kind: "foe"; id: string };
 
 type Page = "greet" | "jobs" | "panel" | "setup" | "work" | "chat" | "news" | `reply:${number}` | `node:${string}`;
 
@@ -60,7 +66,7 @@ function useTyped(text: string, voice: number) {
   return { shown: text.slice(0, n), done: n >= text.length, skip: () => setN(text.length) };
 }
 
-export default function Dialogue({ talk, onClose, goTo }: { talk: Talk; onClose: () => void; goTo: (tab: string) => void }) {
+export default function Dialogue({ talk, onClose, goTo, onOutputs, onSpar }: { talk: Talk; onClose: () => void; goTo: (tab: string) => void; onOutputs?: (staffId: string) => void; onSpar?: (foeId: string) => void }) {
   const { data, update, month, today } = useTracker();
   const citizen = talk.kind === "citizen" ? citizenById(talk.id) : undefined;
   const [page, setPage] = useState<Page>(talk.kind === "board" || talk.kind === "screen" ? "panel" : citizen ? `node:${citizenStart(data, citizen)}` : talk.kind === "gate" ? "node:0" : "greet");
@@ -119,6 +125,18 @@ export default function Dialogue({ talk, onClose, goTo }: { talk: Talk; onClose:
       text = k.greet;
       choices = [{ label: "Show me the goods", go: () => setPage("panel"), primary: true }, { label: "Heard any news?", go: () => setPage("news") }, bye];
     }
+  } else if (talk.kind === "rack") {
+    const w = data.city?.practiceWeapon ?? "";
+    speaker = { id: "rack", name: "Weapon rack", title: "Training Hall", color: "#e8a33d", portrait: <Icon name="swords" size={80} className="text-hero" /> };
+    text = `Take any weapon for practice. It's only for sparring here; your real gear stays as it is.${w ? ` You're holding the ${ITEMS.find((i) => i.id === w)?.name.toLowerCase()}.` : ""}`;
+    panel = <RackPanel />;
+    choices = [bye];
+  } else if (talk.kind === "foe") {
+    const f = foeById(talk.id);
+    const w = data.city?.practiceWeapon ?? "";
+    speaker = { id: `foe-${talk.id}`, name: f?.name ?? "Monster", title: `Practice · ${f?.level ?? ""}`, color: talk.id === "dummy" ? "#b5d67a" : talk.id === "slime" ? "#f4c95d" : "#e8a0a0", portrait: f ? <FoePortrait id={f.id} size={96} /> : null };
+    text = `${f?.about ?? ""} ${w ? `You'll fight with the ${ITEMS.find((i) => i.id === w)?.name.toLowerCase()} from the rack.` : "You'll fight with your own gear."} Practice never costs or pays coins.`;
+    choices = f && onSpar ? [{ label: "Spar!", go: () => onSpar(f.id), primary: true }, bye] : [bye];
   } else if (talk.kind === "kit") {
     const all = data.city?.staff ?? [];
     const waiting = all.filter((s) => setupProgress(s, keys).missing.length > 0).length;
@@ -128,6 +146,7 @@ export default function Dialogue({ talk, onClose, goTo }: { talk: Talk; onClose:
   } else if (talk.kind === "staff" && staff && building) {
     const role = roleOf(staff);
     const prog = setupProgress(staff, keys);
+    const made = allOutputs(data).filter((o) => o.staffId === staff.id && !o.queued).length;
     speaker = { id: staff.id, name: staff.name, title: titleOf(staff), color: role.color, portrait: <Hero look={staff.look} items={[]} size={112} mood="ready" /> };
     if (page === "greet") {
       text = `${say(role.greet, place)} ${prog.missing.length ? `I'm waiting on ${prog.missing.length} thing${prog.missing.length === 1 ? "" : "s"} from you before I can start.` : role.needs.length ? "I'm all set up." : ""}`.trim();
@@ -136,6 +155,7 @@ export default function Dialogue({ talk, onClose, goTo }: { talk: Talk; onClose:
           ? { label: "Here's what I need", go: () => setPage("setup"), primary: true }
           : { label: role.action, go: () => setPage(role.panel === "setup" ? "setup" : role.panel === "work" ? "work" : "panel"), primary: true },
         ...(jobsOf(staff).length && role.panel !== "work" ? [{ label: "My work", go: () => setPage("work") }] : []),
+        ...(made && onOutputs ? [{ label: `What I made (${made})`, go: () => onOutputs(staff.id) }] : []),
         { label: "What do you do?", go: () => setPage("jobs") },
         { label: "How's it going?", go: () => setPage("chat") },
         ...(role.needs.length && role.panel !== "setup" ? [{ label: "My setup", go: () => setPage("setup") }] : []),
@@ -718,7 +738,7 @@ function WriterPanel({ staff }: { staff: CityStaff }) {
                 {o.target && <span className="text-sm font-bold text-muted truncate">For: {o.target}</span>}
                 {!o.queued && <Btn className="ml-auto text-sm py-1" onClick={() => copy(o.id, o.text)}>{copied === o.id ? "Copied" : "Copy"}</Btn>}
               </div>
-              <div className="text-base whitespace-pre-wrap leading-relaxed">{o.queued ? `${live.name} is writing this through your Claude account. It lands here within the hour.` : o.text}</div>
+              <div className="text-base whitespace-pre-wrap leading-relaxed">{o.queued ? `${live.name} is writing this through your Claude account. Within the hour it shows up here and in Outputs (top right of the city).` : o.text}</div>
             </div>
           ))}
         </div>
@@ -1014,7 +1034,7 @@ function WorkPanel({ staff, goTo }: { staff: CityStaff; goTo: (t: string) => voi
                 <>
                   {w.input && <p className="text-sm text-muted mt-1 truncate">From: {w.input}</p>}
                   {w.status === "queued" ? (
-                    <p className="text-base font-bold mt-2">{live.name} is working on this through your Claude account. It lands here within the hour, no need to wait around.</p>
+                    <p className="text-base font-bold mt-2">{live.name} is working on this through your Claude account. Within the hour it shows up here and in Outputs (top right of the city), so no need to wait around.</p>
                   ) : (
                     <div className="text-base whitespace-pre-wrap leading-relaxed mt-2 max-h-96 overflow-y-auto">{w.text}</div>
                   )}
@@ -1330,6 +1350,45 @@ function ShopPanel({ slots }: { slots: string[] }) {
                 </div>
               </div>
             </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/** The Training Hall's weapon rack: borrow a weapon for practice fights. */
+function RackPanel() {
+  const { data, update } = useTracker();
+  const cur = data.city?.practiceWeapon ?? "";
+  const own = data.game?.equipped?.weapon;
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-3">
+        <Icon name="swords" size={26} className="text-gold" />
+        <h3 className="font-display text-2xl tracking-wide">Practice weapons</h3>
+      </div>
+      <div className="grid sm:grid-cols-2 gap-2">
+        {PRACTICE_WEAPONS.map((id) => {
+          const it = id ? ITEMS.find((i) => i.id === id) : undefined;
+          const p = id ? itemPowerText(id) : null;
+          const on = cur === id;
+          return (
+            <button
+              key={id || "own"}
+              type="button"
+              aria-pressed={on}
+              onClick={() => (update((d) => void (d.city!.practiceWeapon = id || undefined)), sfx("click"))}
+              className={`text-left p-3 border-[3px] ${on ? "border-gold bg-gold/15" : "border-outline bg-card-2"}`}
+            >
+              <div className="flex items-center gap-3">
+                <Hero size={64} items={id ? [id] : own ? [own] : []} gear={[]} />
+                <div className="min-w-0">
+                  <div className="font-bold text-lg">{it?.name ?? "My own gear"}</div>
+                  <div className="text-sm font-bold text-muted">{p ? `${p.stats}${p.extra ? ` · ${p.extra}` : ""}` : own ? `Whatever you have on now` : "Bare hands and your outfit"}</div>
+                </div>
+              </div>
+            </button>
           );
         })}
       </div>

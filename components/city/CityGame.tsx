@@ -10,6 +10,11 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTracker } from "../App";
 import { Icon } from "../icons";
 import { Btn } from "../ui";
+import Outputs from "./Outputs";
+import BossFight from "../BossFight";
+import { TrainingArt, TrainingLabels } from "./trainingArt";
+import { foeById, layoutTraining } from "@/lib/training";
+import { newOutputs } from "@/lib/cityOutputs";
 import Dialogue, { type Talk } from "./Dialogue";
 import Decorate from "./Decorate";
 import { CityArt, CityGlow, CityLabels, InteriorArt, InteriorLabels, type DeskStatus, type HouseInfo, type InteriorInfo } from "./art";
@@ -89,6 +94,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   const [decorating, setDecorating] = useState(false);
   const [picked, setPicked] = useState("");
   const [badSpot, setBadSpot] = useState(false);
+  const [outputs, setOutputs] = useState<{ staffId?: string } | null>(null);
 
   const buildings = visibleBuildings(data);
   const bIds = buildings.map((b) => b.id).join(",");
@@ -100,15 +106,18 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
 
   const inside = scene.type === "inside" ? buildings.find((b) => b.id === scene.id) : undefined;
   const atHome = inside?.kind === "home";
+  const atTraining = inside?.kind === "training";
+  const trainingLayout = useMemo(() => (atTraining ? layoutTraining() : null), [atTraining]);
+  const [spar, setSpar] = useState("");
   const furnKey = atHome ? JSON.stringify(furnitureOf(inside!)) : "";
   const homeLayout = useMemo(() => (furnKey ? layoutHome(JSON.parse(furnKey)) : null), [furnKey]);
   const insideStaff = inside ? staff.filter((s) => s.buildingId === inside.id) : [];
   const reporterId = insideStaff.find((s) => s.role === "reporter")?.id;
   const roomKey = (inside?.rooms ?? []).map((r) => r.id).join(",");
   const deskIds = insideStaff.filter((s) => s.id !== reporterId).map((s) => s.id).join(",");
-  const interior = useMemo(() => (scene.type === "inside" && !atHome ? layoutInterior(deskIds ? deskIds.split(",") : [], reporterId, roomKey ? roomKey.split(",") : []) : null), [scene, deskIds, reporterId, roomKey, atHome]);
+  const interior = useMemo(() => (scene.type === "inside" && !atHome && !atTraining ? layoutInterior(deskIds ? deskIds.split(",") : [], reporterId, roomKey ? roomKey.split(",") : []) : null), [scene, deskIds, reporterId, roomKey, atHome, atTraining]);
   /** The room you're in (an office or your home): its size, walls and way out. */
-  const room = interior ?? homeLayout;
+  const room = interior ?? homeLayout ?? trainingLayout;
 
   const W = room?.w ?? cityLayout.w;
   const H = room?.h ?? cityLayout.h;
@@ -129,6 +138,8 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   const doorLock = useRef(0);
   const decoRef = useRef(false);
   decoRef.current = decorating;
+  const outRef = useRef<(() => void) | null>(null);
+  outRef.current = outputs ? () => setOutputs(null) : spar ? () => setSpar("") : null;
   const spawnInside = useRef(false);
   const zoomRef = useRef(1);
   const cam = useRef({ x: 0, y: 0 });
@@ -163,8 +174,8 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   const nameOf = useCallback((id: string) => buildingName(data, buildings.find((b) => b.id === id) ?? buildings[0]), [data, bIds]);
   const shopIds = buildings.filter(isShop).map((b) => b.id);
   const kinds = useMemo(() => new Map(buildings.map((b) => [b.id, b.kind as string])), [bIds]);
-  const latest = useRef({ staffById, nameOf, keys, cityLayout, interior, room, homeLayout, shopIds, work, kinds });
-  latest.current = { staffById, nameOf, keys, cityLayout, interior, room, homeLayout, shopIds, work, kinds };
+  const latest = useRef({ staffById, nameOf, keys, cityLayout, interior, room, homeLayout, trainingLayout, shopIds, work, kinds });
+  latest.current = { staffById, nameOf, keys, cityLayout, interior, room, homeLayout, trainingLayout, shopIds, work, kinds };
 
   const switchScene = useCallback((next: Scene, at?: Pt) => {
     setFade((f) => f + 1);
@@ -263,7 +274,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
           a.act = w.line;
           if (w.state === "busy" && busyDesks.length && rand() < 0.4) {
             const st = pick(busyDesks, rand);
-            a.path = via(a, { x: st.x + 0.9 * T, y: st.y });
+            a.path = via(a, { x: st.x + 0.55 * T, y: st.y });
             a.act = `Collecting an update from ${latest.current.staffById.get(st.staffId)?.name ?? "the team"}`;
             a.onArrive = () => {
               a.wait = 3;
@@ -303,7 +314,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         else if (r < 0.55) away({ x: I.progress.x + T + rand() * (I.progress.w - 2 * T), y: I.progress.y + 0.7 * T + rand() * T }, "Posting an update", 3 + rand() * 2);
         else if (r < 0.7 && busyMates.length) {
           const c = pick(busyMates, rand);
-          away({ x: c.x + 0.9 * T, y: c.y + 4 }, `Asking ${latest.current.staffById.get(c.staffId)?.name ?? "a teammate"} something`, 4 + rand() * 2);
+          away({ x: c.x + 0.55 * T, y: c.y + 4 }, `Asking ${latest.current.staffById.get(c.staffId)?.name ?? "a teammate"} something`, 4 + rand() * 2);
         } else a.wait = 15 + rand() * 20;
       };
       for (const s of insideNow) {
@@ -354,11 +365,12 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
       const k = e.key.toLowerCase();
       if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(k)) e.preventDefault();
       if (k === "escape") {
-        if (talkRef.current) setTalk(null);
+        if (outRef.current) outRef.current();
+        else if (talkRef.current) setTalk(null);
         else setTravel(false);
         return;
       }
-      if ((k === " " || k === "enter" || k === "e") && !talkRef.current && !decoRef.current) {
+      if ((k === " " || k === "enter" || k === "e") && !talkRef.current && !decoRef.current && !outRef.current) {
         nearAct.current?.();
         return;
       }
@@ -390,7 +402,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
       const solids = scene.type === "city" ? L.cityLayout.solids : L.room?.solids ?? [];
       const P = player.current;
       // player (stands still while you talk or decorate)
-      if (!talkRef.current && !decoRef.current) {
+      if (!talkRef.current && !decoRef.current && !outRef.current) {
         const k = pressed.current;
         let dx = (k.has("arrowright") || k.has("d") ? 1 : 0) - (k.has("arrowleft") || k.has("a") ? 1 : 0) + joy.current.x;
         let dy = (k.has("arrowdown") || k.has("s") ? 1 : 0) - (k.has("arrowup") || k.has("w") ? 1 : 0) + joy.current.y;
@@ -563,6 +575,17 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
             if (room) best = { key: `r:${room.id}`, label: "Look around this room", go: () => setTalk({ kind: "room", buildingId: scene.id, roomId: room.id }), d: 0 };
           }
         }
+        if (!best && scene.type === "inside" && L.trainingLayout) {
+          // Training Hall: the weapon rack, or step into a ring to spar with its monster.
+          const TL = L.trainingLayout;
+          const pt = { x: P.x - 1, y: P.y - 1, w: 2, h: 2 };
+          if (hits(pt, { x: TL.rack.x - 10, y: TL.rack.y, w: TL.rack.w + 20, h: TL.rack.h + 1.2 * T })) best = { key: "rack", label: "Take a practice weapon", go: () => setTalk({ kind: "rack" }), d: 0 };
+          else {
+            const r = TL.rings.find((x) => hits(pt, x.ring));
+            const f = r && foeById(r.id);
+            if (f) best = { key: `f:${f.id}`, label: `Spar with the ${f.name}`, go: () => setTalk({ kind: "foe", id: f.id }), d: 0 };
+          }
+        }
         if (!best && scene.type === "inside" && L.homeLayout) {
           // Walk up to any piece of furniture to start decorating.
           const near = L.homeLayout.items.find((f) => !FURNITURE[f.kind].walk && hits({ x: P.x - 30, y: P.y - 30, w: 60, h: 50 }, f.rect));
@@ -638,6 +661,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
     const art =
       scene.type === "city" ? <CityArt layout={cityLayout} houses={housesMemo} />
       : homeLayout ? <HomeArt layout={homeLayout} />
+      : trainingLayout ? <TrainingArt layout={trainingLayout} />
       : interior && interiorMemo ? <InteriorArt layout={interior} info={interiorMemo} />
       : null;
     if (!art) return setSceneryUrl("");
@@ -652,7 +676,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
       gone = true;
       if (url) setTimeout(() => URL.revokeObjectURL(url), 2000);
     };
-  }, [scene.type, cityLayout, housesMemo, interior, interiorMemo, homeLayout, W, H]);
+  }, [scene.type, cityLayout, housesMemo, interior, interiorMemo, homeLayout, trainingLayout, W, H]);
 
   const playerUrl = sheetUrl(data.game?.look);
 
@@ -660,6 +684,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   const tint = scene.type === "inside" ? null : hour >= 19 || hour < 5 ? "night" : hour >= 17 || hour < 7 ? "dusk" : null;
   const sceneStaff = scene.type === "city" ? staff : insideStaff;
   const nearLabel = near.split("|")[1] ?? "";
+  const freshOutputs = newOutputs(data);
   const counts = { busy: 0, idle: 0, setup: 0 };
   for (const s of staff) counts[work.get(s.id)?.state ?? "idle"]++;
 
@@ -673,6 +698,8 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
             <CityLabels layout={cityLayout} houses={housesMemo} cityName={city.name} />
           ) : homeLayout ? (
             <HomeLabels layout={homeLayout} selected={decorating ? picked : undefined} problem={badSpot} />
+          ) : trainingLayout ? (
+            <TrainingLabels layout={trainingLayout} />
           ) : (
             interior && interiorMemo && <InteriorLabels layout={interior} info={interiorMemo} status={deskStatus} />
           )}
@@ -719,6 +746,10 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
               <Icon name="palette" size={20} /> Decorate
             </Btn>
           )}
+          <Btn onClick={() => (setTalk(null), setOutputs({}))} className="relative flex items-center gap-1.5" title="Everything your staff have made">
+            <Icon name="scroll" size={20} /> <span className="max-sm:hidden">Outputs</span>
+            {freshOutputs > 0 && <span className="absolute -top-2.5 -right-2.5 min-w-6 h-6 px-1 grid place-content-center bg-hero text-[#fff4e2] border-2 border-outline text-sm font-extrabold">{freshOutputs}</span>}
+          </Btn>
           <Btn onClick={() => setTravel((v) => !v)} className="flex items-center gap-1.5">
             <Icon name="pin" size={20} /> <span className="max-sm:hidden">Go to</span>
           </Btn>
@@ -775,7 +806,9 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         />
       )}
 
-      {talk && <Dialogue talk={talk} onClose={() => setTalk(null)} goTo={goTo} />}
+      {talk && <Dialogue talk={talk} onClose={() => setTalk(null)} goTo={goTo} onOutputs={(staffId) => (setTalk(null), setOutputs({ staffId }))} onSpar={(id) => (setTalk(null), setSpar(id))} />}
+      {spar && foeById(spar) && <BossFight foe={foeById(spar)} weapon={city.practiceWeapon ?? ""} onClose={() => setSpar("")} />}
+      {outputs && <Outputs staffId={outputs.staffId} onClose={() => setOutputs(null)} />}
     </div>
     </PixelForce.Provider>
   );

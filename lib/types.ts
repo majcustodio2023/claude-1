@@ -502,7 +502,7 @@ export type StaffRoleId =
   | "reporter" | "social" | "content" | "insights" | "ads" | "email" | "discord" | "webinar" | "app" | "store"
   | "videoAI" | "videoEdit" | "funnel" | "adsTracker" | "imageAI" | "scriptWriter" | "copyWriter" | "imageCopy" | "storyboard" | "videoScript" | "custom";
 
-export type BuildingKind = "client" | "video" | "acquisition" | "creative" | "weapons" | "armor" | "home" | "custom";
+export type BuildingKind = "client" | "video" | "acquisition" | "creative" | "weapons" | "armor" | "home" | "training" | "custom";
 
 /** A piece of furniture in the player's home, on the room's tile grid. */
 export interface PlacedFurniture {
@@ -625,4 +625,8 @@ export interface CityState {
   merged?: boolean;
   /** Set once the town was moved to Dawnterra (renamed studios, new video staff). */
   dawnterra?: boolean;
+  /** Newest output you've seen in the Outputs cabinet (ISO time); newer ones get a badge. */
+  outputsSeen?: string;
+  /** The Training Hall weapon you last took off the rack ("" or unset = your own gear). */
+  practiceWeapon?: string;
 }

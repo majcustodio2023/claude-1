@@ -15,10 +15,12 @@ import { shade } from "../characters";
 import { Avatar } from "../avatars";
 import { Icon } from "../icons";
 import { snapHex } from "@/lib/palette";
+import { Office } from "./officeArt";
 
 /** Outline colour: a warm dark plum, like ink on paper. */
 export const LINE = "#2b1d2e";
-const KIND_ICON: Record<string, string> = { video: "film", acquisition: "megaphone", creative: "palette", weapons: "swords", armor: "shield", custom: "home" };
+
+const KIND_ICON: Record<string, string> = { video: "film", acquisition: "megaphone", creative: "palette", weapons: "swords", armor: "shield", training: "swords", custom: "home" };
 const SW = 4;
 
 export interface HouseInfo {
@@ -358,7 +360,7 @@ function RoofClutter({ r, roofH, id, kind, roof }: { r: Rect; roofH: number; id:
   return <g>{items}</g>;
 }
 
-const SIGN: Record<string, string> = { client: "#ffd166", video: "#ffd166", acquisition: "#ff6b6b", creative: "#e9d5ff", weapons: "#ffd166", armor: "#7cc6c0", custom: "#f6e7cf" };
+const SIGN: Record<string, string> = { client: "#ffd166", video: "#ffd166", acquisition: "#ff6b6b", creative: "#e9d5ff", weapons: "#ffd166", armor: "#7cc6c0", training: "#f4c95d", custom: "#f6e7cf" };
 
 /** How much of a building's height is roof (seen from above). The Ad Creative Studio has two storeys, so less roof. */
 export const roofFrac = (kind: string) => (kind === "creative" ? 0.3 : 0.44);
@@ -776,7 +778,7 @@ export const CityLabels = memo(function CityLabels({ layout, houses, cityName }:
               </div>
             )}
             <div className="absolute text-center" style={{ left: r.x + r.w + 2, top: fy + 3, width: 22, height: 80, ...display, fontSize: 12.5, lineHeight: "13px", color: LINE, writingMode: "vertical-rl", textOrientation: "upright", letterSpacing: "-0.2em" }}>
-              {info.kind === "client" ? "OFFICE" : info.kind === "weapons" || info.kind === "armor" ? "SHOP" : info.kind === "custom" ? "HALL" : "STUDIO"}
+              {info.kind === "client" ? "OFFICE" : info.kind === "weapons" || info.kind === "armor" ? "SHOP" : info.kind === "custom" ? "HALL" : info.kind === "training" ? "TRAINING" : "STUDIO"}
             </div>
             {info.alert > 0 && (
               <div className="absolute alert-pop grid place-content-center rounded-full border-[3px]" style={{ left: cx + signW / 2 - 12, top: fy - 4, width: 30, height: 30, background: "#c0392b", borderColor: LINE, color: "#fff", ...display, fontSize: 20 }} title="Staff waiting on setup">
@@ -786,7 +788,7 @@ export const CityLabels = memo(function CityLabels({ layout, houses, cityName }:
             {info.kind === "video" && <Tag left={r.x + r.w - 96} top={r.y - 26} bg="#c0392b" fg="#fffaf0">ON AIR</Tag>}
             {info.kind === "creative" && <Tag left={r.x + 12} top={r.y - 26} bg="#a996d6" fg={LINE}>ADS LAB</Tag>}
             {info.kind === "acquisition" && <Tag left={r.x + 12} top={r.y - 26} bg="#d9703b" fg="#fffaf0">HIRING</Tag>}
-            {(info.kind === "weapons" || info.kind === "armor") && <Tag left={r.x + 12} top={r.y - 26} bg="#f4c95d" fg={LINE}>OPEN</Tag>}
+            {(info.kind === "weapons" || info.kind === "armor" || info.kind === "training") && <Tag left={r.x + 12} top={r.y - 26} bg="#f4c95d" fg={LINE}>OPEN</Tag>}
           </div>
         );
       })}
@@ -1105,20 +1107,10 @@ export const InteriorArt = memo(function InteriorArt({ layout, info }: { layout:
           return <rect key={i} x={x} y={y} width={(L.board.w - 16) / 4 - 6} height="28" fill={noteC[i % noteC.length]} strokeWidth="2" opacity={n.done ? 0.55 : 1} transform={`rotate(${(i % 3) - 1} ${x} ${y})`} />;
         })}
       </g>
-      {/* a big rug under the desks */}
-      {L.stations.length > 0 && (() => {
-        const xs = L.stations.map((s) => s.desk);
-        const x0 = Math.min(...xs.map((d) => d.x)) - 24;
-        const x1 = Math.max(...xs.map((d) => d.x + d.w)) + 24;
-        const y0 = Math.min(...L.stations.map((s) => s.y)) - 46;
-        const y1 = Math.max(...xs.map((d) => d.y + d.h)) + 40;
-        return (
-          <g stroke={LINE} strokeWidth="4">
-            <rect x={x0} y={y0} width={x1 - x0} height={y1 - y0} rx="10" fill={rugFill} />
-            <rect x={x0 + 10} y={y0 + 10} width={x1 - x0 - 20} height={y1 - y0 - 20} rx="6" fill="none" stroke="#f6e7cf" strokeWidth="3" />
-          </g>
-        );
-      })()}
+      {/* each worker's own office, styled for their job */}
+      {L.stations.map((st) => (
+        <Office key={`o-${st.staffId}`} st={st} role={info.desks.find((x) => x.staffId === st.staffId)?.role ?? "custom"} buildingColor={info.color} seed={hashString(st.staffId)} />
+      ))}
       {L.reporter && <Desk x={L.reporter.x} y={L.reporter.y} color="#ffd166" ready wide />}
       {L.stations.map((s) => {
         const d = info.desks.find((x) => x.staffId === s.staffId);

@@ -16,9 +16,9 @@ test("the pixel hero portrait shows every shop item and every achievement gear",
 });
 
 test("every saved look maps onto a pixel style and a pixel theme", () => {
-  const old = resolveLook({ theme: "neon", style: "cyber" });
+  const old = resolveLook({ theme: "neon", style: "cyber" as never });
   assert.ok(STYLES.some((s) => s.id === old.style));
   assert.equal(old.theme, "royal");
-  assert.equal(resolveLook({ theme: "daylight", style: "sleek" }).style, "pixel-clean");
+  assert.equal(resolveLook({ theme: "daylight", style: "sleek" as never }).style, "pixel-clean");
   assert.equal(themeById("nope").id, "dawn");
 });
