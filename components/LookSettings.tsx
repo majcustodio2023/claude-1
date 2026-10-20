@@ -169,7 +169,7 @@ function StyleSample({ id }: { id: StyleId }) {
   return (
     <div className="h-20 bg-bg p-2.5 flex flex-col justify-between overflow-hidden">
       <div className="px-2 py-1.5" style={panel[id]}>
-        <div style={{ fontFamily: '"Pixelify Sans", sans-serif', fontSize: 15 }} className="text-ink leading-tight font-semibold">
+        <div style={{ fontFamily: '"Pixel Digits", "Pixelify Sans", sans-serif', fontSize: 15 }} className="text-ink leading-tight font-semibold">
           Power up
         </div>
         <div className="mt-1.5 w-full bg-field" style={{ border: id === "pixel-clean" ? "1px solid var(--color-line)" : "2px solid var(--color-outline)" }}>
