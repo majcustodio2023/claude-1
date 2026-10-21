@@ -2,7 +2,7 @@ import "server-only";
 import { graphGet } from "./meta";
 import { secretKey } from "./city";
 import { chunks, dueJob, jobContext, jobOf, type Job } from "./cityJobs";
-import { getAnthropicKey, getData, getStaffSecret, updateStaffWork } from "./store";
+import { getAnthropicKey, getBusinessToken, getData, getStaffSecret, updateStaffWork } from "./store";
 import type { CityStaff, StaffWork, TrackerData } from "./types";
 
 // Runs city staff jobs on Claude (Kit's key) and keeps what they make on the server.
@@ -29,7 +29,7 @@ export function businessDay(data: TrackerData, now = new Date()): string {
   }
 }
 
-async function claude(key: string, system: string, user: string): Promise<string> {
+export async function claude(key: string, system: string, user: string): Promise<string> {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
@@ -44,7 +44,8 @@ async function claude(key: string, system: string, user: string): Promise<string
 /** The page's real numbers, when the insights analyst has a page ID and a token. */
 async function pageNumbers(s: CityStaff): Promise<string | null> {
   const pageId = s.setup?.pageId?.trim();
-  const token = await getStaffSecret(secretKey(s.id, "metaToken"));
+  // Their own token, else the business token (a System User token that doesn't expire).
+  const token = (await getStaffSecret(secretKey(s.id, "metaToken"))) ?? (await getBusinessToken());
   if (!pageId || !token) return null;
   type Count = { summary?: { total_count?: number } };
   const page = await graphGet<{ name?: string; followers_count?: number; fan_count?: number }>(`${pageId}?fields=name,followers_count,fan_count`, token);

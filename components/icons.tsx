@@ -462,6 +462,16 @@ const P: Record<string, ReactNode> = {
       <path d="M3.5 12h17M12 3.5c2.4 2.4 3.6 5.2 3.6 8.5s-1.2 6.1-3.6 8.5c-2.4-2.4-3.6-5.2-3.6-8.5s1.2-6.1 3.6-8.5z" />
     </>
   ),
+  users: (
+    <>
+      <rect {...tone} x="5" y="13" width="14" height="4" rx="1" />
+      <rect x="5" y="13" width="14" height="4" rx="1" />
+      <circle cx="7.5" cy="7.5" r="2.2" />
+      <circle cx="16.5" cy="7.5" r="2.2" />
+      <circle cx="12" cy="6" r="2.2" />
+      <path d="M8 21v-4M16 21v-4" />
+    </>
+  ),
   user: (
     <>
       <circle {...tone} cx="12" cy="8" r="4" />

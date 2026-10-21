@@ -11,6 +11,8 @@ import { useTracker } from "../App";
 import { Icon } from "../icons";
 import { Btn } from "../ui";
 import Outputs from "./Outputs";
+import Meeting from "./Meeting";
+import { staffOnFloor } from "@/lib/services";
 import BossFight from "../BossFight";
 import { TrainingArt, TrainingLabels } from "./trainingArt";
 import { foeById, layoutTraining } from "@/lib/training";
@@ -95,13 +97,15 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   const [picked, setPicked] = useState("");
   const [badSpot, setBadSpot] = useState(false);
   const [outputs, setOutputs] = useState<{ staffId?: string } | null>(null);
+  const [meeting, setMeeting] = useState<{ kind: "townhall" | "building"; buildingId?: string; meetingId?: string } | null>(null);
 
   const buildings = visibleBuildings(data);
   const bIds = buildings.map((b) => b.id).join(",");
   const studioIds = STUDIO_KINDS.map((k) => buildings.find((b) => b.kind === k)?.id).filter((x): x is string => Boolean(x));
   const homeIds = buildings.filter((b) => b.kind === "home").map((b) => b.id);
   const cityLayout = useMemo(() => layoutCity(bIds ? bIds.split(",") : [], studioIds, homeIds), [bIds, studioIds.join(","), homeIds.join(",")]);
-  const staff = city.staff.filter((s) => buildings.some((b) => b.id === s.buildingId));
+  // Staff on the building's services only (all of them when it has none); the rest stay off the floor.
+  const staff = buildings.flatMap((b) => staffOnFloor(b, city.staff.filter((s) => s.buildingId === b.id)));
   const staffKey = staff.map((s) => `${s.id}:${s.buildingId}:${s.role}`).join("|");
 
   const inside = scene.type === "inside" ? buildings.find((b) => b.id === scene.id) : undefined;
@@ -139,7 +143,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   const decoRef = useRef(false);
   decoRef.current = decorating;
   const outRef = useRef<(() => void) | null>(null);
-  outRef.current = outputs ? () => setOutputs(null) : spar ? () => setSpar("") : null;
+  outRef.current = meeting ? () => setMeeting(null) : outputs ? () => setOutputs(null) : spar ? () => setSpar("") : null;
   const spawnInside = useRef(false);
   const zoomRef = useRef(1);
   const cam = useRef({ x: 0, y: 0 });
@@ -748,6 +752,16 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
               <Icon name="palette" size={20} /> Decorate
             </Btn>
           )}
+          {!atHome && !atTraining && (
+            <Btn
+              onClick={() => (setTalk(null), setMeeting(inside ? { kind: "building", buildingId: inside.id } : { kind: "townhall" }))}
+              className="relative flex items-center gap-1.5"
+              title={inside ? "Hold a meeting with this building's team" : "Call every AI staff member to a town hall"}
+            >
+              <Icon name="users" size={20} /> <span className="max-sm:hidden">{inside ? "Meeting" : "Town hall"}</span>
+              {(data.meetings ?? []).some((m) => m.status === "waiting") && <span className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-accent border-2 border-outline city-blink" />}
+            </Btn>
+          )}
           <Btn onClick={() => (setTalk(null), setOutputs({}))} className="relative flex items-center gap-1.5" title="Everything your staff have made">
             <Icon name="scroll" size={20} /> <span className="max-sm:hidden">Outputs</span>
             {freshOutputs > 0 && <span className="absolute -top-2.5 -right-2.5 min-w-6 h-6 px-1 grid place-content-center bg-hero text-[#fff4e2] border-2 border-outline text-sm font-extrabold">{freshOutputs}</span>}
@@ -808,9 +822,10 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         />
       )}
 
-      {talk && <Dialogue talk={talk} onClose={() => setTalk(null)} goTo={goTo} onOutputs={(staffId) => (setTalk(null), setOutputs({ staffId }))} onSpar={(id) => (setTalk(null), setSpar(id))} />}
+      {talk && <Dialogue talk={talk} onClose={() => setTalk(null)} goTo={goTo} onOutputs={(staffId) => (setTalk(null), setOutputs({ staffId }))} onSpar={(id) => (setTalk(null), setSpar(id))} onMeeting={(buildingId, meetingId) => (setTalk(null), setMeeting({ kind: "building", buildingId, meetingId }))} />}
       {spar && foeById(spar) && <BossFight foe={foeById(spar)} weapon={city.practiceWeapon ?? ""} onClose={() => setSpar("")} />}
       {outputs && <Outputs staffId={outputs.staffId} onClose={() => setOutputs(null)} />}
+      {meeting && <Meeting kind={meeting.kind} buildingId={meeting.buildingId} meetingId={meeting.meetingId} onClose={() => setMeeting(null)} />}
     </div>
     </PixelForce.Provider>
   );
