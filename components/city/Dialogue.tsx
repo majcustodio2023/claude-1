@@ -19,6 +19,8 @@ import { buildingReport, missions } from "@/lib/cityReport";
 import { WRITER_PROMPTS } from "@/lib/cityPrompts";
 import { NOT_LIVE, dueJob, jobsOf, workOf } from "@/lib/cityJobs";
 import { onRunning, runJob, runningJobs } from "./workRunner";
+import { MeetingList } from "./Meeting";
+import { ServicesPanel } from "./Services";
 import { allOutputs } from "@/lib/cityOutputs";
 import { PRACTICE_WEAPONS, foeById } from "@/lib/training";
 import { FoePortrait } from "./trainingArt";
@@ -66,7 +68,7 @@ function useTyped(text: string, voice: number) {
   return { shown: text.slice(0, n), done: n >= text.length, skip: () => setN(text.length) };
 }
 
-export default function Dialogue({ talk, onClose, goTo, onOutputs, onSpar }: { talk: Talk; onClose: () => void; goTo: (tab: string) => void; onOutputs?: (staffId: string) => void; onSpar?: (foeId: string) => void }) {
+export default function Dialogue({ talk, onClose, goTo, onOutputs, onSpar, onMeeting }: { talk: Talk; onClose: () => void; goTo: (tab: string) => void; onOutputs?: (staffId: string) => void; onSpar?: (foeId: string) => void; onMeeting?: (buildingId: string, meetingId?: string) => void }) {
   const { data, update, month, today } = useTracker();
   const citizen = talk.kind === "citizen" ? citizenById(talk.id) : undefined;
   const [page, setPage] = useState<Page>(talk.kind === "board" || talk.kind === "screen" ? "panel" : citizen ? `node:${citizenStart(data, citizen)}` : talk.kind === "gate" ? "node:0" : "greet");
@@ -204,15 +206,21 @@ export default function Dialogue({ talk, onClose, goTo, onOutputs, onSpar }: { t
     } else if (talk.kind === "board") {
       const list = missions(data, building);
       speaker = { id: "board", name: "Mission board", title: place, color: "#3fd0ff", portrait: <Icon name="target" size={80} className="text-accent" /> };
-      text = list.length ? `${list.filter((m) => !m.done).length} open missions for ${place}. Tap a status to move it along, or add a new one.` : `No missions for ${place} yet. Add the first one below.`;
-      panel = <TasksPanel building={building} />;
+      text = list.length ? `${list.filter((m) => !m.done).length} open missions for ${place}. Tap a status to move it along, or add a new one. The meeting table is here too.` : `No missions for ${place} yet. Add the first one below, or call the team to the meeting table.`;
+      panel = (
+        <>
+          <TasksPanel building={building} />
+          {onMeeting && <MeetingList buildingId={building.id} onOpen={(id) => onMeeting(building.id, id)} />}
+          <ServicesPanel building={building} />
+        </>
+      );
     } else {
       const room = building.rooms?.find((x) => x.id === talk.roomId);
       speaker = { id: "room", name: room?.name ?? "Room", title: place, color: "#7c5cff", portrait: <Icon name="home" size={80} className="text-hero" /> };
       text = room?.notes?.trim() || `This is the ${room?.name ?? "room"}. Leave notes here for what happens in it.`;
       panel = room ? <RoomPanel building={building} roomId={room.id} /> : null;
     }
-    choices = [bye];
+    choices = talk.kind === "board" && onMeeting ? [{ label: "Hold a meeting", go: () => onMeeting(building.id), primary: true }, bye] : [bye];
   } else {
     speaker = { id: "x", name: "…", title: "", color: "#c4bfe6", portrait: null };
     text = "They wandered off.";

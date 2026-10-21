@@ -17,6 +17,8 @@ import { StreamTerms } from "../StreamSettings";
 import { ordinal } from "@/lib/calendar";
 import { incomePartlyCollected } from "@/lib/subs";
 import { Icon } from "../icons";
+import { ServicesPanel } from "../city/Services";
+import { clientsOf } from "@/lib/city";
 
 const STATUS: Record<ClientTask["status"], { label: string; cls: string }> = {
   todo: { label: "To do", cls: "btn-ghost" },
@@ -146,6 +148,8 @@ function MyPlate({ personId }: { personId: string }) {
 
 function ClientCard({ client: c, who }: { client: Client; who: string }) {
   const { data, update, today, month } = useTracker();
+  // The client's building in the city: its services decide which staff work on it.
+  const building = data.city?.buildings.find((b) => clientsOf(b).includes(c.id));
   const [showDone, setShowDone] = useState(false);
   const [settings, setSettings] = useState(false);
   const all = (data.clientTasks ?? []).filter((t) => t.clientId === c.id);
@@ -215,6 +219,11 @@ function ClientCard({ client: c, who }: { client: Client; who: string }) {
       )}
       {!settings && <ContactChips value={c.contact} className="-mt-1 mb-3" />}
       <ClientMoneyPanel client={c} />
+      {building && (
+        <div className="mb-3 -mt-2">
+          <ServicesPanel building={building} />
+        </div>
+      )}
 
       {total > 0 && (
         <div className="mb-3">

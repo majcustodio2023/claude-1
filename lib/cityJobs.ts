@@ -4,6 +4,8 @@
 
 import { groupOf } from "./adgroups";
 import { buildingName, clientsOf, roleOf, setupProgress, titleOf } from "./city";
+import { servicesBrief, servicesOf } from "./services";
+import { reportLines, reportsFor } from "./feeds";
 import type { CityBuilding, CityStaff, StaffRoleId, StaffWork, TrackerData } from "./types";
 
 export interface Job {
@@ -271,7 +273,7 @@ export function dueJob(data: TrackerData, s: CityStaff, today: string): Job | nu
   const auto = jobsOf(s).filter((j) => j.every && !j.input?.required);
   if (s.role === "funnel" && !openDeals(data).length) return null;
   // The page report needs real numbers: only on its own when the page is connected.
-  if (s.role === "insights" && !(s.setup?.pageId && (data.integrations?.staffKeys ?? []).includes(`${s.id}:metaToken`))) return null;
+  if (s.role === "insights" && !(s.setup?.pageId && ((data.integrations?.staffKeys ?? []).includes(`${s.id}:metaToken`) || data.integrations?.metaBusiness))) return null;
   if (s.role === "webinar" && !(s.setup?.date && s.setup.date >= today)) return null;
   // First day on the job: the big one. After that, whatever is due, the most often first.
   for (const j of [...auto].sort((a, b) => (mine.length ? a.every! - b.every! : b.every! - a.every!))) {
@@ -301,6 +303,10 @@ export function jobContext(data: TrackerData, s: CityStaff, b: CityBuilding | un
       const bits = [c!.name, c!.notes?.trim(), c!.contact?.website && `Website: ${c!.contact.website}`].filter(Boolean);
       lines.push(`Client: ${bits.join(". ").slice(0, 3000)}`);
     }
+    const svc = servicesBrief(b, data.city?.staff ?? []);
+    if (svc) lines.push(svc);
+    const mineSvc = servicesOf(b, s.id);
+    if (mineSvc.length) lines.push(`You deliver: ${mineSvc.map((x) => x.name).join(", ")}.`);
     const ids = clientsOf(b);
     const tasks = (data.clientTasks ?? []).filter((t) => ids.includes(t.clientId) && t.status !== "done").map((t) => `- ${t.title}${t.details ? `: ${t.details.slice(0, 200)}` : ""}`);
     const todos = (b.todos ?? []).filter((t) => !t.done).map((t) => `- ${t.title}`);
@@ -316,6 +322,8 @@ export function jobContext(data: TrackerData, s: CityStaff, b: CityBuilding | un
     const names = data.trackedCampaigns.filter((t) => ids.some((id) => groupOf(data, t).key === `client:${id}`)).map((t) => `- ${t.name}${t.targetCpl ? ` (target cost per result ${t.targetCpl})` : ""}`);
     if (names.length) lines.push(`Campaigns:\n${names.join("\n")}`);
   }
+  const stored = reportsFor(data, b, s.role);
+  if (stored.length) lines.push(`Stored reports (pulled on a schedule, real numbers):\n${reportLines(stored.slice(0, 12), today).join("\n")}`);
   if (extra) lines.push(extra);
   return lines.join("\n\n");
 }

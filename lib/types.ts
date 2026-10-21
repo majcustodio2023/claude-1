@@ -256,6 +256,54 @@ export interface AdAccount {
   hasToken?: boolean;
   /** Default group for this account's campaigns: "client:<id>", "group:<id>" or "none". */
   group?: string;
+  /** Set by the server: what Meta says about the token in use (its own, or the business token). */
+  tokenInfo?: TokenInfo;
+}
+
+/** What Meta says about a saved token, checked when it's saved and again every day. */
+export interface TokenInfo {
+  /** "never" for a System User token (or any token without an end date), else the ISO date it stops working. */
+  expires: string;
+  /** Meta's token type, e.g. SYSTEM_USER, USER, PAGE. */
+  type?: string;
+  /** Whose token: the ad account's own, or the one business token shared by every account. */
+  source: "account" | "business";
+  valid: boolean;
+  checkedAt: string;
+  /** Why it isn't valid, in Meta's words. */
+  error?: string;
+}
+
+/** A stored copy of a report, pulled on a schedule so staff read it even when a source is down. */
+export interface ReportSnapshot {
+  /** Stable key per thing reported, e.g. "meta:<trackedId>" or "apple:sales". */
+  key: string;
+  source: "meta" | "apple" | "funnel";
+  label: string;
+  /** Plain-text summary staff read in meetings and jobs. */
+  summary: string;
+  /** The numbers behind it (spend, results, units…). */
+  metrics: Record<string, number>;
+  /** The period it covers, e.g. "last 7 days" or "2026-10-19". */
+  period: string;
+  /** Client building it belongs to, when known. */
+  buildingId?: string;
+  at: string;
+}
+
+/** Counts from the funnel inbox (events your funnel tools send to the tracker's private address). */
+export interface FunnelDay {
+  /** event name -> count, e.g. { optin: 12, purchase: 2 } */
+  events: Record<string, number>;
+  /** Money from events that sent a value. */
+  value: number;
+}
+
+export interface FunnelStats {
+  /** funnel name -> day (YYYY-MM-DD) -> counts */
+  days: Record<string, Record<string, FunnelDay>>;
+  /** The latest events as they came in, newest first (kept short). */
+  recent: { funnel: string; event: string; value?: number; at: string; detail?: string }[];
 }
 
 /** A folder for ad campaigns that aren't tied to one client, e.g. "Personal" or "Agency brand". */
@@ -483,10 +531,16 @@ export interface TrackerData {
   creatives?: Creative[];
   /** What city staff made, newest first. Owned by the server (like creatives). */
   staffWork?: StaffWork[];
+  /** City meetings and their transcripts, newest first. Owned by the server. */
+  meetings?: Meeting[];
+  /** Stored reports (Meta, App Store, funnels), newest per key. Owned by the server. */
+  reports?: ReportSnapshot[];
+  /** Funnel inbox counts. Owned by the server. */
+  funnelStats?: FunnelStats;
   /** The virtual city: buildings (one per client plus studios), their rooms and AI staff. */
   city?: CityState;
   /** Set by the server: which integrations have a saved key (keys never reach the browser). */
-  integrations?: { higgsfield?: boolean; kit?: boolean; voice?: boolean; calendar?: boolean; staffKeys?: string[] };
+  integrations?: { higgsfield?: boolean; kit?: boolean; voice?: boolean; calendar?: boolean; staffKeys?: string[]; metaBusiness?: TokenInfo; apple?: boolean; inbox?: boolean };
   updatedAt?: string;
 }
 
@@ -544,7 +598,45 @@ export interface CityBuilding {
   todos?: CityTodo[];
   /** The player's home: furniture as placed. */
   furniture?: PlacedFurniture[];
+  /** What this client buys from you. When set, the building's floor shows the staff on these services. */
+  services?: CityService[];
   createdAt: string;
+}
+
+/** One service a client pays for (e.g. "Facebook ads"), and the staff who deliver it. */
+export interface CityService {
+  id: string;
+  name: string;
+  /** What's included, deliverables, how often. Staff read this. */
+  notes?: string;
+  staffIds: string[];
+}
+
+/** A meeting in the city: a town hall with everyone, or one building's team. */
+export interface Meeting {
+  id: string;
+  kind: "townhall" | "building";
+  /** Building meetings: where it's held. */
+  buildingId?: string;
+  title: string;
+  /** Who was called in. */
+  staffIds: string[];
+  messages: MeetingMessage[];
+  /** waiting = your last message hasn't been answered yet; ended = closed, transcript kept. */
+  status: "waiting" | "open" | "ended";
+  /** While waiting: the brief for Claude, and when it was asked (a reply for an older brief doesn't clear a newer one). */
+  prompt?: { system: string; user: string; askedAt: string };
+  startedAt: string;
+  endedAt?: string;
+}
+
+export interface MeetingMessage {
+  id: string;
+  /** "you", or the staff id who said it */
+  from: string;
+  name: string;
+  text: string;
+  at: string;
 }
 
 export interface CityStaff {

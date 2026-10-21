@@ -5,14 +5,30 @@ import path from "node:path";
 import { foldOneTimeIntoDeals, upgradeBillPayments } from "./finance";
 import { upgradeTeamPay } from "./clients";
 import { seedData } from "./seed";
-import type { AutopilotEntry, Creative, StaffWork, TrackerData } from "./types";
+import type { AutopilotEntry, Creative, StaffWork, TokenInfo, TrackerData } from "./types";
 
 // The whole tracker lives in one JSON document. Meta tokens are kept beside it,
 // encrypted, and are never sent to the browser.
 
 interface StoredDoc {
   data: TrackerData;
-  secrets?: { tokens?: Record<string, string>; higgsfield?: string; anthropic?: string; openai?: string; calendar?: string; feed?: string; staff?: Record<string, string> };
+  secrets?: {
+    tokens?: Record<string, string>;
+    /** One Meta token for every ad account and page (a Business Manager System User token never expires). */
+    metaBusiness?: string;
+    /** What Meta said about each token: ad account id (or "business") -> info. Not secret. */
+    tokenInfo?: Record<string, TokenInfo>;
+    /** App Store Connect API key as JSON { issuerId, keyId, privateKey, vendor }. */
+    apple?: string;
+    /** Secret in the funnel inbox address. */
+    inbox?: string;
+    higgsfield?: string;
+    anthropic?: string;
+    openai?: string;
+    calendar?: string;
+    feed?: string;
+    staff?: Record<string, string>;
+  };
 }
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -90,15 +106,22 @@ async function loadDoc(): Promise<StoredDoc> {
 
 function withTokenFlags(doc: StoredDoc): TrackerData {
   const tokens = doc.secrets?.tokens ?? {};
+  const info = doc.secrets?.tokenInfo ?? {};
+  const business = Boolean(doc.secrets?.metaBusiness);
   return {
     ...doc.data,
-    adAccounts: doc.data.adAccounts.map((a) => ({ ...a, hasToken: Boolean(tokens[a.id]) })),
+    // Meeting briefs stay on the server (the browser only needs the transcript).
+    meetings: doc.data.meetings?.map(({ prompt: _p, ...m }) => m),
+    adAccounts: doc.data.adAccounts.map((a) => ({ ...a, hasToken: Boolean(tokens[a.id]) || business, tokenInfo: tokens[a.id] ? info[a.id] : business ? info.business : undefined })),
     integrations: {
       higgsfield: Boolean(doc.secrets?.higgsfield),
       kit: Boolean(process.env.ANTHROPIC_API_KEY || doc.secrets?.anthropic),
       voice: Boolean(process.env.OPENAI_API_KEY || doc.secrets?.openai),
       calendar: Boolean(doc.secrets?.calendar),
       staffKeys: Object.keys(doc.secrets?.staff ?? {}),
+      metaBusiness: business ? (info.business ?? { expires: "", source: "business", valid: true, checkedAt: "" }) : undefined,
+      apple: Boolean(doc.secrets?.apple),
+      inbox: Boolean(doc.secrets?.inbox),
     },
   };
 }
@@ -116,7 +139,7 @@ export async function saveData(data: TrackerData): Promise<TrackerData> {
   const next: StoredDoc = {
     data: {
       ...rest,
-      adAccounts: data.adAccounts.map(({ hasToken: _h, ...a }) => a),
+      adAccounts: data.adAccounts.map(({ hasToken: _h, tokenInfo: _t, ...a }) => a),
       // Share links are made and revoked by the server; keep its copy.
       trackedCampaigns: data.trackedCampaigns.map(({ shareToken: _s, ...t }) => {
         const token = doc.data.trackedCampaigns.find((x) => x.id === t.id)?.shareToken;
@@ -126,6 +149,9 @@ export async function saveData(data: TrackerData): Promise<TrackerData> {
       autopilotLog: doc.data.autopilotLog,
       creatives: doc.data.creatives,
       staffWork: doc.data.staffWork,
+      meetings: doc.data.meetings,
+      reports: doc.data.reports,
+      funnelStats: doc.data.funnelStats,
       updatedAt: new Date().toISOString(),
     },
     secrets: { ...doc.secrets, tokens },
@@ -192,10 +218,89 @@ export async function setToken(adAccountRef: string, token: string | null): Prom
   await writeDoc({ ...doc, secrets: { ...doc.secrets, tokens } });
 }
 
+/** The ad account's own token, else the business token that covers every account. */
 export async function getToken(adAccountRef: string): Promise<string | null> {
   const doc = await loadDoc();
-  const blob = doc.secrets?.tokens?.[adAccountRef];
+  const blob = doc.secrets?.tokens?.[adAccountRef] ?? doc.secrets?.metaBusiness;
   return blob ? decrypt(blob) : null;
+}
+
+/** Saves (or clears) the one Meta token used for every ad account and page without its own. */
+export async function setBusinessToken(token: string | null, info?: TokenInfo): Promise<void> {
+  const doc = await loadDoc();
+  const secrets = { ...doc.secrets, tokenInfo: { ...(doc.secrets?.tokenInfo ?? {}) } };
+  if (token) {
+    secrets.metaBusiness = encrypt(token.trim());
+    if (info) secrets.tokenInfo.business = info;
+  } else {
+    delete secrets.metaBusiness;
+    delete secrets.tokenInfo.business;
+  }
+  await writeDoc({ ...doc, secrets });
+}
+
+export async function getBusinessToken(): Promise<string | null> {
+  const blob = (await loadDoc()).secrets?.metaBusiness;
+  return blob ? decrypt(blob) : null;
+}
+
+/** Every saved Meta token (decrypted, server only), keyed by ad account id or "business". */
+export async function allMetaTokens(): Promise<Record<string, string>> {
+  const doc = await loadDoc();
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(doc.secrets?.tokens ?? {})) out[k] = decrypt(v);
+  if (doc.secrets?.metaBusiness) out.business = decrypt(doc.secrets.metaBusiness);
+  return out;
+}
+
+/** Records what Meta said about tokens (ad account id or "business" -> info). */
+export async function setTokenInfo(entries: Record<string, TokenInfo | null>): Promise<void> {
+  const doc = await loadDoc();
+  const tokenInfo = { ...(doc.secrets?.tokenInfo ?? {}) };
+  for (const [k, v] of Object.entries(entries)) {
+    if (v) tokenInfo[k] = v;
+    else delete tokenInfo[k];
+  }
+  await writeDoc({ ...doc, secrets: { ...doc.secrets, tokenInfo } });
+}
+
+/** App Store Connect API key (issuer ID, key ID, the .p8 private key, vendor number). Encrypted. */
+export interface AppleKey {
+  issuerId: string;
+  keyId: string;
+  privateKey: string;
+  vendor?: string;
+}
+
+export async function setAppleKey(key: AppleKey | null): Promise<void> {
+  const doc = await loadDoc();
+  const secrets = { ...doc.secrets };
+  if (key) secrets.apple = encrypt(JSON.stringify(key));
+  else delete secrets.apple;
+  await writeDoc({ ...doc, secrets });
+}
+
+export async function getAppleKey(): Promise<AppleKey | null> {
+  const blob = (await loadDoc()).secrets?.apple;
+  return blob ? (JSON.parse(decrypt(blob)) as AppleKey) : null;
+}
+
+/** Secret in the funnel inbox address. Made on first use; `reset` makes a new one (the old address stops working). */
+export async function getInboxToken(reset = false): Promise<string> {
+  const doc = await loadDoc();
+  if (doc.secrets?.inbox && !reset) return decrypt(doc.secrets.inbox);
+  const token = randomBytes(24).toString("base64url");
+  await writeDoc({ ...doc, secrets: { ...doc.secrets, inbox: encrypt(token) } });
+  return token;
+}
+
+/** True if `token` is the funnel inbox secret (constant-time compare). */
+export async function isInboxToken(token: string): Promise<boolean> {
+  const doc = await loadDoc();
+  if (!doc.secrets?.inbox || !token) return false;
+  const a = createHash("sha256").update(decrypt(doc.secrets.inbox)).digest();
+  const b = createHash("sha256").update(token).digest();
+  return timingSafeEqual(a, b);
 }
 
 /** Higgsfield API key, stored as "keyId:secret", encrypted like the Meta tokens. */
@@ -302,6 +407,19 @@ let workQueue: Promise<unknown> = Promise.resolve();
 export function updateStaffWork(fn: (list: StaffWork[]) => StaffWork[]): Promise<StaffWork[]> {
   // One change at a time, so staff finishing together in the daily run don't overwrite each other.
   const run = workQueue.then(() => writeStaffWork(fn));
+  workQueue = run.catch(() => {});
+  return run;
+}
+
+/** Changes server-owned parts of the data (meetings, stored reports, funnel counts), one change at a time. */
+export function updateServerData<T>(fn: (data: TrackerData) => T): Promise<T> {
+  const run = workQueue.then(async () => {
+    const doc = await loadDoc();
+    const data = { ...doc.data };
+    const out = fn(data);
+    await writeDoc({ ...doc, data });
+    return out;
+  });
   workQueue = run.catch(() => {});
   return run;
 }
