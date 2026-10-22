@@ -678,3 +678,12 @@ html[data-pix="pixel-chunky"] .caption { border-width: 4px; box-shadow: 4px 4px 
 .dawn .city-shadow { border-radius: 0; left: 24%; right: 24%; height: 5px; bottom: 3px; background: rgba(40, 22, 10, 0.28); }
 .dawn .city-tint-night { background: rgba(30, 24, 70, 0.4); }
 .dawn .city-tint-dusk { background: rgba(200, 110, 50, 0.14); }
+
+/* Prototype maker: moving stripes on a build that's still running */
+.proto-stripes {
+  background-image: repeating-linear-gradient(-45deg, rgb(255 255 255 / 0.28) 0 10px, transparent 10px 20px);
+  background-size: 28px 28px;
+  animation: proto-stripes 0.9s linear infinite;
+}
+@keyframes proto-stripes { to { background-position: 28px 0; } }
+@media (prefers-reduced-motion: reduce) { .proto-stripes { animation: none; } }
