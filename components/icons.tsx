@@ -485,6 +485,20 @@ const P: Record<string, ReactNode> = {
       <path d="M4 5l9 7-9 7z M19 5v14" />
     </>
   ),
+  wand: (
+    <>
+      <path {...tone} d="M3.5 18.2 15.8 5.9l2.3 2.3L5.8 20.5z" />
+      <path d="M3.5 18.2 15.8 5.9l2.3 2.3L5.8 20.5zM13.6 8.1l2.3 2.3" />
+      <path d="M19 2.8v2.6M17.7 4.1h2.6M20.6 10.4v2M19.6 11.4h2M9.6 3.2v2M8.6 4.2h2" />
+    </>
+  ),
+  browser: (
+    <>
+      <path {...tone} d="M3 4.5h18v4.5H3z" />
+      <rect x="3" y="4.5" width="18" height="15" rx="1.8" />
+      <path d="M3 9h18M6 6.8h.01M8.5 6.8h.01M7 12.5h6M7 15.5h10" />
+    </>
+  ),
   key: (
     <>
       <circle {...tone} cx="8" cy="15" r="5" />

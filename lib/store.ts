@@ -5,7 +5,7 @@ import path from "node:path";
 import { foldOneTimeIntoDeals, upgradeBillPayments } from "./finance";
 import { upgradeTeamPay } from "./clients";
 import { seedData } from "./seed";
-import type { AutopilotEntry, Creative, StaffWork, TokenInfo, TrackerData } from "./types";
+import type { AutopilotEntry, Creative, PrototypeSettings, StaffWork, TokenInfo, TrackerData } from "./types";
 
 // The whole tracker lives in one JSON document. Meta tokens are kept beside it,
 // encrypted, and are never sent to the browser.
@@ -152,6 +152,8 @@ export async function saveData(data: TrackerData): Promise<TrackerData> {
       meetings: doc.data.meetings,
       reports: doc.data.reports,
       funnelStats: doc.data.funnelStats,
+      // Prototype maker settings are edited on its own page; a tracker tab mustn't overwrite them.
+      settings: { ...rest.settings, prototype: doc.data.settings.prototype },
       updatedAt: new Date().toISOString(),
     },
     secrets: { ...doc.secrets, tokens },
@@ -474,4 +476,25 @@ export async function videoViewUrl(path: string, parts = 1): Promise<string[] | 
   if (!path.startsWith(`${await mediaFolder()}/`) || path.includes("..")) return null;
   const names = parts > 1 ? Array.from({ length: parts }, (_, i) => `${path}.part${i}`) : [path];
   return Promise.all(names.map(async (n) => `${SUPABASE_URL}/storage/v1${((await storage(`object/sign/${VIDEO_BUCKET}/${n}`, { expiresIn: 6 * 3600 })) as { signedURL: string }).signedURL}`));
+}
+
+// ---------- prototype maker (its jobs and pages live in their own tables, not in the document) ----------
+
+/** Calls a database function that needs the tracker's key (it's added here). */
+export async function keyedRpc(fn: string, body: Record<string, unknown> = {}) {
+  if (!usingDatabase) throw new Error("The Prototype maker needs the database (see the README).");
+  return rpc(fn, { p_key: DB_KEY, ...body });
+}
+
+/** Calls a public database function, e.g. the one that serves a finished prototype page. */
+export async function publicRpc(fn: string, body: Record<string, unknown>) {
+  if (!usingDatabase) return null;
+  return rpc(fn, body);
+}
+
+/** Saves the Prototype maker's settings (server-owned, see saveData). */
+export async function setPrototypeSettings(next: PrototypeSettings): Promise<PrototypeSettings> {
+  const doc = await loadDoc();
+  await writeDoc({ ...doc, data: { ...doc.data, settings: { ...doc.data.settings, prototype: next } } });
+  return next;
 }

@@ -225,6 +225,16 @@ export default function App() {
   );
 }
 
+/** Opens the Prototype maker (its own subdomain when one is set in its settings). */
+function PrototypeButton({ data }: { data: TrackerData }) {
+  return (
+    <a href={data.settings.prototype?.url || "/prototype"} target="_blank" rel="noreferrer" className="btn btn-primary flex items-center gap-2" title="Prototype maker: turn a client's socials into a website prototype">
+      <Icon name="wand" size={22} />
+      <span className="max-sm:hidden">Prototype maker</span>
+    </a>
+  );
+}
+
 function SettingsButton({ onClick, className = "" }: { onClick: () => void; className?: string }) {
   return (
     <button type="button" onClick={onClick} className={`btn btn-ghost flex items-center gap-2 ${className}`} title="Settings: look, theme, profile and more" aria-label="Settings">
@@ -261,6 +271,7 @@ function SlimHeader({ data, month, today, saving, onSettings }: { data: TrackerD
           <span className="text-sm font-extrabold max-md:hidden"><SaveState saving={saving} /></span>
         </div>
       </div>
+      <PrototypeButton data={data} />
       <SettingsButton onClick={onSettings} />
     </header>
   );
@@ -282,7 +293,8 @@ function PlayerCard({ data, month, today, saving, onSettings }: { data: TrackerD
       <span className="sparkle" style={{ left: "8%", top: "16%" }} />
       <span className="sparkle" style={{ left: "30%", top: "70%", animationDelay: "0.6s" }} />
       <span className="sparkle" style={{ right: "6%", top: "12%", animationDelay: "1.1s" }} />
-      <div className="absolute top-3 right-3 z-10">
+      <div className="absolute top-3 right-3 z-10 flex gap-2">
+        <PrototypeButton data={data} />
         <SettingsButton onClick={onSettings} />
       </div>
       <div className="relative flex items-end gap-3 sm:gap-6 flex-wrap px-4 sm:px-6 pt-4">

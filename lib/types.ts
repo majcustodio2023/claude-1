@@ -421,6 +421,22 @@ export interface Settings {
   appearance?: Appearance;
   /** Music and sound effect volumes, 0 to 1 (0 = off). last* remember the level before muting. */
   sound?: { music?: number; sfx?: number; lastMusic?: number; lastSfx?: number };
+  /** Prototype maker (see lib/prototype.ts). */
+  prototype?: PrototypeSettings;
+}
+
+export interface PrototypeSettings {
+  /** Where the tracker's Prototype maker button goes. Blank = this app's own /prototype page. */
+  url?: string;
+  /** Model that builds a prototype unless another is picked on the form. */
+  defaultModel?: string;
+  /** The scheduled task's fire address (https://api.anthropic.com/v1/claude_code/routines/trig_…/fire).
+   *  With its token saved, a new request starts building straight away instead of at the next hourly check. */
+  fireUrl?: string;
+  /** Small credit shown in the corner of every prototype, e.g. "Prototype by Your Agency". Blank = none. */
+  badge?: string;
+  /** Standing instructions added to every brief (house style, things to always include…). */
+  extra?: string;
 }
 
 /** How the hero looks. Every field has a default, so older data needs nothing. */
