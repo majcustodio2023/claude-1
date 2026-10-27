@@ -26,6 +26,11 @@ export const videos = {
     { id: "kmYtUG7yqkI", title: "RDR Talks Top 3: Digital Revolutionaries" },
     { id: "eyEsQhHX_aQ", title: "Pagkakitaan Mo Ang Condo Mo!" },
     { id: "YflGmjijecc", title: "RDR Top 3" },
+    { id: "DV24D36fgaU", title: "The Truth About Boss RDR's Wealth" },
+    { id: "w2w7eJX-KzU", title: "RDR Talks with Aiza Molina, Star Legends Adventure Travel and Tours" },
+    { id: "_Hk1dYf7uxk", title: "RDR Talks" },
+    { id: "pi-F7UtH-1c", title: "RDR Talks" },
+    { id: "tR8hOPivW54", title: "RDR Talks" },
   ],
 };
 

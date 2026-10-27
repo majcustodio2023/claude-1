@@ -1,4 +1,5 @@
 import { assets } from "@/lib/rdr/assets";
+import { photoCredits, photos } from "@/lib/rdr/media";
 import {
   beforeSale,
   believe,
@@ -22,8 +23,6 @@ import {
   money,
   numbers,
   objections,
-  offerExtras,
-  offers,
   offersIntro,
   pablings,
   painful,
@@ -46,9 +45,10 @@ import { LiteYouTube } from "@/components/rdr/LiteYouTube";
 import { Words } from "@/components/rdr/Words";
 import { Funnel } from "@/components/rdr/Funnel";
 import { Calculator } from "@/components/rdr/Calculator";
-import { WhichOne } from "@/components/rdr/WhichOne";
 import { NextEvent } from "@/components/rdr/Events";
-import { Attempts, Chain, Checklist, Compound, Inquiries, LogoWall, Marquee, OutletGrid, Phone, PlatformBar, TenX } from "@/components/rdr/Diagrams";
+import { Attempts, Checklist, Compound, Inquiries, LogoWall, Marquee, OutletGrid, PlatformBar, TenX } from "@/components/rdr/Diagrams";
+import { GrowthCurve, HeroWall, Letter, Phones, Radial, Serp, Stepper, Tree, VideoWall } from "@/components/rdr/v2server";
+import { Bento, Compare, Toggle } from "@/components/rdr/v2";
 
 export const dynamic = "force-dynamic";
 
@@ -60,12 +60,27 @@ function Section({ id, ground, children, className = "section" }: { id?: string;
   );
 }
 
-const Lines = ({ items, className = "t-body" }: { items: string[]; className?: string }) => (
-  <div className={`stack ${className}`}>
-    {items.map((t) => (
-      <p key={t}>{t}</p>
-    ))}
+const Head = ({ title, sub, center = false }: { title: string; sub?: string; center?: boolean }) => (
+  <div className={`head2 ${center ? "center" : ""}`}>
+    <Reveal as="h2" className="t-display t-h2">
+      {title}
+    </Reveal>
+    {sub && (
+      <Reveal as="p" index={1} className="t-sub">
+        {sub}
+      </Reveal>
+    )}
   </div>
+);
+
+const Chips = ({ items, hot }: { items: string[]; hot?: RegExp }) => (
+  <ul className="rdr-chips">
+    {items.map((t) => (
+      <li key={t} className={hot?.test(t) ? "hot" : ""}>
+        {t}
+      </li>
+    ))}
+  </ul>
 );
 
 const List = ({ items, two = false }: { items: string[]; two?: boolean }) => (
@@ -76,119 +91,136 @@ const List = ({ items, two = false }: { items: string[]; two?: boolean }) => (
   </ul>
 );
 
+const Img = ({ p, className }: { p: { src: string; alt: string }; className?: string }) => (
+  // eslint-disable-next-line @next/next/no-img-element
+  <img src={p.src} alt={p.alt} loading="lazy" className={className} />
+);
+
 export default function Page() {
+  const wallIds = videos.talks.map((v) => v.id).concat([videos.hero.id, videos.pablings.id]);
+  const heroStats = [
+    { n: 1.4, d: 1, s: "B+", label: "Combined views" },
+    { n: 972.5, d: 1, s: "M", label: "Organic Facebook views" },
+    { n: 2.5, d: 1, s: "M", label: "Facebook followers" },
+    { n: 100, d: 0, s: "+", label: "Brands accelerated" },
+  ];
+
   return (
     <main id="top">
       <Nav />
       <ApplyModal />
 
-      {/* ───────── Hero: the letter opens, the studio is already lit ───────── */}
-      <header data-ground="dark" className="rdr-ground-dark rdr-hero">
-        <div className="wrap top">
+      {/* ───────── 1. Hero: the studio is already live ───────── */}
+      <header data-ground="dark" className="rdr-ground-dark rdr-hero2">
+        <HeroWall ids={wallIds} />
+        <div className="scrim" aria-hidden="true" />
+        <div className="light red" aria-hidden="true" />
+        <div className="light gold" aria-hidden="true" />
+        <div className="wrap grid">
           <div className="stack-lg">
-            <p className="sender" data-rise="" style={{ ["--i" as string]: 0 }}>
-              <b>{hero.sender}</b>
+            <p className="pill" data-rise="" style={{ ["--i" as string]: 0 }}>
+              <i aria-hidden="true" />
+              {hero.sender}
             </p>
-            <h1 className="t-display t-h1" data-rise="" style={{ ["--i" as string]: 1 }}>
+            <h1 className="t-display" data-rise="" style={{ ["--i" as string]: 1 }}>
               {hero.title}
             </h1>
-            <div className="actions" data-rise="" style={{ ["--i" as string]: 2 }}>
+            <p className="sub" data-rise="" style={{ ["--i" as string]: 2 }}>
+              {hero.claimLead} <b className="t-gold">{hero.claimNumber}</b> {hero.claimTail} {hero.sub}
+            </p>
+            <div className="actions" data-rise="" style={{ ["--i" as string]: 3 }}>
               <ApplyButton className="rbtn rbtn-lg" source="hero">
                 {cta.primary}
               </ApplyButton>
+              <a className="rbtn rbtn-quiet" href="#numbers">
+                See the numbers
+              </a>
               <span className="free">{hero.free}</span>
             </div>
+            <ul className="stats" data-rise="" style={{ ["--i" as string]: 4 }} aria-label="RDR platform numbers">
+              {heroStats.map((s, i) => (
+                <li key={s.label} className="stat">
+                  <b>
+                    <NumberTicker value={s.n} decimals={s.d} suffix={s.s} delay={400 + i * 120} />
+                  </b>
+                  <span>{s.label}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-          <div data-rise="" style={{ ["--i" as string]: 3 }}>
+          <div className="player" data-rise="" style={{ ["--i" as string]: 3 }}>
+            <span className="tag">Watch Boss RDR</span>
             <LiteYouTube id={videos.hero.id} title={videos.hero.title} />
+            <span className="tag2">{hero.ready}</span>
           </div>
-        </div>
-        <div className="wrap claim" data-rise="" style={{ ["--i" as string]: 4 }}>
-          <p className="lead">{hero.claimLead}</p>
-          <p className="t-giant num" aria-label={`${hero.claimNumber} ${hero.claimTail}`}>
-            <NumberTicker value={1.4} decimals={1} delay={500} />
-            <small>BILLION</small>
-          </p>
-          <p className="tail">{hero.claimTail}</p>
-        </div>
-        <div className="wrap split split-7-5" data-rise="" style={{ ["--i" as string]: 5 }}>
-          <h2 className="t-sub">{hero.sub}</h2>
-          <p className="ready">{hero.ready}</p>
         </div>
       </header>
 
-      {/* ───────── The letter: what you don't need ───────── */}
-      <Section ground="light">
+      {/* ───────── 2. Who is already in the room ───────── */}
+      <section data-ground="dark" className="rdr-ground-dark rdr-rows" aria-label="Brands and media">
+        <Marquee names={brands} logos={assets.brandLogos} />
+        <div className="rdr-marquee rev gold" role="img" aria-label={media.join(", ")}>
+          <div className="track" aria-hidden="true">
+            {media.map((m) => (
+              <span key={m}>{m}</span>
+            ))}
+          </div>
+          <div className="track" aria-hidden="true">
+            {media.map((m) => (
+              <span key={m}>{m}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── 3. You don't need more content ───────── */}
+      <Section id="letter" ground="light">
         <div className="split split-5-7">
-          <div className="sticky stack">
+          <div className="stack-lg">
             <Reveal as="p" className="t-h3 t-display">
               {letter.intro}
             </Reveal>
-            <Reveal as="p" index={1} className="t-body">
-              {letter.line1}
-            </Reveal>
-            <Reveal as="p" index={2} className="t-statement" style={{ fontWeight: 760 }}>
+            <Reveal as="h2" index={1} className="t-display t-h2 glow-red" style={{ color: "var(--tally)" }}>
               {letter.bold}
             </Reveal>
-          </div>
-          <div className="stack-lg">
-            {letter.dontNeed.map((t) => (
-              <Words key={t} text={t} className="t-statement" />
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      {/* ───────── The right people ───────── */}
-      <Section ground="light" className="section-tight">
-        <div className="stack-xl">
-          <Reveal as="h2" className="t-display t-h2">
-            {letter.need}
-          </Reveal>
-          <div className="split split-7-5">
-            <Reveal as="ul" index={1} className="rdr-chips" aria-label="The right people">
-              {letter.people.map((p) => (
-                <li key={p} className={/MONEY|INTENT/.test(p) ? "hot" : ""}>
-                  {p}
-                </li>
-              ))}
+            <Reveal as="p" index={2} className="t-statement">
+              {letter.need}
             </Reveal>
-            <div className="stack-lg">
-              <Reveal as="p" index={2} className="t-statement">
-                {letter.capable}
-              </Reveal>
-              <Reveal as="ul" index={3} className="rdr-bubbles" aria-label="What they say">
-                {letter.quotes.map((q) => (
-                  <li key={q}>{q}</li>
-                ))}
-              </Reveal>
-            </div>
+            <Reveal index={3}>
+              <Chips items={letter.people} hot={/MONEY|INTENT/} />
+            </Reveal>
+            <Reveal index={4}>
+              <Letter title="Boss RDR on what you don't need" lines={[letter.line1, ...letter.dontNeed, letter.capable]} />
+            </Reveal>
           </div>
+          <Reveal>
+            <Phones quotes={letter.quotes} />
+          </Reveal>
         </div>
       </Section>
 
-      {/* ───────── Three truths ───────── */}
-      <Section ground="dark">
-        <div className="stack-xl">
+      {/* ───────── 4. Three truths on TV static ───────── */}
+      <Section ground="dark" className="section-tight">
+        <div className="stack-lg">
           <Reveal as="p" className="t-statement t-soft">
             {letter.because}
           </Reveal>
-          <ul className="rdr-truths">
-            {letter.truths.map((t, i) => (
-              <Reveal as="li" key={t} index={i + 1}>
-                {t}
-              </Reveal>
-            ))}
-          </ul>
+          <Reveal className="rdr-static">
+            <ul className="rdr-truths">
+              {letter.truths.map((t) => (
+                <li key={t}>{t}</li>
+              ))}
+            </ul>
+          </Reveal>
           <div className="split split-5-7">
             <Reveal as="p" className="t-sub">
               {letter.why}
             </Reveal>
-            <div className="stack-lg">
-              <Reveal as="p" index={1} className="t-statement t-soft">
+            <div className="stack">
+              <Reveal as="p" className="t-soft">
                 {letter.notSimply}
               </Reveal>
-              <Reveal as="p" index={2} className="t-h3 t-display">
+              <Reveal as="p" index={1} className="t-h3 t-display">
                 {letter.built}
               </Reveal>
             </div>
@@ -196,34 +228,25 @@ export default function Page() {
         </div>
       </Section>
 
-      {/* ───────── The numbers ───────── */}
-      <Section id="numbers" ground="dark">
+      {/* ───────── 5. The numbers ───────── */}
+      <Section id="numbers" ground="light">
         <div className="stack-xl">
-          <div className="split split-5-7">
-            <div className="stack">
-              <Reveal as="h2" className="t-display t-h2">
-                {numbers.title}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-sub t-accent">
-                {numbers.sub}
-              </Reveal>
-            </div>
+          <div className="split split-6-6">
+            <Head title={numbers.title} sub={numbers.sub} />
             <Reveal index={2}>
-              <Lines items={numbers.lines} className="t-statement" />
+              <Letter title="Why Boss RDR shows numbers first" lines={numbers.lines} />
             </Reveal>
           </div>
-
           <ul className="rdr-board" aria-label="RDR platform numbers">
             {numbers.tiles.map((t, i) => {
               const [num, ...rest] = t.big.split(" ");
-              const word = rest.join(" ");
               const n = parseFloat(num.replace(/[^0-9.]/g, ""));
               const dec = (num.match(/\.(\d+)/)?.[1] ?? "").length;
               const plus = num.includes("+") ? "+" : "";
               return (
                 <Reveal as="li" key={t.label} index={i % 4} className={`tile ${i === 0 ? "hero-tile" : ""}`}>
                   <p className="big">
-                    <NumberTicker value={n} decimals={dec} suffix={plus} /> {word}
+                    <NumberTicker value={n} decimals={dec} suffix={plus} /> {rest.join(" ")}
                   </p>
                   <div>
                     <p className="label">{t.label}</p>
@@ -233,7 +256,6 @@ export default function Page() {
               );
             })}
           </ul>
-
           <div className="split split-5-7">
             <Reveal as="p" className="t-statement">
               {numbers.behind}
@@ -242,7 +264,9 @@ export default function Page() {
               <PlatformBar />
             </Reveal>
           </div>
-
+          <Reveal>
+            <VideoWall items={videos.talks.slice(0, 8)} />
+          </Reveal>
           {assets.proof.length > 0 && (
             <div className="rdr-proofwall">
               {assets.proof.map((p, i) => (
@@ -254,59 +278,45 @@ export default function Page() {
               ))}
             </div>
           )}
-
-          <Reveal>
-            <LogoWall names={brands} logos={assets.brandLogos} />
-          </Reveal>
           <p className="t-caption">{stats.proofNote}</p>
         </div>
       </Section>
 
-      {/* ───────── The story ───────── */}
-      <Section id="story" ground="light">
+      {/* ───────── 6. The story ───────── */}
+      <Section id="story" ground="dark">
         <div className="stack-xl">
-          <div className="split split-5-7">
-            <div className="stack">
-              <Reveal as="h2" className="t-display t-h2">
-                {story.title}
-              </Reveal>
-            </div>
-            <div className="stack-lg">
-              <Reveal as="p" className="t-sub">
-                {story.sub}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-statement">
-                {story.lead}
-              </Reveal>
-            </div>
+          <Head title={story.title} sub={story.sub} />
+          <div className="rdr-story">
+            <Reveal className="rdr-still">
+              <Img p={photos.studioCamera} />
+              <div className="veil" />
+              <span className="tally">
+                <i aria-hidden="true" />
+                On air
+              </span>
+              <div className="year">
+                <b>2021</b>
+                <span>{story.studio[0]}</span>
+              </div>
+            </Reveal>
+            <Reveal index={1}>
+              <GrowthCurve
+                beats={[
+                  { label: "Made money" },
+                  { label: "Lost money" },
+                  { label: "Failure after failure" },
+                  { label: "2021: a small studio", hot: true },
+                  { label: "Almost nobody watching" },
+                  { label: "One video broke through", hot: true },
+                  { label: "1.4B+ combined views", hot: true },
+                ]}
+              />
+            </Reveal>
           </div>
-
           <div className="split split-5-7">
-            <div className="sticky stack-lg">
-              <Reveal as="p" className="t-h3 t-display">
-                {story.before}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-body t-soft">
-                {story.lesson}
-              </Reveal>
-              <Reveal as="p" index={2} className="t-h3 t-display t-accent">
+            <div className="stack-lg">
+              <Reveal as="p" className="t-display t-h3 t-gold glow-gold">
                 {story.lessonBig}
-              </Reveal>
-            </div>
-            <ol className="rdr-timeline" aria-label="Before RDR, then the studio">
-              {[...story.beats, ...story.mine, ...story.studio, ...story.climb].map((b, i) => (
-                <Reveal as="li" key={b} index={i % 4} className={/2021|broke through|billion/.test(b) ? "turn" : ""}>
-                  <i aria-hidden="true" />
-                  <p>{b}</p>
-                </Reveal>
-              ))}
-            </ol>
-          </div>
-
-          <div className="split split-5-7">
-            <div className="stack-lg">
-              <Reveal as="p" className="t-statement">
-                {story.today}
               </Reveal>
               <Reveal as="ul" index={1} className="rdr-strike" aria-label="What media is not">
                 {story.nots.map((n) => (
@@ -319,26 +329,19 @@ export default function Page() {
                 {story.is}
               </Reveal>
               <Reveal index={1}>
-                <Lines items={story.because} className="t-statement" />
+                <Letter title="The story, in Boss RDR's words" big={story.lead} lines={[story.before, ...story.beats, story.lesson, ...story.mine, ...story.studio, ...story.climb, story.today, ...story.because]} />
               </Reveal>
             </div>
           </div>
         </div>
       </Section>
 
-      {/* ───────── The painful question ───────── */}
-      <Section id="pain" ground="dark">
+      {/* ───────── 7. The painful question ───────── */}
+      <Section id="pain" ground="light">
         <div className="stack-xl">
-          <div className="split split-5-7">
-            <Reveal as="h2" className="t-display t-h2">
-              {painful.title}
-            </Reveal>
-            <Reveal as="p" index={1} className="t-sub">
-              {painful.sub}
-            </Reveal>
-          </div>
-          <div className="split split-5-7">
-            <div className="sticky stack-lg">
+          <Head title={painful.title} sub={painful.sub} />
+          <div className="split split-4-8">
+            <div className="stack-lg">
               <Reveal as="p" className="t-statement">
                 {painful.think}
               </Reveal>
@@ -350,29 +353,13 @@ export default function Page() {
               <Reveal as="p" className="t-h3 t-display">
                 {painful.search}
               </Reveal>
-              <div className="rdr-compare">
-                <Reveal className="col dim" index={1}>
-                  <h4>{painful.leader[1]}</h4>
-                  <div className="poster">{painful.compares[1].poster}</div>
-                  <ul>
-                    <li>{painful.compares[3].or}</li>
-                  </ul>
-                </Reveal>
-                <Reveal className="col lit" index={2}>
-                  <h4>{painful.leader[0]}</h4>
-                  <ul>
-                    <li>{painful.compares[0].when}</li>
-                    <li>{painful.compares[0].ask[0]}</li>
-                    <li>{painful.compares[1].when}</li>
-                    <li>{painful.compares[1].ask[0]}</li>
-                    <li>{painful.compares[2].when}</li>
-                    <li>{painful.compares[2].ask.join(" ")}</li>
-                    <li>{painful.compares[3].when}</li>
-                    <li>{painful.compares[3].ask[0]}</li>
-                  </ul>
-                  <p className="t-h3 t-display">{painful.compares[3].feel}</p>
-                </Reveal>
-              </div>
+              <Reveal index={1}>
+                <Serp
+                  query="your business name"
+                  other={{ title: painful.leader[1], poster: painful.compares[1].poster ?? "", items: ["No founder story", "No media credibility", "No proof, no authority"], verdict: painful.compares[3].or ?? "" }}
+                  leader={{ title: painful.leader[0], items: [painful.compares[0].ask[0], painful.compares[1].ask[0], painful.compares[2].ask.join(" "), painful.compares[3].ask[0]], verdict: painful.compares[3].feel ?? "" }}
+                />
+              </Reveal>
             </div>
           </div>
           <div className="split split-4-8">
@@ -380,7 +367,7 @@ export default function Page() {
               {painful.matters}
             </Reveal>
             <div className="stack-lg">
-              <Reveal as="ul" index={1} className="rdr-ledger" aria-label="The loss nobody calculates">
+              <Reveal as="ul" className="rdr-ledger glass" style={{ padding: "8px 22px" }} aria-label="The loss nobody calculates">
                 {painful.every.map((e) => (
                   <li key={e}>
                     <span>{e}</span>
@@ -392,7 +379,7 @@ export default function Page() {
                   <span aria-hidden="true">₱ ______</span>
                 </li>
               </Reveal>
-              <Reveal as="p" index={2} className="t-statement t-soft">
+              <Reveal as="p" index={1} className="t-statement t-soft">
                 {painful.never}
               </Reveal>
             </div>
@@ -400,17 +387,10 @@ export default function Page() {
         </div>
       </Section>
 
-      {/* ───────── Before the sale + the funnel scene ───────── */}
-      <Section id="before" ground="light">
+      {/* ───────── 8. Before the sale: the funnel ───────── */}
+      <Section id="before" ground="dark" className="section-tight">
         <div className="stack-xl">
-          <div className="split split-5-7">
-            <Reveal as="h2" className="t-display t-h2">
-              {beforeSale.title}
-            </Reveal>
-            <Reveal as="p" index={1} className="t-sub">
-              {beforeSale.sub}
-            </Reveal>
-          </div>
+          <Head title={beforeSale.title} sub={beforeSale.sub} />
           <div className="split split-4-8">
             <Reveal as="p" className="t-statement">
               {beforeSale.before}
@@ -425,464 +405,219 @@ export default function Page() {
           </div>
         </div>
       </Section>
-      <section data-ground="light" className="rdr-ground-light">
+      <section data-ground="dark" className="rdr-ground-dark">
         <Funnel old={beforeSale.old} words={beforeSale.funnel} isnt={beforeSale.isnt} its={beforeSale.its} game={beforeSale.game} />
       </section>
-      <Section ground="light" className="section-tight">
+      <Section ground="dark" className="section-tight">
         <div className="split split-6-6">
           <div className="stack-lg">
-            <Reveal as="p" className="t-body">
-              {beforeSale.notImpressed}
-            </Reveal>
-            <Reveal as="blockquote" index={1} className="t-quote t-soft">
+            <Reveal as="blockquote" className="t-quote t-soft">
               {beforeSale.quote}
             </Reveal>
-            <Reveal as="p" index={2} className="t-body">
-              {beforeSale.next}
-            </Reveal>
-            <Reveal as="blockquote" index={3} className="t-display t-h2 t-accent">
+            <Reveal as="blockquote" index={1} className="t-display t-h2 t-gold glow-gold">
               {beforeSale.nextQ}
+            </Reveal>
+            <Reveal as="p" index={2} className="t-display t-h3">
+              {beforeSale.care}
             </Reveal>
           </div>
           <div className="stack-lg">
             <Reveal>
               <List items={beforeSale.questions} />
             </Reveal>
-            <Reveal as="p" index={1} className="t-statement">
-              {beforeSale.businessman}
-            </Reveal>
-            <Reveal as="p" index={2} className="t-display t-h3">
-              {beforeSale.care}
+            <Reveal index={1}>
+              <Letter title="Why one million views does not impress Boss RDR" lines={[beforeSale.notImpressed, beforeSale.quote, beforeSale.next, beforeSale.nextQ, beforeSale.businessman]} />
             </Reveal>
           </div>
         </div>
       </Section>
 
-      {/* ───────── The dream ───────── */}
-      <Section id="dream" ground="dark">
+      {/* ───────── 9. The dream ───────── */}
+      <Section id="dream" ground="light">
         <div className="stack-xl">
-          <div className="split split-5-7">
-            <Reveal as="h2" className="t-display t-h2">
-              {dream.title}
+          <Head title={dream.title} sub={dream.sub} />
+          <div className="split split-6-6" style={{ alignItems: "center" }}>
+            <Reveal>
+              <Radial core="Your next sales call" items={dream.seen.map((s) => s.replace(/^They've /, "").replace(/^They /, "").replace(/\.$/, ""))} />
             </Reveal>
-            <Reveal as="p" index={1} className="t-sub">
-              {dream.sub}
-            </Reveal>
-          </div>
-          <div className="split split-5-7">
-            <div className="sticky stack-lg">
-              <Reveal as="p" className="t-h3 t-display">
-                {dream.imagine}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-statement">
-                {dream.stranger}
-              </Reveal>
-            </div>
-            <Reveal as="ul" className="rdr-seen" aria-label="What they have already seen">
-              {dream.seen.map((s) => (
-                <li key={s}>
-                  <i aria-hidden="true" />
-                  {s}
-                </li>
-              ))}
-            </Reveal>
-          </div>
-          <div className="split split-5-7">
-            <div className="stack-lg">
-              <Reveal as="p" className="t-body">
-                {dream.so}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-display t-h3">
-                {dream.zero}
-              </Reveal>
-              <Reveal as="p" index={2} className="t-display t-h3 t-accent">
-                {dream.trust}
-              </Reveal>
-            </div>
             <div className="stack-lg">
               <Reveal as="p" className="t-statement">
-                {dream.now}
+                {dream.stranger}
               </Reveal>
-              <Reveal as="ul" index={1} className="rdr-chips">
-                {dream.with.map((w) => (
-                  <li key={w}>{w}</li>
-                ))}
+              <Reveal as="p" index={1} className="t-display t-h3">
+                {dream.zero} <span className="t-gold">{dream.trust}</span>
               </Reveal>
-              <Reveal as="p" index={2} className="t-body">
-                {dream.stops}
+              <Reveal index={2}>
+                <Chips items={dream.with} />
               </Reveal>
               <Reveal as="p" index={3} className="t-h3 t-display">
                 {dream.asset}
               </Reveal>
+              <Reveal index={4}>
+                <Letter title="Imagine this, in Boss RDR's words" lines={[dream.imagine, dream.stranger, ...dream.seen, dream.so, dream.zero, dream.trust, dream.now, dream.stops]} />
+              </Reveal>
             </div>
           </div>
         </div>
       </Section>
 
-      {/* ───────── Money: the live calculator ───────── */}
-      <Section id="money" ground="light">
+      {/* ───────── 10. Money ───────── */}
+      <Section id="money" ground="dark">
         <div className="stack-xl">
+          <Head title={money.title} sub={money.sub} />
           <div className="split split-5-7">
-            <Reveal as="h2" className="t-display t-h2">
-              {money.title}
-            </Reveal>
-            <Reveal as="p" index={1} className="t-sub">
-              {money.sub}
-            </Reveal>
-          </div>
-          <div className="split split-5-7">
-            <div className="sticky stack-lg">
+            <div className="stack-lg">
               <Reveal as="p" className="t-h3 t-display">
                 {money.think}
               </Reveal>
               <Reveal as="p" index={1} className="t-statement">
                 {money.one}
               </Reveal>
-              <Reveal as="ul" index={2} className="rdr-chips">
-                {money.amounts.map((a) => (
-                  <li key={a}>{a}</li>
-                ))}
+              <Reveal index={2}>
+                <Chips items={money.amounts} />
               </Reveal>
               <Reveal index={3}>
                 <List items={money.worths} />
+              </Reveal>
+              <Reveal index={4}>
+                <Letter title="The ROI conversation Boss RDR cares about" lines={[...money.whatIf, money.roi, `${money.not} ${money.notQ}`, `${money.but} ${money.butQ}`]} />
               </Reveal>
             </div>
             <Reveal className="field">
               <Calculator />
             </Reveal>
           </div>
-          <div className="split split-7-5">
-            <Reveal>
-              <Lines items={money.whatIf} className="t-statement" />
-            </Reveal>
-            <div className="stack-lg">
-              <Reveal as="p" className="t-statement" style={{ fontWeight: 760 }}>
-                {money.roi}
-              </Reveal>
-              <Reveal index={1} className="rdr-pairs">
-                <ul className="rdr-pairs">
-                  <li>
-                    <div className="a">
-                      {money.not} {money.notQ}
-                    </div>
-                    <div className="b">
-                      {money.but} {money.butQ}
-                    </div>
-                  </li>
-                </ul>
-              </Reveal>
-            </div>
-          </div>
         </div>
       </Section>
 
-      {/* ───────── Case studies ───────── */}
-      <Section id="results" ground="dark" className="section-tight">
-        <div className="split split-5-7">
-          <Reveal as="h2" className="t-display t-h2">
-            {believe.title}
-          </Reveal>
-          <Reveal as="p" index={1} className="t-sub t-accent">
-            {believe.sub}
-          </Reveal>
-        </div>
-      </Section>
+      {/* ───────── 11. Case studies ───────── */}
+      <Section id="results" ground="light">
+        <div className="stack-xl">
+          <Head title={believe.title} sub={believe.sub} />
 
-      <Section ground="dark">
-        <article className="rdr-case">
-          <div className="split split-5-7">
-            <div className="stack">
-              <Reveal as="h3" className="t-display t-h2">
-                {pablings.title}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-sub">
-                {pablings.sub}
-              </Reveal>
+          <Reveal as="article" className="rdr-case2">
+            <div className="media">
+              <Img p={photos.barbershop} />
+              <div className="veil" />
+              <div className="inner">
+                <LiteYouTube id={videos.pablings.id} title={videos.pablings.title} />
+              </div>
             </div>
-            <Reveal index={2}>
-              <LiteYouTube id={videos.pablings.id} title={videos.pablings.title} />
-            </Reveal>
-          </div>
-          <div className="split split-5-7">
-            <div className="stack-lg">
-              <Reveal>
-                <Lines items={pablings.lines} />
-              </Reveal>
-              <Reveal as="p" index={1} className="t-body">
-                {pablings.through}
-              </Reveal>
-              <Reveal as="ul" index={2} className="rdr-chips">
-                {pablings.see.map((s) => (
-                  <li key={s}>{s}</li>
-                ))}
-              </Reveal>
+            <div className="body">
+              <span className="result">
+                <i aria-hidden="true" />
+                Reported in RDR's published case study
+              </span>
+              <h3 className="t-display">{pablings.title}</h3>
+              <p className="t-sub">{pablings.sub}</p>
+              <div className="kpi">
+                <b>
+                  ~<NumberTicker value={200} /> outlets
+                </b>
+                <span>{pablings.reported.replace(/,$/, "")}</span>
+              </div>
+              <OutletGrid />
+              <Chips items={pablings.see} />
+              <Letter title="The Pablings lesson, in full" lines={[...pablings.lines, pablings.through, `${pablings.reported} ${pablings.reportedBig}${pablings.reportedTail}`, pablings.lesson, ...pablings.didNot, pablings.did, pablings.and, pablings.worth]} />
+              <ApplyButton offer="talks" source="case-pablings">
+                {cta.talks}
+              </ApplyButton>
             </div>
-            <div className="stack-lg">
-              <Reveal>
-                <OutletGrid />
-              </Reveal>
-              <Reveal as="p" index={1} className="t-statement">
-                {pablings.reported} <b className="t-accent">{pablings.reportedBig}</b>
-                {pablings.reportedTail}
-              </Reveal>
-            </div>
-          </div>
-          <div className="split split-5-7">
-            <div className="stack-lg">
-              <Reveal as="p" className="t-h3 t-display">
-                {pablings.lesson}
-              </Reveal>
-              <Reveal as="ul" index={1} className="rdr-strike">
-                {pablings.didNot.map((d) => (
-                  <li key={d}>{d}</li>
-                ))}
-              </Reveal>
-            </div>
-            <div className="stack-lg">
-              <Reveal as="p" className="t-statement">
-                {pablings.did}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-body">
-                {pablings.and}
-              </Reveal>
-              <Reveal as="p" index={2} className="t-display t-h2 t-accent">
-                {pablings.worth}
-              </Reveal>
-              <Reveal index={3} className="stack">
-                <p className="t-sub">{pablings.ask}</p>
-                <ApplyButton offer="talks" source="case-pablings">
-                  {cta.talks}
-                </ApplyButton>
-              </Reveal>
-            </div>
-          </div>
-        </article>
-      </Section>
+          </Reveal>
 
-      <Section ground="light">
-        <article className="rdr-case">
-          <div className="split split-5-7">
-            <div className="stack">
-              <Reveal as="h3" className="t-display t-h2">
-                {cmv.title}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-sub">
-                {cmv.sub}
-              </Reveal>
-            </div>
-            <div className="stack-lg">
-              <Reveal as="p" className="t-body">
-                {cmv.fav}
-              </Reveal>
-              <Reveal as="blockquote" index={1} className="t-quote">
-                {cmv.excuse}
-              </Reveal>
-              <Reveal as="p" index={2} className="t-h3 t-display">
-                {cmv.really}
-              </Reveal>
-            </div>
-          </div>
-          <div className="split split-5-7">
-            <div className="stack-lg">
-              <Reveal as="ul" className="rdr-strike">
-                {cmv.not.map((n) => (
-                  <li key={n}>{n}</li>
-                ))}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-statement">
-                {cmv.talking}
-              </Reveal>
-              <Reveal as="ul" index={2} className="rdr-chips">
-                {cmv.products.map((p) => (
-                  <li key={p}>{p}</li>
-                ))}
-              </Reveal>
-            </div>
-            <div className="stack-lg">
-              <Reveal>
+          <Reveal as="article" className="rdr-case2">
+            <div className="media">
+              <Img p={photos.industrial} />
+              <div className="veil" />
+              <div className="inner">
                 <LiteYouTube id={videos.cmv.id} title={videos.cmv.title} emptyLabel="CMV interview" />
-              </Reveal>
-              <Reveal as="p" index={1} className="t-h3 t-display">
-                {cmv.exactly}
-              </Reveal>
+              </div>
             </div>
-          </div>
-          <div className="split split-5-7">
-            <div className="stack-lg">
-              <Reveal>
-                <Lines items={cmv.machine} className="t-statement" />
-              </Reveal>
-              <Reveal as="p" index={1} className="t-display t-h3 t-accent">
-                {cmv.sell}
-              </Reveal>
-              <Reveal index={2}>
-                <List items={cmv.show} />
-              </Reveal>
-            </div>
-            <div className="stack-lg">
-              <Reveal as="p" className="t-body">
-                {cmv.reported}
-              </Reveal>
-              <Reveal index={1}>
-                <TenX />
-              </Reveal>
-              <Reveal as="p" index={2} className="t-giant t-giant-col t-accent">
-                {cmv.big}
-              </Reveal>
-              <Reveal as="p" index={3} className="t-statement">
-                {cmv.along}
-              </Reveal>
-            </div>
-          </div>
-          <div className="split split-5-7">
-            <div className="stack-lg">
-              <Reveal as="p" className="t-statement">
-                {cmv.think}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-statement t-soft">
-                {cmv.sexy}
-              </Reveal>
-              <Reveal as="p" index={2} className="t-display t-h3">
-                {cmv.need}
-              </Reveal>
-            </div>
-            <Reveal className="field stack">
-              <p className="t-sub">{cmv.ask}</p>
-              <p className="t-body">{cmv.askSub}</p>
+            <div className="body">
+              <span className="result">
+                <i aria-hidden="true" />
+                Reported in RDR's published case study
+              </span>
+              <h3 className="t-display">{cmv.title}</h3>
+              <p className="t-sub">{cmv.sub}</p>
+              <div className="kpi">
+                <b>{cmv.big}</b>
+                <span>{cmv.along}</span>
+              </div>
+              <TenX />
+              <blockquote className="t-quote t-soft">{cmv.excuse}</blockquote>
+              <Chips items={cmv.products} />
+              <Letter title="Why a hard-to-market business still has a story" lines={[cmv.fav, cmv.excuse, cmv.really, ...cmv.not, cmv.talking, cmv.exactly, ...cmv.machine, cmv.sell, ...cmv.show, cmv.reported, cmv.big, cmv.along, cmv.think, cmv.sexy, cmv.need]} />
+              <div className="stack">
+                <p className="t-sub">{cmv.ask}</p>
+                <p className="t-soft">{cmv.askSub}</p>
+              </div>
               <ApplyButton offer="talks" source="case-cmv">
                 {cta.talks}
               </ApplyButton>
-            </Reveal>
-          </div>
-        </article>
-      </Section>
-
-      <Section ground="dark">
-        <article className="rdr-case">
-          <div className="split split-5-7">
-            <div className="stack">
-              <Reveal as="h3" className="t-display t-h2">
-                {cinema.title}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-sub">
-                {cinema.sub}
-              </Reveal>
             </div>
-            <div className="stack-lg">
-              <Reveal>
-                <Lines items={cinema.beauty} className="t-h3 t-display" />
-              </Reveal>
-              <Reveal as="ul" index={1} className="rdr-chips">
-                {cinema.thousands.map((t) => (
-                  <li key={t}>{t}</li>
-                ))}
-              </Reveal>
-              <Reveal as="p" index={2} className="t-statement">
-                {cinema.commodity}
-              </Reveal>
-            </div>
-          </div>
-          <div className="split split-5-7">
-            <div className="stack-lg">
-              <Reveal as="p" className="t-body">
-                {cinema.goalNot}
-              </Reveal>
-              <Reveal as="blockquote" index={1} className="t-quote t-soft">
-                {cinema.look}
-              </Reveal>
-              <Reveal as="p" index={2} className="t-body">
-                {cinema.goalWas}
-              </Reveal>
-              <Reveal index={3}>
-                <List items={cinema.understand} />
-              </Reveal>
-            </div>
-            <div className="stack-lg">
-              <Reveal>
-                <LiteYouTube id={videos.cinemaSkin.id} title={videos.cinemaSkin.title} emptyLabel="Cinema Skin feature" />
-              </Reveal>
-              <Reveal index={1}>
-                <Inquiries shots={assets.cinemaSkin.inquiries} />
-              </Reveal>
-              <Reveal as="p" index={2} className="t-statement">
-                {cinema.reported} <b>{cinema.reportedBold}</b>
-              </Reveal>
-            </div>
-          </div>
-          <div className="split split-5-7">
-            <div className="stack-lg">
-              <Reveal as="p" className="t-statement">
-                {cinema.mean}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-statement t-soft">
-                {cinema.notEnt}
-              </Reveal>
-            </div>
-            <div className="stack-lg">
-              <Reveal as="p" className="t-display t-h2">
-                {cinema.big}
-              </Reveal>
-              <Reveal index={1} className="stack">
-                <p className="t-sub">{cinema.ask}</p>
-                <ApplyButton offer="stories" source="case-cinema">
-                  {cta.story}
-                </ApplyButton>
-              </Reveal>
-            </div>
-          </div>
-        </article>
-      </Section>
-
-      {/* ───────── Content vs brand acceleration ───────── */}
-      <Section id="difference" ground="light">
-        <div className="stack-xl">
-          <Reveal as="h2" className="t-display t-h2">
-            {difference.title}
           </Reveal>
-          <div className="stack">
-            <Reveal className="rdr-pairs-head">
-              <p className="t-statement t-soft">{difference.contentSays}</p>
-              <p className="t-statement">{difference.accelSays}</p>
-            </Reveal>
-            <ul className="rdr-pairs">
-              {difference.pairs.map((p, i) => (
-                <Reveal as="li" key={p.content} index={i % 3}>
-                  <div className="a">{p.content}</div>
-                  <div className="b">{p.accel}</div>
-                </Reveal>
-              ))}
-            </ul>
-          </div>
+
+          <Reveal as="article" className="rdr-case2">
+            <div className="media">
+              <Img p={photos.skincare} />
+              <div className="veil" />
+              <div className="inner">
+                <LiteYouTube id={videos.cinemaSkin.id} title={videos.cinemaSkin.title} emptyLabel="Cinema Skin feature" />
+              </div>
+            </div>
+            <div className="body">
+              <span className="result">
+                <i aria-hidden="true" />
+                Reported in RDR's published case study
+              </span>
+              <h3 className="t-display">{cinema.title}</h3>
+              <p className="t-sub">{cinema.sub}</p>
+              <div className="kpi">
+                <b>Inquiry surge</b>
+                <span>{cinema.reportedBold}</span>
+              </div>
+              <Inquiries shots={assets.cinemaSkin.inquiries} />
+              <Chips items={cinema.thousands} />
+              <p className="t-display t-h3">{cinema.big}</p>
+              <Letter title="The Cinema Skin story, in full" lines={[...cinema.beauty, cinema.commodity, cinema.goalNot, cinema.look, cinema.goalWas, ...cinema.understand, `${cinema.reported} ${cinema.reportedBold}`, cinema.mean, cinema.notEnt]} />
+              <p className="t-sub">{cinema.ask}</p>
+              <ApplyButton offer="stories" source="case-cinema">
+                {cta.story}
+              </ApplyButton>
+            </div>
+          </Reveal>
         </div>
       </Section>
 
-      {/* ───────── Why work with me ───────── */}
-      <Section id="why" ground="dark">
+      {/* ───────── 12. Content vs brand acceleration ───────── */}
+      <Section id="difference" ground="dark">
         <div className="stack-xl">
-          <div className="split split-5-7">
-            <Reveal as="h2" className="t-display t-h2">
-              {why.title}
-            </Reveal>
-            <Reveal as="p" index={1} className="t-sub">
-              {why.sub}
-            </Reveal>
-          </div>
+          <Head title={difference.title} sub="Drag the handle." />
+          <Reveal>
+            <Compare a={{ title: difference.contentSays, items: difference.pairs.map((p) => p.content) }} b={{ title: difference.accelSays, items: difference.pairs.map((p) => p.accel) }} />
+          </Reveal>
+        </div>
+      </Section>
+
+      {/* ───────── 13. Why work with me ───────── */}
+      <Section id="why" ground="light">
+        <div className="stack-xl">
+          <Head title={why.title} sub={why.sub} />
           <div className="split split-5-7">
             <div className="stack-lg">
-              <Reveal as="p" className="t-statement">
-                {why.look}
+              <Reveal as="ul" className="rdr-recap">
+                {why.numbers.map((n) => {
+                  const [big, ...rest] = n.split(" ");
+                  return (
+                    <li key={n}>
+                      <b>{big}</b>
+                      {rest.join(" ").replace(/\.$/, "")}
+                    </li>
+                  );
+                })}
               </Reveal>
-              <Reveal as="ul" index={1} className="rdr-list">
-                {why.numbers.map((n) => (
-                  <li key={n} style={{ fontWeight: 760, fontStretch: "108%" }}>
-                    {n}
-                  </li>
-                ))}
-              </Reveal>
-              <Reveal as="p" index={2} className="t-body">
-                {why.theory}
-              </Reveal>
-              <Reveal as="p" index={3} className="t-h3 t-display">
+              <Reveal as="p" index={1} className="t-h3 t-display">
                 {why.attempts}
               </Reveal>
             </div>
@@ -890,238 +625,66 @@ export default function Page() {
               <Reveal>
                 <Attempts />
               </Reveal>
-              <Reveal as="ul" index={1} className="rdr-chips">
-                {why.list.map((l) => (
-                  <li key={l} className={/worked|shared|travelled/.test(l) ? "hot" : ""}>
-                    {l}
-                  </li>
-                ))}
+              <Reveal index={1}>
+                <Chips items={why.list} hot={/worked|shared|travelled/} />
               </Reveal>
               <Reveal as="p" index={2} className="t-statement">
-                {why.years}
+                {why.notHiring} <span className="t-gold">{why.benefit}</span>
+              </Reveal>
+              <Reveal index={3}>
+                <Letter title="Thousands of attempts, in Boss RDR's words" lines={[why.look, why.theory, why.attempts, why.years, why.notHiring, why.already, why.benefit]} />
               </Reveal>
             </div>
-          </div>
-          <div className="split split-5-7">
-            <Reveal as="p" className="t-h3 t-display">
-              {why.notHiring}
-            </Reveal>
-            <Reveal index={1}>
-              <Lines items={[why.already, why.benefit]} className="t-statement" />
-            </Reveal>
           </div>
         </div>
       </Section>
 
-      {/* ───────── National media ───────── */}
-      <Section id="media" ground="light">
+      {/* ───────── 14. National media ───────── */}
+      <Section id="media" ground="dark">
         <div className="stack-xl">
-          <div className="split split-5-7">
-            <Reveal as="h2" className="t-display t-h2">
-              {mediaSection.title}
-            </Reveal>
-            <Reveal as="p" index={1} className="t-statement">
-              {mediaSection.lead}
-            </Reveal>
-          </div>
+          <Head title={mediaSection.title} sub={mediaSection.lead} />
         </div>
       </Section>
-      <section data-ground="light" className="rdr-ground-light" aria-label="Media platforms">
+      <section data-ground="dark" className="rdr-ground-dark rdr-rows" aria-label="Media platforms">
         <Marquee names={media} logos={assets.mediaLogos} />
       </section>
-      <Section ground="light" className="section-tight">
+      <Section ground="dark" className="section-tight">
         <div className="split split-5-7">
           <div className="stack-lg">
-            <Reveal as="p" className="t-soft">
-              {mediaSection.tail}
-            </Reveal>
-            <Reveal as="p" index={1} className="t-body">
-              {mediaSection.mention}
-            </Reveal>
-            <Reveal as="p" index={2} className="t-display t-h2 t-accent">
+            <Reveal as="p" className="t-display t-h2 t-gold glow-gold">
               {mediaSection.compounds}
-            </Reveal>
-          </div>
-          <div className="stack-lg">
-            <Reveal>
-              <Compound labels={mediaSection.chain} />
             </Reveal>
             <Reveal as="p" index={1} className="t-statement">
               {mediaSection.eventually}
             </Reveal>
           </div>
-        </div>
-      </Section>
-
-      {/* ───────── The platforms ───────── */}
-      <Section id="platforms" ground="dark" className="section-tight">
-        <div className="split split-5-7">
-          <Reveal as="h2" className="t-display t-h2">
-            {offersIntro.title}
-          </Reveal>
-          <Reveal as="p" index={1} className="t-sub">
-            {offersIntro.sub}
-          </Reveal>
-        </div>
-      </Section>
-
-      <section data-ground="light" className="rdr-ground-light">
-        <div className="wrap">
-          {offers.map((o) => (
-            <article key={o.key} id={`offer-${o.key}`} className="rdr-offer">
-              <div className="split split-5-7">
-                <div className="head">
-                  <Reveal as="p" className="num">
-                    {o.number}
-                  </Reveal>
-                  <Reveal as="h3" index={1} className="t-display t-h2">
-                    {o.title.replace(/^OFFER #\d+ — /, "")}
-                  </Reveal>
-                  <Reveal as="p" index={2} className="t-sub t-accent">
-                    {o.sub}
-                  </Reveal>
-                </div>
-                <div className="stack-lg">
-                  <Reveal>
-                    <Lines items={o.paras} className="t-statement" />
-                  </Reveal>
-                  {o.key === "talks" && (
-                    <Reveal index={1} className="rdr-chips">
-                      <ul className="rdr-chips">
-                        {offerExtras.talksUncover.map((t) => (
-                          <li key={t}>{t}</li>
-                        ))}
-                      </ul>
-                    </Reveal>
-                  )}
-                  {o.key === "n1m" && (
-                    <Reveal index={1}>
-                      <Phone ones={offerExtras.n1mOne} />
-                    </Reveal>
-                  )}
-                </div>
-              </div>
-
-              <div className="split split-5-7">
-                <div className="stack-lg">
-                  {o.listIntro && (
-                    <Reveal as="p" className="t-body" style={{ fontWeight: 650 }}>
-                      {o.listIntro}
-                    </Reveal>
-                  )}
-                  {o.list && (
-                    <Reveal index={1}>
-                      {o.key === "studio" || o.key === "vlog" ? (
-                        <ul className="rdr-studio">
-                          {o.list.map((t) => (
-                            <li key={t}>{t}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <List items={o.list} two={o.list.length > 6} />
-                      )}
-                    </Reveal>
-                  )}
-                </div>
-                <div className="stack-lg">
-                  {o.afterList && (
-                    <Reveal>
-                      <Lines items={o.afterList} className="t-statement" />
-                    </Reveal>
-                  )}
-                  {o.key === "vlog" && (
-                    <Reveal index={1}>
-                      <List items={offerExtras.vlogLet} />
-                    </Reveal>
-                  )}
-                  {o.key === "films" && (
-                    <Reveal index={1} className="stack-lg">
-                      <ul className="rdr-chips">
-                        {offerExtras.filmsMakes.map((t) => (
-                          <li key={t}>{t}</li>
-                        ))}
-                      </ul>
-                      <p className="t-body">{offerExtras.filmsBecause}</p>
-                    </Reveal>
-                  )}
-                  {o.big && (
-                    <Reveal as="p" index={2} className="t-display t-h3">
-                      {o.big}
-                    </Reveal>
-                  )}
-                  {o.key === "studio" && (
-                    <Reveal as="p" index={3} className="t-statement">
-                      {offerExtras.studioGive}
-                    </Reveal>
-                  )}
-                  {o.key === "events" && (
-                    <Reveal index={3}>
-                      <NextEvent cta={o.cta} />
-                    </Reveal>
-                  )}
-                  {o.key !== "events" && (
-                    <Reveal index={3}>
-                      <ApplyButton offer={o.key} source={`offer-${o.key}`}>
-                        {o.cta}
-                      </ApplyButton>
-                    </Reveal>
-                  )}
-                </div>
-              </div>
-
-              {o.key === "talks" && (
-                <Reveal className="rdr-clips" aria-label="RDR Talks clips">
-                  {videos.talks.slice(0, 4).map((v) => (
-                    <LiteYouTube key={v.id} id={v.id} title={v.title} />
-                  ))}
-                </Reveal>
-              )}
-              {o.key === "films" && (
-                <Reveal>
-                  <LiteYouTube id={videos.talks[1].id} title={videos.talks[1].title} className="rdr-cine" />
-                </Reveal>
-              )}
-              {o.key === "studio" && assets.studio.length > 0 && (
-                <Reveal className="rdr-gallery">
-                  {assets.studio.map((s) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img key={s} src={s} alt="Inside the RDR studio" loading="lazy" />
-                  ))}
-                </Reveal>
-              )}
-              {o.key === "gci" && assets.gci.length > 0 && (
-                <Reveal className="rdr-gallery">
-                  {assets.gci.map((s) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img key={s} src={s} alt="Growth Circle International" loading="lazy" />
-                  ))}
-                </Reveal>
-              )}
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* ───────── Which one ───────── */}
-      <Section id="which" ground="dark">
-        <div className="stack-xl">
-          <div className="split split-5-7">
-            <Reveal as="h2" className="t-display t-h2">
-              {which.title}
-            </Reveal>
-            <Reveal as="p" index={1} className="t-sub t-accent">
-              {which.sub}
-            </Reveal>
-          </div>
-          <Reveal>
-            <WhichOne map={which.map} />
-          </Reveal>
-          <div className="split split-7-5">
-            <Reveal>
-              <Lines items={which.still} className="t-statement" />
+          <div className="stack-lg">
+            <Reveal className="glass" style={{ padding: 24 }}>
+              <Compound labels={mediaSection.chain} />
             </Reveal>
             <Reveal index={1}>
-              <ApplyButton offer="general" source="which" className="rbtn rbtn-lg">
+              <Letter title="Why authority compounds" lines={[mediaSection.tail, mediaSection.mention, mediaSection.compounds, ...mediaSection.chain, mediaSection.eventually]} />
+            </Reveal>
+          </div>
+        </div>
+      </Section>
+
+      {/* ───────── 15. The platforms ───────── */}
+      <Section id="platforms" ground="light">
+        <div className="stack-xl">
+          <Head title={offersIntro.title} sub={offersIntro.sub} />
+          <Reveal as="p" className="t-display t-h3">
+            {which.title} <span className="t-gold">{which.sub}</span>
+          </Reveal>
+          <Reveal>
+            <Bento map={which.map} talksIds={videos.talks.map((v) => v.id)} nextEvent={<NextEvent cta={cta.events} />} />
+          </Reveal>
+          <div className="split split-7-5">
+            <Reveal as="p" className="t-statement">
+              {which.still.join(" ")}
+            </Reveal>
+            <Reveal index={1}>
+              <ApplyButton offer="general" source="which" className="rbtn rbtn-gold rbtn-lg">
                 {cta.choose}
               </ApplyButton>
             </Reveal>
@@ -1129,17 +692,10 @@ export default function Page() {
         </div>
       </Section>
 
-      {/* ───────── Who it's for ───────── */}
-      <Section id="who" ground="light">
+      {/* ───────── 16. Who it's for ───────── */}
+      <Section id="who" ground="dark">
         <div className="stack-xl">
-          <div className="split split-5-7">
-            <Reveal as="h2" className="t-display t-h2">
-              {whoFor.title}
-            </Reveal>
-            <Reveal as="p" index={1} className="t-sub">
-              {whoFor.sub}
-            </Reveal>
-          </div>
+          <Head title={whoFor.title} sub={whoFor.sub} />
           <div className="rdr-fit">
             <Reveal className="field field-3 stack-lg">
               <ul className="rdr-strike">
@@ -1148,311 +704,214 @@ export default function Page() {
                 ))}
               </ul>
               <p className="t-statement">{whoFor.wont}</p>
-              <p className="t-body t-soft">{whoFor.expose}</p>
+              <p className="t-soft">{whoFor.expose}</p>
             </Reveal>
             <Reveal index={1} className="field stack-lg">
-              <Lines items={whoFor.but} className="t-statement" />
-              <p className="t-display t-h3 t-accent">{whoFor.interesting}</p>
-              <p className="t-body" style={{ fontWeight: 650 }}>
-                {whoFor.fit}
-              </p>
-              <ul className="rdr-chips">
-                {whoFor.list.map((l) => (
-                  <li key={l}>{l}</li>
-                ))}
-              </ul>
+              <p className="t-statement">{whoFor.but.join(" ")}</p>
+              <p className="t-display t-h3 t-gold">{whoFor.interesting}</p>
+              <p style={{ fontWeight: 650 }}>{whoFor.fit}</p>
+              <Chips items={whoFor.list} />
             </Reveal>
           </div>
         </div>
       </Section>
 
-      {/* ───────── ROI test ───────── */}
-      <Section id="roi" ground="dark">
+      {/* ───────── 17. ROI test ───────── */}
+      <Section id="roi" ground="light">
         <div className="stack-xl">
-          <div className="split split-5-7">
-            <Reveal as="h2" className="t-display t-h2">
-              {roiTest.title}
-            </Reveal>
-            <Reveal as="p" index={1} className="t-sub">
-              {roiTest.sub}
-            </Reveal>
-          </div>
-          <div className="split split-5-7">
-            <Reveal>
-              <List items={roiTest.questions} />
+          <Head title={roiTest.title} sub={roiTest.sub} />
+          <div className="split split-6-6">
+            <Reveal as="ul" className="rdr-recap">
+              {roiTest.questions.map((q) => (
+                <li key={q} style={{ fontSize: 16, color: "var(--fg)" }}>
+                  {q}
+                </li>
+              ))}
             </Reveal>
             <div className="stack-lg">
               <Reveal as="p" className="t-statement">
                 {roiTest.compare}
               </Reveal>
-              <Reveal as="p" index={1} className="t-body">
-                {roiTest.how}
-              </Reveal>
-              <Reveal index={2}>
+              <Reveal index={1}>
                 <ul className="rdr-pairs">
                   <li>
                     <div className="a">
                       {roiTest.not} {roiTest.notQ}
                     </div>
-                    <div className="b">
+                    <div className="b" style={{ background: "var(--gold)", color: "var(--on-gold)" }}>
                       {roiTest.but} {roiTest.butQ}
                     </div>
                   </li>
                 </ul>
               </Reveal>
+              <Reveal index={2}>
+                <Letter title="How a business owner should think" lines={[roiTest.how, ...roiTest.cheap]} />
+              </Reveal>
               <Reveal index={3}>
-                <Lines items={roiTest.cheap} />
+                <a className="rbtn rbtn-quiet" href="#money">
+                  Run your own numbers
+                </a>
               </Reveal>
             </div>
           </div>
         </div>
       </Section>
 
-      {/* ───────── Ecosystem ───────── */}
-      <Section id="ecosystem" ground="light">
+      {/* ───────── 18. Ecosystem ───────── */}
+      <Section id="ecosystem" ground="dark">
         <div className="stack-xl">
-          <Reveal as="h2" className="t-display t-h2">
-            {ecosystem.title}
-          </Reveal>
+          <Head title={ecosystem.title} />
           <Reveal>
             <LogoWall names={brands} logos={assets.brandLogos} />
           </Reveal>
           <div className="split split-5-7">
-            <div className="stack">
-              <Reveal as="p" className="t-soft">
-                {ecosystem.more}
-              </Reveal>
-              <Reveal index={1}>
-                <Lines items={ecosystem.different} className="t-statement" />
-              </Reveal>
-              <Reveal as="p" index={2} className="t-body">
-                {ecosystem.same}
-              </Reveal>
-            </div>
-            <Reveal as="p" className="t-display t-h2 t-accent">
+            <Reveal as="p" className="t-soft">
+              {ecosystem.more} {ecosystem.different.join(" ")} {ecosystem.same}
+            </Reveal>
+            <Reveal as="p" className="t-display t-h2 t-gold glow-gold">
               {ecosystem.big}
             </Reveal>
           </div>
         </div>
       </Section>
 
-      {/* ───────── How it works ───────── */}
-      <Section id="how" ground="dark">
+      {/* ───────── 19. How it works ───────── */}
+      <Section id="how" ground="light">
         <div className="stack-xl">
-          <Reveal as="h2" className="t-display t-h2">
-            {howItWorks.title}
+          <Head title={howItWorks.title} />
+          <Reveal>
+            <Stepper steps={howItWorks.steps} />
           </Reveal>
-          <ol className="rdr-steps">
-            {howItWorks.steps.map((s, i) => (
-              <Reveal as="li" key={s.title} index={i % 2}>
-                <div className="stack">
-                  <h3 className="t-display t-h3">{s.title}</h3>
-                  {s.lines && <Lines items={s.lines} />}
-                  {s.close && <Lines items={s.close} />}
-                  {s.bold && (
-                    <p className="t-statement" style={{ fontWeight: 760 }}>
-                      {s.bold}
-                    </p>
-                  )}
-                </div>
-                <div className="stack-lg">
-                  {s.list && <List items={s.list} two={s.list.length > 6} />}
-                  {s.asks && (
-                    <ul className="asks">
-                      {s.asks.map((a) => (
-                        <li key={a}>{a}</li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </Reveal>
-            ))}
-          </ol>
+          <Reveal>
+            <ApplyButton className="rbtn rbtn-lg" source="how">
+              {cta.primary}
+            </ApplyButton>
+          </Reveal>
         </div>
       </Section>
 
-      {/* ───────── Objections ───────── */}
-      <Section id="questions" ground="light">
-        <div className="stack-xl">
-          <div className="rdr-obj">
-            {objections.map((o, i) => (
-              <Reveal as="details" key={o.q} index={i % 3} open={i === 0 ? true : undefined}>
-                <summary>
-                  <span>{o.q}</span>
-                  <i aria-hidden="true" />
-                </summary>
-                <div className="body">
-                  {o.a && <p className="t-sub t-accent">{o.a}</p>}
-                  <Lines items={o.paras} />
-                  {o.bold && (
-                    <p className="t-statement" style={{ fontWeight: 760 }}>
-                      {o.bold}
-                    </p>
-                  )}
-                  {o.list && <List items={o.list} two={o.list.length > 6} />}
-                  {o.after && <Lines items={o.after} />}
-                  {o.list2 && <List items={o.list2} />}
-                  {o.big && <p className="t-display t-h3">{o.big}</p>}
-                  {o.close && <Lines items={o.close} />}
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      {/* ───────── Philosophy ───────── */}
-      <Section id="philosophy" ground="dark">
-        <div className="stack-xl">
-          <div className="split split-5-7">
-            <Reveal as="h2" className="t-display t-h2">
-              {philosophy.title}
-            </Reveal>
-            <div className="stack-lg">
-              <Reveal as="p" className="t-display t-h2 t-accent">
-                {philosophy.sub}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-statement">
-                {philosophy.want} <b>{philosophy.wantBold}</b>
-              </Reveal>
-              <Reveal as="p" index={2} className="t-body t-soft">
-                {philosophy.diff}
-              </Reveal>
-            </div>
-          </div>
-          <ul className="rdr-scale">
-            {philosophy.pairs.map((p, i) => (
-              <Reveal as="li" key={p.famous} index={i}>
-                <div className="f">{p.famous}</div>
-                <div className="v">{p.valuable}</div>
-              </Reveal>
-            ))}
-          </ul>
-          <div className="split split-5-7">
-            <Reveal>
-              <Lines items={philosophy.fame} className="t-statement" />
-            </Reveal>
-            <Reveal as="p" className="t-display t-h2">
-              {philosophy.big}
-            </Reveal>
-          </div>
-        </div>
-      </Section>
-
-      {/* ───────── Why I care ───────── */}
-      <Section id="care" ground="light">
-        <div className="stack-xl">
-          <div className="split split-5-7">
-            <Reveal as="h2" className="t-display t-h2">
-              {care.title}
-            </Reveal>
-            <div className="stack-lg">
-              {care.lines.map((l) => (
-                <Words key={l} text={l} className="t-statement" />
-              ))}
-            </div>
-          </div>
-          <div className="split split-5-7">
-            <div className="stack-lg">
-              <Reveal as="p" className="t-body">
-                {care.look}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-display t-h3">
-                {care.see}
-              </Reveal>
-            </div>
-            <div className="stack-lg">
-              <Reveal as="ul" className="rdr-chips">
-                {care.behind.map((b) => (
-                  <li key={b}>{b}</li>
+      {/* ───────── 20. Questions ───────── */}
+      <Section id="questions" ground="dark">
+        <div className="rdr-obj">
+          {objections.map((o, i) => (
+            <Reveal as="details" key={o.q} index={i % 3} open={i === 0 ? true : undefined}>
+              <summary>
+                <span>{o.q}</span>
+                <i aria-hidden="true" />
+              </summary>
+              <div className="body">
+                {o.a && <p className="t-sub t-gold">{o.a}</p>}
+                {o.paras.map((p) => (
+                  <p key={p}>{p}</p>
                 ))}
-              </Reveal>
-              <Reveal as="p" index={1} className="t-statement">
-                {care.so}
-              </Reveal>
-              <Reveal as="p" index={2} className="t-display t-h2 t-accent">
-                {care.dont}
-              </Reveal>
-              <Reveal index={3}>
-                <Lines items={care.did} className="t-statement" />
-              </Reveal>
-            </div>
-          </div>
+                {o.bold && (
+                  <p className="t-statement" style={{ fontWeight: 760 }}>
+                    {o.bold}
+                  </p>
+                )}
+                {o.list && <Chips items={o.list} />}
+                {o.after?.map((p) => (
+                  <p key={p}>{p}</p>
+                ))}
+                {o.list2 && <List items={o.list2} />}
+                {o.big && <p className="t-display t-h3 t-gold">{o.big}</p>}
+                {o.close?.map((p) => (
+                  <p key={p}>{p}</p>
+                ))}
+              </div>
+            </Reveal>
+          ))}
         </div>
       </Section>
 
-      {/* ───────── My goal for you ───────── */}
-      <Section id="goal" ground="dark">
+      {/* ───────── 21. Philosophy ───────── */}
+      <Section id="philosophy" ground="light">
         <div className="stack-xl">
+          <Head title={philosophy.title} sub={philosophy.sub} center />
+          <Reveal as="p" className="t-statement" style={{ textAlign: "center", marginInline: "auto" }}>
+            {philosophy.want} <b className="t-gold">{philosophy.wantBold}</b> {philosophy.diff}
+          </Reveal>
+          <Reveal>
+            <Toggle pairs={philosophy.pairs} />
+          </Reveal>
+          <Reveal as="p" className="t-display t-h2" style={{ textAlign: "center" }}>
+            {philosophy.big}
+          </Reveal>
+          <Reveal>
+            <Letter title="Famous or valuable, in Boss RDR's words" lines={[...philosophy.pairs.flatMap((p) => [p.famous, p.valuable]), ...philosophy.fame, philosophy.big]} />
+          </Reveal>
+        </div>
+      </Section>
+
+      {/* ───────── 22. Why I care, and the goal ───────── */}
+      <Section id="care" ground="dark">
+        <div className="stack-xl">
+          <Reveal className="rdr-photoquote">
+            <Img p={photos.audienceScreen} />
+            <div className="veil" />
+            <div className="stack-lg">
+              <h2 className="t-display t-h3 t-gold">{care.title}</h2>
+              <div className="stack">
+                {care.lines.slice(0, 3).map((l) => (
+                  <Words key={l} text={l} className="q" />
+                ))}
+              </div>
+              <p className="t-statement">{care.see}</p>
+              <Chips items={care.behind} />
+              <p className="t-display t-h3">{care.dont}</p>
+            </div>
+          </Reveal>
+          <Reveal>
+            <Letter title="Why Boss RDR cares, in full" lines={[...care.lines, care.look, care.see, ...care.behind, care.so, care.dont, ...care.did]} />
+          </Reveal>
           <div className="split split-5-7">
-            <Reveal as="h2" className="t-display t-h2">
-              {goal.title}
-            </Reveal>
-            <Reveal as="p" index={1} className="t-sub t-accent">
-              {goal.sub}
-            </Reveal>
-          </div>
-          <div className="split split-7-5">
-            <Reveal>
-              <List items={goal.wants} />
-            </Reveal>
-            <Reveal as="p" index={1} className="t-display t-h3">
-              {goal.because}
-            </Reveal>
-          </div>
-        </div>
-      </Section>
-
-      {/* ───────── One door ───────── */}
-      <Section id="door" ground="light">
-        <div className="stack-xl">
-          <div className="split split-6-6">
-            <div className="stack">
-              {door.one.map((l, i) => (
-                <Reveal as="p" key={l} index={i} className="t-giant t-giant-col">
-                  {l}
-                </Reveal>
-              ))}
-              <Reveal as="h2" index={3} className="t-sub">
-                {door.can}
-              </Reveal>
-            </div>
+            <Head title={goal.title} sub={goal.sub} />
             <div className="stack-lg">
               <Reveal>
-                <Chain items={door.chain} />
+                <List items={goal.wants} />
               </Reveal>
-              <Reveal index={1}>
-                <Lines items={door.promise} />
+              <Reveal as="p" index={1} className="t-display t-h3 t-gold">
+                {goal.because}
               </Reveal>
             </div>
-          </div>
-          <div className="split split-7-5">
-            <Reveal as="p" className="t-display t-h2 t-accent">
-              {door.big}
-            </Reveal>
-            <Reveal index={1}>
-              <Lines items={door.visibility} className="t-statement" />
-            </Reveal>
           </div>
         </div>
       </Section>
 
-      {/* ───────── Invitation ───────── */}
-      <Section id="invitation" ground="dark">
+      {/* ───────── 23. One door ───────── */}
+      <Section id="door" ground="light">
         <div className="stack-xl">
-          <div className="split split-5-7">
+          <div className="head2 center">
             <Reveal as="h2" className="t-display t-h2">
-              {invitation.title}
+              {door.one.join(" ")}
+            </Reveal>
+            <Reveal as="p" index={1} className="t-sub">
+              {door.can}
+            </Reveal>
+          </div>
+          <Reveal>
+            <Tree seed="One piece of content" chain={door.chain} />
+          </Reveal>
+          <div className="split split-6-6">
+            <Reveal as="p" className="t-display t-h3 t-gold glow-gold">
+              {door.big}
             </Reveal>
             <div className="stack">
-              <Reveal as="p" className="t-sub t-soft">
-                {invitation.sub1}
+              <Reveal as="p" className="t-statement">
+                {door.visibility.join(" ")}
               </Reveal>
-              <Reveal as="p" index={1} className="t-sub">
-                {invitation.sub2}
+              <Reveal index={1}>
+                <Letter title="Can Boss RDR promise which door?" lines={[...door.promise, door.big, ...door.visibility]} />
               </Reveal>
             </div>
           </div>
+        </div>
+      </Section>
+
+      {/* ───────── 24. Invitation ───────── */}
+      <Section id="invitation" ground="dark">
+        <div className="stack-xl">
+          <Head title={invitation.title} sub={`${invitation.sub1} ${invitation.sub2}`} />
           <div className="split split-5-7">
             <div className="stack-lg">
               <Reveal as="ul" className="rdr-strike">
@@ -1460,59 +919,58 @@ export default function Page() {
                   <li key={n}>{n}</li>
                 ))}
               </Reveal>
-              <Reveal as="p" index={1} className="t-body">
-                {invitation.but}
-              </Reveal>
-              <Reveal as="p" index={2} className="t-body">
-                {invitation.to}
+              <Reveal as="p" index={1} className="t-statement">
+                {invitation.but} {invitation.to}
               </Reveal>
             </div>
             <div className="stack-lg">
-              <ul className="rdr-bar" style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))" }}>
-                {invitation.numbers.map((n, i) => (
-                  <Reveal as="li" key={n} index={i % 2}>
-                    {n}
-                  </Reveal>
-                ))}
-              </ul>
-              <Reveal as="p" className="t-body">
+              <Reveal as="ul" className="rdr-recap">
+                {invitation.numbers.map((n) => {
+                  const [big, ...rest] = n.split(" ");
+                  return (
+                    <li key={n}>
+                      <b>{big}</b>
+                      {rest.join(" ")}
+                    </li>
+                  );
+                })}
+              </Reveal>
+              <Reveal as="p" className="t-soft">
                 {invitation.stories}
               </Reveal>
-              <ul className="rdr-list">
-                {invitation.cases.map((c, i) => (
-                  <Reveal as="li" key={c} index={i} style={{ fontWeight: 760, fontStretch: "108%" }}>
-                    {c}
-                  </Reveal>
-                ))}
-              </ul>
+              <Reveal>
+                <List items={invitation.cases} />
+              </Reveal>
+              <Reveal>
+                <Letter title="The kind of outcomes that interest Boss RDR" lines={invitation.interest} />
+              </Reveal>
             </div>
           </div>
-          <Reveal>
-            <Lines items={invitation.interest} className="t-statement" />
-          </Reveal>
         </div>
       </Section>
 
-      {/* ───────── Step forward ───────── */}
+      {/* ───────── 25. Step forward ───────── */}
       <Section id="forward" ground="light">
         <div className="stack-xl">
-          <div className="split split-5-7">
+          <div className="head2 center">
             <Reveal as="h2" className="t-display t-h2">
               {stepForward.title}
             </Reveal>
+            <Reveal as="p" index={1} className="t-giant t-accent glow-red" style={{ color: "var(--tally)" }}>
+              {stepForward.sub}
+            </Reveal>
+          </div>
+          <div className="split split-6-6">
             <Reveal>
               <List items={stepForward.tell} />
             </Reveal>
-          </div>
-          <Reveal as="p" className="t-giant t-accent">
-            {stepForward.sub}
-          </Reveal>
-          <div className="stack">
-            {stepForward.big.map((l, i) => (
-              <Reveal as="p" key={l} index={i} className={`t-display t-h1 ${i === 2 ? "t-accent" : i === 1 ? "t-soft" : ""}`}>
-                {l}
-              </Reveal>
-            ))}
+            <div className="stack">
+              {stepForward.big.map((l, i) => (
+                <Reveal as="p" key={l} index={i} className={`t-display t-h2 ${i === 2 ? "t-gold glow-gold" : i === 1 ? "t-soft" : ""}`}>
+                  {l}
+                </Reveal>
+              ))}
+            </div>
           </div>
           <ul className="rdr-ctagrid" aria-label="Apply">
             {stepForward.ctas.map((c, i) => (
@@ -1534,21 +992,23 @@ export default function Page() {
               <p className="name">{stepForward.signoff[1]}</p>
               <p className="t-soft">{stepForward.signoff[2]}</p>
             </Reveal>
-            {assets.heroPhoto ? (
-              <Reveal>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="rdr-photo" src={assets.heroPhoto} alt="Boss RDR with entrepreneurs" loading="lazy" />
-              </Reveal>
-            ) : (
-              <Reveal>
-                <LiteYouTube id={videos.talks[4].id} title={videos.talks[4].title} />
-              </Reveal>
-            )}
+            <Reveal className="rdr-still" style={{ minHeight: 320 }}>
+              {assets.heroPhoto ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={assets.heroPhoto} alt="Boss RDR with entrepreneurs" loading="lazy" />
+              ) : (
+                <Img p={photos.stageSpeaker} />
+              )}
+              <div className="veil" />
+              <div className="year">
+                <span>{hero.ready}</span>
+              </div>
+            </Reveal>
           </div>
         </div>
       </Section>
 
-      {/* ───────── Final proof bar and close ───────── */}
+      {/* ───────── 26. Final proof bar and close ───────── */}
       <footer data-ground="dark" className="rdr-ground-dark section">
         <div className="wrap stack-xl">
           <ul className="rdr-bar" aria-label="Proof">
@@ -1556,20 +1016,15 @@ export default function Page() {
               const [n, ...r] = it.split(" ");
               return (
                 <Reveal as="li" key={it} index={i % 3}>
-                  <b>{n}</b>
+                  <b className="t-gold">{n}</b>
                   {r.join(" ")}
                 </Reveal>
               );
             })}
           </ul>
-          <div className="stack-lg">
-            <Reveal>
-              <LogoWall names={brands} logos={assets.brandLogos} />
-            </Reveal>
-            <Reveal index={1}>
-              <Marquee names={media} logos={assets.mediaLogos} />
-            </Reveal>
-          </div>
+          <Reveal>
+            <LogoWall names={brands} logos={assets.brandLogos} />
+          </Reveal>
           <div className="split split-7-5">
             <div className="stack">
               <Reveal as="p" className="t-display t-h1">
@@ -1608,6 +1063,17 @@ export default function Page() {
               </a>
             </span>
           </div>
+          <p className="rdr-credits">
+            Video stills are from Boss RDR's own YouTube channels. Atmosphere photography on Unsplash by{" "}
+            {photoCredits.map((p, i) => (
+              <span key={p.link}>
+                <a href={p.link} target="_blank" rel="noopener">
+                  {p.credit}
+                </a>
+                {i < photoCredits.length - 1 ? ", " : "."}
+              </span>
+            ))}
+          </p>
         </div>
       </footer>
     </main>
