@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import "./rdr.css";
+import "./rdr3.css";
 
 export const metadata: Metadata = {
   title: "Boss RDR — Get Your Business Known, Trusted and Chosen",
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0f0e0c" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#071128" };
 
 export default function RdrLayout({ children }: { children: React.ReactNode }) {
   return (
