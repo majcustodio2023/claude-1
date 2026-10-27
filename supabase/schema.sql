@@ -92,3 +92,14 @@ grant execute on function public.tracker_backup_get(text, date) to anon;
 
 -- Then register the key once (run with your own value):
 -- insert into tracker_keys values (encode(digest('<TRACKER_DB_KEY>', 'sha256'), 'hex'));
+
+-- Applications from the Boss RDR landing page (/rdr). Written by the app with the anon key.
+create table if not exists rdr_applications (
+  id uuid primary key,
+  received_at timestamptz not null default now(),
+  email text not null,
+  business text not null,
+  payload jsonb not null
+);
+alter table rdr_applications enable row level security;
+create policy "rdr_applications_insert" on rdr_applications for insert to anon with check (true);
