@@ -191,6 +191,19 @@ export function Rail({ children, label }: { children: ReactNode; label: string }
   );
 }
 
+/* ---------- the RDR crest, with the set-in-type ring as fallback ---------- */
+export function Crest({ src }: { src: string }) {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed)
+    return (
+      <span className="ring" aria-hidden="true">
+        RDR
+      </span>
+    );
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={src} alt="" onError={() => setFailed(true)} />;
+}
+
 /* ---------- a press or client mark with a clean fallback ---------- */
 export function MarkItem({ mark }: { mark: Mark }) {
   const [failed, setFailed] = useState(false);

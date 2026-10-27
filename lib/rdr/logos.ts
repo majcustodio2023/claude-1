@@ -16,6 +16,8 @@ const mediaDomains: Record<string, string> = {
 
 const brandDomains: Record<string, string> = {
   "Brilliant Skin": "brilliantskinessentials.com",
+  "Jhaena Jewels": "jhaenajewels.com",
+  SalveoWELL: "salveowell.com",
 };
 
 export interface Mark {
@@ -24,7 +26,10 @@ export interface Mark {
   kind: "file" | "icon" | "mono";
 }
 
-const icon = (domain: string) => `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+const icon = (domain: string, sz = 128) => `https://www.google.com/s2/favicons?domain=${domain}&sz=${sz}`;
+
+/** RDR's own mark: the supplied crest file, else the icon RDR publishes on its own site. */
+export const crest = () => assets.logo || icon("rdrbsi.com", 256);
 
 export function mediaMark(name: string): Mark {
   if (assets.mediaLogos[name]) return { name, src: assets.mediaLogos[name], kind: "file" };

@@ -1,6 +1,6 @@
 import { assets } from "@/lib/rdr/assets";
 import { photoCredits, photos, yt } from "@/lib/rdr/media";
-import { brandMark, mediaMark } from "@/lib/rdr/logos";
+import { brandMark, crest, mediaMark } from "@/lib/rdr/logos";
 import {
   beforeSale,
   believe,
@@ -44,21 +44,14 @@ import { ApplyButton, Reveal } from "@/components/rdr/ui";
 import { NumberTicker } from "@/components/rdr/NumberTicker";
 import { LiteYouTube } from "@/components/rdr/LiteYouTube";
 import { Calculator } from "@/components/rdr/Calculator";
-import { MarkItem, Nav, OpenOnHash, Platforms, Rail, Share } from "@/components/rdr/v3";
+import { Crest, MarkItem, Nav, OpenOnHash, Platforms, Rail, Share } from "@/components/rdr/v3";
 
 export const dynamic = "force-dynamic";
 
 /* ---------- small building blocks ---------- */
 const Mark = () => (
   <a href="#top" className="mark" aria-label="RDR Business Solutions, home">
-    {assets.logo ? (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={assets.logo} alt="" />
-    ) : (
-      <span className="ring" aria-hidden="true">
-        RDR
-      </span>
-    )}
+    <Crest src={crest()} />
     <span className="word">
       <b>RDR</b>
       <span>Business Solutions</span>

@@ -447,7 +447,10 @@
 }
 .rdr .mark img {
   height: 40px;
-  width: auto;
+  width: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
 }
 .rdr .mark .ring {
   width: 40px;
