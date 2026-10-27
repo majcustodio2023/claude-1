@@ -256,6 +256,54 @@ export interface AdAccount {
   hasToken?: boolean;
   /** Default group for this account's campaigns: "client:<id>", "group:<id>" or "none". */
   group?: string;
+  /** Set by the server: what Meta says about the token in use (its own, or the business token). */
+  tokenInfo?: TokenInfo;
+}
+
+/** What Meta says about a saved token, checked when it's saved and again every day. */
+export interface TokenInfo {
+  /** "never" for a System User token (or any token without an end date), else the ISO date it stops working. */
+  expires: string;
+  /** Meta's token type, e.g. SYSTEM_USER, USER, PAGE. */
+  type?: string;
+  /** Whose token: the ad account's own, or the one business token shared by every account. */
+  source: "account" | "business";
+  valid: boolean;
+  checkedAt: string;
+  /** Why it isn't valid, in Meta's words. */
+  error?: string;
+}
+
+/** A stored copy of a report, pulled on a schedule so staff read it even when a source is down. */
+export interface ReportSnapshot {
+  /** Stable key per thing reported, e.g. "meta:<trackedId>" or "apple:sales". */
+  key: string;
+  source: "meta" | "apple" | "funnel";
+  label: string;
+  /** Plain-text summary staff read in meetings and jobs. */
+  summary: string;
+  /** The numbers behind it (spend, results, units…). */
+  metrics: Record<string, number>;
+  /** The period it covers, e.g. "last 7 days" or "2026-10-19". */
+  period: string;
+  /** Client building it belongs to, when known. */
+  buildingId?: string;
+  at: string;
+}
+
+/** Counts from the funnel inbox (events your funnel tools send to the tracker's private address). */
+export interface FunnelDay {
+  /** event name -> count, e.g. { optin: 12, purchase: 2 } */
+  events: Record<string, number>;
+  /** Money from events that sent a value. */
+  value: number;
+}
+
+export interface FunnelStats {
+  /** funnel name -> day (YYYY-MM-DD) -> counts */
+  days: Record<string, Record<string, FunnelDay>>;
+  /** The latest events as they came in, newest first (kept short). */
+  recent: { funnel: string; event: string; value?: number; at: string; detail?: string }[];
 }
 
 /** A folder for ad campaigns that aren't tied to one client, e.g. "Personal" or "Agency brand". */
@@ -373,6 +421,22 @@ export interface Settings {
   appearance?: Appearance;
   /** Music and sound effect volumes, 0 to 1 (0 = off). last* remember the level before muting. */
   sound?: { music?: number; sfx?: number; lastMusic?: number; lastSfx?: number };
+  /** Prototype maker (see lib/prototype.ts). */
+  prototype?: PrototypeSettings;
+}
+
+export interface PrototypeSettings {
+  /** Where the tracker's Prototype maker button goes. Blank = this app's own /prototype page. */
+  url?: string;
+  /** Model that builds a prototype unless another is picked on the form. */
+  defaultModel?: string;
+  /** The scheduled task's fire address (https://api.anthropic.com/v1/claude_code/routines/trig_…/fire).
+   *  With its token saved, a new request starts building straight away instead of at the next hourly check. */
+  fireUrl?: string;
+  /** Small credit shown in the corner of every prototype, e.g. "Prototype by Your Agency". Blank = none. */
+  badge?: string;
+  /** Standing instructions added to every brief (house style, things to always include…). */
+  extra?: string;
 }
 
 /** How the hero looks. Every field has a default, so older data needs nothing. */
@@ -481,8 +545,18 @@ export interface TrackerData {
   autopilotLog?: AutopilotEntry[];
   /** Ad creatives: AI-generated (Higgsfield) or added by link. Owned by the server. */
   creatives?: Creative[];
+  /** What city staff made, newest first. Owned by the server (like creatives). */
+  staffWork?: StaffWork[];
+  /** City meetings and their transcripts, newest first. Owned by the server. */
+  meetings?: Meeting[];
+  /** Stored reports (Meta, App Store, funnels), newest per key. Owned by the server. */
+  reports?: ReportSnapshot[];
+  /** Funnel inbox counts. Owned by the server. */
+  funnelStats?: FunnelStats;
+  /** The virtual city: buildings (one per client plus studios), their rooms and AI staff. */
+  city?: CityState;
   /** Set by the server: which integrations have a saved key (keys never reach the browser). */
-  integrations?: { higgsfield?: boolean; kit?: boolean; voice?: boolean; calendar?: boolean };
+  integrations?: { higgsfield?: boolean; kit?: boolean; voice?: boolean; calendar?: boolean; staffKeys?: string[]; metaBusiness?: TokenInfo; apple?: boolean; inbox?: boolean };
   updatedAt?: string;
 }
 
@@ -490,4 +564,177 @@ export interface KitMessage {
   role: "user" | "assistant";
   text: string;
   at: string;
+}
+
+// ---- The city ----
+
+export type StaffRoleId =
+  | "reporter" | "social" | "content" | "insights" | "ads" | "email" | "discord" | "webinar" | "app" | "store"
+  | "videoAI" | "videoEdit" | "funnel" | "adsTracker" | "imageAI" | "scriptWriter" | "copyWriter" | "imageCopy" | "storyboard" | "videoScript" | "custom";
+
+export type BuildingKind = "client" | "video" | "acquisition" | "creative" | "weapons" | "armor" | "home" | "training" | "custom";
+
+/** A piece of furniture in the player's home, on the room's tile grid. */
+export interface PlacedFurniture {
+  id: string;
+  /** lib/home.ts FURNITURE key */
+  kind: string;
+  x: number;
+  y: number;
+}
+
+export interface CityRoom {
+  id: string;
+  name: string;
+  notes?: string;
+}
+
+export interface CityTodo {
+  id: string;
+  title: string;
+  done: boolean;
+  doneOn?: string;
+}
+
+export interface CityBuilding {
+  id: string;
+  kind: BuildingKind;
+  name: string;
+  /** Client buildings: the client this is the department for. */
+  clientId?: string;
+  /** More clients this building also covers: income lines of the same company, e.g. a commission and a second-half payment. */
+  clientIds?: string[];
+  /** Roof colour (#rrggbb). Blank = picked from the id. */
+  color?: string;
+  /** Extra rooms beside the built-in Progress Room and Mission Room. */
+  rooms?: CityRoom[];
+  /** What the reporter says on top of the automatic numbers. */
+  progressNote?: string;
+  /** Mission Room list for buildings with no client (client buildings use the client's tasks). */
+  todos?: CityTodo[];
+  /** The player's home: furniture as placed. */
+  furniture?: PlacedFurniture[];
+  /** What this client buys from you. When set, the building's floor shows the staff on these services. */
+  services?: CityService[];
+  createdAt: string;
+}
+
+/** One service a client pays for (e.g. "Facebook ads"), and the staff who deliver it. */
+export interface CityService {
+  id: string;
+  name: string;
+  /** What's included, deliverables, how often. Staff read this. */
+  notes?: string;
+  staffIds: string[];
+}
+
+/** A meeting in the city: a town hall with everyone, or one building's team. */
+export interface Meeting {
+  id: string;
+  kind: "townhall" | "building";
+  /** Building meetings: where it's held. */
+  buildingId?: string;
+  title: string;
+  /** Who was called in. */
+  staffIds: string[];
+  messages: MeetingMessage[];
+  /** waiting = your last message hasn't been answered yet; ended = closed, transcript kept. */
+  status: "waiting" | "open" | "ended";
+  /** While waiting: the brief for Claude, and when it was asked (a reply for an older brief doesn't clear a newer one). */
+  prompt?: { system: string; user: string; askedAt: string };
+  startedAt: string;
+  endedAt?: string;
+}
+
+export interface MeetingMessage {
+  id: string;
+  /** "you", or the staff id who said it */
+  from: string;
+  name: string;
+  text: string;
+  at: string;
+}
+
+export interface CityStaff {
+  id: string;
+  buildingId: string;
+  role: StaffRoleId;
+  name: string;
+  /** Job title shown instead of the role's (custom staff). */
+  title?: string;
+  look?: HeroLook;
+  /** Answers to what the role needs (links, handles, schedule). Keys and passwords go to the server, not here. */
+  setup?: Record<string, string>;
+  /** Writers: how they write (their system prompt). Blank = the role's starting instructions. */
+  instructions?: string;
+  /** Writers: examples to copy the style of (pasted text or links to sample ads). */
+  samples?: { id: string; text: string }[];
+  /** Writers: what they wrote, newest first (kept short). */
+  outputs?: { id: string; input: string; target?: string; text: string; at: string }[];
+  /** false = don't do the daily job on their own (they still work when asked). */
+  autoWork?: boolean;
+  createdAt: string;
+}
+
+/** Something a city staff member made (posts, a calendar, reply drafts…). Kept by the server. */
+export interface StaffWork {
+  id: string;
+  staffId: string;
+  buildingId: string;
+  /** lib/cityJobs.ts job id */
+  jobId: string;
+  /** e.g. "This week's posts" */
+  label: string;
+  text: string;
+  /** What you gave them for this job (a pasted email, reviews…), shortened. */
+  input?: string;
+  /** Done on their own (daily job) rather than asked. */
+  auto?: boolean;
+  /** Day it was done (business time zone), YYYY-MM-DD */
+  day: string;
+  at: string;
+  /** Set when it was posted somewhere for real (e.g. "Posted to Discord"). */
+  sent?: string;
+  /** queued = waiting for Claude in the project to do it (no API key); text is blank until then. */
+  status?: "queued";
+  /** The brief, kept only while queued. */
+  prompt?: { system: string; user: string };
+}
+
+export interface VideoRequest {
+  id: string;
+  buildingId: string;
+  /** Link to the raw video (Drive, Dropbox…). Blank when uploaded or prompt-only. */
+  videoUrl: string;
+  /** Uploaded raw video: its path in the tracker's file storage, and the file name. */
+  /** parts: stored in that many pieces (path.part0…) when it was too big for one upload. */
+  file?: { path: string; name: string; size: number; parts?: number };
+  style: string;
+  prompt: string;
+  status: "requested" | "editing" | "done";
+  resultUrl?: string;
+  createdAt: string;
+}
+
+export interface CityState {
+  name: string;
+  buildings: CityBuilding[];
+  staff: CityStaff[];
+  /** Clients whose building was knocked down on purpose, so it isn't rebuilt. */
+  skipClients?: string[];
+  /** Studios (video, acquisition, creative) knocked down on purpose. */
+  skipKinds?: BuildingKind[];
+  videoRequests?: VideoRequest[];
+  /** Quests taken from townspeople: when, and the count their goal is measured from. */
+  quests?: Record<string, { at: string; base: number }>;
+  /** Shops give gear away while this is on (default). Off = items cost coins. */
+  freeShops?: boolean;
+  /** Set once client buildings of the same company have been merged automatically. */
+  merged?: boolean;
+  /** Set once the town was moved to Dawnterra (renamed studios, new video staff). */
+  dawnterra?: boolean;
+  /** Newest output you've seen in the Outputs cabinet (ISO time); newer ones get a badge. */
+  outputsSeen?: string;
+  /** The Training Hall weapon you last took off the rack ("" or unset = your own gear). */
+  practiceWeapon?: string;
 }

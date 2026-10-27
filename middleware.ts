@@ -3,6 +3,8 @@ import { SESSION_COOKIE, isValidSession } from "@/lib/auth";
 
 // Hosts whose root is the Boss RDR landing page (e.g. rdr.majcustodioph.com).
 const LANDING_HOST = /^(rdr|bossrdr)\./i;
+/** The Prototype maker's own subdomain (prototypemaker.<domain> or prototype.<domain>) opens straight on it. */
+const isMakerHost = (host: string | null) => /^(prototypemaker|prototype)\./i.test(host ?? "");
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -17,7 +19,12 @@ export async function middleware(req: NextRequest) {
 
   if (pathname === "/rdr" || pathname.startsWith("/rdr/") || pathname.startsWith("/api/rdr")) return NextResponse.next();
 
-  if (await isValidSession(req.cookies.get(SESSION_COOKIE)?.value)) return NextResponse.next();
+  if (await isValidSession(req.cookies.get(SESSION_COOKIE)?.value)) {
+    if (pathname === "/" && isMakerHost(host)) {
+      return NextResponse.rewrite(new URL("/prototype", req.url));
+    }
+    return NextResponse.next();
+  }
   if (pathname.startsWith("/api/")) {
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
@@ -25,5 +32,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!login|share/|api/login|api/cron|api/calendar/ics/|_next|favicon.ico|icon.svg|icon-192.png|icon-512.png|apple-icon|manifest.webmanifest|rdr/).*)"],
+  matcher: ["/((?!login|share/|p/|proto-kit\\.|api/login|api/cron|api/inbox/|api/calendar/ics/|_next|favicon.ico|icon.svg|icon-192.png|icon-512.png|apple-icon|manifest.webmanifest|rdr/).*)"],
 };

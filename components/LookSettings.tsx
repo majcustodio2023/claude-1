@@ -36,7 +36,7 @@ export default function LookSettings() {
         </div>
       </Section>
 
-      <Section title="Color theme">
+      <Section title="Color theme" note="Pixel palettes from around Dawnterra, light and dark.">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {THEMES.map((t) => (
             <Choice key={t.id} on={look.theme === t.id} onClick={() => set({ theme: t.id })}>
@@ -58,8 +58,8 @@ export default function LookSettings() {
         </div>
       </Section>
 
-      <Section title="Design style" note="Changes the shapes, borders, fonts and effects, not just the colors.">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+      <Section title="Frame style" note="Every style is pixel art like the city; this changes the borders and shadows.">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {STYLES.map((st) => (
             <Choice key={st.id} on={look.style === st.id} onClick={() => set({ style: st.id })}>
               <StyleSample id={st.id} />
@@ -159,32 +159,21 @@ function Toggle({ label, value, options, onChange }: { label: string; value: str
   );
 }
 
-/** A tiny panel drawn the way each style draws it. */
+/** A tiny panel drawn the way each pixel style draws it. */
 function StyleSample({ id }: { id: StyleId }) {
-  const box = "h-20 rounded-[8px] bg-bg p-2.5 flex flex-col justify-between overflow-hidden";
-  const font = { comic: "var(--font-display)", sleek: "Inter, sans-serif", cyber: "Orbitron, sans-serif", retro: '"Press Start 2P", monospace', minimal: "Inter, sans-serif" }[id];
   const panel: Record<StyleId, React.CSSProperties> = {
-    comic: { border: "3px solid var(--color-outline)", boxShadow: "3px 3px 0 var(--color-outline)", borderRadius: 6, background: "var(--color-card)" },
-    sleek: { border: "1px solid var(--color-line)", borderRadius: 12, background: "var(--color-card)", boxShadow: "0 6px 14px -6px rgb(0 0 0 / .45)" },
-    cyber: { border: "1px solid var(--color-accent)", background: "var(--color-card)", clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))", boxShadow: "inset 0 0 14px rgb(var(--rgb-accent) / .25)" },
-    retro: { border: "3px solid var(--color-outline)", background: "var(--color-card)", boxShadow: "4px 4px 0 rgb(0 0 0 / .5)" },
-    minimal: { border: "1px solid var(--color-line)", borderRadius: 4, background: "var(--color-card)" },
-  };
-  const bar: Record<StyleId, React.CSSProperties> = {
-    comic: { border: "2px solid var(--color-outline)", borderRadius: 99, background: "var(--color-hero)", height: 9 },
-    sleek: { borderRadius: 99, background: "linear-gradient(90deg, var(--color-accent), var(--color-hero))", height: 6 },
-    cyber: { background: "repeating-linear-gradient(90deg, var(--color-accent) 0 6px, transparent 6px 8px)", height: 7, boxShadow: "0 0 8px var(--color-accent)" },
-    retro: { background: "repeating-linear-gradient(90deg, var(--color-good) 0 7px, transparent 7px 9px)", height: 9 },
-    minimal: { background: "var(--color-ink)", height: 3, opacity: 0.7 },
+    pixel: { border: "3px solid var(--color-outline)", background: "var(--color-card)", boxShadow: "inset 0 0 0 2px var(--pix-hi), 3px 3px 0 var(--pix-shadow)" },
+    "pixel-clean": { border: "2px solid var(--color-line)", background: "var(--color-card)" },
+    "pixel-chunky": { border: "4px solid var(--color-outline)", background: "var(--color-card)", boxShadow: "5px 5px 0 var(--pix-shadow)" },
   };
   return (
-    <div className={box}>
+    <div className="h-20 bg-bg p-2.5 flex flex-col justify-between overflow-hidden">
       <div className="px-2 py-1.5" style={panel[id]}>
-        <div style={{ fontFamily: font, fontSize: id === "retro" ? 9 : 14, letterSpacing: id === "cyber" ? "0.08em" : undefined, textTransform: id === "cyber" ? "uppercase" : undefined }} className="text-ink leading-tight">
+        <div style={{ fontFamily: '"Pixel Digits", "Pixelify Sans", sans-serif', fontSize: 15 }} className="text-ink leading-tight font-semibold">
           Power up
         </div>
-        <div className="mt-1.5 w-full bg-field" style={{ borderRadius: bar[id].borderRadius }}>
-          <div style={{ ...bar[id], width: "65%" }} />
+        <div className="mt-1.5 w-full bg-field" style={{ border: id === "pixel-clean" ? "1px solid var(--color-line)" : "2px solid var(--color-outline)" }}>
+          <div style={{ background: "repeating-linear-gradient(90deg, var(--color-hero) 0 8px, color-mix(in srgb, var(--color-hero) 75%, black) 8px 10px)", height: 8, width: "65%" }} />
         </div>
       </div>
     </div>

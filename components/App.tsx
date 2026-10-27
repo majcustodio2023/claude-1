@@ -15,6 +15,7 @@ import Clients from "./tabs/Clients";
 import Team from "./tabs/Team";
 import Ads from "./tabs/Ads";
 import Creatives from "./tabs/Creatives";
+import City from "./tabs/City";
 import SettingsTab from "./tabs/Settings";
 import HeroTab from "./tabs/HeroTab";
 import BossFight from "./BossFight";
@@ -50,6 +51,7 @@ export const useTracker = () => {
 
 const TABS = [
   ["today", "HQ", "home"],
+  ["city", "City", "globe"],
   ["hero", "Hero & Shop", "shop"],
   ["income", "Income", "income"],
   ["pipeline", "Boss Deals", "swords"],
@@ -179,6 +181,7 @@ export default function App() {
           </nav>
         )}
         {tab === "today" && <Today goTo={go} />}
+        {tab === "city" && <City goTo={(t) => go(t as TabId)} />}
         {tab === "income" && <Income goTo={go} />}
         {tab === "pipeline" && <Pipeline />}
         {tab === "expenses" && <Expenses />}
@@ -222,6 +225,16 @@ export default function App() {
   );
 }
 
+/** Opens the Prototype maker (its own subdomain when one is set in its settings). */
+function PrototypeButton({ data }: { data: TrackerData }) {
+  return (
+    <a href={data.settings.prototype?.url || "/prototype"} target="_blank" rel="noreferrer" className="btn btn-primary flex items-center gap-2" title="Prototype maker: turn a client's socials into a website prototype">
+      <Icon name="wand" size={22} />
+      <span className="max-sm:hidden">Prototype maker</span>
+    </a>
+  );
+}
+
 function SettingsButton({ onClick, className = "" }: { onClick: () => void; className?: string }) {
   return (
     <button type="button" onClick={onClick} className={`btn btn-ghost flex items-center gap-2 ${className}`} title="Settings: look, theme, profile and more" aria-label="Settings">
@@ -258,6 +271,7 @@ function SlimHeader({ data, month, today, saving, onSettings }: { data: TrackerD
           <span className="text-sm font-extrabold max-md:hidden"><SaveState saving={saving} /></span>
         </div>
       </div>
+      <PrototypeButton data={data} />
       <SettingsButton onClick={onSettings} />
     </header>
   );
@@ -279,7 +293,8 @@ function PlayerCard({ data, month, today, saving, onSettings }: { data: TrackerD
       <span className="sparkle" style={{ left: "8%", top: "16%" }} />
       <span className="sparkle" style={{ left: "30%", top: "70%", animationDelay: "0.6s" }} />
       <span className="sparkle" style={{ right: "6%", top: "12%", animationDelay: "1.1s" }} />
-      <div className="absolute top-3 right-3 z-10">
+      <div className="absolute top-3 right-3 z-10 flex gap-2">
+        <PrototypeButton data={data} />
         <SettingsButton onClick={onSettings} />
       </div>
       <div className="relative flex items-end gap-3 sm:gap-6 flex-wrap px-4 sm:px-6 pt-4">
@@ -292,7 +307,7 @@ function PlayerCard({ data, month, today, saving, onSettings }: { data: TrackerD
             </div>
           </div>
         </div>
-        <div className={`flex-1 min-w-60 pb-4 ${cover === "classic" ? "" : "[text-shadow:0_2px_0_#0b0a14,0_0_10px_rgba(11,10,20,0.95)]"}`}>
+        <div className="flex-1 min-w-60 pb-4">
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="comic-num text-5xl sm:text-6xl leading-none text-ink uppercase">{data.settings.playerName || "Hero"}</h1>
             <span className={`font-display text-xl tracking-wide px-3 pt-1 pb-0.5 border-[3px] border-outline rounded-md text-outline shadow-[3px_3px_0_var(--color-outline)] rotate-[2deg] ${rankBg}`}>{rank.name}</span>

@@ -9,6 +9,21 @@
 @import "@fontsource/orbitron/700.css";
 @import "@fontsource/orbitron/900.css";
 @import "@fontsource/press-start-2p/400.css";
+@import "@fontsource/pixelify-sans/400.css";
+@import "@fontsource/pixelify-sans/500.css";
+@import "@fontsource/pixelify-sans/600.css";
+@import "@fontsource/pixelify-sans/700.css";
+
+/* Pixelify Sans draws 2, 3, 5 and 8 too alike at money sizes (a 2 reads as an 8).
+   "Pixel Digits" swaps in Press Start 2P's digits only, scaled to sit with Pixelify's letters. */
+@font-face {
+  font-family: "Pixel Digits";
+  font-style: normal;
+  font-display: swap;
+  src: url("../node_modules/@fontsource/press-start-2p/files/press-start-2p-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0030-0039;
+  size-adjust: 66%;
+}
 
 /* "Hero Comic": dark ink pages, halftone dots, thick outlines, hard shadows, loud captions. */
 @theme {
@@ -453,3 +468,222 @@ html[data-light="1"] .speed-lines { opacity: 0.4; filter: invert(1); }
 .kit-pop { animation: kit-pop 0.18s ease-out; transform-origin: bottom right; }
 @keyframes kit-pop { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .kit-bob, .kit-pop { animation: none; } }
+
+/* ---------- The city ---------- */
+.city-walker { will-change: transform; }
+.city-walker .city-flip { transition: transform 120ms; transform-origin: 50% 100%; }
+.city-walker[data-face="-1"] .city-flip { transform: scaleX(-1); }
+.city-walker .city-body { transform-origin: 50% 100%; animation: city-idle 2.4s ease-in-out infinite; }
+.city-walker[data-moving="1"] .city-body { animation: city-walk 0.34s steps(2, jump-none) infinite; }
+@keyframes city-idle { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.97); } }
+@keyframes city-walk { 0% { transform: translateY(0) rotate(-4deg); } 100% { transform: translateY(-5px) rotate(4deg); } }
+.city-shadow { position: absolute; left: 18%; right: 18%; bottom: 2px; height: 9px; border-radius: 50%; background: rgba(0, 0, 0, 0.3); }
+.city-tag {
+  position: absolute; left: 50%; top: 100%; transform: translate(-50%, -6px); white-space: nowrap;
+  font-weight: 800; font-size: 12px; line-height: 1; color: #0b0a14; padding: 3px 6px 2px; border: 2px solid #0b0a14; border-radius: 6px;
+}
+.city-npc { cursor: pointer; }
+.city-badge { display: none; position: absolute; left: 50%; top: -8px; transform: translateX(-50%); width: 22px; height: 22px; border-radius: 50%; border: 2.5px solid #0b0a14; font: 900 13px/17px Nunito, sans-serif; text-align: center; color: #0b0a14; box-shadow: 2px 2px 0 #0b0a14; pointer-events: none; }
+.city-walker[data-state="setup"] .city-badge { display: block; background: #ff4d5e; color: #fff; }
+.city-walker[data-state="setup"] .city-badge::before { content: "!"; }
+.city-walker[data-state="busy"] .city-badge { display: block; background: #5cf28b; }
+.city-walker[data-state="busy"] .city-badge::before { content: "..."; letter-spacing: -1px; }
+.city-walker[data-state="idle"] .city-badge { display: block; background: #d8d2e8; }
+.city-walker[data-state="idle"] .city-badge::before { content: "z"; }
+.city-walker .city-bubble[style*="opacity: 1"] ~ .city-badge { display: none; }
+.city-bubble {
+  position: absolute; left: 50%; bottom: calc(100% + 4px); transform: translateX(-50%); width: max-content; max-width: 190px;
+  background: #fff8ec; color: #0b0a14; border: 2.5px solid #0b0a14; border-radius: 12px; padding: 4px 9px;
+  font-weight: 800; font-size: 13px; line-height: 1.25; text-align: center; box-shadow: 3px 3px 0 #0b0a14;
+  transition: opacity 250ms; pointer-events: none;
+}
+.city-bubble:empty { display: none; }
+.city-bubble::after {
+  content: ""; position: absolute; left: 50%; top: 100%; width: 10px; height: 10px; background: #fff8ec;
+  border-right: 2.5px solid #0b0a14; border-bottom: 2.5px solid #0b0a14; transform: translate(-50%, -5px) rotate(45deg);
+}
+.city-tint-night { background: rgba(20, 18, 60, 0.42); }
+.city-tint-dusk { background: rgba(160, 70, 60, 0.16); }
+.city-fade { animation: city-fade 600ms ease-out both; background: #0b0a14; }
+@keyframes city-fade { from { opacity: 1; } to { opacity: 0; } }
+.city-prompt { animation: city-prompt 1.4s ease-in-out infinite; }
+@keyframes city-prompt { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -4px); } }
+.city-pop { animation: city-pop 420ms cubic-bezier(0.2, 1.5, 0.4, 1) both; }
+@keyframes city-pop { from { opacity: 0; transform: scale(0.7) rotate(-2deg); } to { opacity: 1; transform: none; } }
+.city-box { animation: city-box 300ms cubic-bezier(0.2, 1.3, 0.4, 1) both; }
+@keyframes city-box { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+.city-count { animation: city-pop 500ms cubic-bezier(0.2, 1.5, 0.4, 1) both; }
+.city-fill { animation: city-fill 900ms cubic-bezier(0.2, 1, 0.3, 1) both; transform-origin: left; }
+@keyframes city-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.city-blink { animation: city-blink 1.2s ease-in-out infinite; }
+@keyframes city-blink { 50% { opacity: 0.35; } }
+.talk-bob { animation: bob 1.2s ease-in-out infinite; }
+.ripple { animation: ripple 2.4s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.ripple-2 { animation-delay: 1.2s; }
+@keyframes ripple { from { transform: scale(0.4); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
+.spout { animation: spout 0.9s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: bottom; }
+@keyframes spout { to { transform: scaleY(1.12); } }
+.smoke circle { animation: smoke 3.2s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.smoke circle:nth-child(2) { animation-delay: 1.6s; }
+@keyframes smoke { from { transform: translateY(0) scale(0.6); opacity: 0.6; } to { transform: translateY(-26px) scale(1.4); opacity: 0; } }
+.win-lit { animation: win 4s ease-in-out infinite; }
+@keyframes win { 50% { fill: #fff3c4; } }
+.screen-glow { animation: screen 2.2s ease-in-out infinite; }
+@keyframes screen { 50% { opacity: 0.75; } }
+.neon { animation: neon 1.6s ease-in-out infinite; }
+@keyframes neon { 50% { filter: brightness(1.35) drop-shadow(0 0 6px #fff); } }
+.alert-pop { animation: alert-pop 1.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes alert-pop { 50% { transform: scale(1.15); } }
+.lamp-glow { animation: lamp 3s ease-in-out infinite; }
+@keyframes lamp { 50% { opacity: 0.8; } }
+.fog { animation: fog 6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.fog-2 { animation-duration: 8s; animation-delay: -3s; }
+@keyframes fog { 0%, 100% { transform: translateX(-12px) scale(1); opacity: 0.25; } 50% { transform: translateX(14px) scale(1.15); opacity: 0.45; } }
+.pixelated { image-rendering: pixelated; }
+
+/* ---------- Dawnterra pixel characters ---------- */
+/* A sheet is 4 walk frames across (step, stand, step, stand) and 3 rows (down, up, side). */
+.pix { image-rendering: pixelated; background-repeat: no-repeat; }
+.city-walker .city-body.pix { animation: none; background-size: 160px 180px; background-position: -40px 0; }
+.city-walker[data-dir="up"] .city-body.pix { background-position-y: -60px; }
+.city-walker[data-dir="side"] .city-body.pix { background-position-y: -120px; }
+.city-walker[data-moving="1"] .city-body.pix { animation: pix-walk 0.52s steps(4) infinite; }
+@keyframes pix-walk { from { background-position-x: 0; } to { background-position-x: -160px; } }
+.pix-bob { animation: pix-bob 1.6s steps(2) infinite; }
+@keyframes pix-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
+
+/* ---------- Dawnterra look: warm parchment and pixel type ----------
+   One spec for the city (.dawn wraps the whole game screen) and for the app when the
+   "Dawnterra pixel" style is picked in Settings > Look. Square pixel corners, a dark brown
+   ink outline, parchment cards, and Pixelify Sans for every label. */
+.dawn {
+  --color-bg: #2a1d14;
+  --color-card: #f3e2c0;
+  --color-card-2: #e8cfa2;
+  --color-ink: #3b2416;
+  --color-muted: #7a5a40;
+  --color-line: #c9a978;
+  --color-outline: #3b2416;
+  --color-accent: #2f8f83;
+  --color-accent-soft: #cfe3d8;
+  --color-hero: #d9603b;
+  --color-gold: #e8a33d;
+  --color-good: #4f9a3a;
+  --color-warn: #d9822b;
+  --color-bad: #c0392b;
+  --color-field: #fbf1dc;
+  --rgb-accent: 47 143 131;
+  --rgb-hero: 217 96 59;
+  --rgb-gold: 232 163 61;
+  --rgb-good: 79 154 58;
+  color-scheme: light;
+}
+.dawn, html[data-style="pixel"] {
+  --font-display: "Pixel Digits", "Pixelify Sans", "Nunito", sans-serif;
+  --font-pixel: "Pixel Digits", "Pixelify Sans", sans-serif;
+  /* Frame shading, tuned per light or dark theme so frames read on both. */
+  --pix-shadow: rgb(40 22 10 / 0.55);
+  --pix-hi: rgb(255 248 230 / 0.55);
+  --pix-lo: rgb(150 100 55 / 0.25);
+  --pix-sheen: rgb(255 255 255 / 0.28);
+  --pix-dither: rgb(0 0 0 / 0.035);
+  --pix-ghost: #e8cfa2;
+  --pix-ghost-ink: #3b2416;
+}
+html[data-style="pixel"][data-light="0"] {
+  --pix-shadow: rgb(0 0 0 / 0.65);
+  --pix-hi: rgb(255 255 255 / 0.07);
+  --pix-lo: rgb(0 0 0 / 0.3);
+  --pix-sheen: rgb(255 255 255 / 0.06);
+  --pix-dither: rgb(255 255 255 / 0.025);
+  --pix-ghost: var(--color-card-2);
+  --pix-ghost-ink: var(--color-ink);
+}
+html[data-style="pixel"] body {
+  letter-spacing: 0.01em;
+  background-image:
+    linear-gradient(45deg, var(--pix-dither) 25%, transparent 25% 75%, var(--pix-dither) 75%),
+    linear-gradient(45deg, var(--pix-dither) 25%, transparent 25% 75%, var(--pix-dither) 75%);
+  background-size: 8px 8px; background-position: 0 0, 4px 4px;
+}
+/* The city sets its own parchment palette, so its text has to use that palette's ink too
+   (otherwise it keeps the page's colour, which is near-white on a dark theme). */
+.dawn { font-family: var(--font-display); letter-spacing: 0.01em; color: var(--color-ink); }
+:is(.dawn, html[data-style="pixel"]) .hud {
+  border-radius: 0;
+  border: 3px solid var(--color-outline);
+  background:
+    linear-gradient(180deg, var(--pix-sheen), transparent 18%),
+    linear-gradient(0deg, var(--pix-lo), transparent 22%),
+    var(--color-card);
+  box-shadow: inset 0 0 0 3px var(--pix-hi), inset 0 0 0 5px var(--pix-lo), 4px 4px 0 var(--pix-shadow);
+  clip-path: polygon(0 3px, 3px 3px, 3px 0, calc(100% - 3px) 0, calc(100% - 3px) 3px, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 3px calc(100% - 3px), 0 calc(100% - 3px));
+}
+:is(.dawn, html[data-style="pixel"]) .hud-hero { background: linear-gradient(180deg, rgb(var(--rgb-hero) / 0.16), transparent 45%), var(--color-card); }
+:is(.dawn, html[data-style="pixel"]) .hud-gold { background: linear-gradient(180deg, rgb(var(--rgb-gold) / 0.18), transparent 45%), var(--color-card); }
+:is(.dawn, html[data-style="pixel"]) .hud-good { background: linear-gradient(180deg, rgb(var(--rgb-good) / 0.15), transparent 45%), var(--color-card); }
+:is(.dawn, html[data-style="pixel"]) .caption {
+  transform: none; border-radius: 0; letter-spacing: 0.02em; font-weight: 700;
+  border: 3px solid var(--color-outline); box-shadow: 3px 3px 0 var(--pix-shadow);
+  background: linear-gradient(180deg, #8a5a32, #6e4425); color: #fbefd6;
+}
+:is(.dawn, html[data-style="pixel"]) .caption-hero { background: linear-gradient(180deg, #d9603b, #b4482a); }
+:is(.dawn, html[data-style="pixel"]) .caption-cyan { background: linear-gradient(180deg, #2f8f83, #23716a); }
+:is(.dawn, html[data-style="pixel"]) .caption-good { background: linear-gradient(180deg, #4f9a3a, #3c7a2c); }
+:is(.dawn, html[data-style="pixel"]) .btn {
+  border-radius: 0; font-weight: 600; letter-spacing: 0.02em;
+  border: 3px solid var(--color-outline);
+  box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.18), inset 0 3px 0 rgb(255 255 255 / 0.3), 3px 3px 0 var(--pix-shadow);
+}
+:is(.dawn, html[data-style="pixel"]) .btn:hover { transform: translateY(-1px); box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.18), inset 0 3px 0 rgb(255 255 255 / 0.3), 3px 4px 0 var(--pix-shadow); }
+:is(.dawn, html[data-style="pixel"]) .btn:active { transform: translate(2px, 2px); box-shadow: inset 0 3px 0 rgb(0 0 0 / 0.2); }
+:is(.dawn, html[data-style="pixel"]) .btn-primary { background: #e8a33d; color: #3b2416; }
+:is(.dawn, html[data-style="pixel"]) .btn-hero { background: #d9603b; color: #fff4e2; }
+:is(.dawn, html[data-style="pixel"]) .btn-ghost { background: var(--pix-ghost); color: var(--pix-ghost-ink); }
+:is(.dawn, html[data-style="pixel"]) .btn-danger { background: #f1c7b8; color: #8f2a1d; }
+:is(.dawn, html[data-style="pixel"]) .bar { border-radius: 0; }
+:is(.dawn, html[data-style="pixel"]) .bar > .fill { background: repeating-linear-gradient(90deg, var(--bar-to) 0 10px, var(--bar-from) 10px 12px); animation: none; }
+:is(.dawn, html[data-style="pixel"]) .bar > .fill::after { display: none; }
+:is(.dawn, html[data-style="pixel"]) .comic-num { -webkit-text-stroke: 0; text-shadow: 2px 2px 0 var(--pix-lo); }
+:is(.dawn, html[data-style="pixel"]) :is(input, select, textarea) { border-radius: 0; border-color: var(--color-outline); }
+:is(.dawn, html[data-style="pixel"]) [class*="rounded"]:not(.rounded-full) { border-radius: 0 !important; }
+html[data-style="pixel"] .font-display { letter-spacing: 0.01em; }
+html[data-style="pixel"] .speed-lines { display: none; }
+
+/* Clean: the pixel font and square corners, with thin borders and no frames or drop shadows. */
+html[data-pix="pixel-clean"] .hud { border: 2px solid var(--color-line); box-shadow: none; background: var(--color-card); clip-path: none; }
+html[data-pix="pixel-clean"] :is(.hud-hero, .hud-gold, .hud-good) { background: var(--color-card); }
+html[data-pix="pixel-clean"] .btn { border-width: 2px; box-shadow: none; }
+html[data-pix="pixel-clean"] .btn:hover { box-shadow: none; }
+html[data-pix="pixel-clean"] .caption { border-width: 2px; box-shadow: none; }
+/* Chunky: thick borders and big stepped shadows, like an old console menu. */
+html[data-pix="pixel-chunky"] .hud { border-width: 4px; box-shadow: inset 0 0 0 3px var(--pix-hi), 7px 7px 0 var(--pix-shadow); }
+html[data-pix="pixel-chunky"] .btn { border-width: 4px; box-shadow: inset 0 -4px 0 rgb(0 0 0 / 0.2), 4px 4px 0 var(--pix-shadow); }
+html[data-pix="pixel-chunky"] .caption { border-width: 4px; box-shadow: 4px 4px 0 var(--pix-shadow); }
+
+/* City name tags, speech bubbles and status badges in the same parchment. */
+.dawn .city-tag {
+  font-family: var(--font-pixel); font-weight: 600; font-size: 13px; letter-spacing: 0.02em;
+  border-radius: 0; border: 2px solid #3b2416; color: #3b2416; box-shadow: 2px 2px 0 rgb(40 22 10 / 0.45);
+}
+.dawn .city-bubble {
+  font-family: var(--font-pixel); font-weight: 500; font-size: 14px;
+  background: #fbf1dc; color: #3b2416; border: 3px solid #3b2416; border-radius: 0; box-shadow: 3px 3px 0 rgb(40 22 10 / 0.45);
+}
+.dawn .city-bubble::after { background: #fbf1dc; border-color: #3b2416; border-width: 0 3px 3px 0; transform: translate(-50%, -6px) rotate(45deg); }
+.dawn .city-badge { border-radius: 0; border: 2px solid #3b2416; box-shadow: 2px 2px 0 rgb(40 22 10 / 0.45); font-family: var(--font-pixel); font-weight: 700; }
+.dawn .city-walker[data-state="setup"] .city-badge { background: #c0392b; }
+.dawn .city-walker[data-state="busy"] .city-badge { background: #8fcf6a; }
+.dawn .city-walker[data-state="idle"] .city-badge { background: #e8cfa2; }
+.dawn .city-shadow { border-radius: 0; left: 24%; right: 24%; height: 5px; bottom: 3px; background: rgba(40, 22, 10, 0.28); }
+.dawn .city-tint-night { background: rgba(30, 24, 70, 0.4); }
+.dawn .city-tint-dusk { background: rgba(200, 110, 50, 0.14); }
+
+/* Prototype maker: moving stripes on a build that's still running */
+.proto-stripes {
+  background-image: repeating-linear-gradient(-45deg, rgb(255 255 255 / 0.28) 0 10px, transparent 10px 20px);
+  background-size: 28px 28px;
+  animation: proto-stripes 0.9s linear infinite;
+}
+@keyframes proto-stripes { to { background-position: 28px 0; } }
+@media (prefers-reduced-motion: reduce) { .proto-stripes { animation: none; } }

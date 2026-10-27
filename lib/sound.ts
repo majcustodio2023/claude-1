@@ -3,7 +3,7 @@
 
 export type Sfx =
   | "click" | "hit" | "crit" | "slash" | "fire" | "thunder" | "laser" | "cosmic" | "dark" | "holy"
-  | "heal" | "guard" | "buff" | "hurt" | "charge" | "dodge" | "enrage" | "ko" | "victory" | "defeat" | "coin" | "loot";
+  | "heal" | "guard" | "buff" | "hurt" | "charge" | "dodge" | "enrage" | "ko" | "victory" | "defeat" | "coin" | "loot" | "door" | "open";
 
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
@@ -181,7 +181,23 @@ export function sfx(name: Sfx) {
     case "loot":
       [72, 76, 79, 84, 88].forEach((n, i) => tone("triangle", note(n), t + i * 0.07, 0.3, 0.2, b));
       break;
+    case "door":
+      tone("triangle", note(67), t, 0.09, 0.18, b);
+      tone("triangle", note(74), t + 0.08, 0.14, 0.18, b);
+      break;
+    case "open":
+      tone("square", note(79), t, 0.05, 0.1, b);
+      tone("square", note(86), t + 0.05, 0.08, 0.1, b);
+      break;
   }
+}
+
+/** One syllable of a character talking: a short blip at their voice's pitch (MIDI note). */
+export function blip(pitch = 72) {
+  if (vol.sfx === 0) return;
+  const c = audio();
+  if (!c || !sfxBus) return;
+  tone("square", note(pitch + Math.floor(Math.random() * 3)), c.currentTime + 0.005, 0.045, 0.06, sfxBus);
 }
 
 // ---------- battle music: a small chiptune step sequencer ----------
