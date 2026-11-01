@@ -27,6 +27,9 @@ export default function Meeting({ kind, buildingId, meetingId, onClose }: { kind
   const [text, setText] = useState("");
   const [to, setTo] = useState("");
   const [busy, setBusy] = useState(false);
+  // Your message shows the moment you hit Send, before the server has saved it.
+  const [pending, setPending] = useState<{ text: string; at: string; to: string } | null>(null);
+  const [now, setNow] = useState(Date.now());
   const end = useRef<HTMLDivElement>(null);
   const place = kind === "townhall" ? data.city?.name ?? "the city" : (() => { const b = data.city?.buildings.find((x) => x.id === buildingId); return b ? buildingName(data, b) : "the building"; })();
 
@@ -46,35 +49,50 @@ export default function Meeting({ kind, buildingId, meetingId, onClose }: { kind
     }
   };
 
-  // While they're thinking, look for the answer every 15 seconds.
-  const waiting = m?.status === "waiting";
+  // While they're thinking, look for the answer every 2 seconds.
+  const thinking = m?.status === "waiting";
+  const waiting = thinking || Boolean(pending);
   useEffect(() => {
-    if (!waiting || !id) return;
+    if (!thinking || !id) return;
     const t = setInterval(async () => {
       try {
         const r = await fetch(`/api/city/meeting?id=${encodeURIComponent(id)}`, { cache: "no-store" });
         const j = (await r.json()) as { meeting: MeetingT | null };
-        if (j.meeting && j.meeting.messages.length !== m?.messages.length) {
+        // Never step back to an older copy (a reply that's still in flight).
+        if (j.meeting && j.meeting.messages.length > (m?.messages.length ?? 0)) {
           put(j.meeting);
           sfx("loot");
-        } else if (j.meeting && j.meeting.status !== "waiting") put(j.meeting);
+        } else if (j.meeting && j.meeting.status !== "waiting" && j.meeting.messages.length === m?.messages.length) put(j.meeting);
       } catch {}
-    }, 15000);
+    }, 2000);
     return () => clearInterval(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [waiting, id, m?.messages.length]);
-  useEffect(() => end.current?.scrollIntoView({ block: "end" }), [m?.messages.length, waiting]);
+  }, [thinking, id, m?.messages.length]);
+  useEffect(() => {
+    if (!waiting) return;
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [waiting]);
+  useEffect(() => end.current?.scrollIntoView({ block: "end" }), [m?.messages.length, waiting, pending]);
 
   const send = async () => {
     const t = text.trim();
     if (!t || !m) return;
     setText("");
+    setPending({ text: t, at: new Date().toISOString(), to });
     sfx("click");
     const out = await call({ action: "say", id: m.id, text: t, to: to ? [to] : [] });
+    setPending(null);
     if (!out) setText(t);
   };
 
   const who = (from: string) => staff.find((s) => s.id === from);
+  const shown = [...(m?.messages ?? []), ...(pending ? [{ id: "pending", from: "you", name: data.settings.playerName || "You", text: pending.text, at: pending.at }] : [])];
+  // Who's on it while they think: the person you asked, anyone you named, else the first at the table.
+  const lastMine = [...shown].reverse().find((x) => x.from === "you");
+  const askedTo = pending ? pending.to : to;
+  const onIt = waiting ? workingOn(people, lastMine?.text ?? "", askedTo) : [];
+  const elapsed = lastMine ? Math.max(0, Math.round((now - new Date(lastMine.at).getTime()) / 1000)) : 0;
   const past = here.filter((x) => x.id !== id);
 
   return (
@@ -120,7 +138,7 @@ export default function Meeting({ kind, buildingId, meetingId, onClose }: { kind
             </div>
           )}
           {m && m.messages.length === 0 && !waiting && <p className="text-center text-lg font-bold text-muted py-4">Everyone's seated. Say something to open the meeting.</p>}
-          {m?.messages.map((x) => {
+          {shown.map((x) => {
             const s = who(x.from);
             const mine = x.from === "you";
             return (
@@ -140,15 +158,27 @@ export default function Meeting({ kind, buildingId, meetingId, onClose }: { kind
               </div>
             );
           })}
-          {waiting && (
-            <div className="flex gap-2 items-center border-2 border-dashed border-line rounded-md px-3 py-2">
-              <span className="font-display text-2xl city-blink">…</span>
-              <div className="text-base font-bold">
-                {to ? `${who(to)?.name ?? "They"} is thinking.` : "The team is thinking."}{" "}
-                <span className="text-muted">They answer through your Claude account. The first answer in a meeting can take up to an hour; while a meeting is going, the next ones come in a few minutes. You can close this and come back.</span>
+          {waiting &&
+            onIt.map((p, i) => (
+              <div key={`on-${p.id}`} className="flex gap-2 items-start">
+                <div className="shrink-0 w-11 h-11 overflow-hidden rounded-md border-2 border-outline grid place-content-center city-blink" style={{ background: `${roleOf(p).color}44` }}>
+                  <Hero look={p.look} items={[]} size={40} />
+                </div>
+                <div className="max-w-[85%] border-2 border-dashed border-outline rounded-md px-3 py-2 bg-card-2">
+                  <div className="text-sm font-extrabold">
+                    {p.name}
+                    <span className="text-muted font-bold"> · {titleOf(p)}</span>
+                  </div>
+                  <div className="text-base font-bold">{progressLine(p, i, elapsed)}</div>
+                  {i === onIt.length - 1 && (
+                    <div className="text-sm font-bold text-muted mt-1 flex items-center gap-2">
+                      <span className="font-display text-lg city-blink">…</span>
+                      {pending ? "Sending" : `Working on it · ${clock(elapsed)}`}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            ))}
           <div ref={end} />
         </div>
 
@@ -208,6 +238,27 @@ export default function Meeting({ kind, buildingId, meetingId, onClose }: { kind
       </div>
     </div>
   );
+}
+
+const clock = (sec: number) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
+
+/** Up to 3 people who'll answer: the one you picked, people you named, else whoever is first at the table. */
+function workingOn(people: CityStaff[], text: string, to: string): CityStaff[] {
+  const picked = people.find((p) => p.id === to);
+  if (picked) return [picked];
+  const low = text.toLowerCase();
+  const named = people.filter((p) => p.name && new RegExp(`\\b${p.name.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(low));
+  return (named.length ? named : people).slice(0, named.length ? 3 : 1);
+}
+
+/** What they say while they work, with a time frame. Honest: it's a status, not their answer. */
+function progressLine(p: CityStaff, i: number, sec: number): string {
+  if (i > 0) return sec < 20 ? "I'll add my part right after." : "Checking my side too, nearly there.";
+  if (sec < 15) return "On it. Give me a minute.";
+  if (sec < 45) return `Pulling up the numbers for this. About a minute.`;
+  if (sec < 90) return "Writing it up now. Give me another minute.";
+  if (sec < 180) return "Still on it, this one needs a closer look. A couple more minutes.";
+  return "Taking longer than I'd like. It's still being worked on, you can close this and I'll have it here when you're back.";
 }
 
 /** The Mission Room's list of this building's meetings, with a way to open each transcript. */
