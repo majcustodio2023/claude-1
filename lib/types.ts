@@ -339,8 +339,10 @@ export interface TrackedCampaign {
 export interface Creative {
   id: string;
   kind: "image" | "video";
-  source: "higgsfield" | "link";
+  source: "higgsfield" | "openai" | "link";
   status: "generating" | "ready" | "failed";
+  /** Where the app stored a picture it made itself (ChatGPT images); served at url */
+  storagePath?: string;
   url?: string;
   prompt?: string;
   /** Higgsfield request, while generating */
@@ -384,6 +386,8 @@ export interface Settings {
   dailyVerse?: boolean;
   /** Quick prompts in the Creatives tab: [label, prompt]. */
   creativePrompts?: [string, string][];
+  /** Which AI paints ad images: ChatGPT images (OpenAI key) or Higgsfield. Remembered from the last pick. */
+  imageEngine?: "openai" | "higgsfield";
   monthlyGoal: number;
   /** When set, overrides the sum of expense lines as the "stay afloat" number */
   expenseTargetOverride?: number;
@@ -556,7 +560,7 @@ export interface TrackerData {
   /** The virtual city: buildings (one per client plus studios), their rooms and AI staff. */
   city?: CityState;
   /** Set by the server: which integrations have a saved key (keys never reach the browser). */
-  integrations?: { higgsfield?: boolean; kit?: boolean; voice?: boolean; calendar?: boolean; staffKeys?: string[]; metaBusiness?: TokenInfo; apple?: boolean; inbox?: boolean };
+  integrations?: { higgsfield?: boolean; openai?: boolean; kit?: boolean; voice?: boolean; calendar?: boolean; staffKeys?: string[]; metaBusiness?: TokenInfo; apple?: boolean; inbox?: boolean };
   updatedAt?: string;
 }
 

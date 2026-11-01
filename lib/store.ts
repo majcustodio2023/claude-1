@@ -117,6 +117,7 @@ function withTokenFlags(doc: StoredDoc): TrackerData {
       higgsfield: Boolean(doc.secrets?.higgsfield),
       kit: Boolean(process.env.ANTHROPIC_API_KEY || doc.secrets?.anthropic),
       voice: Boolean(process.env.OPENAI_API_KEY || doc.secrets?.openai),
+      openai: Boolean(process.env.OPENAI_API_KEY || doc.secrets?.openai),
       calendar: Boolean(doc.secrets?.calendar),
       staffKeys: Object.keys(doc.secrets?.staff ?? {}),
       metaBusiness: business ? (info.business ?? { expires: "", source: "business", valid: true, checkedAt: "" }) : undefined,
@@ -476,6 +477,44 @@ export async function videoViewUrl(path: string, parts = 1): Promise<string[] | 
   if (!path.startsWith(`${await mediaFolder()}/`) || path.includes("..")) return null;
   const names = parts > 1 ? Array.from({ length: parts }, (_, i) => `${path}.part${i}`) : [path];
   return Promise.all(names.map(async (n) => `${SUPABASE_URL}/storage/v1${((await storage(`object/sign/${VIDEO_BUCKET}/${n}`, { expiresIn: 6 * 3600 })) as { signedURL: string }).signedURL}`));
+}
+
+/** Private bucket for pictures the app makes itself (ChatGPT images). Same secret folder as the videos. */
+export const IMAGE_BUCKET = "city-images";
+
+/** Stores a picture the app made and returns its storage path. */
+export async function saveImage(bytes: Buffer, type: string): Promise<string> {
+  if (!usingDatabase) throw new Error("Saving pictures needs the database (see the README).");
+  const ext = type === "image/jpeg" ? "jpg" : type === "image/webp" ? "webp" : "png";
+  const name = `${await mediaFolder()}/img-${Date.now().toString(36)}-${randomBytes(4).toString("hex")}.${ext}`;
+  const res = await fetch(`${SUPABASE_URL}/storage/v1/object/${IMAGE_BUCKET}/${name}`, {
+    method: "POST",
+    headers: { apikey: SUPABASE_KEY!, Authorization: `Bearer ${SUPABASE_KEY}`, "Content-Type": type },
+    body: new Uint8Array(bytes),
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`Couldn't save the picture (file storage said ${res.status}: ${await res.text()})`);
+  return name;
+}
+
+async function checkedImagePath(p: string): Promise<string | null> {
+  return p.startsWith(`${await mediaFolder()}/img-`) && !p.includes("..") ? p : null;
+}
+
+/** A stored picture's bytes. */
+export async function readImage(p: string): Promise<{ bytes: ArrayBuffer; type: string } | null> {
+  const ok = await checkedImagePath(p);
+  if (!ok) return null;
+  const res = await fetch(`${SUPABASE_URL}/storage/v1/object/authenticated/${IMAGE_BUCKET}/${ok}`, { headers: { apikey: SUPABASE_KEY!, Authorization: `Bearer ${SUPABASE_KEY}` }, cache: "no-store" });
+  if (!res.ok) return null;
+  return { bytes: await res.arrayBuffer(), type: res.headers.get("content-type") ?? "image/png" };
+}
+
+/** A link to a stored picture that outside services (Higgsfield, Meta) can fetch, good for six hours. */
+export async function imagePublicUrl(p: string): Promise<string | null> {
+  const ok = await checkedImagePath(p);
+  if (!ok) return null;
+  return `${SUPABASE_URL}/storage/v1${((await storage(`object/sign/${IMAGE_BUCKET}/${ok}`, { expiresIn: 6 * 3600 })) as { signedURL: string }).signedURL}`;
 }
 
 // ---------- prototype maker (its jobs and pages live in their own tables, not in the document) ----------

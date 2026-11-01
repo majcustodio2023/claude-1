@@ -17,7 +17,7 @@ import { blip, sfx } from "@/lib/sound";
 import { ROLES, buildingName, clientsOf, roleOf, say, secretKey, setupProgress, titleOf, type StaffRole } from "@/lib/city";
 import { buildingReport, missions } from "@/lib/cityReport";
 import { WRITER_PROMPTS } from "@/lib/cityPrompts";
-import { NOT_LIVE, dueJob, jobsOf, workOf } from "@/lib/cityJobs";
+import { NOT_LIVE, WORK_ETA, dueJob, jobsOf, workOf } from "@/lib/cityJobs";
 import { onRunning, runJob, runningJobs } from "./workRunner";
 import { MeetingList } from "./Meeting";
 import { ServicesPanel } from "./Services";
@@ -33,6 +33,7 @@ import { hashString, rng } from "@/lib/avatar";
 import { randomHeroLook } from "@/lib/heroLook";
 import type { HeroLook, ItemSlot } from "@/lib/types";
 import { toast } from "../ui";
+import { EnginePicker, OpenAIKeyForm, useEngine, type Shape } from "../ImageEngine";
 import type { CityBuilding, CityStaff, Creative, StaffWork, TrackerData, VideoRequest } from "@/lib/types";
 
 export type Talk =
@@ -176,7 +177,7 @@ export default function Dialogue({ talk, onClose, goTo, onOutputs, onSpar, onMee
     } else if (page === "work") {
       const mine = workOf(data, staff.id);
       text = mine[0]?.status === "queued"
-        ? `I'm on "${mine[0].label.toLowerCase()}". It'll be here within the hour.`
+        ? `On it! I'm writing "${mine[0].label.toLowerCase()}" right now. ${WORK_ETA}.`
         : mine.length
           ? `Here's what I've made. ${mine[0].day === today ? `Today I did: ${mine[0].label.toLowerCase()}.` : ""} Want something else? Pick a job.`
           : prog.missing.length
@@ -321,7 +322,10 @@ function rolePanel(role: StaffRole, staff: CityStaff, building: CityBuilding, da
       };
     case "imageAI":
       return {
-        text: data.integrations?.higgsfield ? "Paste the image copy and describe the look. I'll paint it with Higgsfield." : "I paint with Higgsfield, so I need your Higgsfield key first.",
+        text:
+          data.integrations?.openai || data.integrations?.higgsfield
+            ? "Paste the image copy and describe the look. Pick who paints it: ChatGPT images or Higgsfield."
+            : "I paint with ChatGPT images or Higgsfield. Give me one of their keys first and I'll get painting.",
         panel: <VideoAIPanel imageOnly />,
       };
     case "writer":
@@ -600,16 +604,21 @@ function VideoAIPanel({ imageOnly = false }: { imageOnly?: boolean }) {
   const [key, setKey] = useState("");
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
-  const has = Boolean(data.integrations?.higgsfield);
+  const [engine, setEngine, keys] = useEngine();
+  const [shape, setShape] = useState<Shape>("portrait");
+  // Videos are Higgsfield only; images can be painted by either.
+  const using = imageOnly ? engine : "higgsfield";
+  const has = keys[using];
+  const anyKey = keys.higgsfield || (imageOnly && keys.openai);
   const refresh = async () => {
     const r = await fetch("/api/creative", { cache: "no-store" });
     if (r.ok) setList((await r.json()).creatives);
   };
   const generating = list.some((c) => c.status === "generating");
   useEffect(() => {
-    if (!has) return;
+    if (!anyKey) return;
     refresh();
-  }, [has]);
+  }, [anyKey]);
   useEffect(() => {
     if (!generating) return;
     const t = setInterval(refresh, 5000);
@@ -631,9 +640,20 @@ function VideoAIPanel({ imageOnly = false }: { imageOnly?: boolean }) {
       setBusy(false);
     }
   };
+  const picker = imageOnly && <EnginePicker engine={engine} setEngine={setEngine} shape={shape} setShape={setShape} />;
+  if (!has && using === "openai") {
+    return (
+      <div className="space-y-3">
+        {picker}
+        <PanelTitle icon="key">OpenAI key for ChatGPT images</PanelTitle>
+        <OpenAIKeyForm />
+      </div>
+    );
+  }
   if (!has) {
     return (
       <div>
+        {picker}
         <PanelTitle icon="key">Higgsfield key</PanelTitle>
         <p className="text-base mb-2">Make one at cloud.higgsfield.ai and paste it as KEY_ID:KEY_SECRET.</p>
         <div className="flex gap-2 flex-wrap">
@@ -644,14 +664,15 @@ function VideoAIPanel({ imageOnly = false }: { imageOnly?: boolean }) {
       </div>
     );
   }
-  const recent = list.filter((c) => c.source === "higgsfield").slice(0, 6);
+  const recent = list.filter((c) => c.source === "higgsfield" || (imageOnly && c.source === "openai")).slice(0, 6);
   return (
     <div>
       <PanelTitle icon={imageOnly ? "image" : "film"}>{imageOnly ? "Make an ad image" : "Shoot a new scene"}</PanelTitle>
+      {picker && <div className="mb-2">{picker}</div>}
       <textarea className="w-full min-h-20" placeholder={imageOnly ? "e.g. Bold ad image, headline 'Get 50 booked calls in 30 days' at the top, happy coach at a laptop, bright colours, 4:5" : "e.g. Anime-style hero walking through a neon city at night, cinematic, 9:16"} value={prompt} onChange={(e) => setPrompt(e.target.value)} />
       <div className="flex gap-2 mt-2 flex-wrap">
-        <Btn kind="primary" disabled={busy || !prompt.trim()} onClick={async () => (await post("/api/creative", { op: "image", prompt })) && sfx("loot")}>
-          <Icon name="image" size={20} /> {imageOnly ? "Make the image" : "Shoot the first frame"}
+        <Btn kind="primary" disabled={busy || !prompt.trim()} onClick={async () => (await post("/api/creative", { op: "image", prompt, engine: using, shape })) && sfx("loot")}>
+          <Icon name="image" size={20} /> {busy ? (using === "openai" ? "Painting… (up to 2 minutes)" : "Sending…") : imageOnly ? "Make the image" : "Shoot the first frame"}
         </Btn>
       </div>
       {err && <p className="text-bad font-bold mt-2">{err}</p>}
@@ -675,7 +696,9 @@ function VideoAIPanel({ imageOnly = false }: { imageOnly?: boolean }) {
           ))}
         </div>
       )}
-      <p className="text-sm text-muted mt-3">Uses your Higgsfield credits. Everything made here also shows in the Creatives tab, ready for test ads.</p>
+      <p className="text-sm text-muted mt-3">
+        {using === "openai" ? "Uses your OpenAI account (ChatGPT images)." : "Uses your Higgsfield credits."} Everything made here also shows in the Creatives tab, ready for test ads.
+      </p>
     </div>
   );
 }
@@ -746,7 +769,7 @@ function WriterPanel({ staff }: { staff: CityStaff }) {
                 {o.target && <span className="text-sm font-bold text-muted truncate">For: {o.target}</span>}
                 {!o.queued && <Btn className="ml-auto text-sm py-1" onClick={() => copy(o.id, o.text)}>{copied === o.id ? "Copied" : "Copy"}</Btn>}
               </div>
-              <div className="text-base whitespace-pre-wrap leading-relaxed">{o.queued ? `${live.name} is writing this through your Claude account. Within the hour it shows up here and in Outputs (top right of the city).` : o.text}</div>
+              <div className="text-base whitespace-pre-wrap leading-relaxed">{o.queued ? <WorkingNow name={live.name} since={workOf(data, live.id).find((w) => w.id === o.id)?.at} /> : o.text}</div>
             </div>
           ))}
         </div>
@@ -806,18 +829,21 @@ function WriterPanel({ staff }: { staff: CityStaff }) {
 }
 
 const STYLES = ["Anime", "Cinematic", "TikTok fast cuts", "Talking head + captions", "Clean corporate", "Vlog"];
+const CUSTOM = "Custom style";
 
 function VideoEditPanel({ building }: { building: CityBuilding }) {
   const { data, update, today } = useTracker();
   const [url, setUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [style, setStyle] = useState(STYLES[2]);
+  const [custom, setCustom] = useState("");
   const [prompt, setPrompt] = useState("");
   const [pct, setPct] = useState<number | null>(null);
   const [error, setError] = useState("");
   const reqs = (data.city?.videoRequests ?? []).filter((r) => r.buildingId === building.id);
   const link = url.trim();
-  const ok = (Boolean(file) || /^https?:\/\//.test(link) || prompt.trim().length > 3) && pct == null;
+  const customStyle = custom.trim();
+  const ok = (Boolean(file) || /^https?:\/\//.test(link) || prompt.trim().length > 3) && pct == null && (style !== CUSTOM || customStyle.length > 2);
 
   // Straight from your computer to storage, in 40 MB pieces (three at a time, each retried),
   // so any size goes up and a dropped connection only costs one piece.
@@ -868,7 +894,7 @@ function VideoEditPanel({ building }: { building: CityBuilding }) {
         saved = await upload(file);
       }
       update((d) => {
-        d.city!.videoRequests = [{ id: uid("vid"), buildingId: building.id, videoUrl: /^https?:\/\//.test(link) ? link : "", file: saved, style, prompt: prompt.trim(), status: "requested", createdAt: today }, ...(d.city!.videoRequests ?? [])];
+        d.city!.videoRequests = [{ id: uid("vid"), buildingId: building.id, videoUrl: /^https?:\/\//.test(link) ? link : "", file: saved, style: style === CUSTOM ? customStyle : style, prompt: prompt.trim(), status: "requested", createdAt: today }, ...(d.city!.videoRequests ?? [])];
       });
       setUrl("");
       setFile(null);
@@ -897,12 +923,22 @@ function VideoEditPanel({ building }: { building: CityBuilding }) {
       </label>
       {!file && <input className="w-full mt-2" placeholder="Or a link to it (Google Drive, Dropbox…)" value={url} onChange={(e) => setUrl(e.target.value)} />}
       <div className="flex flex-wrap gap-2 mt-2">
-        {STYLES.map((s) => (
+        {[...STYLES, CUSTOM].map((s) => (
           <button key={s} type="button" onClick={() => setStyle(s)} className={`btn text-base ${style === s ? "btn-primary" : "btn-ghost"}`}>
             {s}
           </button>
         ))}
       </div>
+      {style === CUSTOM && (
+        <input
+          className="w-full mt-2"
+          autoFocus
+          placeholder="Describe the style in your own words, e.g. 90s VHS look, warm grain, punchy zooms on key words"
+          value={custom}
+          onChange={(e) => setCustom(e.target.value)}
+          aria-label="Your style"
+        />
+      )}
       <textarea className="w-full min-h-20 mt-2" placeholder="How should it be edited? e.g. Cut to 30s, hook in the first 2 seconds, captions in yellow, upbeat music" value={prompt} onChange={(e) => setPrompt(e.target.value)} />
       {pct != null && (
         <div className="mt-2 h-3 rounded-full bg-card-2 border-2 border-outline overflow-hidden">
@@ -1042,7 +1078,9 @@ function WorkPanel({ staff, goTo }: { staff: CityStaff; goTo: (t: string) => voi
                 <>
                   {w.input && <p className="text-sm text-muted mt-1 truncate">From: {w.input}</p>}
                   {w.status === "queued" ? (
-                    <p className="text-base font-bold mt-2">{live.name} is working on this through your Claude account. Within the hour it shows up here and in Outputs (top right of the city), so no need to wait around.</p>
+                    <div className="mt-2">
+                      <WorkingNow name={live.name} since={w.at} />
+                    </div>
                   ) : (
                     <div className="text-base whitespace-pre-wrap leading-relaxed mt-2 max-h-96 overflow-y-auto">{w.text}</div>
                   )}
@@ -1068,7 +1106,27 @@ function WorkPanel({ staff, goTo }: { staff: CityStaff; goTo: (t: string) => voi
   );
 }
 
-/** While someone's work is queued, checks every minute for it to come back done. */
+/** The live "on it" note while a job is being written: who, a running timer, and the usual wait. */
+export function WorkingNow({ name, since }: { name: string; since?: string }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const secs = since ? Math.max(0, Math.floor((now - Date.parse(since)) / 1000)) : 0;
+  const clock = `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`;
+  return (
+    <div className="flex items-center gap-2 flex-wrap text-base font-bold" role="status" aria-live="polite">
+      <span className="inline-block w-3 h-3 rounded-full bg-good animate-pulse" aria-hidden />
+      <span>
+        {name} is on it, writing now · {clock}
+      </span>
+      <span className="text-muted font-normal">{WORK_ETA}. It also lands in Outputs (top right of the city).</span>
+    </div>
+  );
+}
+
+/** While someone's work is queued, checks every few seconds for it to come back done. */
 function QueuePoll({ staffId }: { staffId: string }) {
   const { data, update } = useTracker();
   const waiting = (data.staffWork ?? []).some((w) => w.staffId === staffId && w.status === "queued");
@@ -1081,7 +1139,7 @@ function QueuePoll({ staffId }: { staffId: string }) {
         const { work } = (await r.json()) as { work: StaffWork[] };
         update((d) => void (d.staffWork = work));
       } catch {}
-    }, 60000);
+    }, 3000);
     return () => clearInterval(t);
   }, [waiting]);
   return null;

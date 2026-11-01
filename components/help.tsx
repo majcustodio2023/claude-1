@@ -160,7 +160,8 @@ export const HELP = {
   ),
   generate: (
     <ul>
-      <li>Paste your Higgsfield API key once (it&apos;s encrypted). Then describe the image you want, or turn an image into a short video.</li>
+      <li>Pick who paints: ChatGPT images (your OpenAI API key) or Higgsfield (your Higgsfield key). Paste the key once; it&apos;s encrypted. Then describe the image you want.</li>
+      <li>Turning an image into a short video uses Higgsfield.</li>
       <li>The quick prompts are editable starting points.</li>
     </ul>
   ),

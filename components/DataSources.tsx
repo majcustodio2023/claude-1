@@ -11,6 +11,7 @@ import { Badge, Btn, Card, toast } from "./ui";
 import { Icon } from "./icons";
 import { daysLeft } from "@/lib/feeds";
 import type { TokenInfo } from "@/lib/types";
+import { OpenAIKeyForm } from "./ImageEngine";
 
 const post = async (body: Record<string, unknown>) => {
   const r = await fetch("/api/feeds", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -140,6 +141,35 @@ export default function DataSources() {
               {data.integrations?.apple && <Btn type="button" onClick={() => run("apple", async () => (await post({ action: "apple", clear: true }), await reload()))}>Disconnect</Btn>}
             </div>
           </form>
+        )}
+      </section>
+
+      {/* OpenAI (ChatGPT images) */}
+      <section className="border-2 border-line rounded-md p-3 mb-3 space-y-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <h4 className="font-display text-xl tracking-wide flex-1">OpenAI (ChatGPT images)</h4>
+          {data.integrations?.openai ? <Badge tone="good">Key saved</Badge> : <Badge tone="muted">Optional · not connected</Badge>}
+          {data.integrations?.openai && (
+            <Btn
+              className="text-sm py-1"
+              disabled={busy === "openai"}
+              onClick={() =>
+                confirm("Remove the OpenAI key? ChatGPT images and Kit's real voice stop until you add one again.") &&
+                run("openai", async () => {
+                  const r = await fetch("/api/kit/voice/key", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key: null }) });
+                  if (!r.ok) throw new Error((await r.json()).error);
+                  await reload();
+                })
+              }
+            >
+              Remove
+            </Btn>
+          )}
+        </div>
+        {data.integrations?.openai ? (
+          <p className="text-base">The Ad Image Maker and the Creatives tab can paint with ChatGPT images. Scripts and copy are still written by Claude.</p>
+        ) : (
+          <OpenAIKeyForm />
         )}
       </section>
 

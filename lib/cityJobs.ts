@@ -350,3 +350,6 @@ export function chunks(text: string, max: number): string[] {
   if (cur.trim()) out.push(cur);
   return out;
 }
+
+/** How long a written job usually takes once it's sent (the fast pickup watcher, see the README). */
+export const WORK_ETA = "Usually ready in about a minute";
