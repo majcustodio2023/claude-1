@@ -620,33 +620,29 @@ function Stall({ x, y, color, seed }: { x: number; y: number; color: string; see
   );
 }
 
-/** The sealed gate to the Hollow Wilds: a stone wall, a chained iron gate, hazard paint and fog. */
+/** The north gate to the Wilds: stone pillars, the portcullis raised, broken chains and a trail sign. */
 function Gate({ r }: { r: Rect }) {
   const cx = r.x + r.w / 2;
+  // The north gate stands open now: the portcullis is raised and the green Wilds show through.
   return (
     <g stroke={LINE} strokeWidth={SW} strokeLinejoin="round">
       <rect x={r.x - 70} y={-10} width={r.w + 140} height={r.h + 6} fill="#2a1f3d" stroke="none" />
-      <ellipse cx={cx} cy={r.h - 6} rx={r.w * 0.9} ry="26" fill="#9aa0b4" opacity="0.35" stroke="none" className="fog" />
+      <rect x={r.x} y={-6} width={r.w} height={r.h + 2} fill="#6aa645" />
+      <path d={`M${r.x + 10} ${r.h * 0.5} q14 -26 28 0 M${r.x + r.w - 44} ${r.h * 0.42} q14 -26 28 0`} fill="#3e6b32" />
+      <path d={`M${cx - 18} ${r.h} L${cx - 8} -6 H${cx + 8} L${cx + 18} ${r.h} Z`} fill="#c9955a" strokeWidth="0" />
       <rect x={r.x - 70} y={-6} width="64" height={r.h + 4} fill="url(#a-stone)" />
       <rect x={r.x + r.w + 6} y={-6} width="64" height={r.h + 4} fill="url(#a-stone)" />
       <rect x={r.x - 76} y={r.h - 14} width="76" height="14" fill="#837474" />
       <rect x={r.x + r.w} y={r.h - 14} width="76" height="14" fill="#837474" />
+      {/* the raised portcullis: only its spiked bottom shows under the arch */}
+      <rect x={r.x} y={-6} width={r.w} height="16" fill="#3a3346" />
       {Array.from({ length: 7 }, (_, i) => (
-        <path key={i} d={`M${r.x + 8 + i * ((r.w - 16) / 6)} 0 V${r.h - 4}`} stroke="#3a3346" strokeWidth="7" />
+        <path key={i} d={`M${r.x + 8 + i * ((r.w - 16) / 6)} 8 v10 l-4 6 h8 l-4 -6`} stroke="#3a3346" strokeWidth="4" fill="#3a3346" />
       ))}
-      <path d={`M${r.x} ${r.h * 0.3} H${r.x + r.w} M${r.x} ${r.h * 0.72} H${r.x + r.w}`} stroke="#3a3346" strokeWidth="7" />
-      <path d={`M${r.x + 4} ${r.h * 0.18} L${r.x + r.w - 4} ${r.h * 0.82} M${r.x + r.w - 4} ${r.h * 0.18} L${r.x + 4} ${r.h * 0.82}`} stroke="#b08d57" strokeWidth="6" strokeDasharray="9 4" />
-      <rect x={cx - 12} y={r.h * 0.5 - 12} width="24" height="22" rx="3" fill="#b08d57" />
-      {/* hazard stripes along the bottom */}
-      <rect x={r.x - 4} y={r.h - 12} width={r.w + 8} height="12" fill="#ffd166" />
-      {Array.from({ length: Math.ceil(r.w / 18) }, (_, i) => (
-        <path key={`h${i}`} d={`M${r.x + i * 18} ${r.h} l10 -12 h8 l-10 12 z`} fill={LINE} strokeWidth="0" />
-      ))}
-      {/* torn warning posters on the wall */}
-      <rect x={r.x - 58} y="14" width="24" height="30" fill="#f6e7cf" strokeWidth="2.5" transform={`rotate(-6 ${r.x - 46} 29)`} />
-      <rect x={r.x + r.w + 28} y="18" width="24" height="30" fill="#f19aa8" strokeWidth="2.5" transform={`rotate(5 ${r.x + r.w + 40} 33)`} />
-      {/* the danger sign (its words are text on top) */}
-      <rect x={cx - 76} y={r.h + 18} width="152" height="46" rx="5" fill="#ffd166" transform={`rotate(-3 ${cx} ${r.h + 41})`} />
+      {/* broken chains on the ground */}
+      <path d={`M${r.x - 30} ${r.h - 4} q10 -8 20 0 q10 8 20 0 M${r.x + r.w + 12} ${r.h - 2} q10 -8 20 0`} stroke="#b08d57" strokeWidth="5" fill="none" strokeDasharray="8 4" />
+      {/* the trail sign (its words are text on top) */}
+      <rect x={cx - 76} y={r.h + 18} width="152" height="46" rx="5" fill="#8cc05a" transform={`rotate(-3 ${cx} ${r.h + 41})`} />
       <path d={`M${cx - 50} ${r.h + 64} v16 M${cx + 50} ${r.h + 60} v16`} strokeWidth="5" />
     </g>
   );
@@ -795,9 +791,9 @@ export const CityLabels = memo(function CityLabels({ layout, houses, cityName }:
       <div className="absolute grid place-content-center text-center" style={{ left: P.x + P.w / 2 - 143, top: P.y + 12, width: 286, height: 42, ...display, fontWeight: 700, fontSize: 32, color: "#fbf1dc", textShadow: "3px 3px 0 #4e2f1d" }}>
         {short(cityName.toUpperCase(), 18)}
       </div>
-      <div className="absolute text-center -rotate-3" style={{ left: g.x + g.w / 2 - 76, top: g.h + 20, width: 152, ...display, fontWeight: 700, color: "#c0392b" }}>
-        <div style={{ fontSize: 24 }}>DANGER</div>
-        <div style={{ fontSize: 14, color: LINE }}>DO NOT ENTER</div>
+      <div className="absolute text-center -rotate-3" style={{ left: g.x + g.w / 2 - 76, top: g.h + 20, width: 152, ...display, fontWeight: 700, color: LINE }}>
+        <div style={{ fontSize: 24 }}>THE WILDS</div>
+        <div style={{ fontSize: 14, color: "#2f4a2a" }}>MONSTERS AHEAD</div>
       </div>
     </div>
   );

@@ -120,7 +120,7 @@ export const CITIZENS: Citizen[] = [
     bubbles: ["Don't go near the gate…", "The fog came back last night.", "Forty years I've watched this gate."],
     nodes: {
       start: {
-        text: "Easy there, hero. That gate stays shut. Beyond it are the Hollow Wilds, where the Ghosted live. Leads that went cold. Invoices nobody paid. They don't stay dead.",
+        text: "Easy there, hero. The gate's open now, but mind yourself. Beyond it are the Hollow Wilds, where the Ghosted live. Leads that went cold. Invoices nobody paid. They don't stay dead.",
         replies: [
           { label: "Ghosted? Like clients who stop replying?", next: "ghosted" },
           { label: "I'm not scared of a few monsters.", next: "brave" },
@@ -398,14 +398,15 @@ export const STAFF_CHATS: { line: string; replies: [string, string][] }[] = [
   },
 ];
 
+/** The north gate. A reply with next "wilds" walks you out into the Wilds (components/wilds). */
 export const GATE: LoreNode[] = [
   {
-    text: "A rusted iron gate wrapped in chains. Grey fog curls out from under it, and something on the other side breathes slow and deep. The sign reads: DANGER. DO NOT ENTER.",
-    replies: [{ label: "Push the gate", next: "1" }, { label: "Back away", next: "" }],
+    text: "The old iron gate. Its chains lie broken on the ground and the fog has pulled back. Beyond it the Wilds roll out green and wide: a sunny meadow, then Mosswood and its river, then the dark Old Grove. Monsters roam out there, and they drop loot.",
+    replies: [{ label: "Step into the Wilds", next: "wilds" }, { label: "What's out there?", next: "1" }, { label: "Not yet", next: "" }],
   },
   {
-    text: "The chains rattle but hold. From the fog, a whisper: \"…not yet, hero. Gear up. We'll be waiting.\" The gate is sealed, for now.",
-    replies: [{ label: "…Okay then.", next: "" }],
+    text: "The meadow by the gate is gentle: jellies, puffballs and buzzbees. Mosswood is tougher, with shroomkin, barklings and mosswolves. The Old Grove is home to thornback beetles, bramble treants and the Grove King himself. There's a camp just outside with a fire to rest at and a forager who buys loot.",
+    replies: [{ label: "Step into the Wilds", next: "wilds" }, { label: "Back away", next: "" }],
   },
 ];
 

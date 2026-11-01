@@ -50,6 +50,12 @@ function hat(g: Grid, items: Set<string>, hairC: string) {
   if (items.has("kabuto")) {
     rows(g, 10, 4, ["g........g", ".g......g.", "..g.rr.g..", ".kkkkkkkk.", "kkkkkkkkkk", "kkkkkkkkkk", "gggggggggg"], { g: GOLD, r: "#c0392b", k: "#6b2a22" });
   }
+  if (items.has("leaf-cap")) {
+    rows(g, 9, 3, ["....l.....", "..lldll...", ".llldllll.", "lllddllldl", "gggggggggg"], { l: "#6aa645", d: "#3e6b32", g: "#8a5a32" });
+  }
+  if (items.has("mushroom-helm")) {
+    rows(g, 8, 1, ["....rrrrrr....", "..rrwwrrrrrr..", ".rrrwwrrrwwrr.", "rrrrrrrrrwwrrr", "rwwrrrrrrrrrrr", "rrrrrrwwrrrrrr", ".cccccccccccc."], { r: "#c0502f", w: "#fbf1dc", c: "#e8cfa2" });
+  }
   if (items.has("flame-crown")) {
     rows(g, 10, 2, ["....o..o..", "...oyo.oo.", "..oyyoyyo.", "g.gg.gg.g.", "gggggggggg"], { o: "#d9703b", y: GOLD_HI, g: GOLD });
   }
@@ -68,6 +74,10 @@ function behind(g: Grid, items: Set<string>, gear: Set<string>) {
   }
   if (items.has("red-cape"))
     rows(g, 8, 17, ["..cccccccccc..", "..cccccccccc..", ".cccccccccccc.", ".cccccccccccc.", "cccccccccccccc", "cccccccccccccc", "cccccccccccccc", "dcddcddcddcddd"], { c: "#c0392b", d: "#93392a" });
+  if (items.has("moss-cloak"))
+    rows(g, 8, 17, ["..cccccccccc..", "..cdcccccdcc..", ".cccccccccccc.", ".ccdcccccdccc.", "cccccccccccccc", "ccccdccccccdcc", "cccccccccccccc", "dcddcddcddcddd"], { c: "#4f8a3a", d: "#2f4a2a" });
+  if (items.has("beetle-shell"))
+    rows(g, 6, 13, ["....ssssssssss....", "..ssshhssssssss..", ".sshhsssssssssss.", "ssssssssmsssssss.s", "ssssssssmssssssss", "ssssssssmssssssss", "ssssssssmssssssss", ".sssssssmsssssss.", "..ssssssmssssss..", "....ssssmssss...."], { s: "#2a6a6e", h: "#86d0bd", m: "#1f4a52" });
   if (items.has("jetpack")) {
     for (const x of [8, 20]) {
       rows(g, x, 17, ["ss", "ts", "ss", "ss", "ss", "ss", "ss", "ff", "yf", ".f"], { s: "#a3998f", t: STEEL_HI, f: "#d9703b", y: GOLD_HI });
@@ -100,6 +110,25 @@ function weapon(g: Grid, items: Set<string>) {
     rows(g, 20, 22, ["wwww"], { w: WOOD });
     rows(g, 20, 8, ["sssssssss", "stsssssss", "skkkkkkks", "sssssssss", "sssssssss"], { s: "#7d7574", t: STEEL_HI, k: "#5a5458" });
   }
+  if (items.has("oak-club")) {
+    rows(g, 19, 13, ["...bbb", "..bbbb", "..bdbb", "..bbb.", ".bbb..", ".bb...", "bb....", "b.....", "b....."], { b: "#8a5a32", d: "#4e2f1d" });
+  }
+  if (items.has("fang-dagger")) {
+    rows(g, 19, 17, ["....w", "...ww", "..wws", ".kk..", "kk..."], { w: "#fbf1dc", s: "#c8bdae", k: "#6e4425" });
+  }
+  if (items.has("thorn-spear")) {
+    for (let y = 6; y < 28; y++) g.set(21, y, y % 5 === 0 ? "#3e6b32" : "#6e4425");
+    rows(g, 20, 2, [".w.", "www", "www", ".g."], { w: "#e8cfa2", g: "#3e6b32" });
+    for (const y of [10, 15, 20]) g.set(22, y, "#6aa645");
+  }
+  if (items.has("grove-blade")) {
+    g.set(18, 23, "#3b2416");
+    rows(g, 19, 20, [".g", "g."], { g: "#6aa645" });
+    for (let i = 0; i < 9; i++) {
+      g.set(21 + i, 19 - i, "#4f8a3a");
+      if (i < 8) g.set(22 + i, 19 - i, "#b5d67a");
+    }
+  }
   if (items.has("scythe")) {
     for (let y = 4; y < 28; y++) g.set(21, y, "#3a2a5a");
     rows(g, 13, 2, ["..vvvvvvvv", "vvvlllllvv", "vll.......", "v........."], { v: "#5a4290", l: "#a996d6" });
@@ -113,6 +142,8 @@ function front(g: Grid, gear: Set<string>) {
 function pet(g: Grid, items: Set<string>) {
   if (items.has("slime")) rows(g, 0, 23, ["..ggg..", ".glggg.", "gkgkggg", "ggggggg", ".ggggg."], { g: "#6aa645", l: "#b5d67a", k: INK });
   if (items.has("ghost")) rows(g, 0, 21, ["..www..", ".wwwww.", "wkwkwww", "wwwwwww", "wwwwwss", "w.w.w.s"], { w: "#fbf1dc", s: "#c8bdae", k: INK });
+  if (items.has("pet-sprout")) rows(g, 0, 21, ["..l.l..", "...l...", "..bbb..", ".bkbkb.", ".bbbbb.", "..b.b.."], { l: "#6aa645", b: "#c9955a", k: INK });
+  if (items.has("pet-bee")) rows(g, 0, 21, [".ww.ww.", "..www..", ".yyyyy.", "ykykkky", "yyyyyyk", ".kyky.."], { w: "#c4ead9", y: "#f4c95d", k: INK });
   if (items.has("mini-dragon"))
     rows(g, 0, 21, ["....r..", "...ggg.", "w..gkgg", "ww.ggg.", "wgggg..", ".gbbg..", ".g..g.."], { g: "#4f8a3a", b: "#b5d67a", w: "#93392a", r: "#c0392b", k: INK });
 }
@@ -123,6 +154,7 @@ const AURAS: Record<string, { inner: string; outer?: string; sparks?: string; st
   shadow: { inner: "#5a4290", outer: "#3a2a5a" },
   sakura: { inner: "#f5cfc4", sparks: "#e8a0a0" },
   electric: { inner: "#c4ead9", sparks: "#4fb0a0" },
+  firefly: { inner: "#fbe29a", sparks: "#b5d67a" },
   unstoppable: { inner: "#b4d0e6", sparks: "#4f78a8" },
 };
 

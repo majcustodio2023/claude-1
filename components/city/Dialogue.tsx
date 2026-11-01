@@ -26,7 +26,7 @@ import { PRACTICE_LEVELS, PRACTICE_WEAPONS, foeById, practiceLevelOf } from "@/l
 import { FoePortrait } from "./trainingArt";
 import { itemPowerText } from "@/lib/battle";
 import { GATE, SHOPKEEPERS, STAFF_CHATS, citizenById, citizenStart, questById, questProgress, questState } from "@/lib/cityLore";
-import { ITEMS, RARITY, SLOT_LABEL } from "@/lib/items";
+import { ITEMS, RARITY, SLOT_LABEL, notForSale } from "@/lib/items";
 import { ITEM_POWER } from "@/lib/battle";
 import { takeShopItem } from "@/lib/loot";
 import { hashString, rng } from "@/lib/avatar";
@@ -69,7 +69,7 @@ function useTyped(text: string, voice: number) {
   return { shown: text.slice(0, n), done: n >= text.length, skip: () => setN(text.length) };
 }
 
-export default function Dialogue({ talk, onClose, goTo, onOutputs, onSpar, onMeeting, onChat }: { talk: Talk; onClose: () => void; goTo: (tab: string) => void; onOutputs?: (staffId: string) => void; onSpar?: (foeId: string) => void; onMeeting?: (buildingId: string, meetingId?: string) => void; onChat?: (staffId: string) => void }) {
+export default function Dialogue({ talk, onClose, goTo, onOutputs, onSpar, onMeeting, onChat, onWilds }: { talk: Talk; onClose: () => void; goTo: (tab: string) => void; onOutputs?: (staffId: string) => void; onSpar?: (foeId: string) => void; onMeeting?: (buildingId: string, meetingId?: string) => void; onChat?: (staffId: string) => void; onWilds?: () => void }) {
   const { data, update, month, today } = useTracker();
   const citizen = talk.kind === "citizen" ? citizenById(talk.id) : undefined;
   const [page, setPage] = useState<Page>(talk.kind === "board" || talk.kind === "screen" ? "panel" : citizen ? `node:${citizenStart(data, citizen)}` : talk.kind === "gate" ? "node:0" : "greet");
@@ -110,10 +110,9 @@ export default function Dialogue({ talk, onClose, goTo, onOutputs, onSpar, onMee
     }));
   } else if (talk.kind === "gate") {
     const n = GATE[Number(page.slice(5)) || 0];
-    speaker = { id: "gate", name: "The Gate", title: "North wall", color: "#7c5cff", portrait: <Icon name="lock" size={80} className="text-hero" /> };
+    speaker = { id: "gate", name: "The North Gate", title: "To the Wilds", color: "#4f8a3a", portrait: <Icon name="pin" size={80} className="text-good" /> };
     text = n.text;
-    if (page === "node:1") sfx("dark");
-    choices = n.replies.map((r) => ({ label: r.label, go: () => (r.next ? setPage(`node:${r.next}`) : onClose()) }));
+    choices = n.replies.map((r) => ({ label: r.label, primary: r.next === "wilds", go: () => (r.next === "wilds" ? (onWilds ? onWilds() : onClose()) : r.next ? setPage(`node:${r.next}`) : onClose()) }));
   } else if (talk.kind === "shop" && building) {
     const k = SHOPKEEPERS[building.kind as "weapons" | "armor"] ?? SHOPKEEPERS.weapons;
     speaker = { id: k.seed, name: k.name, title: `${k.title} · ${place}`, color: k.color, portrait: <Hero look={citizenPortrait(k.seed)} items={[]} size={112} /> };
@@ -1383,7 +1382,7 @@ function ShopPanel({ slots }: { slots: string[] }) {
         {list.map((it) => {
           const have = owned.has(it.id);
           const on = equipped[it.slot] === it.id;
-          const locked = it.source === "loot";
+          const locked = notForSale(it);
           const stats = Object.entries(ITEM_POWER[it.id]?.stats ?? {});
           return (
             <div key={it.id} className="bg-card-2 border-[3px] border-outline rounded-[10px] overflow-hidden flex flex-col" style={{ boxShadow: `inset 0 0 0 2px ${RARITY[it.rarity].color}55` }}>
