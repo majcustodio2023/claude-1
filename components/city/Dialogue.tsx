@@ -17,7 +17,7 @@ import { blip, sfx } from "@/lib/sound";
 import { ROLES, buildingName, clientsOf, roleOf, say, secretKey, setupProgress, titleOf, type StaffRole } from "@/lib/city";
 import { buildingReport, missions } from "@/lib/cityReport";
 import { WRITER_PROMPTS } from "@/lib/cityPrompts";
-import { NOT_LIVE, dueJob, jobsOf, workOf } from "@/lib/cityJobs";
+import { NOT_LIVE, WORK_ETA, dueJob, jobsOf, workOf } from "@/lib/cityJobs";
 import { onRunning, runJob, runningJobs } from "./workRunner";
 import { MeetingList } from "./Meeting";
 import { ServicesPanel } from "./Services";
@@ -177,7 +177,7 @@ export default function Dialogue({ talk, onClose, goTo, onOutputs, onSpar, onMee
     } else if (page === "work") {
       const mine = workOf(data, staff.id);
       text = mine[0]?.status === "queued"
-        ? `I'm on "${mine[0].label.toLowerCase()}". It'll be here within the hour.`
+        ? `On it! I'm writing "${mine[0].label.toLowerCase()}" right now. ${WORK_ETA}.`
         : mine.length
           ? `Here's what I've made. ${mine[0].day === today ? `Today I did: ${mine[0].label.toLowerCase()}.` : ""} Want something else? Pick a job.`
           : prog.missing.length
@@ -769,7 +769,7 @@ function WriterPanel({ staff }: { staff: CityStaff }) {
                 {o.target && <span className="text-sm font-bold text-muted truncate">For: {o.target}</span>}
                 {!o.queued && <Btn className="ml-auto text-sm py-1" onClick={() => copy(o.id, o.text)}>{copied === o.id ? "Copied" : "Copy"}</Btn>}
               </div>
-              <div className="text-base whitespace-pre-wrap leading-relaxed">{o.queued ? `${live.name} is writing this through your Claude account. Within the hour it shows up here and in Outputs (top right of the city).` : o.text}</div>
+              <div className="text-base whitespace-pre-wrap leading-relaxed">{o.queued ? <WorkingNow name={live.name} since={workOf(data, live.id).find((w) => w.id === o.id)?.at} /> : o.text}</div>
             </div>
           ))}
         </div>
@@ -1078,7 +1078,9 @@ function WorkPanel({ staff, goTo }: { staff: CityStaff; goTo: (t: string) => voi
                 <>
                   {w.input && <p className="text-sm text-muted mt-1 truncate">From: {w.input}</p>}
                   {w.status === "queued" ? (
-                    <p className="text-base font-bold mt-2">{live.name} is working on this through your Claude account. Within the hour it shows up here and in Outputs (top right of the city), so no need to wait around.</p>
+                    <div className="mt-2">
+                      <WorkingNow name={live.name} since={w.at} />
+                    </div>
                   ) : (
                     <div className="text-base whitespace-pre-wrap leading-relaxed mt-2 max-h-96 overflow-y-auto">{w.text}</div>
                   )}
@@ -1104,7 +1106,27 @@ function WorkPanel({ staff, goTo }: { staff: CityStaff; goTo: (t: string) => voi
   );
 }
 
-/** While someone's work is queued, checks every minute for it to come back done. */
+/** The live "on it" note while a job is being written: who, a running timer, and the usual wait. */
+export function WorkingNow({ name, since }: { name: string; since?: string }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const secs = since ? Math.max(0, Math.floor((now - Date.parse(since)) / 1000)) : 0;
+  const clock = `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`;
+  return (
+    <div className="flex items-center gap-2 flex-wrap text-base font-bold" role="status" aria-live="polite">
+      <span className="inline-block w-3 h-3 rounded-full bg-good animate-pulse" aria-hidden />
+      <span>
+        {name} is on it, writing now · {clock}
+      </span>
+      <span className="text-muted font-normal">{WORK_ETA}. It also lands in Outputs (top right of the city).</span>
+    </div>
+  );
+}
+
+/** While someone's work is queued, checks every few seconds for it to come back done. */
 function QueuePoll({ staffId }: { staffId: string }) {
   const { data, update } = useTracker();
   const waiting = (data.staffWork ?? []).some((w) => w.staffId === staffId && w.status === "queued");
@@ -1117,7 +1139,7 @@ function QueuePoll({ staffId }: { staffId: string }) {
         const { work } = (await r.json()) as { work: StaffWork[] };
         update((d) => void (d.staffWork = work));
       } catch {}
-    }, 60000);
+    }, 3000);
     return () => clearInterval(t);
   }, [waiting]);
   return null;

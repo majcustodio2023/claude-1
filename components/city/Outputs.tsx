@@ -10,6 +10,7 @@ import { Icon } from "../icons";
 import { Badge, Btn } from "../ui";
 import { buildingName, roleOf, titleOf } from "@/lib/city";
 import { allOutputs, type Output } from "@/lib/cityOutputs";
+import { WORK_ETA } from "@/lib/cityJobs";
 
 const fileName = (o: Output) => `${o.staffName}-${o.label}-${o.day}`.replace(/[^a-z0-9-]+/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").toLowerCase() + ".txt";
 
@@ -94,7 +95,7 @@ export default function Outputs({ staffId, onClose }: { staffId?: string; onClos
                     </span>
                     {o.queued ? <Badge tone="accent">Being made</Badge> : isNew ? <Badge tone="gold">New</Badge> : null}
                   </button>
-                  {o.queued && <p className="text-base mt-2">{o.staffName} is working on this now. It lands here within the hour.</p>}
+                  {o.queued && <p className="text-base mt-2">{o.staffName} is on it, writing now. {WORK_ETA}.</p>}
                   {open === o.id && !o.queued && (
                     <>
                       <div className="flex gap-2 mt-2 flex-wrap">
