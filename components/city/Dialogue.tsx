@@ -69,7 +69,7 @@ function useTyped(text: string, voice: number) {
   return { shown: text.slice(0, n), done: n >= text.length, skip: () => setN(text.length) };
 }
 
-export default function Dialogue({ talk, onClose, goTo, onOutputs, onSpar, onMeeting }: { talk: Talk; onClose: () => void; goTo: (tab: string) => void; onOutputs?: (staffId: string) => void; onSpar?: (foeId: string) => void; onMeeting?: (buildingId: string, meetingId?: string) => void }) {
+export default function Dialogue({ talk, onClose, goTo, onOutputs, onSpar, onMeeting, onChat }: { talk: Talk; onClose: () => void; goTo: (tab: string) => void; onOutputs?: (staffId: string) => void; onSpar?: (foeId: string) => void; onMeeting?: (buildingId: string, meetingId?: string) => void; onChat?: (staffId: string) => void }) {
   const { data, update, month, today } = useTracker();
   const citizen = talk.kind === "citizen" ? citizenById(talk.id) : undefined;
   const [page, setPage] = useState<Page>(talk.kind === "board" || talk.kind === "screen" ? "panel" : citizen ? `node:${citizenStart(data, citizen)}` : talk.kind === "gate" ? "node:0" : "greet");
@@ -157,6 +157,7 @@ export default function Dialogue({ talk, onClose, goTo, onOutputs, onSpar, onMee
         prog.missing.length && role.panel === "work"
           ? { label: "Here's what I need", go: () => setPage("setup"), primary: true }
           : { label: role.action, go: () => setPage(role.panel === "setup" ? "setup" : role.panel === "work" ? "work" : "panel"), primary: true },
+        ...(onChat ? [{ label: "Chat with me", go: () => onChat(staff.id) }] : []),
         ...(jobsOf(staff).length && role.panel !== "work" ? [{ label: "My work", go: () => setPage("work") }] : []),
         ...(made && onOutputs ? [{ label: `What I made (${made})`, go: () => onOutputs(staff.id) }] : []),
         { label: "What do you do?", go: () => setPage("jobs") },
