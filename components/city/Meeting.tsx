@@ -12,18 +12,20 @@ import { Icon } from "../icons";
 import { Badge, Btn, toast } from "../ui";
 import { buildingName, roleOf, titleOf } from "@/lib/city";
 import { attendees } from "@/lib/meetings";
+import { personalityOf } from "@/lib/personality";
 import { sfx } from "@/lib/sound";
 import type { CityStaff, Meeting as MeetingT } from "@/lib/types";
 
 const when = (iso: string) => new Date(iso).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 
-export default function Meeting({ kind, buildingId, meetingId, onClose }: { kind: MeetingT["kind"]; buildingId?: string; meetingId?: string; onClose: () => void }) {
+export default function Meeting({ kind, buildingId, staffId, meetingId, onClose }: { kind: MeetingT["kind"]; buildingId?: string; staffId?: string; meetingId?: string; onClose: () => void }) {
   const { data, update } = useTracker();
   const staff = data.city?.staff ?? [];
-  const here = (data.meetings ?? []).filter((m) => m.kind === kind && (kind === "townhall" || m.buildingId === buildingId));
+  const here = (data.meetings ?? []).filter((m) => m.kind === kind && (kind === "townhall" || (kind === "chat" ? m.staffIds[0] === staffId : m.buildingId === buildingId)));
+  const dm = kind === "chat";
   const [id, setId] = useState(meetingId ?? here.find((m) => m.status !== "ended")?.id ?? "");
   const m = (data.meetings ?? []).find((x) => x.id === id);
-  const people = useMemo(() => (m ? m.staffIds.map((sid) => staff.find((s) => s.id === sid)).filter((s): s is CityStaff => Boolean(s)) : attendees(data, kind, buildingId)), [m, staff, data, kind, buildingId]);
+  const people = useMemo(() => (m ? m.staffIds.map((sid) => staff.find((s) => s.id === sid)).filter((s): s is CityStaff => Boolean(s)) : attendees(data, kind, buildingId, staffId)), [m, staff, data, kind, buildingId, staffId]);
   const [text, setText] = useState("");
   const [to, setTo] = useState("");
   const [busy, setBusy] = useState(false);
@@ -31,8 +33,10 @@ export default function Meeting({ kind, buildingId, meetingId, onClose }: { kind
   const [pending, setPending] = useState<{ text: string; at: string; to: string } | null>(null);
   const [now, setNow] = useState(Date.now());
   const end = useRef<HTMLDivElement>(null);
-  const place = kind === "townhall" ? data.city?.name ?? "the city" : (() => { const b = data.city?.buildings.find((x) => x.id === buildingId); return b ? buildingName(data, b) : "the building"; })();
+  const place = kind === "townhall" ? data.city?.name ?? "the city" : (() => { const bid = kind === "chat" ? staff.find((x) => x.id === staffId)?.buildingId : buildingId; const b = data.city?.buildings.find((x) => x.id === bid); return b ? buildingName(data, b) : "the building"; })();
 
+  const [persona, setPersona] = useState<string | null>(null);
+  const savePersona = (sid: string, v: string) => update((d) => { const s = d.city?.staff.find((x) => x.id === sid); if (s) s.personality = v.trim() || undefined; });
   const put = (meeting: MeetingT) => update((d) => void (d.meetings = [meeting, ...(d.meetings ?? []).filter((x) => x.id !== meeting.id)]));
   const call = async (body: Record<string, unknown>) => {
     setBusy(true);
@@ -48,6 +52,15 @@ export default function Meeting({ kind, buildingId, meetingId, onClose }: { kind
       setBusy(false);
     }
   };
+
+  // A chat opens straight away: no "start" step.
+  const started = useRef(false);
+  useEffect(() => {
+    if (!dm || m || started.current || !people.length) return;
+    started.current = true;
+    call({ action: "start", kind, staffId }).then((x) => x && setId(x.id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dm, m, people.length]);
 
   // While they're thinking, look for the answer every 2 seconds.
   const thinking = m?.status === "waiting";
@@ -101,15 +114,40 @@ export default function Meeting({ kind, buildingId, meetingId, onClose }: { kind
         <div className="flex items-center gap-2 mb-2">
           <Icon name="users" size={28} className="text-gold" />
           <div className="flex-1 min-w-0">
-            <h3 className="font-display text-2xl sm:text-3xl tracking-wide truncate">{kind === "townhall" ? "Town hall" : `${place} meeting`}</h3>
-            <div className="text-sm font-bold text-muted">{m ? `${m.status === "ended" ? "Ended" : "Started"} ${when(m.endedAt ?? m.startedAt)} · ` : ""}{people.length} staff {m ? "in the room" : "will be called in"}</div>
+            <h3 className="font-display text-2xl sm:text-3xl tracking-wide truncate">{dm ? `Chat with ${people[0]?.name ?? "staff"}` : kind === "townhall" ? "Town hall" : `${place} meeting`}</h3>
+            <div className="text-sm font-bold text-muted">{dm ? `${people[0] ? titleOf(people[0]) : ""} · ${place}` : <>{m ? `${m.status === "ended" ? "Ended" : "Started"} ${when(m.endedAt ?? m.startedAt)} · ` : ""}{people.length} staff {m ? "in the room" : "will be called in"}</>}</div>
           </div>
-          {m && m.status !== "ended" && <Btn onClick={() => call({ action: "end", id: m.id })} disabled={busy}>End meeting</Btn>}
+          {m && m.status !== "ended" && !dm && <Btn onClick={() => call({ action: "end", id: m.id })} disabled={busy}>End meeting</Btn>}
           <Btn onClick={onClose}>Close</Btn>
         </div>
 
+        {/* a chat: who they are, editable */}
+        {dm && people[0] && (
+          <div className="flex gap-3 items-start pb-2 border-b-2 border-line">
+            <div className={`shrink-0 w-16 h-16 overflow-hidden rounded-md border-2 border-outline grid place-content-center ${waiting ? "city-blink" : ""}`} style={{ background: `${roleOf(people[0]).color}44` }}>
+              <Hero look={people[0].look} items={[]} size={60} />
+            </div>
+            {persona === null ? (
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-extrabold text-muted">Personality</div>
+                <p className="text-base">{personalityOf(people[0])}</p>
+              </div>
+            ) : (
+              <textarea className="flex-1 text-base" rows={3} value={persona} onChange={(e) => setPersona(e.target.value)} onKeyDown={(e) => e.stopPropagation()} placeholder="How they are, how they talk, a bit about their life. Leave blank for the one they were given." />
+            )}
+            {persona === null ? (
+              <Btn className="text-sm py-1" onClick={() => setPersona(people[0].personality ?? personalityOf(people[0]))}>Edit</Btn>
+            ) : (
+              <div className="flex flex-col gap-1">
+                <Btn kind="primary" className="text-sm py-1" onClick={() => (savePersona(people[0].id, persona), setPersona(null))}>Save</Btn>
+                <Btn className="text-sm py-1" onClick={() => setPersona(null)}>Cancel</Btn>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* who's at the table */}
-        <div className="flex gap-1.5 overflow-x-auto pb-2 border-b-2 border-line">
+        {!dm && <div className="flex gap-1.5 overflow-x-auto pb-2 border-b-2 border-line">
           {people.map((p) => (
             <div key={p.id} className="shrink-0 w-16 text-center" title={`${p.name}, ${titleOf(p)}`}>
               <div className={`w-14 h-14 mx-auto overflow-hidden rounded-md border-2 border-outline grid place-content-center ${waiting && (!to || to === p.id) ? "city-blink" : ""}`} style={{ background: `${roleOf(p).color}44` }}>
@@ -118,10 +156,11 @@ export default function Meeting({ kind, buildingId, meetingId, onClose }: { kind
               <div className="text-xs font-extrabold truncate mt-0.5">{p.name}</div>
             </div>
           ))}
-        </div>
+        </div>}
 
         <div className="flex-1 overflow-y-auto py-3 space-y-3">
-          {!m && (
+          {!m && dm && <p className="text-center text-lg font-bold text-muted py-4">{people.length ? `Opening your chat with ${people[0].name}…` : "That worker isn't in town any more."}</p>}
+          {!m && !dm && (
             <div className="text-center py-6 space-y-3">
               <p className="text-lg font-bold">
                 {people.length
@@ -137,7 +176,7 @@ export default function Meeting({ kind, buildingId, meetingId, onClose }: { kind
               )}
             </div>
           )}
-          {m && m.messages.length === 0 && !waiting && <p className="text-center text-lg font-bold text-muted py-4">Everyone's seated. Say something to open the meeting.</p>}
+          {m && m.messages.length === 0 && !waiting && !pending && <p className="text-center text-lg font-bold text-muted py-4">{dm ? `Say hi to ${people[0]?.name ?? "them"}. Ask about work, give them a job, or just talk.` : "Everyone's seated. Say something to open the meeting."}</p>}
           {shown.map((x) => {
             const s = who(x.from);
             const mine = x.from === "you";
@@ -169,7 +208,7 @@ export default function Meeting({ kind, buildingId, meetingId, onClose }: { kind
                     {p.name}
                     <span className="text-muted font-bold"> · {titleOf(p)}</span>
                   </div>
-                  <div className="text-base font-bold">{progressLine(p, i, elapsed)}</div>
+                  <div className="text-base font-bold">{dm && elapsed < 20 ? "Typing…" : progressLine(p, i, elapsed)}</div>
                   {i === onIt.length - 1 && (
                     <div className="text-sm font-bold text-muted mt-1 flex items-center gap-2">
                       <span className="font-display text-lg city-blink">…</span>
@@ -190,16 +229,18 @@ export default function Meeting({ kind, buildingId, meetingId, onClose }: { kind
               send();
             }}
           >
-            <select value={to} onChange={(e) => setTo(e.target.value)} className="text-base" aria-label="Ask who">
-              <option value="">Ask everyone</option>
-              {people.map((p) => (
-                <option key={p.id} value={p.id}>Ask {p.name}</option>
-              ))}
-            </select>
+            {!dm && (
+              <select value={to} onChange={(e) => setTo(e.target.value)} className="text-base" aria-label="Ask who">
+                <option value="">Ask everyone</option>
+                {people.map((p) => (
+                  <option key={p.id} value={p.id}>Ask {p.name}</option>
+                ))}
+              </select>
+            )}
             <textarea
               className="flex-1 min-w-48 text-base"
               rows={2}
-              placeholder={waiting ? "You can add more while they think" : "Type to the team…"}
+              placeholder={waiting ? "You can add more while they think" : dm ? `Message ${people[0]?.name ?? ""}…` : "Type to the team…"}
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => {
@@ -222,7 +263,7 @@ export default function Meeting({ kind, buildingId, meetingId, onClose }: { kind
 
         {past.length > 0 && (
           <details className="border-t-2 border-line pt-2 mt-2">
-            <summary className="font-extrabold cursor-pointer">Past meetings here ({past.length})</summary>
+            <summary className="font-extrabold cursor-pointer">{dm ? "Earlier chats" : "Past meetings here"} ({past.length})</summary>
             <ul className="mt-1 max-h-32 overflow-y-auto">
               {past.map((x) => (
                 <li key={x.id}>

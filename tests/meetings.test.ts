@@ -6,6 +6,7 @@ import { addReplies, attendees, meetingBrief, parseReplies } from "../lib/meetin
 import { addService, staffOnFloor } from "../lib/services";
 import { funnelSnapshots, recordFunnelEvent, daysLeft, reportsFor } from "../lib/feeds";
 import { parseSalesTsv } from "../lib/appstore";
+import { personalityOf } from "../lib/personality";
 import type { Meeting } from "../lib/types";
 
 const town = () => {
@@ -38,6 +39,22 @@ test("the meeting brief carries the real data, the people and the latest message
   assert.match(b.user, /JSON array/);
   const th = meetingBrief(d, { ...m, kind: "townhall", staffIds: attendees(d, "townhall").map((s) => s.id) }, "2026-10-20");
   assert.match(th.system, /Business status/);
+});
+
+test("a 1:1 chat is just that worker, in their own voice and personality, and the others keep theirs", () => {
+  const d = town();
+  const w = d.city!.staff[0];
+  assert.deepEqual(attendees(d, "chat", undefined, w.id).map((s) => s.id), [w.id]);
+  const m: Meeting = { id: "c1", kind: "chat", buildingId: w.buildingId, title: "x", staffIds: [w.id], messages: [{ id: "a", from: "you", name: "Alex", text: "hey, how was your weekend?", at: "2026-10-20T01:00:00Z" }], status: "waiting", startedAt: "" };
+  const b = meetingBrief(d, m, "2026-10-20");
+  assert.match(b.system, new RegExp(`You are ${w.name}`));
+  assert.ok(b.system.includes(personalityOf(w)));
+  assert.match(b.system, /Never invent/);
+  assert.match(b.user, /messaged you/);
+  w.personality = "Grumpy pirate who loves spreadsheets.";
+  assert.match(meetingBrief(d, m, "2026-10-20").system, /Grumpy pirate/);
+  const others = d.city!.staff.slice(1, 6).map(personalityOf);
+  assert.ok(new Set(others).size > 1, "not everyone has the same personality");
 });
 
 test("replies only count from people in the room, and a reply to an older question keeps the newer one waiting", () => {

@@ -97,7 +97,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   const [picked, setPicked] = useState("");
   const [badSpot, setBadSpot] = useState(false);
   const [outputs, setOutputs] = useState<{ staffId?: string } | null>(null);
-  const [meeting, setMeeting] = useState<{ kind: "townhall" | "building"; buildingId?: string; meetingId?: string } | null>(null);
+  const [meeting, setMeeting] = useState<{ kind: "townhall" | "building" | "chat"; buildingId?: string; staffId?: string; meetingId?: string } | null>(null);
 
   const buildings = visibleBuildings(data);
   const bIds = buildings.map((b) => b.id).join(",");
@@ -822,10 +822,10 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         />
       )}
 
-      {talk && <Dialogue talk={talk} onClose={() => setTalk(null)} goTo={goTo} onOutputs={(staffId) => (setTalk(null), setOutputs({ staffId }))} onSpar={(id) => (setTalk(null), setSpar(id))} onMeeting={(buildingId, meetingId) => (setTalk(null), setMeeting({ kind: "building", buildingId, meetingId }))} />}
+      {talk && <Dialogue talk={talk} onClose={() => setTalk(null)} goTo={goTo} onOutputs={(staffId) => (setTalk(null), setOutputs({ staffId }))} onSpar={(id) => (setTalk(null), setSpar(id))} onMeeting={(buildingId, meetingId) => (setTalk(null), setMeeting({ kind: "building", buildingId, meetingId }))} onChat={(staffId) => (setTalk(null), setMeeting({ kind: "chat", staffId }))} />}
       {spar && foeById(spar) && <BossFight foe={foeById(spar)} weapon={city.practiceWeapon ?? ""} onClose={() => setSpar("")} />}
       {outputs && <Outputs staffId={outputs.staffId} onClose={() => setOutputs(null)} />}
-      {meeting && <Meeting kind={meeting.kind} buildingId={meeting.buildingId} meetingId={meeting.meetingId} onClose={() => setMeeting(null)} />}
+      {meeting && <Meeting kind={meeting.kind} buildingId={meeting.buildingId} staffId={meeting.staffId} meetingId={meeting.meetingId} onClose={() => setMeeting(null)} />}
     </div>
     </PixelForce.Provider>
   );

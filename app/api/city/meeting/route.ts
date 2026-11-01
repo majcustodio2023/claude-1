@@ -12,14 +12,14 @@ export const maxDuration = 120;
 // Without an API key the answer is written by Claude in the project, which picks waiting meetings up
 // on a schedule (supabase tracker_meeting_queue / tracker_meeting_reply). Nothing is faked meanwhile.
 export async function POST(req: Request) {
-  const body = (await req.json()) as { action?: string; kind?: Meeting["kind"]; buildingId?: string; id?: string; text?: string; to?: string[] };
+  const body = (await req.json()) as { action?: string; kind?: Meeting["kind"]; buildingId?: string; staffId?: string; id?: string; text?: string; to?: string[] };
   try {
     if (body.action === "start") {
       const data = await getData();
-      const kind = body.kind === "townhall" ? "townhall" : "building";
-      const people = attendees(data, kind, body.buildingId);
-      if (!people.length) throw new Error(kind === "townhall" ? "There's nobody in town to call in yet." : "Nobody works in this building yet.");
-      const m: Meeting = { id: `meet-${Date.now().toString(36)}`, kind, buildingId: kind === "building" ? body.buildingId : undefined, title: meetingTitle(data, kind, body.buildingId), staffIds: people.map((p) => p.id), messages: [], status: "open", startedAt: new Date().toISOString() };
+      const kind = body.kind === "townhall" || body.kind === "chat" ? body.kind : "building";
+      const people = attendees(data, kind, body.buildingId, body.staffId);
+      if (!people.length) throw new Error(kind === "townhall" ? "There's nobody in town to call in yet." : kind === "chat" ? "That worker isn't in town any more." : "Nobody works in this building yet.");
+      const m: Meeting = { id: `${kind === "chat" ? "chat" : "meet"}-${Date.now().toString(36)}`, kind, buildingId: kind === "townhall" ? undefined : kind === "chat" ? people[0].buildingId : body.buildingId, title: meetingTitle(data, kind, body.buildingId, body.staffId), staffIds: people.map((p) => p.id), messages: [], status: "open", startedAt: new Date().toISOString() };
       const meetings = await updateServerData((d) => (d.meetings = keepMeetings([m, ...(d.meetings ?? [])])));
       return NextResponse.json({ meeting: m, meetings });
     }

@@ -635,7 +635,8 @@ export interface CityService {
 /** A meeting in the city: a town hall with everyone, or one building's team. */
 export interface Meeting {
   id: string;
-  kind: "townhall" | "building";
+  /** chat = a private 1:1 with one worker (staffIds holds just them). */
+  kind: "townhall" | "building" | "chat";
   /** Building meetings: where it's held. */
   buildingId?: string;
   title: string;
@@ -675,6 +676,8 @@ export interface CityStaff {
   samples?: { id: string; text: string }[];
   /** Writers: what they wrote, newest first (kept short). */
   outputs?: { id: string; input: string; target?: string; text: string; at: string }[];
+  /** Who they are as a person: temperament, how they talk, a bit of their life. Blank = the one they were given (lib/personality.ts). */
+  personality?: string;
   /** false = don't do the daily job on their own (they still work when asked). */
   autoWork?: boolean;
   createdAt: string;
