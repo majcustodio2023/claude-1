@@ -23,7 +23,8 @@ export type Fx = "slash" | "impact" | "fire" | "thunder" | "holy" | "dark" | "he
 export type SkillId =
   | "strike" | "guard" | "smash"
   | "arcane" | "inferno" | "oni-rage" | "iaido" | "barrage" | "mend" | "quake" | "reap"
-  | "resolve" | "dive" | "hellfire" | "aegis" | "bloom" | "thunder" | "shadow-step" | "supernova";
+  | "resolve" | "dive" | "hellfire" | "aegis" | "bloom" | "thunder" | "shadow-step" | "supernova"
+  | "lunge" | "verdant";
 
 export interface Skill {
   id: SkillId;
@@ -83,6 +84,8 @@ export const SKILLS: Record<SkillId, Skill> = {
   thunder: { id: "thunder", name: "Thunderclap", desc: "1.4x, breaks armor: boss takes +30% for 2 rounds.", cost: 35, fx: "thunder", power: 1.4, status: { kind: "break", turns: 2, chance: 1 } },
   "shadow-step": { id: "shadow-step", name: "Shadow Step", desc: "Dodge the next attack; your next hit is a sure crit.", cost: 25, cooldown: 3, fx: "dark", dodge: true, focus: true },
   supernova: { id: "supernova", name: "Supernova", desc: "3.2x cosmic blast that ignores defense.", cost: 90, fx: "cosmic", power: 3.2, pierce: true },
+  lunge: { id: "lunge", name: "Thorn Lunge", desc: "1.9x thrust that always goes first.", cost: 35, fx: "slash", power: 1.9, first: true },
+  verdant: { id: "verdant", name: "Verdant Slash", desc: "2.3x, heals you for a third of the damage.", cost: 50, fx: "heal", power: 2.3, lifesteal: 0.33 },
 };
 
 export type Passive = "nimble" | "fury" | "halo" | "bulwark" | "flame-crits" | "sharp-eye" | "kit-beat" | "fox-fire";
@@ -138,6 +141,19 @@ export const ITEM_POWER: Record<string, ItemPower> = {
   slime: { stats: { hp: 10 }, pet: { name: "Slime", power: 0.3 } },
   ghost: { stats: { hp: 10, spd: 1 }, pet: { name: "Ghost", power: 0.35, status: { kind: "weak", chance: 0.25 } } },
   "mini-dragon": { stats: { hp: 20, atk: 2 }, pet: { name: "Mini dragon", power: 0.55, status: { kind: "burn", chance: 0.25 } } },
+  // Monster drops from the Wilds.
+  "leaf-cap": { stats: { hp: 15, def: 1 } },
+  "mushroom-helm": { stats: { hp: 25, def: 4 } },
+  "wolf-mask": { stats: { atk: 3, crit: 5 } },
+  "oak-club": { stats: { atk: 4, hp: 10 } },
+  "fang-dagger": { stats: { atk: 5, spd: 4, crit: 5 }, passive: "sharp-eye" },
+  "thorn-spear": { stats: { atk: 7, crit: 2 }, skill: "lunge" },
+  "grove-blade": { stats: { atk: 10, hp: 20, spd: 1 }, skill: "verdant" },
+  "moss-cloak": { stats: { hp: 20, def: 2 } },
+  "beetle-shell": { stats: { hp: 30, def: 7, spd: -1 }, passive: "bulwark" },
+  firefly: { stats: { spd: 3, crit: 3, hp: 10 }, passive: "nimble" },
+  "pet-sprout": { stats: { hp: 10 }, pet: { name: "Sprout", power: 0.3 } },
+  "pet-bee": { stats: { spd: 1 }, pet: { name: "Bee", power: 0.4, status: { kind: "weak", chance: 0.2 } } },
   "kit-bow": { stats: { hp: 8 } },
   "kit-ninja": { stats: { spd: 2 } },
   "kit-headphones": { stats: { hp: 5 }, passive: "kit-beat" },
@@ -342,7 +358,8 @@ export type BattleEvent =
   | { kind: "enrage" }
   | { kind: "end"; result: "win" | "lose" };
 
-export function startBattle(loadout: Loadout, spec: BossSpec): Battle {
+/** Starts a fight. `heroHp` carries hurt HP over from an earlier fight (out in the Wilds). */
+export function startBattle(loadout: Loadout, spec: BossSpec, heroHp?: number): Battle {
   const boss: BossSide = {
     name: spec.name,
     maxHp: Math.round(spec.stats.hp),
@@ -360,7 +377,7 @@ export function startBattle(loadout: Loadout, spec: BossSpec): Battle {
     round: 1,
     hero: {
       maxHp: loadout.stats.hp,
-      hp: loadout.stats.hp,
+      hp: heroHp == null ? loadout.stats.hp : Math.max(1, Math.min(loadout.stats.hp, Math.round(heroHp))),
       energy: START_ENERGY,
       shield: 0,
       stats: loadout.stats,
@@ -558,20 +575,77 @@ function tick<T extends { turns: number }>(list: T[]): T[] {
 
 /** Plays one round: your move and the boss's, in speed order, then end-of-round effects. */
 export function playRound(prev: Battle, id: SkillId, rand: () => number = Math.random): { battle: Battle; events: BattleEvent[] } {
+  if (prev.over || skillBlocked(prev, id)) return { battle: prev, events: [] };
+  const s = SKILLS[id];
+  return round(prev, rand, {
+    guarding: !!s.guard,
+    first: !!s.first,
+    hero: (b, ev) => {
+      // The boss may have drained energy before you moved.
+      if (skillBlocked(b, id)) {
+        ev.push({ kind: "text", text: `Not enough energy for ${s.name}! You strike instead.` });
+        return heroAct(b, "strike", ev, rand);
+      }
+      heroAct(b, id, ev, rand);
+    },
+  });
+}
+
+/** Something from the bag, used in a fight instead of a skill: heals, gives energy, or cures. */
+export interface ItemUse {
+  name: string;
+  /** Share of max HP healed. */
+  heal?: number;
+  /** Energy given. */
+  energy?: number;
+  /** Clears poison and weakness. */
+  cure?: boolean;
+}
+
+/** A round where you use an item. Like grabbing a potion in Pokemon, it always goes first. */
+export function useItemRound(prev: Battle, item: ItemUse, rand: () => number = Math.random): { battle: Battle; events: BattleEvent[] } {
+  if (prev.over) return { battle: prev, events: [] };
+  return round(prev, rand, {
+    first: true,
+    hero: (b, ev) => {
+      ev.push({ kind: "act", who: "hero", name: item.name, fx: "heal", special: false });
+      if (item.heal) healHero(b, ev, b.hero.maxHp * item.heal);
+      if (item.energy) {
+        const got = Math.min(item.energy, MAX_ENERGY - b.hero.energy);
+        b.hero.energy += got;
+        if (got) ev.push({ kind: "energy", amount: got });
+      }
+      if (item.cure && b.hero.statuses.length) {
+        b.hero.statuses = [];
+        ev.push({ kind: "status", target: "hero", text: "Cured" });
+      }
+    },
+  });
+}
+
+/** Faster heroes get away more often. Always at least a fair chance, and better each try. */
+export function fleeChance(b: Battle, tries = 0): number {
+  return Math.max(0.35, Math.min(0.95, 0.5 + (b.hero.stats.spd - b.boss.stats.spd) * 0.04 + tries * 0.15));
+}
+
+/** A failed escape: you lose your turn and the foe gets a free move. */
+export function failedFleeRound(prev: Battle, rand: () => number = Math.random): { battle: Battle; events: BattleEvent[] } {
+  if (prev.over) return { battle: prev, events: [] };
+  return round(prev, rand, { first: false, hero: (_b, ev) => void ev.push({ kind: "text", text: "Couldn't get away!" }), heroLast: true });
+}
+
+function round(
+  prev: Battle,
+  rand: () => number,
+  opts: { guarding?: boolean; first: boolean; hero: (b: Battle, ev: BattleEvent[]) => void; heroLast?: boolean },
+): { battle: Battle; events: BattleEvent[] } {
   const b: Battle = structuredClone(prev);
   const ev: BattleEvent[] = [];
-  if (b.over || skillBlocked(b, id)) return { battle: prev, events: [] };
-  const s = SKILLS[id];
-  const guarding = !!s.guard;
-  const heroFirst = guarding || s.first || b.hero.stats.spd >= b.boss.stats.spd;
+  const guarding = !!opts.guarding;
+  const heroFirst = !opts.heroLast && (guarding || opts.first || b.hero.stats.spd >= b.boss.stats.spd);
   const hero = () => {
     if (b.hero.hp <= 0) return;
-    // The boss may have drained energy before you moved.
-    if (skillBlocked(b, id)) {
-      ev.push({ kind: "text", text: `Not enough energy for ${s.name}! You strike instead.` });
-      return heroAct(b, "strike", ev, rand);
-    }
-    heroAct(b, id, ev, rand);
+    opts.hero(b, ev);
   };
   const boss = () => b.boss.hp > 0 && bossAct(b, ev, rand, guarding);
   if (heroFirst) {

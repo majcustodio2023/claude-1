@@ -1,5 +1,5 @@
 import { billLeft, billPaid, dealBalance, dealPaid } from "./finance";
-import { ITEMS, RARITY, itemById, type Item, type Rarity } from "./items";
+import { ITEMS, RARITY, itemById, notForSale, type Item, type Rarity } from "./items";
 import { QUESTS, questState } from "./cityLore";
 import type { GameState, TrackerData } from "./types";
 
@@ -74,7 +74,7 @@ export function ensureGame(d: TrackerData, today: string): GameState {
 /** Picks a random item you don't own yet, weighted by rarity. */
 export function rollItem(game: GameState, rand: () => number, minRarity: Rarity = "common"): Item | undefined {
   const order: Rarity[] = ["common", "rare", "epic", "legendary"];
-  const pool = ITEMS.filter((i) => i.source !== "shop" && !game.owned.includes(i.id) && order.indexOf(i.rarity) >= order.indexOf(minRarity));
+  const pool = ITEMS.filter((i) => (i.source === "loot" || i.source === "both") && !game.owned.includes(i.id) && order.indexOf(i.rarity) >= order.indexOf(minRarity));
   const total = pool.reduce((a, i) => a + RARITY[i.rarity].weight, 0);
   let r = rand() * total;
   for (const i of pool) if ((r -= RARITY[i.rarity].weight) < 0) return i;
@@ -146,7 +146,7 @@ export function finishBoss(d: TrackerData, dealId: string, rank: FightRank, toda
 export function buyItem(d: TrackerData, itemId: string, today: string): string | null {
   const game = ensureGame(d, today);
   const item = itemById(itemId);
-  if (!item || item.source === "loot") return "That item isn't for sale.";
+  if (!item || notForSale(item)) return "That item isn't for sale.";
   if (game.owned.includes(itemId)) return "You already own it.";
   if (game.coins < item.price) return `You need ${item.price - game.coins} more coins.`;
   game.coins -= item.price;
@@ -161,7 +161,7 @@ export function takeShopItem(d: TrackerData, itemId: string, today: string): str
   if (d.city?.freeShops === false) return buyItem(d, itemId, today);
   const game = ensureGame(d, today);
   const item = itemById(itemId);
-  if (!item || item.source === "loot") return "That one only drops beyond the gate.";
+  if (!item || notForSale(item)) return "That one only drops beyond the gate.";
   if (game.owned.includes(itemId)) return "You already own it.";
   game.owned.push(itemId);
   game.equipped[item.slot] = itemId;

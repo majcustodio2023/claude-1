@@ -478,17 +478,19 @@ function wear(L: Look, w: Worn | undefined): Look {
   if (it.has("eyepatch")) out.eyewear = "eyepatch";
   if (it.has("scar")) out.marks = "scar";
   if (it.has("red-cape")) (out.back = "cape"), (out.backC = "#c0392b");
-  if (it.has("jetpack") || it.has("demon-wings") || it.has("angel-wings")) out.back = "none";
+  if (it.has("moss-cloak")) (out.back = "cape"), (out.backC = "#4f8a3a");
+  if (it.has("jetpack") || it.has("beetle-shell") || it.has("demon-wings") || it.has("angel-wings")) out.back = "none";
   return out;
 }
 
 /** Hats drawn over the head in lib/pixelGear.ts. */
-export const HAT_ITEMS = ["cat-ears", "devil-horns", "halo", "wizard-hat", "kabuto", "flame-crown"];
+export const HAT_ITEMS = ["cat-ears", "devil-horns", "halo", "wizard-hat", "kabuto", "flame-crown", "leaf-cap", "mushroom-helm"];
 
 /** Gear drawn onto the body, facing you. */
 function wornDetails(g: Grid, L: Look, w: Worn) {
   const it = new Set(w.items ?? []);
   const gear = new Set(w.gear ?? []);
+  if (it.has("wolf-mask")) g.rect(4, 7, 8, 1, "#a3998f"), g.rect(4, 8, 1, 2, "#a3998f"), g.rect(11, 8, 1, 2, "#a3998f"), g.rect(7, 8, 2, 2, "#a3998f"), g.set(5, 10, "#fbf1dc"), g.set(10, 10, "#fbf1dc");
   if (it.has("oni-mask")) g.rect(8, 10, 4, 2, "#c0392b"), g.set(9, 11, "#fbf1dc"), g.set(11, 11, "#fbf1dc"), g.set(11, 9, "#c0392b");
   if (gear.has("first-strike") && L.headwear !== "crown") g.rect(3, 5, 10, 1, "#c0392b"), g.set(13, 5, "#c0392b"), g.set(14, 6, "#93392a");
   if (gear.has("strategist")) [[8, 7], [9, 7], [10, 7], [10, 8], [11, 8], [12, 8]].forEach(([x, y]) => g.set(x, y, "#4fb0a0"));

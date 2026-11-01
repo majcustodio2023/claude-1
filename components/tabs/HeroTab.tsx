@@ -18,6 +18,7 @@ import { sfx } from "@/lib/sound";
 import { COVERS, CUSTOM_COVER, activeCover, buyCover, customCoverPrice, customCoverUnlocked, ownsCover, unlockCustomCover, type Cover } from "@/lib/covers";
 import { CoverArt, shrinkCover } from "../covers";
 import { useRef } from "react";
+import Inventory from "../wilds/Inventory";
 
 const SLOTS: ItemSlot[] = ["hat", "face", "weapon", "back", "aura", "pet", "kit-head", "kit-face", "kit-neck", "kit-tail"];
 const FURS = ["#ff8a1f", "#2b2140", "#ff5fae", "#8a6a3a", "#4f6bff", "#f4efe4", "#e8e8f0", "#d62839", "#6ee77a", "#ffd23f"];
@@ -28,6 +29,7 @@ export default function HeroTab() {
   const equipped = Object.values(game?.equipped ?? {}).filter(Boolean) as string[];
   const stock = shopStock(today);
   const gear = Object.keys(data.heroGear ?? {});
+  const [bagOpen, setBagOpen] = useState(false);
 
   const equip = (slot: ItemSlot, id?: string) =>
     update((d) => {
@@ -55,6 +57,13 @@ export default function HeroTab() {
       <KitLocker />
 
       <Card title="Your items" icon="🎒" help={HELP.inventory}>
+        <div className="flex flex-wrap items-center gap-3 mb-3">
+          <Btn kind="primary" onClick={() => setBagOpen(true)} className="flex items-center gap-1.5">
+            <Icon name="backpack" size={20} /> Open bag &amp; equipment
+          </Btn>
+          <span className="text-base text-muted font-bold">Potions, monster loot from the Wilds, and every piece of gear with its stats.</span>
+        </div>
+        {bagOpen && <Inventory onClose={() => setBagOpen(false)} />}
         {!game?.owned.length ? (
           <p className="text-lg text-muted">No items yet. Buy some in the shop below, or find loot in <Icon name="gift" size={20} /> tasks and boss fights.</p>
         ) : (

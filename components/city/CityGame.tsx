@@ -14,6 +14,7 @@ import Outputs from "./Outputs";
 import Meeting from "./Meeting";
 import { staffOnFloor } from "@/lib/services";
 import BossFight from "../BossFight";
+import WildsGame from "../wilds/WildsGame";
 import { TrainingArt, TrainingLabels } from "./trainingArt";
 import { foeById, layoutTraining } from "@/lib/training";
 import { newOutputs } from "@/lib/cityOutputs";
@@ -142,8 +143,10 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
   const doorLock = useRef(0);
   const decoRef = useRef(false);
   decoRef.current = decorating;
+  const [wilds, setWilds] = useState(false);
   const outRef = useRef<(() => void) | null>(null);
-  outRef.current = meeting ? () => setMeeting(null) : outputs ? () => setOutputs(null) : spar ? () => setSpar("") : null;
+  // While you're out in the Wilds the town stands still (its own keys and Space do nothing).
+  outRef.current = wilds ? () => {} : meeting ? () => setMeeting(null) : outputs ? () => setOutputs(null) : spar ? () => setSpar("") : null;
   const spawnInside = useRef(false);
   const zoomRef = useRef(1);
   const cam = useRef({ x: 0, y: 0 });
@@ -562,7 +565,7 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         }
         if (!best && scene.type === "city") {
           const g = L.cityLayout.gate;
-          if (P.y < g.h + 1.6 * T && Math.abs(P.x - (g.x + g.w / 2)) < g.w * 0.8) best = { key: "gate", label: "Look at the gate", go: () => setTalk({ kind: "gate" }), d: 0 };
+          if (P.y < g.h + 1.6 * T && Math.abs(P.x - (g.x + g.w / 2)) < g.w * 0.8) best = { key: "gate", label: "Go through the gate to the Wilds", go: () => setTalk({ kind: "gate" }), d: 0 };
         }
         if (!best && scene.type === "city") {
           const f = L.cityLayout.fountain;
@@ -822,7 +825,18 @@ export default function CityGame({ onExit, goTo }: { onExit: () => void; goTo: (
         />
       )}
 
-      {talk && <Dialogue talk={talk} onClose={() => setTalk(null)} goTo={goTo} onOutputs={(staffId) => (setTalk(null), setOutputs({ staffId }))} onSpar={(id) => (setTalk(null), setSpar(id))} onMeeting={(buildingId, meetingId) => (setTalk(null), setMeeting({ kind: "building", buildingId, meetingId }))} onChat={(staffId) => (setTalk(null), setMeeting({ kind: "chat", staffId }))} />}
+      {talk && <Dialogue talk={talk} onClose={() => setTalk(null)} goTo={goTo} onOutputs={(staffId) => (setTalk(null), setOutputs({ staffId }))} onSpar={(id) => (setTalk(null), setSpar(id))} onMeeting={(buildingId, meetingId) => (setTalk(null), setMeeting({ kind: "building", buildingId, meetingId }))} onChat={(staffId) => (setTalk(null), setMeeting({ kind: "chat", staffId }))} onWilds={() => (setTalk(null), sfx("door"), setWilds(true))} />}
+      {wilds && (
+        <WildsGame
+          onExit={() => {
+            setWilds(false);
+            sfx("door");
+            setFade((f) => f + 1);
+            const g = cityLayout.gate;
+            Object.assign(player.current, { x: g.x + g.w / 2, y: g.h + 1.2 * T, dir: "down" });
+          }}
+        />
+      )}
       {spar && foeById(spar) && <BossFight foe={foeById(spar)} weapon={city.practiceWeapon ?? ""} onClose={() => setSpar("")} />}
       {outputs && <Outputs staffId={outputs.staffId} onClose={() => setOutputs(null)} />}
       {meeting && <Meeting kind={meeting.kind} buildingId={meeting.buildingId} staffId={meeting.staffId} meetingId={meeting.meetingId} onClose={() => setMeeting(null)} />}

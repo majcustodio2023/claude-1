@@ -500,6 +500,15 @@ export interface GameState {
   cover?: string;
   /** Your own banner picture, shrunk to a small JPEG data URL. */
   coverImage?: string;
+  /**
+   * The bag: how many of each stackable thing you carry (potions, monster materials) and spare
+   * copies of gear you already own. Your one worn/kept copy of gear stays in `owned`.
+   */
+  bag?: Record<string, number>;
+  /** Coins the Wilds merchant paid today for loot (capped per day). */
+  soldToday?: { day: string; coins: number };
+  /** Monsters beaten out in the Wilds, by monster id. */
+  wildKills?: Record<string, number>;
 }
 
 /** One month of fun money: what was safe to spend, and whether it was saved instead. */
