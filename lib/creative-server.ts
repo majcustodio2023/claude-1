@@ -4,7 +4,7 @@ import { uid } from "./finance";
 import { jobStatus } from "./higgsfield";
 import { actId, graphGet, graphPost, toMetrics, type RawInsight } from "./meta";
 import { resolveTracked } from "./meta-server";
-import { getData, getHiggsfieldKey, updateCreatives } from "./store";
+import { getData, getHiggsfieldKey, imagePublicUrl, updateCreatives } from "./store";
 import type { Creative } from "./types";
 
 /** Checks every generating creative with Higgsfield and saves the ones that finished. */
@@ -41,7 +41,7 @@ async function uploadMedia(creative: Creative, account: string, token: string): 
   const cached = creative.meta?.[account];
   if (creative.kind === "image") {
     if (cached?.imageHash) return { kind: "image", imageHash: cached.imageHash };
-    const res = await fetch(creative.url!, { cache: "no-store" });
+    const res = await fetch(await fetchableUrl(creative), { cache: "no-store" });
     if (!res.ok) throw new Error(`Couldn't download the image (HTTP ${res.status}). Check the link is public.`);
     const bytes = Buffer.from(await res.arrayBuffer()).toString("base64");
     const r = (await graphPost(`${account}/adimages`, { bytes }, token)) as { images: Record<string, { hash: string }> };
@@ -95,6 +95,16 @@ export async function makeTestAd(creativeId: string, trackedId: string): Promise
     l.map((c) => (c.id === creative.id ? { ...c, ads: [...(c.ads ?? []), { adId: ad.id, trackedId, campaign: tracked.name, createdAt: new Date().toISOString() }] } : c)),
   );
   return { adId: ad.id, template: template.name };
+}
+
+/** A link outside services can download the creative from (the app's own pictures get a signed link). */
+export async function fetchableUrl(c: Creative): Promise<string> {
+  if (c.storagePath) {
+    const url = await imagePublicUrl(c.storagePath);
+    if (!url) throw new Error("That picture isn't in storage any more.");
+    return url;
+  }
+  return c.url!;
 }
 
 export const newCreative = (c: Omit<Creative, "id" | "createdAt">): Creative => ({ ...c, id: uid("cr"), createdAt: new Date().toISOString() });
