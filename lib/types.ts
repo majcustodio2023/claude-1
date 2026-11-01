@@ -744,4 +744,6 @@ export interface CityState {
   outputsSeen?: string;
   /** The Training Hall weapon you last took off the rack ("" or unset = your own gear). */
   practiceWeapon?: string;
+  /** Training Hall difficulty (lib/training PRACTICE_LEVELS). Blank = hard. */
+  practiceLevel?: string;
 }

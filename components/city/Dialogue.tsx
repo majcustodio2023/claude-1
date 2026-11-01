@@ -22,7 +22,7 @@ import { onRunning, runJob, runningJobs } from "./workRunner";
 import { MeetingList } from "./Meeting";
 import { ServicesPanel } from "./Services";
 import { allOutputs } from "@/lib/cityOutputs";
-import { PRACTICE_WEAPONS, foeById } from "@/lib/training";
+import { PRACTICE_LEVELS, PRACTICE_WEAPONS, foeById, practiceLevelOf } from "@/lib/training";
 import { FoePortrait } from "./trainingArt";
 import { itemPowerText } from "@/lib/battle";
 import { GATE, SHOPKEEPERS, STAFF_CHATS, citizenById, citizenStart, questById, questProgress, questState } from "@/lib/cityLore";
@@ -137,8 +137,10 @@ export default function Dialogue({ talk, onClose, goTo, onOutputs, onSpar, onMee
   } else if (talk.kind === "foe") {
     const f = foeById(talk.id);
     const w = data.city?.practiceWeapon ?? "";
-    speaker = { id: `foe-${talk.id}`, name: f?.name ?? "Monster", title: `Practice · ${f?.level ?? ""}`, color: talk.id === "dummy" ? "#b5d67a" : talk.id === "slime" ? "#f4c95d" : "#e8a0a0", portrait: f ? <FoePortrait id={f.id} size={96} /> : null };
-    text = `${f?.about ?? ""} ${w ? `You'll fight with the ${ITEMS.find((i) => i.id === w)?.name.toLowerCase()} from the rack.` : "You'll fight with your own gear."} Practice never costs or pays coins.`;
+    const lvl = PRACTICE_LEVELS.find((l) => l.id === practiceLevelOf(data.city?.practiceLevel))!;
+    speaker = { id: `foe-${talk.id}`, name: f?.name ?? "Monster", title: `Practice · ${f?.level ?? ""} · ${lvl.label}`, color: talk.id === "dummy" ? "#b5d67a" : talk.id === "slime" ? "#f4c95d" : "#e8a0a0", portrait: f ? <FoePortrait id={f.id} size={96} /> : null };
+    text = `${f?.about ?? ""} It grows with your gear and level, so it's never a pushover. ${w ? `You'll fight with the ${ITEMS.find((i) => i.id === w)?.name.toLowerCase()} from the rack.` : "You'll fight with your own gear."} Practice never costs or pays coins.`;
+    panel = <DifficultyPicker />;
     choices = f && onSpar ? [{ label: "Spar!", go: () => onSpar(f.id), primary: true }, bye] : [bye];
   } else if (talk.kind === "kit") {
     const all = data.city?.staff ?? [];
@@ -1420,6 +1422,32 @@ function ShopPanel({ slots }: { slots: string[] }) {
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/** Training Hall difficulty. Every level is matched to your gear first, then made tougher. */
+function DifficultyPicker() {
+  const { data, update } = useTracker();
+  const cur = practiceLevelOf(data.city?.practiceLevel);
+  return (
+    <div>
+      <div className="font-display text-xl tracking-wide mb-2">Difficulty</div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2" role="radiogroup" aria-label="Difficulty">
+        {PRACTICE_LEVELS.map((l) => (
+          <button
+            key={l.id}
+            type="button"
+            role="radio"
+            aria-checked={cur === l.id}
+            onClick={() => (update((d) => void (d.city!.practiceLevel = l.id)), sfx("click"))}
+            className={`btn text-base ${cur === l.id ? "btn-primary" : "btn-ghost"}`}
+          >
+            {l.label}
+          </button>
+        ))}
+      </div>
+      <p className="text-base mt-2">{PRACTICE_LEVELS.find((l) => l.id === cur)!.about}</p>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { PixelArena } from "./pixelScenes";
 import { FoePortrait } from "./city/trainingArt";
-import { practiceItems, practiceLoadout, type PracticeFoe } from "@/lib/training";
+import { practiceItems, practiceLevelOf, practiceLoadout, scaledFoe, type PracticeFoe } from "@/lib/training";
 import { themeById, themeVars } from "@/lib/appearance";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -88,8 +88,8 @@ export default function BossFight({ dealId, practice: practiceProp, rematch, foe
   const level = useHeroLevel();
   const loadout = useMemo(() => (foe ? practiceLoadout(data, level, weapon) : loadoutFor(data, level)), [data, level, foe, weapon]);
   const spec: BossSpec = useMemo(
-    () => (foe ? foe.spec : deal ? makeBoss(deal.name, deal.id, bossTier(deal.value, data.settings.monthlyGoal)) : makeBoss("Training Dummy", "practice", 3)),
-    [deal, data.settings.monthlyGoal, foe],
+    () => (foe ? scaledFoe(foe, loadout, practiceLevelOf(data.city?.practiceLevel)) : deal ? makeBoss(deal.name, deal.id, bossTier(deal.value, data.settings.monthlyGoal)) : makeBoss("Training Dummy", "practice", 3)),
+    [deal, data.settings.monthlyGoal, foe, loadout, data.city?.practiceLevel],
   );
 
   const [phase, setPhase] = useState<Phase>("intro");
