@@ -88,3 +88,61 @@
     io.observe(el);
   });
 })();
+
+/* ===================== FX v2: cinematic layer ===================== */
+(function () {
+  'use strict';
+  const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(pointer: fine)').matches;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  /* letter split: [data-split="chars"] */
+  $$('[data-split="chars"]').forEach((el) => {
+    $$('.w', el).forEach((w) => { const t = w.textContent; w.textContent = ''; t.split('').forEach((ch, i) => { const s = document.createElement('span'); s.className = 'c'; s.textContent = ch; s.style.setProperty('--ci', i); w.appendChild(s); }); });
+  });
+
+  /* scroll scrub: --p from 0 (top enters bottom) to 1 (bottom leaves top) */
+  const scrubs = $$('[data-scrub]');
+  /* horizontal pin sections */
+  const hpins = $$('[data-hpin]').map((sec) => ({ sec, sticky: sec.querySelector('.hpin__sticky'), track: sec.querySelector('.hpin__track') }));
+  const sizeHpins = () => hpins.forEach((h) => { if (innerWidth < 900) { h.sec.style.height = ''; return; } const extra = h.track.scrollWidth - innerWidth; h.sec.style.height = `${extra + innerHeight + 80}px`; h.extra = extra; });
+  /* scrollytelling */
+  const stories = $$('.story').map((s) => ({ s, steps: $$('.story__step', s), imgs: $$('.story__media img', s) }));
+  /* scrubbed counters: [data-tick] counts with --p */
+  const ticks = $$('[data-tick]');
+  const fmtN = (v, d) => (d.prefix || '') + (d.decimals ? v.toFixed(d.decimals) : Math.round(v).toLocaleString('en-PH')) + (d.suffix || '');
+
+  let raf = false;
+  const run = () => {
+    raf = false; const vh = innerHeight;
+    scrubs.forEach((el) => { const r = el.getBoundingClientRect(); const p = clamp((vh - r.top) / (vh + r.height), 0, 1); el.style.setProperty('--p', p.toFixed(4)); });
+    hpins.forEach((h) => { if (innerWidth < 900 || !h.extra) return; const r = h.sec.getBoundingClientRect(); const p = clamp(-r.top / (h.sec.offsetHeight - vh), 0, 1); h.track.style.transform = `translate3d(${(-p * h.extra).toFixed(1)}px,0,0)`; h.sec.style.setProperty('--p', p.toFixed(4)); });
+    stories.forEach((st) => { let on = 0; st.steps.forEach((step, i) => { const r = step.getBoundingClientRect(); if (r.top < vh * 0.55) on = i; }); st.steps.forEach((step, i) => step.classList.toggle('is-on', i === on)); st.imgs.forEach((im, i) => im.classList.toggle('is-on', i === on)); });
+    ticks.forEach((el) => { const r = el.getBoundingClientRect(); const p = clamp((vh * 0.9 - r.top) / (vh * 0.5), 0, 1); const e = 1 - Math.pow(1 - p, 3); el.textContent = fmtN(+el.dataset.tick * e, el.dataset); });
+  };
+  const kick = () => { if (!raf) { raf = true; requestAnimationFrame(run); } };
+  addEventListener('scroll', kick, { passive: true }); addEventListener('resize', () => { sizeHpins(); kick(); });
+  sizeHpins(); run(); setTimeout(() => { sizeHpins(); run(); }, 400); addEventListener('load', () => { sizeHpins(); run(); });
+
+  /* mouse parallax layers: [data-mouse] container, [data-depth] children */
+  if (fine && !reduce) $$('[data-mouse]').forEach((box) => {
+    const layers = $$('[data-depth]', box); let tx = 0, ty = 0, cx = 0, cy = 0, live = false;
+    box.addEventListener('mousemove', (e) => { const r = box.getBoundingClientRect(); tx = (e.clientX - r.left) / r.width - 0.5; ty = (e.clientY - r.top) / r.height - 0.5; if (!live) { live = true; tickM(); } });
+    box.addEventListener('mouseleave', () => { tx = 0; ty = 0; });
+    const tickM = () => { cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08; layers.forEach((l) => { const d = parseFloat(l.dataset.depth) || 10; l.style.setProperty('--mx', `${(-cx * d).toFixed(2)}px`); l.style.setProperty('--my', `${(-cy * d).toFixed(2)}px`); }); if (Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001) requestAnimationFrame(tickM); else live = false; };
+  });
+
+  /* custom cursor */
+  if (fine && !reduce && !document.body.classList.contains('deck-body')) {
+    const c = document.createElement('div'); c.className = 'cursor'; const r = document.createElement('div'); r.className = 'cursor__ring'; document.body.append(c, r);
+    let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
+    addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; c.style.transform = `translate(${mx}px,${my}px)`; document.body.classList.add('has-cursor'); });
+    const loop = () => { rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18; r.style.transform = `translate(${rx}px,${ry}px)`; requestAnimationFrame(loop); }; loop();
+    document.addEventListener('mouseover', (e) => { document.body.classList.toggle('cursor-hot', !!e.target.closest('a, button, .btn, [data-tilt], input[type=range], summary')); });
+  }
+
+  /* image wipes & reveals */
+  const wio = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); wio.unobserve(e.target); } }), { threshold: 0.25 });
+  $$('.wipe, .rise').forEach((el) => wio.observe(el));
+})();
