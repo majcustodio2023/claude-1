@@ -439,7 +439,7 @@ h3 { font-size: clamp(22px, 2.4vw, 30px); letter-spacing: -0.015em; line-height:
 [data-split="chars"] .w { opacity: 1 !important; transform: none !important; }
 [data-split="chars"].split-ready.in .w .c, .hero [data-split="chars"].split-ready .w .c { opacity: 1; transform: none; }
 /* cinematic hero */
-.hero--cine { min-height: 100svh; display: grid; align-content: end; padding: 0 0 clamp(40px, 7vh, 90px); color: #fff; position: relative; overflow: hidden; background: var(--dark); }
+.hero--cine { min-height: 100svh; display: grid; align-content: end; padding: 120px 0 clamp(40px, 7vh, 90px); color: #fff; position: relative; overflow: hidden; background: var(--dark); }
 .hero--cine .hero__bg { position: absolute; inset: 0; z-index: 0; }
 .hero--cine .hero__bg img { width: 100%; height: 100%; object-fit: cover; animation: kenburns 24s ease-in-out infinite alternate; transform-origin: 60% 40%; }
 .hero--cine .hero__bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,8,16,0.35) 0%, rgba(5,8,16,0.15) 35%, rgba(5,8,16,0.88) 85%), linear-gradient(90deg, rgba(5,8,16,0.75) 0%, rgba(5,8,16,0) 60%); }
@@ -552,5 +552,7 @@ body.cursor-hot .cursor__ring { width: 64px; height: 64px; margin: -32px 0 0 -32
 .band--dark .quote__tag { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
 .band--dark .eyebrow { color: color-mix(in srgb, var(--brand) 60%, white); }
 @media (max-width: 600px) { .btn { white-space: normal; text-align: center; } }
-.hero--cine h1 { font-size: clamp(48px, 7.6vw, 118px); max-width: 11ch; }
+.hero--cine h1 { font-size: clamp(44px, min(7.6vw, 11.5vh), 118px); max-width: 11ch; }
+.hero--cine .lead { font-size: clamp(16px, min(1.5vw, 2.4vh), 22px); }
+@media (max-height: 760px) { .hero--cine { padding-top: 104px; gap: 14px; } .hero--cine .wrap { gap: 14px; } .hero__cards .glass b { font-size: clamp(22px, 2.4vw, 32px); } }
 .hero__cards .g1 { right: 4%; top: 16%; } .hero__cards .g2 { right: 18%; top: 36%; } .hero__cards .g3 { right: 6%; top: 56%; }
