@@ -5,10 +5,12 @@ import { buildBrief } from "./prototypeBrief";
 import {
   DEFAULT_PROTOTYPE_MODEL,
   PROTOTYPE_MODELS,
+  brandOf,
   guessName,
   linkKind,
   makeSlug,
   normalizeLink,
+  type PrototypeBrand,
   type PrototypeJob,
   type PulledPicture,
   type Scraped,
@@ -245,27 +247,40 @@ export async function fireBuilder(settings: PrototypeSettings | undefined): Prom
   }
 }
 
-export async function listJobs(): Promise<PrototypeJob[]> {
-  return ((await keyedRpc("prototype_list")) as PrototypeJob[] | null) ?? [];
+/** Jobs from one maker (the Prototype maker and Wendy keep separate lists on the same queue). */
+export async function listJobs(brand: PrototypeBrand = "prototype"): Promise<PrototypeJob[]> {
+  const all = ((await keyedRpc("prototype_list")) as PrototypeJob[] | null) ?? [];
+  return all.filter((j) => brandOf(j.brand) === brand);
 }
 
 export interface NewPrototype {
   links: string[];
   description: string;
   model?: string;
+  brand?: PrototypeBrand;
+  /** The owner's prompt instructions for this build (Wendy). */
+  instructions?: string;
 }
 
-/** Saves a new request with everything the builder needs, then wakes the builder. */
-export async function createJob(input: NewPrototype, settings: PrototypeSettings | undefined, origin: string): Promise<{ job: PrototypeJob; fire: string | null }> {
+/** Saves a new request with everything the builder needs, then wakes the builder.
+ *  `settings` are the maker's own (Wendy has hers); `fireSettings` hold the shared builder start link. */
+export async function createJob(
+  input: NewPrototype,
+  settings: PrototypeSettings | undefined,
+  origin: string,
+  fireSettings: PrototypeSettings | undefined = settings,
+): Promise<{ job: PrototypeJob; fire: string | null }> {
+  const brand = brandOf(input.brand);
+  const instructions = (input.instructions ?? "").trim().slice(0, 4000);
   const links = Array.from(new Set(input.links.map(normalizeLink).filter((l): l is string => Boolean(l)))).slice(0, 6);
   const description = input.description.trim().slice(0, 4000);
-  if (!links.length && description.length < 15) throw new Error("Paste at least one social link, or describe the business in a sentence or two.");
+  if (!links.length && description.length < 15 && instructions.length < 15) throw new Error("Paste at least one social link, or describe the business in a sentence or two.");
   const model = PROTOTYPE_MODELS.some((m) => m.id === input.model) ? input.model! : settings?.defaultModel || DEFAULT_PROTOTYPE_MODEL;
-  const id = `proto-${Date.now().toString(36)}-${randomBytes(3).toString("hex")}`;
+  const id = `${brand === "wendy" ? "wendy" : "proto"}-${Date.now().toString(36)}-${randomBytes(3).toString("hex")}`;
   const slug = makeSlug(guessName(links, description), randomBytes(4).toString("hex"));
 
   // The job row has to exist before its pictures can be saved; the brief is filled in after.
-  await keyedRpc("prototype_create", { p_job: { id, slug, model, links, description, scraped: {}, brief: "(reading the links…)" } });
+  await keyedRpc("prototype_create", { p_job: { id, slug, model, links, description, brand, instructions, scraped: {}, brief: "(reading the links…)" } });
   let scraped: Scraped = { sources: [], pictures: [] };
   try {
     scraped = await scrape(id, links);
@@ -273,9 +288,9 @@ export async function createJob(input: NewPrototype, settings: PrototypeSettings
     scraped.sources = links.map((url) => ({ url, kind: linkKind(url), ok: false, note: (e as Error).message }));
   }
   if (settings?.badge?.trim()) scraped.badge = settings.badge.trim().slice(0, 80);
-  const brief = buildBrief({ id, slug, model, links, description, scraped, settings, siteBase: `${origin}/p/${slug}/` });
+  const brief = buildBrief({ id, slug, model, links, description, instructions, scraped, settings, siteBase: `${origin}/p/${slug}/` });
   await keyedRpc("prototype_set_brief", { p_id: id, p_brief: brief, p_scraped: scraped });
-  const fire = await fireBuilder(settings);
-  const job = (await listJobs()).find((j) => j.id === id)!;
+  const fire = await fireBuilder(fireSettings);
+  const job = (await listJobs(brand)).find((j) => j.id === id)!;
   return { job, fire };
 }

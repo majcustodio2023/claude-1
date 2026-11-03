@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { getData, setPrototypeSettings, setStaffSecret } from "@/lib/store";
 import { FIRE_TOKEN_KEY, fireBuilder } from "@/lib/prototype-server";
-import { PROTOTYPE_MODELS } from "@/lib/prototype";
+import { PROTOTYPE_MODELS, brandOf } from "@/lib/prototype";
 import type { PrototypeSettings } from "@/lib/types";
 
 // Saves the Prototype maker's settings. The builder's token is encrypted and never sent back.
+// ?brand=wendy saves Wendy's own settings (the builder link and token stay with the Prototype maker).
 export async function PUT(req: Request) {
+  const brand = brandOf(new URL(req.url).searchParams.get("brand"));
   const body = (await req.json().catch(() => ({}))) as PrototypeSettings & { fireToken?: string | null };
   const clean = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) || undefined : undefined);
   const fireUrl = clean(body.fireUrl, 300);
@@ -21,6 +23,14 @@ export async function PUT(req: Request) {
     badge: clean(body.badge, 80),
     extra: clean(body.extra, 3000),
   };
+  if (brand === "wendy") {
+    try {
+      await setPrototypeSettings({ ...settings, fireUrl: undefined }, "wendy");
+      return NextResponse.json({ settings });
+    } catch (e) {
+      return NextResponse.json({ error: (e as Error).message }, { status: 500 });
+    }
+  }
   try {
     await setPrototypeSettings(settings);
     let keys: string[] | undefined;

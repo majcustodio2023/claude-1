@@ -154,7 +154,7 @@ export async function saveData(data: TrackerData): Promise<TrackerData> {
       reports: doc.data.reports,
       funnelStats: doc.data.funnelStats,
       // Prototype maker settings are edited on its own page; a tracker tab mustn't overwrite them.
-      settings: { ...rest.settings, prototype: doc.data.settings.prototype },
+      settings: { ...rest.settings, prototype: doc.data.settings.prototype, wendy: doc.data.settings.wendy },
       updatedAt: new Date().toISOString(),
     },
     secrets: { ...doc.secrets, tokens },
@@ -531,9 +531,9 @@ export async function publicRpc(fn: string, body: Record<string, unknown>) {
   return rpc(fn, body);
 }
 
-/** Saves the Prototype maker's settings (server-owned, see saveData). */
-export async function setPrototypeSettings(next: PrototypeSettings): Promise<PrototypeSettings> {
+/** Saves the Prototype maker's (or Wendy's) settings (server-owned, see saveData). */
+export async function setPrototypeSettings(next: PrototypeSettings, brand: "prototype" | "wendy" = "prototype"): Promise<PrototypeSettings> {
   const doc = await loadDoc();
-  await writeDoc({ ...doc, data: { ...doc.data, settings: { ...doc.data.settings, prototype: next } } });
+  await writeDoc({ ...doc, data: { ...doc.data, settings: { ...doc.data.settings, [brand]: next } } });
   return next;
 }
