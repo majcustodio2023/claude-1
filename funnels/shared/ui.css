@@ -80,7 +80,8 @@ em.acc { font-family: var(--font-accent); font-style: italic; font-weight: 500; 
 .brand { min-width: 0; }
 .nav__in .btn { flex: none; }
 @media (max-width: 560px) { .nav__in .btn { padding: 10px 14px; font-size: 13px; } .brand .mute { display: none; } .brand { font-size: 16px; } }
-.calc > *, .deck > *, .grid > *, .panel, .pain > *, .founder > *, .booking > *, .offer > * { min-width: 0; }
+.calc > *, .deck > *, .grid > *, .panel, .pain > *, .founder > *, .booking > *, .offer > *, .hero__grid > *, .stats > *, .steps > *, .quotes > *, .ads > *, .form__row > *, .footer__grid > *, .two > *, .scen > *, .camp > * { min-width: 0; }
+@media (max-width: 600px) { .btn--xl, .hero__ctas .btn { white-space: normal; text-align: center; } }
 @media (max-width: 900px) { .table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; } }
 
 /* ---------- Buttons ---------- */
