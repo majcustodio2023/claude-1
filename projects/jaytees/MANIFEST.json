@@ -1,0 +1,1077 @@
+{
+ "deploymentId": "dpl_EXFaYJ8pLoMyXRaAyatbL21t68Xg",
+ "files": [
+  {
+   "path": ".env.example",
+   "uid": "dffcc0c9e9e807aba0132778aa57173268b20668"
+  },
+  {
+   "path": ".vercelignore",
+   "uid": "7d527892b0187c4b40508d5aa30fdb6ec86837c1"
+  },
+  {
+   "path": "AGENTS.md",
+   "uid": "5ec4789692f7fa325f3c83427e98e934987d1bac"
+  },
+  {
+   "path": "README.md",
+   "uid": "7ba16f1bf099196063e5d413cf00a5aa850b043d"
+  },
+  {
+   "path": "eslint.config.mjs",
+   "uid": "0546fadfb85e748eede91910f34990d0da01cc9d"
+  },
+  {
+   "path": "next-env.d.ts",
+   "uid": "915946e261450f4fb6aab2ca862c8b440b748240"
+  },
+  {
+   "path": "next.config.ts",
+   "uid": "4b1c441b4640ddbbc512fd35f638da4d154f95e1"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "266be9975d231fbf72899110bb2597cd7a5f10c3"
+  },
+  {
+   "path": "package.json",
+   "uid": "7ad75289e48440747bcc8a8d177b5f659c1f7660"
+  },
+  {
+   "path": "public/file.svg",
+   "uid": "fb380eeffe87d50b597383664c02982964d0d28c"
+  },
+  {
+   "path": "public/globe.svg",
+   "uid": "2eba23b01a46733bb8423e6d38ebf5f7e95abec5"
+  },
+  {
+   "path": "public/icon.png",
+   "uid": "7be8bb01e80b7035d26883a183091c2c40a25ba5"
+  },
+  {
+   "path": "public/img/brand/banner.jpg",
+   "uid": "316d82a8873caab536cc2515000a0f0b5fed03dc"
+  },
+  {
+   "path": "public/img/brand/logo-800.png",
+   "uid": "580c72694196fcf9ba8ec42801a72cdaf71ead09"
+  },
+  {
+   "path": "public/img/brand/logo-src.jpg",
+   "uid": "9511295d9daaf8c9a737751130c38b14b26a9845"
+  },
+  {
+   "path": "public/img/brand/logo.png",
+   "uid": "9bdbf3d9b988d2181e6d33284c0165cce9ab6e09"
+  },
+  {
+   "path": "public/img/food/adobo-rice-platter.jpg",
+   "uid": "222519f103d551469bd2c9425d3accbe214b9717"
+  },
+  {
+   "path": "public/img/food/adobong-pusit.jpg",
+   "uid": "ede39ba76c5638cd1d0405148010dfda41e64f9e"
+  },
+  {
+   "path": "public/img/food/bagoong-rice-platter.jpg",
+   "uid": "77aa1d7b528458e27a92a23e1deee6092adf1566"
+  },
+  {
+   "path": "public/img/food/bangsilog.jpg",
+   "uid": "2d156ae578b01588802ec99e9258b49299d08b4d"
+  },
+  {
+   "path": "public/img/food/beef-caldereta.jpg",
+   "uid": "40e6b270363bf5887bfeaf861f53f9cd3d548a0c"
+  },
+  {
+   "path": "public/img/food/beef-steak-tagalog.jpg",
+   "uid": "e2a60b57c03c24ad7b4300093129d57eb4fedde7"
+  },
+  {
+   "path": "public/img/food/beef-stew-spareribs.jpg",
+   "uid": "4bf080425ebec470e48db995215920987056fd6b"
+  },
+  {
+   "path": "public/img/food/beer-in-can.jpg",
+   "uid": "953639d4b1b8332ff1610ba0d679872fe26a605a"
+  },
+  {
+   "path": "public/img/food/bicol-express.jpg",
+   "uid": "ac3b6f0d9ca1e1549115aee8df00515736f62a20"
+  },
+  {
+   "path": "public/img/food/bottled-water.jpg",
+   "uid": "76bb0055973f60bce3a3894af07b881b3cbc04d1"
+  },
+  {
+   "path": "public/img/food/buco-pandan.jpg",
+   "uid": "1632fcb88b9841a6ea4efd47c2372c118d575405"
+  },
+  {
+   "path": "public/img/food/buco-pie.jpg",
+   "uid": "514be265f428385af82f67e8a7c79d4959316f64"
+  },
+  {
+   "path": "public/img/food/buco-salad.jpg",
+   "uid": "7dbe9b114c10994b138dd106244366c230ff9560"
+  },
+  {
+   "path": "public/img/food/buffalo-wings-5-pcs.jpg",
+   "uid": "b6c4d359100dc0b640dc57934a850a82b6eaa85b"
+  },
+  {
+   "path": "public/img/food/buffalo-wings-spicy-5-pcs.jpg",
+   "uid": "b9f824df7b5f4208f101cd1ec4ae3e0d7a0f80ff"
+  },
+  {
+   "path": "public/img/food/bulalo-hero.jpg",
+   "uid": "7186158b997bea15b9a48f6bc6213bb3b910d98b"
+  },
+  {
+   "path": "public/img/food/bulalo-sisig.jpg",
+   "uid": "747315e5fbe291474934c66f7c15e9b6336533a0"
+  },
+  {
+   "path": "public/img/food/bulalo.jpg",
+   "uid": "361c2ddf99b9f73f87314897b7672cbf1c94b668"
+  },
+  {
+   "path": "public/img/food/buttered-garlic-shrimp.jpg",
+   "uid": "7567184d7b43098a4042463b0ea2cbb1b9d89ecf"
+  },
+  {
+   "path": "public/img/food/calamares.jpg",
+   "uid": "eb26e99f7fd6cf8df28a6d3d8fa2d8dfb0f76498"
+  },
+  {
+   "path": "public/img/food/chicharon-bulaklak.jpg",
+   "uid": "d1e76d335749e59e94f2b35373b7c6534518fc08"
+  },
+  {
+   "path": "public/img/food/chicken-adobo-sa-gata.jpg",
+   "uid": "b60cd0c809859f9343a1e63faec8e615a669c524"
+  },
+  {
+   "path": "public/img/food/chicken-adobo.jpg",
+   "uid": "3caf0855b361ae17a8157b08827cf1556d4e4865"
+  },
+  {
+   "path": "public/img/food/choco-shake.jpg",
+   "uid": "67556152be0ccc1ff57e7f10fa0496e6b18b79f7"
+  },
+  {
+   "path": "public/img/food/chopsuey.jpg",
+   "uid": "a91f57af3359bf254b36d6fcf10238c95e1afe03"
+  },
+  {
+   "path": "public/img/food/crab-rice-platter.jpg",
+   "uid": "2de6194725073dc86a13bd136dc311348c4b6d3f"
+  },
+  {
+   "path": "public/img/food/crispy-pata-1-5kg.jpg",
+   "uid": "70d0d3bfcd5edd8e4b76181e21bcfeb7ffb513c5"
+  },
+  {
+   "path": "public/img/food/crispy-pork-binagoongan.jpg",
+   "uid": "305f22b23b9cbec6e137edea36bce499a8f3120f"
+  },
+  {
+   "path": "public/img/food/crispy-tawilis.jpg",
+   "uid": "7be525b1c8b3b94d6b126a3b4a9adbbfe5cd4271"
+  },
+  {
+   "path": "public/img/food/cucumber-lemonade-glass.jpg",
+   "uid": "16d41dee4384ab6463d1df682638ddde30aff252"
+  },
+  {
+   "path": "public/img/food/cucumber-lemonade-pitcher.jpg",
+   "uid": "5924e5df6f80d0a644c6319412405847f683a217"
+  },
+  {
+   "path": "public/img/food/daing-na-bangus.jpg",
+   "uid": "035b7dd8e6573c60a8619722f5b71b4b01372217"
+  },
+  {
+   "path": "public/img/food/dynamite.jpg",
+   "uid": "cb196d15b70dac9c32d6b36c5dadca7af2c7f8b5"
+  },
+  {
+   "path": "public/img/food/ensaladang-mangga-w-bagoong.jpg",
+   "uid": "3e65d87b2b0560c402268b9919510186635b5653"
+  },
+  {
+   "path": "public/img/food/ensaladang-talong-w-bagoong.jpg",
+   "uid": "079300f803f1c7dcb851a70d5bc5963a4adc434c"
+  },
+  {
+   "path": "public/img/food/fresh-mango-juice.jpg",
+   "uid": "0e28a72cd16db798fda9a6bd4f1cc0dc0c9bf75e"
+  },
+  {
+   "path": "public/img/food/fried-tilapia.jpg",
+   "uid": "3e4c436e8911278cf2c977d187b0d3e003c08ce0"
+  },
+  {
+   "path": "public/img/food/fries.jpg",
+   "uid": "6f1bd3118f93673a4fc168ee935e83fc64733f43"
+  },
+  {
+   "path": "public/img/food/garlic-fried-chicken-half.jpg",
+   "uid": "8150a7d1865c5904a64ec7c64ac21a467d4499e3"
+  },
+  {
+   "path": "public/img/food/garlic-fried-chicken-whole.jpg",
+   "uid": "c4e6f3a1c415ec23ad33b35069c60010f566fe0a"
+  },
+  {
+   "path": "public/img/food/garlic-rice-cup.jpg",
+   "uid": "9dbbdc3e9f5aa4121b838c3fed634eb06232173f"
+  },
+  {
+   "path": "public/img/food/garlic-rice-platter.jpg",
+   "uid": "082597e4c2b43dfb853cd18f511ebf88a7fc8657"
+  },
+  {
+   "path": "public/img/food/ginataang-hipon.jpg",
+   "uid": "e2425e2f21eb7130007f6f51b3bb7d57ff02df13"
+  },
+  {
+   "path": "public/img/food/green-mango-shake.jpg",
+   "uid": "6d5ffe9c8a99357f66e75ceb99a4c6f3a6b7434c"
+  },
+  {
+   "path": "public/img/food/grilled-beef-ribs.jpg",
+   "uid": "58ece9462bcf7dcb7ca75809a5d60f8a8e8adfe8"
+  },
+  {
+   "path": "public/img/food/grilled-liempo.jpg",
+   "uid": "f615a15094ad965449017ab2475fa65f2a55121b"
+  },
+  {
+   "path": "public/img/food/grilled-squid-spicy-250g.jpg",
+   "uid": "006f5350e30b9cb9eb1b7850aa92598ec4cb7fbb"
+  },
+  {
+   "path": "public/img/food/grilled-tanigue-250g.jpg",
+   "uid": "dc5f28b7611857afa22aae7d89563cccc96be7ad"
+  },
+  {
+   "path": "public/img/food/guyabano-shake.jpg",
+   "uid": "67b6dc24faf337d5ff3aac67bab947dac487af8e"
+  },
+  {
+   "path": "public/img/food/halo-halo.jpg",
+   "uid": "3c7d1d2acbf8192a7f131b7c349470b36746840f"
+  },
+  {
+   "path": "public/img/food/melon-shake.jpg",
+   "uid": "8874fffec7be764dd5cab0bb5fbd554d79ad1df1"
+  },
+  {
+   "path": "public/img/food/mixed-seafoods-in-oyster-sauce-spicy.jpg",
+   "uid": "5cc0b745686d317a7f5a00db6772506acc662631"
+  },
+  {
+   "path": "public/img/food/mixed-seafoods-in-oyster-sauce.jpg",
+   "uid": "5b034ef1eaa9de0cafc78f6f03bbd3b426eb1479"
+  },
+  {
+   "path": "public/img/food/mixed-vegetables-in-oyster-sauce.jpg",
+   "uid": "ab296c1fe52cf8efbb0b9eae1d20ca5a10da4bef"
+  },
+  {
+   "path": "public/img/food/nilagang-baka.jpg",
+   "uid": "fb4f92f5f95a21596784e41e14fda9fa383d94b2"
+  },
+  {
+   "path": "public/img/food/onion-rings.jpg",
+   "uid": "69683f465a20c015b61e2f2a17491243564d7763"
+  },
+  {
+   "path": "public/img/food/pakbet.jpg",
+   "uid": "319cdeb150ec607f3a821181bcd09b0cac4db98a"
+  },
+  {
+   "path": "public/img/food/pancit.jpg",
+   "uid": "94920e992e0923431542d708320da8739a0b2396"
+  },
+  {
+   "path": "public/img/food/pineapple-juice-in-can.jpg",
+   "uid": "e19432c27faf6a5b28b8af64a711b372b4659763"
+  },
+  {
+   "path": "public/img/food/pineapple-shake.jpg",
+   "uid": "c0ee4395e3646b07aec5b727b85d395fbf71f468"
+  },
+  {
+   "path": "public/img/food/pork-adobo.jpg",
+   "uid": "45739276d5528344eecb869815d9732ad465bef0"
+  },
+  {
+   "path": "public/img/food/pork-barbeque-2-pcs.jpg",
+   "uid": "9344153289009fb43954ea8ee4d369c1f24fa743"
+  },
+  {
+   "path": "public/img/food/relyenong-bangus.jpg",
+   "uid": "804a8c3c76599eaa4969dcea6a9171d859a4f237"
+  },
+  {
+   "path": "public/img/food/ripe-mango-shake.jpg",
+   "uid": "6ae091e9bed425b94b5f45523291cd98602ca580"
+  },
+  {
+   "path": "public/img/food/set-a.jpg",
+   "uid": "e6f93bfd1e07e914daec9ead28137e15de614dbe"
+  },
+  {
+   "path": "public/img/food/set-b.jpg",
+   "uid": "557bbc97f9490b846cfa8a0b1a3a6552bdb64ced"
+  },
+  {
+   "path": "public/img/food/set-c.jpg",
+   "uid": "31dcd57997240d028c0f6aaac4c6a871edcf1a12"
+  },
+  {
+   "path": "public/img/food/set-d.jpg",
+   "uid": "2dd2a261779f10ed524761d327c2a3054bde55fe"
+  },
+  {
+   "path": "public/img/food/set-e.jpg",
+   "uid": "47d5d9066290290707ed15ecf3c4f90b7ecbbad3"
+  },
+  {
+   "path": "public/img/food/set-f.jpg",
+   "uid": "0cf6a808752d7621630249882aa5ac8e208ffda9"
+  },
+  {
+   "path": "public/img/food/set-g.jpg",
+   "uid": "b3fc7d7f6112afc8a6290fc9f9020d1ace654d8e"
+  },
+  {
+   "path": "public/img/food/shanghai-spring-rolls-6-pcs.jpg",
+   "uid": "6b365bbc3c5cd310f910c8e2f96b4ec039274104"
+  },
+  {
+   "path": "public/img/food/sinigang-na-baboy.jpg",
+   "uid": "4fdb41a1a9788e29dfa17584451ff858a01cbc8f"
+  },
+  {
+   "path": "public/img/food/sinigang-na-baka-ribs.jpg",
+   "uid": "e9b7780f9b6ec9f50d30e1092f3d03a6c12eb944"
+  },
+  {
+   "path": "public/img/food/sinigang-na-hipon.jpg",
+   "uid": "666bb8e69a4ba5daadadb5e45361223fb96b1118"
+  },
+  {
+   "path": "public/img/food/sinigang-sa-miso-tanigue.jpg",
+   "uid": "f41f0e84b1b7a8a7605e76b6ddf76f4976214792"
+  },
+  {
+   "path": "public/img/food/sisig.jpg",
+   "uid": "0b059ecea7d21b6eb99966e865abe00b9c17a6e4"
+  },
+  {
+   "path": "public/img/food/sizzling-beef-tapa.jpg",
+   "uid": "06f5eabdddb3becab3d58d3a4aac1acd60b4e41b"
+  },
+  {
+   "path": "public/img/food/sizzling-chicken.jpg",
+   "uid": "23f14d11c40a4e409bab6c9d61ddd7a9fdc605d3"
+  },
+  {
+   "path": "public/img/food/sizzling-gambas-shrimp.jpg",
+   "uid": "2b8563ef8516da2dd2cc8371d4b8921799a8a167"
+  },
+  {
+   "path": "public/img/food/sizzling-lechon-kawali.jpg",
+   "uid": "effc54d90acf9a8134bf229b022c2300ce91bf9e"
+  },
+  {
+   "path": "public/img/food/sizzling-lechon-paksiw.jpg",
+   "uid": "26f44b9f70acb6a57357b1208a6bd8fd7cbfd3ba"
+  },
+  {
+   "path": "public/img/food/sizzling-spareribs-beef.jpg",
+   "uid": "0f23d3380d9930a4628c323c554d3f2fcf6b12a5"
+  },
+  {
+   "path": "public/img/food/sizzling-squid.jpg",
+   "uid": "c8cbdc8fbdf6a60153e09c8fe4c36430cbee3cea"
+  },
+  {
+   "path": "public/img/food/soda.jpg",
+   "uid": "dd8bf836a8ece8254f40af415c59fdb86008c000"
+  },
+  {
+   "path": "public/img/food/steamed-rice-cup.jpg",
+   "uid": "86ef52e6cea0194e8a5ea2b4a4cd5904809f9cd1"
+  },
+  {
+   "path": "public/img/food/steamed-rice-platter.jpg",
+   "uid": "c01cacc81aec0926325799fa20993b31ff6730cc"
+  },
+  {
+   "path": "public/img/food/strawberry-shake.jpg",
+   "uid": "026a04d52967b8f50feb60f39b74012b05d08b7f"
+  },
+  {
+   "path": "public/img/food/stuffed-squid.jpg",
+   "uid": "59749e843c5b4985ec1624ac95bad8555354e474"
+  },
+  {
+   "path": "public/img/food/sweet-and-sour-tilapia.jpg",
+   "uid": "10ef4927f2c6623d78b18e8b4efcb9c988544450"
+  },
+  {
+   "path": "public/img/food/taal-view.jpg",
+   "uid": "4a60199aa713629518e8034ed276b2ad123633e2"
+  },
+  {
+   "path": "public/img/food/table-spread.jpg",
+   "uid": "676ba7681c7fee1e7b30293ebd2d0225c281d086"
+  },
+  {
+   "path": "public/img/food/tapsilog.jpg",
+   "uid": "ee3f816be95fdfd95d9380df9670547cf2186d3d"
+  },
+  {
+   "path": "public/img/food/tawsilog.jpg",
+   "uid": "d5d0bbe555b84ce496f2cdbc632b936e75334786"
+  },
+  {
+   "path": "public/img/food/tempura.jpg",
+   "uid": "05a0c92f91470dfe6f5fd3dc1ac8112fb3198ba2"
+  },
+  {
+   "path": "public/img/food/tocilog.jpg",
+   "uid": "471df4f7f76ce5ff0460e6dc0fcf8742f25878d1"
+  },
+  {
+   "path": "public/img/food/tokwa-t-baboy.jpg",
+   "uid": "4021077e9e36c74fbbc84d9ae03f493d21223b7a"
+  },
+  {
+   "path": "public/img/food/vanilla-shake.jpg",
+   "uid": "35c6c6edc04d86d8bc909001fc6a87579fa62382"
+  },
+  {
+   "path": "public/img/food/watermelon-shake.jpg",
+   "uid": "c5ce376ec5243b848fc3ddaf25b9e706b42b8b61"
+  },
+  {
+   "path": "public/img/food/yang-chow-rice-platter.jpg",
+   "uid": "2c9acc0f5c16dcbe6f3f9cfcd12c7b0e56bec6f5"
+  },
+  {
+   "path": "public/img/places/exterior-2.jpg",
+   "uid": "c33b795dbf34c5084dab6da61689cf424543e9e4"
+  },
+  {
+   "path": "public/img/places/exterior-night.jpg",
+   "uid": "d2c57851d031b58f20903e4e9d86b80595bf1d86"
+  },
+  {
+   "path": "public/img/places/guests-bulalo.jpg",
+   "uid": "fb450af0afb3b16c0e8604f052b6553cddf759dc"
+  },
+  {
+   "path": "public/img/places/interior-2.jpg",
+   "uid": "6aaa9dca9b666139e126eeb1b8f208e3a5178f68"
+  },
+  {
+   "path": "public/img/places/interior-main.jpg",
+   "uid": "80bdd8643e8ec40ea7b59e4f879a393b7e79af80"
+  },
+  {
+   "path": "public/img/places/pasalubong-1.jpg",
+   "uid": "b1d4e51de5e36216307984b38322d68c696d5225"
+  },
+  {
+   "path": "public/img/places/pasalubong-2.jpg",
+   "uid": "d04e50ac6fab6e55c8a05e95f4f21b26f86a1a1a"
+  },
+  {
+   "path": "public/next.svg",
+   "uid": "3f3e95622612b989c5bd6a03299a308c6f3c7e6b"
+  },
+  {
+   "path": "public/vercel.svg",
+   "uid": "cebb8852d58c8886be3e9051a26957f42bb82f1a"
+  },
+  {
+   "path": "public/window.svg",
+   "uid": "54c48e0daa6caa317fe1b4c419007fd93e948db9"
+  },
+  {
+   "path": "src/app/(site)/layout.tsx",
+   "uid": "4facfc33f0a4edd4b912b59581ea7b95ea890946"
+  },
+  {
+   "path": "src/app/(site)/loading.tsx",
+   "uid": "39b533ba41321e44df12e65b9eee114517dcbfed"
+  },
+  {
+   "path": "src/app/(site)/menu/[branch]/checkout/page.tsx",
+   "uid": "758b9e7c2d2b31de3206ae342c282673f4e47b57"
+  },
+  {
+   "path": "src/app/(site)/menu/[branch]/layout.tsx",
+   "uid": "302cf9cd1a72307ba2003c9755e02c6d29361ae2"
+  },
+  {
+   "path": "src/app/(site)/menu/[branch]/page.tsx",
+   "uid": "217e4919757c3276de726b58c818cef5c63e6985"
+  },
+  {
+   "path": "src/app/(site)/order/[number]/page.tsx",
+   "uid": "234fba651b96c7cff078a55720d5b230480fcde7"
+  },
+  {
+   "path": "src/app/(site)/page.tsx",
+   "uid": "b80ed4cce3439f5ebfd997fb67cd5930649b16f7"
+  },
+  {
+   "path": "src/app/(site)/reservation/[number]/page.tsx",
+   "uid": "0d36dc715bb33236f39840c6748fb044198f14c9"
+  },
+  {
+   "path": "src/app/(site)/reserve/[branch]/page.tsx",
+   "uid": "37066af64eb9e46a5c1b0a77adac4ff103c1e292"
+  },
+  {
+   "path": "src/app/(site)/start/page.tsx",
+   "uid": "b1b4b246ff36434814397a861aaa65420c4fa0a7"
+  },
+  {
+   "path": "src/app/(site)/track/go/route.ts",
+   "uid": "58532a4456533aae4eee0fb14dd2cf68cf2c6ac8"
+  },
+  {
+   "path": "src/app/(site)/track/page.tsx",
+   "uid": "5b5dd8a882bd7f5ae16d51e0fd27ed38c69543c6"
+  },
+  {
+   "path": "src/app/admin/(app)/account/loading.tsx",
+   "uid": "4fa8ccc20b4ee905a78d082e7823e4d8c5c1e360"
+  },
+  {
+   "path": "src/app/admin/(app)/account/page.tsx",
+   "uid": "3694373d3d75c7fbcc91dfa1ba6e3b0de0374cfe"
+  },
+  {
+   "path": "src/app/admin/(app)/audit/loading.tsx",
+   "uid": "0e4e1349cb566b9860d54892146cf9cecd2a953a"
+  },
+  {
+   "path": "src/app/admin/(app)/audit/page.tsx",
+   "uid": "08046035536bfac1423e76fddc1a1c090141b15d"
+  },
+  {
+   "path": "src/app/admin/(app)/deliveries/loading.tsx",
+   "uid": "551b232987247fbafb584f2b46a3bed9be82c8d3"
+  },
+  {
+   "path": "src/app/admin/(app)/deliveries/page.tsx",
+   "uid": "32b744e0ac4c402a4806f7c3731bf261d0645a79"
+  },
+  {
+   "path": "src/app/admin/(app)/inventory/loading.tsx",
+   "uid": "4edd2a951b4c0125f8ecca7bc883817184256211"
+  },
+  {
+   "path": "src/app/admin/(app)/inventory/page.tsx",
+   "uid": "33714be375e47a4f3f54212093b0a8b8614028e7"
+  },
+  {
+   "path": "src/app/admin/(app)/layout.tsx",
+   "uid": "58638c49871c9edceb32cc1f60a74dae8a886f75"
+  },
+  {
+   "path": "src/app/admin/(app)/loading.tsx",
+   "uid": "708f9fbb67d9c283f1d8e87feb412ac11688c343"
+  },
+  {
+   "path": "src/app/admin/(app)/menu/loading.tsx",
+   "uid": "8f0a89157b835fcde9ea466afe12e3b629368b43"
+  },
+  {
+   "path": "src/app/admin/(app)/menu/page.tsx",
+   "uid": "b15d5a69b1194bebfa18f59ed2f3a4c884defb45"
+  },
+  {
+   "path": "src/app/admin/(app)/orders/[id]/loading.tsx",
+   "uid": "16c11ff0aa56b9afa44e6c226b439ed2bf388fcc"
+  },
+  {
+   "path": "src/app/admin/(app)/orders/[id]/page.tsx",
+   "uid": "a39537248e38b83eb518165bcde8d9590ca2eba5"
+  },
+  {
+   "path": "src/app/admin/(app)/orders/loading.tsx",
+   "uid": "ecba82bb2d9055b68d276be5a7e9b614a93486b7"
+  },
+  {
+   "path": "src/app/admin/(app)/orders/page.tsx",
+   "uid": "ab49dcd273c93759b0dac47308ab113407f68b2f"
+  },
+  {
+   "path": "src/app/admin/(app)/overview/loading.tsx",
+   "uid": "5baa2f5200219582595e38a06b362543f656f92b"
+  },
+  {
+   "path": "src/app/admin/(app)/overview/page.tsx",
+   "uid": "d60d4aa9fa0ebf2c74270f58595f6f3ac0f4560e"
+  },
+  {
+   "path": "src/app/admin/(app)/page.tsx",
+   "uid": "533971766539da5b95224677cda1c67d2d68f664"
+  },
+  {
+   "path": "src/app/admin/(app)/reservations/loading.tsx",
+   "uid": "df44fc58345e96c424479ceab2c09a115aeb40fb"
+  },
+  {
+   "path": "src/app/admin/(app)/reservations/page.tsx",
+   "uid": "d1930df593d90e8f4e5fb5010f0108500c4a25c9"
+  },
+  {
+   "path": "src/app/admin/(app)/settings/loading.tsx",
+   "uid": "9fa02e10a2adfcaa1feffe9eb9f5f3f7c02ceeda"
+  },
+  {
+   "path": "src/app/admin/(app)/settings/page.tsx",
+   "uid": "89ecc87eea56b9c18eb234ca14dc3d8668e58c44"
+  },
+  {
+   "path": "src/app/admin/(app)/staff/loading.tsx",
+   "uid": "19969139260a1c2ced2310533501a6022fc8f2a5"
+  },
+  {
+   "path": "src/app/admin/(app)/staff/page.tsx",
+   "uid": "ce376072692e8e17c8e03f5471945e5692680854"
+  },
+  {
+   "path": "src/app/admin/(auth)/layout.tsx",
+   "uid": "085949f9978c7948d1f2ba211a5f733e7813c3f1"
+  },
+  {
+   "path": "src/app/admin/(auth)/login/loading.tsx",
+   "uid": "07d2cb4ceeb0f20b234b4723311eb7af9cfe6261"
+  },
+  {
+   "path": "src/app/admin/(auth)/login/page.tsx",
+   "uid": "28e6aca5f9979f4c4ea323df5c4bd803afac6688"
+  },
+  {
+   "path": "src/app/admin/(auth)/pending/page.tsx",
+   "uid": "724b2864a092b3f6c0cf1c3059744cb6143dee08"
+  },
+  {
+   "path": "src/app/admin/(auth)/register/loading.tsx",
+   "uid": "cb81e9a70d5c86e1d960c53e6c34d2caf8db929b"
+  },
+  {
+   "path": "src/app/admin/(auth)/register/page.tsx",
+   "uid": "da479f5435c88c2daf3b355e3b04659351c81358"
+  },
+  {
+   "path": "src/app/api/admin/notify/route.ts",
+   "uid": "caffab8b7cad00456fc61d90d3408509c0040f64"
+  },
+  {
+   "path": "src/app/api/orders/route.ts",
+   "uid": "1a179ac72581e8c27473dadad10d3434e0567ae6"
+  },
+  {
+   "path": "src/app/api/reservations/route.ts",
+   "uid": "b319e51520e00a5adf8fb2ad354040e296edb43e"
+  },
+  {
+   "path": "src/app/favicon.ico",
+   "uid": "9bd95591db1b6ee579ed9485a4d4a957e7a90354"
+  },
+  {
+   "path": "src/app/globals.css",
+   "uid": "202e42e205463a88721f1061eb6062211d583248"
+  },
+  {
+   "path": "src/app/layout.tsx",
+   "uid": "13534d228d4c76f638393c0021fd8c60ddd17013"
+  },
+  {
+   "path": "src/app/not-found.tsx",
+   "uid": "e08a3730b9609cd4266817a2cb4e59f45a63bd48"
+  },
+  {
+   "path": "src/app/robots.ts",
+   "uid": "cc57a2e6f2f6a807d65e8db62c1a3edc383752f3"
+  },
+  {
+   "path": "src/app/sitemap.ts",
+   "uid": "1e9e116da8f334fe87f594d4fd0182560f0124f0"
+  },
+  {
+   "path": "src/components/admin/AdminProvider.tsx",
+   "uid": "1e92f6820b81c4e2c314dd42b221a58b3010d648"
+  },
+  {
+   "path": "src/components/admin/AdminShell.tsx",
+   "uid": "950c2db3b1a66c246f9ac61e8c3cad7468cbcf0b"
+  },
+  {
+   "path": "src/components/admin/BranchSwitcher.tsx",
+   "uid": "6d3263f50e1d2dfe1845c00816a408a68f0993ea"
+  },
+  {
+   "path": "src/components/admin/Button.tsx",
+   "uid": "690164c4158c16194f0ff8cbea2d70db93b217b2"
+  },
+  {
+   "path": "src/components/admin/Charts.tsx",
+   "uid": "55936cd8acb87a75fbe34890cd067f6e466ebc0b"
+  },
+  {
+   "path": "src/components/admin/ConfirmDialog.tsx",
+   "uid": "2a1c4bc1320f5631cee546eeb31b500a87d54f14"
+  },
+  {
+   "path": "src/components/admin/DataTable.tsx",
+   "uid": "56e78aa6befd6762fe167928ed06871678029b4e"
+  },
+  {
+   "path": "src/components/admin/EmptyState.tsx",
+   "uid": "7473cf7d1a14dff80802ef1ff995a933ef5e19bf"
+  },
+  {
+   "path": "src/components/admin/Field.tsx",
+   "uid": "ca658abcc620fb7df16efbbd468c7db608331dca"
+  },
+  {
+   "path": "src/components/admin/KpiCard.tsx",
+   "uid": "7d773fa92ef304244e9ea2a7c6c6dce4ec8a1679"
+  },
+  {
+   "path": "src/components/admin/LiveClock.tsx",
+   "uid": "d10b1578414695f345b2f5f034dcadea8ef39244"
+  },
+  {
+   "path": "src/components/admin/Modal.tsx",
+   "uid": "bc0386d0f7b609444bd4a7812592549068fda4f5"
+  },
+  {
+   "path": "src/components/admin/MoneyInput.tsx",
+   "uid": "56211e664b0834f0b4c64979d70acfe00567789a"
+  },
+  {
+   "path": "src/components/admin/NotificationCenter.tsx",
+   "uid": "3c70346d3df687baf3161a9128a12c894b37a4f9"
+  },
+  {
+   "path": "src/components/admin/PageFade.tsx",
+   "uid": "1734033f5c9551d3bad4dc43f723c386c199fdbb"
+  },
+  {
+   "path": "src/components/admin/PageHeader.tsx",
+   "uid": "1faa400649d8b6b4647ef44465488811ba46d5b3"
+  },
+  {
+   "path": "src/components/admin/RouteProgress.tsx",
+   "uid": "33bd63b42ffe5943f41bc4fa0b3438f13d23613d"
+  },
+  {
+   "path": "src/components/admin/Skeletons.tsx",
+   "uid": "21fadd109a608c776ed8556dcb0c6d1e22e2cab9"
+  },
+  {
+   "path": "src/components/admin/Sparkline.tsx",
+   "uid": "57ee1dba636558f453c4ed597246105ceaf8cfe8"
+  },
+  {
+   "path": "src/components/admin/Spinner.tsx",
+   "uid": "163a848468b20ed6fea24657c5b76cbd9ecdac22"
+  },
+  {
+   "path": "src/components/admin/StatusChip.tsx",
+   "uid": "d3cb6aa88ca33ac48c4c789f4b7805ed770c6baf"
+  },
+  {
+   "path": "src/components/admin/Switch.tsx",
+   "uid": "04aefb2f8eb1d84449cd718a57537a40e6cca8dd"
+  },
+  {
+   "path": "src/components/admin/Tabs.tsx",
+   "uid": "e8223c4a193debcf36d01d439c19c29edf632b5f"
+  },
+  {
+   "path": "src/components/admin/TagInput.tsx",
+   "uid": "02e0e69858e76a5b97bffddff8c570e26b1b8b94"
+  },
+  {
+   "path": "src/components/admin/TimeAgo.tsx",
+   "uid": "992aeb2d2df7b0fce945f0eb616814c95b7fae19"
+  },
+  {
+   "path": "src/components/admin/Toast.tsx",
+   "uid": "aa0933dabed1dbd5bc57115ef9335ae4da62d6d6"
+  },
+  {
+   "path": "src/components/admin/UserMenu.tsx",
+   "uid": "bc36828199c4ac2ccb2a2fa4b53524394faacb9d"
+  },
+  {
+   "path": "src/components/admin/account/AccountForm.tsx",
+   "uid": "7eb54426bad8de6d880df43292a849dec7652038"
+  },
+  {
+   "path": "src/components/admin/audit/AuditReportView.tsx",
+   "uid": "d58b4371791c547773e8901a48b6d98b939ce6c4"
+  },
+  {
+   "path": "src/components/admin/auth/LoginForm.tsx",
+   "uid": "2b25b7b0b3d1ad14830a22e7fa7060aebb73b1fa"
+  },
+  {
+   "path": "src/components/admin/auth/PendingCard.tsx",
+   "uid": "8bd067cc45346973832bf4fc70e5f92337f47188"
+  },
+  {
+   "path": "src/components/admin/auth/RegisterForm.tsx",
+   "uid": "1ada2159e5155962f115ce7080ebb4cef9481ef8"
+  },
+  {
+   "path": "src/components/admin/dashboard/Dashboard.tsx",
+   "uid": "9ee4236117cdb1f3c35ba7e73b8cd27c0f7ea8d2"
+  },
+  {
+   "path": "src/components/admin/dashboard/GettingStarted.tsx",
+   "uid": "77d3fc532ecae9f4a3e739bc7ebba297c3010b30"
+  },
+  {
+   "path": "src/components/admin/deliveries/DeliveriesBoard.tsx",
+   "uid": "f5e36f2b3160b21d6f220f3897df1e136bb2297d"
+  },
+  {
+   "path": "src/components/admin/inventory/DeliveriesTab.tsx",
+   "uid": "6aa419f520e666a9f17f2595f50590c9a8ddb76e"
+  },
+  {
+   "path": "src/components/admin/inventory/InventoryBoard.tsx",
+   "uid": "fbbefcab44e2446955323dab6002f3dbe8ab1a5d"
+  },
+  {
+   "path": "src/components/admin/inventory/ItemModal.tsx",
+   "uid": "d307f32f38841e3611e5cf57fed76aa82970d5ff"
+  },
+  {
+   "path": "src/components/admin/inventory/MovementModal.tsx",
+   "uid": "c509584c812dd64ab37056a0aceaf5f1ad45b8ff"
+  },
+  {
+   "path": "src/components/admin/inventory/MovementsTab.tsx",
+   "uid": "ee6907c5f92650ce6db57f70396bef804823876d"
+  },
+  {
+   "path": "src/components/admin/inventory/ReceiveDeliverySheet.tsx",
+   "uid": "7faa1443c3cdc5d82cf947a6010c8bfefc417c12"
+  },
+  {
+   "path": "src/components/admin/inventory/StockTab.tsx",
+   "uid": "78a0c3b1f86fd13fe60e0652ac231217a505faed"
+  },
+  {
+   "path": "src/components/admin/inventory/SummaryTab.tsx",
+   "uid": "e055847aae855637f8c1f9590def9ddcbbd8a861"
+  },
+  {
+   "path": "src/components/admin/menu/MenuManager.tsx",
+   "uid": "72a2aebf9ed5fe148fe263369ebbad1f2df634a9"
+  },
+  {
+   "path": "src/components/admin/orders/CancelOrderModal.tsx",
+   "uid": "da75bb07f0f484ebbfd009894e66ba9288e372e2"
+  },
+  {
+   "path": "src/components/admin/orders/OrderDetail.tsx",
+   "uid": "ccd2acc8618692851906b071143136fea84afd62"
+  },
+  {
+   "path": "src/components/admin/orders/OrdersList.tsx",
+   "uid": "bf08eae2367320541d552da71ecfb9e611c250c1"
+  },
+  {
+   "path": "src/components/admin/orders/ServiceTimeline.tsx",
+   "uid": "8152e623207052a5992ce4f2a18d54c0db9d23ad"
+  },
+  {
+   "path": "src/components/admin/overview/Overview.tsx",
+   "uid": "50f36e5aacad2e3e49e555d345b2db0d982c7243"
+  },
+  {
+   "path": "src/components/admin/reservations/ReservationsBoard.tsx",
+   "uid": "ff15a72b2e12b120fdd9fc5135618e600f62e14c"
+  },
+  {
+   "path": "src/components/admin/settings/BranchSettings.tsx",
+   "uid": "d61699f826fc4bb9f1980c6ec86dbff410b2acf1"
+  },
+  {
+   "path": "src/components/admin/staff/StaffBoard.tsx",
+   "uid": "9926ef1f4b041a0d3d5ebeecefde1a7b88e2317e"
+  },
+  {
+   "path": "src/components/admin/stock/StockSummaryTable.tsx",
+   "uid": "990f27bfd21579e6ff5044b6142531daf3a700d5"
+  },
+  {
+   "path": "src/components/admin/tour/TourOverlay.tsx",
+   "uid": "9e2b2d170330d7d3c037f3dda6fb7906bec9722a"
+  },
+  {
+   "path": "src/components/admin/tour/TourProvider.tsx",
+   "uid": "b435c2ea32b49c2a5357b7b216ddb2dc0cc53ba6"
+  },
+  {
+   "path": "src/components/admin/tour/TourWelcomeCard.tsx",
+   "uid": "0bfb01b43fefbb0f87b237bbe471060917f64c9a"
+  },
+  {
+   "path": "src/components/site/BranchCard.tsx",
+   "uid": "e3435748d890a3a530dee9093a0ced204d9154e3"
+  },
+  {
+   "path": "src/components/site/CheckoutForm.tsx",
+   "uid": "e350b65ab4a0dec5d4e33d919d51b133c19f94f6"
+  },
+  {
+   "path": "src/components/site/Footer.tsx",
+   "uid": "f0a608a8b639c4b7a0aa0efbbc3c619aa5b871dc"
+  },
+  {
+   "path": "src/components/site/Hero.tsx",
+   "uid": "5f1cbe16e0975616cc6828e9249b3d7392b64667"
+  },
+  {
+   "path": "src/components/site/Logo.tsx",
+   "uid": "ffec2ba592a6df4167c199e94a17e3b1e519ba8c"
+  },
+  {
+   "path": "src/components/site/MenuBrowser.tsx",
+   "uid": "706972b41339cac0720bbdfc7b4812022c4c616c"
+  },
+  {
+   "path": "src/components/site/ModeCards.tsx",
+   "uid": "77be432cf46a6ce2ff929c91b412ae59cb4c3644"
+  },
+  {
+   "path": "src/components/site/ModeSync.tsx",
+   "uid": "10d73c5b8a0e592f236ea698f8bd9270f451c92f"
+  },
+  {
+   "path": "src/components/site/Nav.tsx",
+   "uid": "63312f37db551bba4400a066c00e82cbbdc84722"
+  },
+  {
+   "path": "src/components/site/OpenBadge.tsx",
+   "uid": "5f9f026003af01681186516cda02113d61532000"
+  },
+  {
+   "path": "src/components/site/OrderTracker.tsx",
+   "uid": "ecc003ee3401e256498de36d5d08609a5ad9fd8d"
+  },
+  {
+   "path": "src/components/site/ReceiptUpload.tsx",
+   "uid": "25db42b1d65e9181c7d526cc6c20c0595411ccb1"
+  },
+  {
+   "path": "src/components/site/ReservationForm.tsx",
+   "uid": "e81d7d2cb78aa5aab3b391cdb536423103a7b02d"
+  },
+  {
+   "path": "src/components/site/cart.tsx",
+   "uid": "e1dd1610f58df6e870132e95673193d588dcfd31"
+  },
+  {
+   "path": "src/lib/admin/audit-load.ts",
+   "uid": "3c4f7af4b6329abf63b2cc33a5bdeb797abea97c"
+  },
+  {
+   "path": "src/lib/admin/audit.ts",
+   "uid": "faa6783e052f047c468eedc4391a9b059295dfe5"
+  },
+  {
+   "path": "src/lib/admin/dates.ts",
+   "uid": "610fb626dab425632cb5440b20e66ddef91bd132"
+  },
+  {
+   "path": "src/lib/admin/inventory-presets.ts",
+   "uid": "3b143e0e961e894d8c4c5df12f4cf8de675dc219"
+  },
+  {
+   "path": "src/lib/admin/notify.ts",
+   "uid": "9528823d049baad56acb865e9ce8b42f0fc3c928"
+  },
+  {
+   "path": "src/lib/admin/realtime.ts",
+   "uid": "5fbad7e56143454407800c8bca710630536888d9"
+  },
+  {
+   "path": "src/lib/admin/roles.ts",
+   "uid": "389dadc984e2393156e24560e047e04a9ab65564"
+  },
+  {
+   "path": "src/lib/admin/scope.ts",
+   "uid": "30032d79ecea73c22465246048902e00f865e08a"
+  },
+  {
+   "path": "src/lib/admin/stock-summary.ts",
+   "uid": "e9501e96361c547ea36af67b7a330150da1a9de2"
+  },
+  {
+   "path": "src/lib/admin/tours.ts",
+   "uid": "828cecc85c3b0f8e3045c162f008ce204eec441b"
+  },
+  {
+   "path": "src/lib/admin/ui.ts",
+   "uid": "1bf49f0270dddab45e24056661e80ccb1f4eb4d1"
+  },
+  {
+   "path": "src/lib/data.ts",
+   "uid": "5e6a538646b3c89aa4d649352b65b1ebd61a0c51"
+  },
+  {
+   "path": "src/lib/email.ts",
+   "uid": "d050f3011bf51a4caacb04e7e7851524bfcf5b0b"
+  },
+  {
+   "path": "src/lib/format.ts",
+   "uid": "26748bb956da83e4229f8e08ed88bac6a4b09f00"
+  },
+  {
+   "path": "src/lib/hours.ts",
+   "uid": "181b13dafe831acdfcc746bfd13f6c741ce793df"
+  },
+  {
+   "path": "src/lib/supabase/client.ts",
+   "uid": "1c8f6ae71aaa3b852f2c8f568696fb071c0475a9"
+  },
+  {
+   "path": "src/lib/supabase/server.ts",
+   "uid": "af38bf2025295711eacd590cc276c1118a384357"
+  },
+  {
+   "path": "src/lib/types.ts",
+   "uid": "0ca4425723f88c1d37d56c5c454d19c8c6bbb2ff"
+  },
+  {
+   "path": "src/proxy.ts",
+   "uid": "925de4ffd6e9b75939de400c9634b37cce93bdc2"
+  },
+  {
+   "path": "tsconfig.json",
+   "uid": "27dded29dc880f958ee67c9ed276fb2b1412f515"
+  }
+ ]
+}

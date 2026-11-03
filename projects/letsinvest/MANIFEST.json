@@ -1,0 +1,149 @@
+{
+ "deploymentId": "dpl_CnApuTk4ZmcvkVpHFHvDMdWmpU5A",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "4d2170db40b7b95e789e418549d3b22271cec85e"
+  },
+  {
+   "path": "README.md",
+   "uid": "b4235c77aab8ce285909b31d7cabfe94203b824c"
+  },
+  {
+   "path": "index.html",
+   "uid": "44680a1b471ed28e2cb8c5567c33eef9e107f64b"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "813899a0d41dbd0ee43e5b7dab82fe1d14e12fa8"
+  },
+  {
+   "path": "package.json",
+   "uid": "2529f8a8436eda0b3ee28e36b5f3a3497e18daa2"
+  },
+  {
+   "path": "src/App.tsx",
+   "uid": "ae95b990be9a1ad050acf20e1ee650b5edcb7c8e"
+  },
+  {
+   "path": "src/components/ClientEditor.tsx",
+   "uid": "d36b6971008faa59679f1c29e55dfa108db0ff86"
+  },
+  {
+   "path": "src/components/ControlsPanel.tsx",
+   "uid": "4e50f17841306edbe55929a16108dd44269b17fb"
+  },
+  {
+   "path": "src/components/layout.tsx",
+   "uid": "64ee2745887f24ad9afacfa7ec5c3b46c985672d"
+  },
+  {
+   "path": "src/components/shared.tsx",
+   "uid": "96d3df7c52d4b43eb4ba45f1afb84b858e0c7f42"
+  },
+  {
+   "path": "src/components/timeline.tsx",
+   "uid": "c56e6e528b9e95f237920e1735ac56847c145a7e"
+  },
+  {
+   "path": "src/components/ui/index.tsx",
+   "uid": "169b4e0a2cfdab0ebd06632e834b3409a9eb298b"
+  },
+  {
+   "path": "src/engine/analysis.ts",
+   "uid": "2e3b0112947a1680f7dc01631aaad8167492c85d"
+  },
+  {
+   "path": "src/engine/defaults.ts",
+   "uid": "88bbac6b779d459277b1b013292f7e8f1b23ce16"
+  },
+  {
+   "path": "src/engine/engine.test.ts",
+   "uid": "ddd3d152edcac1a0106311b56bf571cfef5cc854"
+  },
+  {
+   "path": "src/engine/engine.ts",
+   "uid": "60b96d341c72e28d387e402a72e9007467db7847"
+  },
+  {
+   "path": "src/engine/money.ts",
+   "uid": "325b1e768a81c9c4d32e435bba149a863178b2af"
+  },
+  {
+   "path": "src/engine/scenarios.ts",
+   "uid": "51ba3730b21f545235e440633e5a81d99768467e"
+  },
+  {
+   "path": "src/engine/types.ts",
+   "uid": "f51ac92218016d5f92fbb77ca8902fd365f42aba"
+  },
+  {
+   "path": "src/index.css",
+   "uid": "29f17f91583e34bc3537173dd5fe315034a8173f"
+  },
+  {
+   "path": "src/main.tsx",
+   "uid": "7650ed033c079b853298449dffbafac4274c1f66"
+  },
+  {
+   "path": "src/pages/Cycles.tsx",
+   "uid": "ea41e9d23bcf1314793e91b94d380f11c40c8c1e"
+  },
+  {
+   "path": "src/pages/Deals.tsx",
+   "uid": "cf48e3cb6d20ec891b47f843c3deb2667afdeb89"
+  },
+  {
+   "path": "src/pages/Earnings.tsx",
+   "uid": "9b3c6c24490cfb5d468c5e29e8a5c923fd189b6e"
+  },
+  {
+   "path": "src/pages/Overview.tsx",
+   "uid": "884a38433c37ec252cf87a2554dfacff6b858e05"
+  },
+  {
+   "path": "src/pages/Recovery.tsx",
+   "uid": "704f68508c395f1cd98b5e9bd4823480a51d89d0"
+  },
+  {
+   "path": "src/pages/Report.tsx",
+   "uid": "b4f52503865034fa1a1c7d1c49085b9cab84a6c7"
+  },
+  {
+   "path": "src/pages/Scaling.tsx",
+   "uid": "3792ae1315f5457ce954b3e93930aceb8a95267b"
+  },
+  {
+   "path": "src/pages/Scenarios.tsx",
+   "uid": "85185c324e166d9bc51400693f761743143fbaee"
+  },
+  {
+   "path": "src/pages/Terms.tsx",
+   "uid": "c62213581fc6395a7c63d359b383002460199e04"
+  },
+  {
+   "path": "src/pages/Timeline.tsx",
+   "uid": "3c23432b681e32cd5404d98baf7b31dea2b89978"
+  },
+  {
+   "path": "src/presentation/Presentation.tsx",
+   "uid": "50b9273fd2733dc44f5fdebecaa8fb421050b8c8"
+  },
+  {
+   "path": "src/state/store.tsx",
+   "uid": "8334ec6f390837b0de70cdeeef19265127d8a06f"
+  },
+  {
+   "path": "tsconfig.json",
+   "uid": "891822a284ec82200f7749f9ec4b779187bc19fa"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "1e84aed5b21c94aa9489f8872c6b58204d49e175"
+  },
+  {
+   "path": "vite.config.ts",
+   "uid": "1549fbbf2b71e3290358347ef16f9324e0871c5c"
+  }
+ ]
+}

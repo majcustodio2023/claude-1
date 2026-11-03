@@ -1,0 +1,181 @@
+{
+ "deploymentId": "dpl_CiYzrhVyzX6XruZSxKUKZooECrdC",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "b5e879cb749418785f18dd5c519ac55ee8e04d93"
+  },
+  {
+   "path": "public/app.js",
+   "uid": "3f099e8d4b02ce778ea7e0dccaef87841e5f6b43"
+  },
+  {
+   "path": "public/data.js",
+   "uid": "107a580a9e6d656e33cd881888a6448df640b5ed"
+  },
+  {
+   "path": "public/img/americano.jpg",
+   "uid": "9929b3a1754be81715b1d977dd07b7cf53ed6826"
+  },
+  {
+   "path": "public/img/beach-cups.jpg",
+   "uid": "566f3a9961b32bf3d2605f93e5cb5a7f642ca58b"
+  },
+  {
+   "path": "public/img/bundles-poster.jpg",
+   "uid": "009a69a1828e0b86d4654fdd12f8ef682d60ee96"
+  },
+  {
+   "path": "public/img/cappuccino.jpg",
+   "uid": "f7fa80d5711bb914f839cb8b52b317a4fa977c7f"
+  },
+  {
+   "path": "public/img/carbonara.jpg",
+   "uid": "188b41d23829174f26d7fd50506f5fbfd92e0d7a"
+  },
+  {
+   "path": "public/img/cheesecake.jpg",
+   "uid": "a021744abfa93b4afa1e1cf305950037adef0325"
+  },
+  {
+   "path": "public/img/choco.jpg",
+   "uid": "adc7e880c390a181ee44ac8b570e65a27e83bc1f"
+  },
+  {
+   "path": "public/img/clubsandwich.jpg",
+   "uid": "59bf45d013f31f51929956dee592426ee6db1873"
+  },
+  {
+   "path": "public/img/fillet-white-sauce.jpg",
+   "uid": "0876e3de2bd3616fb779d041ebcac5824a9b9b87"
+  },
+  {
+   "path": "public/img/fishchips.jpg",
+   "uid": "45d8d1df0ab2ff96d0de8ab4193822245ceae827"
+  },
+  {
+   "path": "public/img/fizzy-strawberry.jpg",
+   "uid": "bd05eca93c78c243a5ecd49d2e44026dbf5ce119"
+  },
+  {
+   "path": "public/img/fizzy-sunset.jpg",
+   "uid": "76141527ebb2d856561cdf2959e53468cd89c00e"
+  },
+  {
+   "path": "public/img/fries.jpg",
+   "uid": "1ec664466ba4dd38f1958bda793cc2d262873ad1"
+  },
+  {
+   "path": "public/img/hello-summer.jpg",
+   "uid": "6725ef8e3ae7fa3b1e4784c662ccd098a1a08cc3"
+  },
+  {
+   "path": "public/img/hotmatcha.jpg",
+   "uid": "4e7ceb502df0153e8f1036d141a002e110e35f41"
+  },
+  {
+   "path": "public/img/icedcoffee.jpg",
+   "uid": "fa210ad21c109137965d326cacc37453d5e0d7b3"
+  },
+  {
+   "path": "public/img/icedmatcha.jpg",
+   "uid": "4a2dfdb95141aeedf00ba43712985040fe239c05"
+  },
+  {
+   "path": "public/img/interior.jpg",
+   "uid": "6e6d40d835783812000ccb583383570ccdeca721"
+  },
+  {
+   "path": "public/img/latteart.jpg",
+   "uid": "4c16d4c94499bda0f6c76cc0e793555267f9159a"
+  },
+  {
+   "path": "public/img/macchiato.jpg",
+   "uid": "6e4665a00a950c4f0c1b2a09c5e27c5858aa78b7"
+  },
+  {
+   "path": "public/img/nachos.jpg",
+   "uid": "ae663d4325b3969c6e763c1746d227cd61f0dba0"
+  },
+  {
+   "path": "public/img/pesto.jpg",
+   "uid": "91206fd52f3977aa74bfc64c5d091add14dbb6e7"
+  },
+  {
+   "path": "public/img/pour.jpg",
+   "uid": "2706b78699954a227b08197c1ed68e49b052e73f"
+  },
+  {
+   "path": "public/img/quesadilla.jpg",
+   "uid": "35a4020429b1c261908753c9531a354b2793483b"
+  },
+  {
+   "path": "public/img/ricebowl.jpg",
+   "uid": "050e9dd8390c6dc877cc0f5fb0e7abff78ec4a31"
+  },
+  {
+   "path": "public/img/slush-blue-lychee.jpg",
+   "uid": "14ff21da39ece966815c80950ac307033d784c33"
+  },
+  {
+   "path": "public/img/slush-green-apple.jpg",
+   "uid": "0aed74c8bbfa4c43840663edbb66b29411e2b815"
+  },
+  {
+   "path": "public/img/slush-honey-lemonade.jpg",
+   "uid": "9d0d18b878db0affbe74012639b469fcaecdeaa2"
+  },
+  {
+   "path": "public/img/slush-lemon-cucumber.jpg",
+   "uid": "715bf40385b8d649d3d119f7b34104ae0b9fe889"
+  },
+  {
+   "path": "public/img/slush-passion-mango.jpg",
+   "uid": "1924925f5bb73156c2bb37b053438d3a08c9100c"
+  },
+  {
+   "path": "public/img/spanish.jpg",
+   "uid": "418c2044ea4229165e94c41d6b44f92716c2b807"
+  },
+  {
+   "path": "public/img/strawberry.jpg",
+   "uid": "4c939498795b85ed0bd872ea3523f5985f5d27da"
+  },
+  {
+   "path": "public/img/sunset-cheers.jpg",
+   "uid": "9caa435104a35bd08a9cc16b0438da1037a9255a"
+  },
+  {
+   "path": "public/img/tofu-sisig.jpg",
+   "uid": "ee44fd79904adcb573200ea7443071b32e74e42f"
+  },
+  {
+   "path": "public/img/tuna-shanghai.jpg",
+   "uid": "6ca5426fff1d10cb32d80fd06949f16b1f909c4f"
+  },
+  {
+   "path": "public/img/waffle.jpg",
+   "uid": "9d1aef43bb8fb526156bcf616c45eb4031133dfb"
+  },
+  {
+   "path": "public/img/why-matcha.jpg",
+   "uid": "196c725332892dea1d61126657ef30b7cb7e170b"
+  },
+  {
+   "path": "public/img/wings.jpg",
+   "uid": "9e7353610852acabb6c2d26a940e55a6c44d5338"
+  },
+  {
+   "path": "public/index.html",
+   "uid": "55665c682d254267ab2991276ceb8cceb773ef5f"
+  },
+  {
+   "path": "public/styles.css",
+   "uid": "b8c4e0233c55b1feed58c4c27f62299a834132bd"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "5802dec1be67ce2e8df7bb187a2c82c3dccde5bc"
+  }
+ ]
+}

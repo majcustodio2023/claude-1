@@ -1,0 +1,437 @@
+{
+ "deploymentId": "dpl_3tpm1vGLEVvCnMWuDvbnAe3NcogT",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "22a1188f99b4ab2ee33ec9ad9a67e7b180ce3c98"
+  },
+  {
+   "path": "README.md",
+   "uid": "7ba16f1bf099196063e5d413cf00a5aa850b043d"
+  },
+  {
+   "path": "eslint.config.mjs",
+   "uid": "ed485d506d8c18e1e78bd8414d8f485e408b5b42"
+  },
+  {
+   "path": "next-env.d.ts",
+   "uid": "79ea33d5bd6bf5319667f287c6aec3a5e0ce256a"
+  },
+  {
+   "path": "next.config.ts",
+   "uid": "89327ac52fc9a00fb8b885afd6654f18e58b3156"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "bae3a6f26e3ef53238502a13e3592959715a7788"
+  },
+  {
+   "path": "package.json",
+   "uid": "3a1d55e70938d227c1894f13520ae8cb5f49e45f"
+  },
+  {
+   "path": "postcss.config.mjs",
+   "uid": "73695b153f42c92ffd2e6af7b20a4c0c74adc3ec"
+  },
+  {
+   "path": "public/file.svg",
+   "uid": "fb380eeffe87d50b597383664c02982964d0d28c"
+  },
+  {
+   "path": "public/globe.svg",
+   "uid": "2eba23b01a46733bb8423e6d38ebf5f7e95abec5"
+  },
+  {
+   "path": "public/media/candidates.jpg",
+   "uid": "b128ba1375a9bc14cf887ad9f3e7fc75fd54e9ac"
+  },
+  {
+   "path": "public/media/cma-ball.jpg",
+   "uid": "409719a668032278895d4a80928e77e7b6aebb68"
+  },
+  {
+   "path": "public/media/cma-faculty.jpg",
+   "uid": "73f4bf494e1f3f610432f43160d7f3448d4526da"
+  },
+  {
+   "path": "public/media/director-avatar.jpg",
+   "uid": "b870b60a9ced4449a18271b152e83c992076f298"
+  },
+  {
+   "path": "public/media/director-office.jpg",
+   "uid": "cb6cae90c0577fc02ce883da7b30d333c6dc971a"
+  },
+  {
+   "path": "public/media/director-picc.jpg",
+   "uid": "f215d04f6a094f9f2276b402e86ae9f40f0f6a69"
+  },
+  {
+   "path": "public/media/director-university.jpg",
+   "uid": "9e5e18bb06c65dbb31ec1b6c4a3e2eae4a1c873b"
+  },
+  {
+   "path": "public/media/director.jpg",
+   "uid": "a229838b0b200b699557430c4476219201562594"
+  },
+  {
+   "path": "public/media/faculty.jpg",
+   "uid": "ee59d9f17de5710194b4bebdae31241bf6f0f617"
+  },
+  {
+   "path": "public/media/hero-bg.jpg",
+   "uid": "efe7a4fde41a06e00254e7e837886ca73cf32f91"
+  },
+  {
+   "path": "public/media/hero-photo.jpg",
+   "uid": "414ddd6f3582f1b52bb528494390e5a50ef59a21"
+  },
+  {
+   "path": "public/media/hero-strip.png",
+   "uid": "757a3e826bb9de8d04435592d90f46c695dd6fd0"
+  },
+  {
+   "path": "public/media/life-after-cma.mp4",
+   "uid": "667fb24a7cf8045725718c32f62ea88ab09a2a85"
+  },
+  {
+   "path": "public/media/logo-full.png",
+   "uid": "2b7c24a7ba3990d4f34f45ac959200a5624b10aa"
+  },
+  {
+   "path": "public/media/logo-insights.png",
+   "uid": "d2ce497ed12e536fc0c2bda088ee9cbb262075ac"
+  },
+  {
+   "path": "public/media/mentors.jpg",
+   "uid": "c376c297e0397581128e1135ff88636918f60752"
+  },
+  {
+   "path": "public/media/msg-1.jpg",
+   "uid": "388dcdf4d8a4078afd0be24cd4a3758911202eb3"
+  },
+  {
+   "path": "public/media/msg-2.jpg",
+   "uid": "5acbc4f63ae6ca9537f8c598eff7dedaccb6b2cf"
+  },
+  {
+   "path": "public/media/msg-3.jpg",
+   "uid": "d6790c7d2c983703da773d5b3efa692c9b588c26"
+  },
+  {
+   "path": "public/media/msg-4.jpg",
+   "uid": "b6a769ee1266bd144c74be0b0b0b4a88f240efb4"
+  },
+  {
+   "path": "public/media/orientation-bai-2026.jpg",
+   "uid": "df83e8acb1dbd8a5e1cd917d863afe257bfb224d"
+  },
+  {
+   "path": "public/media/orientation.jpg",
+   "uid": "0e5d9fe61b45abb3348636eed95cf7da5ee2a68f"
+  },
+  {
+   "path": "public/media/passers-usc-1.jpg",
+   "uid": "305ba98f8fd45944a40213a5aabf8b9db8f24340"
+  },
+  {
+   "path": "public/media/passers-usc-2.jpg",
+   "uid": "9c99dae760336e3514dc9545159316b5ec89a2c4"
+  },
+  {
+   "path": "public/media/passers-ust-2.jpg",
+   "uid": "22395a0ea9b0bf8397d846852a2740e2b95e2ddf"
+  },
+  {
+   "path": "public/media/passers-ust-tall.jpg",
+   "uid": "1002c820a9ee875bcb5510e8a0c68ff69be46497"
+  },
+  {
+   "path": "public/media/seal.png",
+   "uid": "97408cccca6e059210345817b3f610e2712c3db0"
+  },
+  {
+   "path": "public/media/starter-pack.jpg",
+   "uid": "409a922ac0acb9fe115fde6f9c51cc781ade2a4c"
+  },
+  {
+   "path": "public/media/team-passers.jpg",
+   "uid": "bf6d8edb7ec14e4584df7802e714504cf273db37"
+  },
+  {
+   "path": "public/media/team.jpg",
+   "uid": "5ba34637f3fa320d899736bde3cf1be2a2da2ee3"
+  },
+  {
+   "path": "public/media/university-orientation-2.jpg",
+   "uid": "35dcad58bd71a5710f5f9d325ab84f96d720e202"
+  },
+  {
+   "path": "public/media/university-orientation.jpg",
+   "uid": "37e693edb9b818de702281bfac99642da6989dfc"
+  },
+  {
+   "path": "public/media/uworld-mock.jpg",
+   "uid": "76cd7a59a663df64b1654e3bbfcc042ac60697d9"
+  },
+  {
+   "path": "public/media/uworld-platform.jpg",
+   "uid": "d094161e36f3d5d2148e1ef70c4dc1f178eb6205"
+  },
+  {
+   "path": "public/media/uworld-progress.jpg",
+   "uid": "cce246e1bfce13b2ebc7749f5267ddeebe841cd3"
+  },
+  {
+   "path": "public/next.svg",
+   "uid": "3f3e95622612b989c5bd6a03299a308c6f3c7e6b"
+  },
+  {
+   "path": "public/vercel.svg",
+   "uid": "cebb8852d58c8886be3e9051a26957f42bb82f1a"
+  },
+  {
+   "path": "public/window.svg",
+   "uid": "54c48e0daa6caa317fe1b4c419007fd93e948db9"
+  },
+  {
+   "path": "src/app/admin/(app)/billing/actions.ts",
+   "uid": "f1faa457184cbf9d47a09d5aefdcf7179c0deb70"
+  },
+  {
+   "path": "src/app/admin/(app)/billing/page.tsx",
+   "uid": "7b145731287b59244fa983d625e602b44fb09123"
+  },
+  {
+   "path": "src/app/admin/(app)/calendar/actions.ts",
+   "uid": "068b271e79fcf82a310808246b61f916b908b026"
+  },
+  {
+   "path": "src/app/admin/(app)/calendar/page.tsx",
+   "uid": "9bdc1915e3af90d4e8f93c58df4d777384b265e0"
+  },
+  {
+   "path": "src/app/admin/(app)/followup/page.tsx",
+   "uid": "c7adbeb1e850437802accede4e4daaf8a8f935a8"
+  },
+  {
+   "path": "src/app/admin/(app)/layout.tsx",
+   "uid": "9c49070f148314f3a33b5651873f4447471b40e1"
+  },
+  {
+   "path": "src/app/admin/(app)/leads/page.tsx",
+   "uid": "5b9dc0fbabd1c8f9c74b5fe1bb9c8406c9db24e6"
+  },
+  {
+   "path": "src/app/admin/(app)/page.tsx",
+   "uid": "178fde0e975bfbd7c5fbd895f0f8e8d3cad18e7d"
+  },
+  {
+   "path": "src/app/admin/(app)/pipeline/page.tsx",
+   "uid": "e72d7f6668b61b563391e9ec6612bb24127fe9e5"
+  },
+  {
+   "path": "src/app/admin/(app)/sequence/page.tsx",
+   "uid": "f977c9ceb3f83fce6a35290d7a541e3e674c7e82"
+  },
+  {
+   "path": "src/app/admin/(app)/settings/actions.ts",
+   "uid": "04decc00000c77d162b341888dc54c4bb2615b62"
+  },
+  {
+   "path": "src/app/admin/(app)/settings/page.tsx",
+   "uid": "6e257dd166a61ef3d50bb82a15e7d422355f4f65"
+  },
+  {
+   "path": "src/app/admin/login/page.tsx",
+   "uid": "eb942e42e688a6b42555766cdad546f38ef6a84d"
+  },
+  {
+   "path": "src/app/api/admin/followup/route.ts",
+   "uid": "7aa6d89ba6e98250bbbdc09669bb02d30177ef3a"
+  },
+  {
+   "path": "src/app/api/admin/leads/[id]/route.ts",
+   "uid": "f549e5950a81e80b6327491209244f277b34d23f"
+  },
+  {
+   "path": "src/app/api/admin/leads/route.ts",
+   "uid": "78478c6bb3d8794910b67308bb4676cdf19a2150"
+  },
+  {
+   "path": "src/app/api/admin/login/route.ts",
+   "uid": "587e63e63e54a135978e25de33110251021386ee"
+  },
+  {
+   "path": "src/app/api/admin/logout/route.ts",
+   "uid": "0278ceadde923f55c3ef58a316e8f84d680e93f5"
+  },
+  {
+   "path": "src/app/api/admin/upload/route.ts",
+   "uid": "de2ab4217bbe4250bef48e8f815c8f77b20c437d"
+  },
+  {
+   "path": "src/app/api/book/ics/[id]/route.ts",
+   "uid": "405e6b244595a354e2ad64d12662525315f60cfc"
+  },
+  {
+   "path": "src/app/api/book/route.ts",
+   "uid": "9ff6c9911ed1a1754ec548bb54e3d528f38fed33"
+  },
+  {
+   "path": "src/app/api/calendar/[token]/route.ts",
+   "uid": "9c6b7e7b2dd32bcebe53cf81c69d1399f4a3ed1e"
+  },
+  {
+   "path": "src/app/api/cron/appointments/route.ts",
+   "uid": "574894d572fbf0ec7a45fa7189db5f172b7ddca9"
+  },
+  {
+   "path": "src/app/api/cron/followup/route.ts",
+   "uid": "af573045b166a2ea8e1ab0d9002da635128b95c1"
+  },
+  {
+   "path": "src/app/api/leads/route.ts",
+   "uid": "b8af590ca38a0997b59d10c92349a8cf0533296e"
+  },
+  {
+   "path": "src/app/api/unsubscribe/route.ts",
+   "uid": "0cf1590eebd8d870c9bac805b8d804b2c8e11da0"
+  },
+  {
+   "path": "src/app/favicon.ico",
+   "uid": "9ecfcc8f0ead0bf3d2d7c39e084b88f41cc89a2e"
+  },
+  {
+   "path": "src/app/globals.css",
+   "uid": "0fef59ecd20bf1b9dca768eb7cf1cbc12660d4bf"
+  },
+  {
+   "path": "src/app/layout.tsx",
+   "uid": "cc2bfaf847a5333221d8355a902661b01b3e3255"
+  },
+  {
+   "path": "src/app/page.tsx",
+   "uid": "427d05c7e47bff3f90442cda6bc5a52253f61fb8"
+  },
+  {
+   "path": "src/app/thank-you/page.tsx",
+   "uid": "be0f60a03368f06c9298fe0bc20f98f3abe9163f"
+  },
+  {
+   "path": "src/app/unsubscribed/page.tsx",
+   "uid": "c25bad4b5b4e77d0dcd1cca17d570227fdb06c91"
+  },
+  {
+   "path": "src/components/BookingFlow.tsx",
+   "uid": "8aa07c7e3cc85dc1e792432d1a3ec71dd176a552"
+  },
+  {
+   "path": "src/components/BookingModal.tsx",
+   "uid": "70f0a24437fc1d2b20a4b2659c528e4a2f0c63ea"
+  },
+  {
+   "path": "src/components/GuideForm.tsx",
+   "uid": "f5d5c5eb8c7866ddd3eb123d2ca51a5b04fdf673"
+  },
+  {
+   "path": "src/components/HeroVideo.tsx",
+   "uid": "54f03817f17efaf5062856ea7b02ee31f0f4b2b9"
+  },
+  {
+   "path": "src/components/MetaPixel.tsx",
+   "uid": "a0572c98d13e591f893169a5a635982deb9bd253"
+  },
+  {
+   "path": "src/components/SiteChrome.tsx",
+   "uid": "85054d2911c0e0b295de086063a832fb674bc3d1"
+  },
+  {
+   "path": "src/components/ThankYouDetails.tsx",
+   "uid": "bbf8c369040732f0150eb58e39e226c80d2a304c"
+  },
+  {
+   "path": "src/components/admin/AdminNav.tsx",
+   "uid": "454850d7ed359065657d6d0b910b0b4192086190"
+  },
+  {
+   "path": "src/components/admin/CalendarView.tsx",
+   "uid": "2dc06497a8ce1bbde3f1787dd34627d58b715c3f"
+  },
+  {
+   "path": "src/components/admin/FollowupBox.tsx",
+   "uid": "0bf20690feabfdf074449186d160af93d64afd6c"
+  },
+  {
+   "path": "src/components/admin/LeadDrawer.tsx",
+   "uid": "b15f88618764a81b1f50925c8d1413f7c432fb82"
+  },
+  {
+   "path": "src/components/admin/LeadsTable.tsx",
+   "uid": "2794c7e2e2b8eb34552040f9b0f38d1f19a255c8"
+  },
+  {
+   "path": "src/components/admin/Pipeline.tsx",
+   "uid": "9b6ccbe3c8517c22fb972d271bee76653baaa9d3"
+  },
+  {
+   "path": "src/components/admin/QuotaBanner.tsx",
+   "uid": "b54fedfd9a43aaacb4ed3c4635a3fac5f93da588"
+  },
+  {
+   "path": "src/components/admin/SequenceEditor.tsx",
+   "uid": "a50dcd1b9ca2e733a54ce368d2b730d77caf1a76"
+  },
+  {
+   "path": "src/components/admin/ui.tsx",
+   "uid": "411c4a7efcf67db5f73b29ff02ab78c1e500c4e1"
+  },
+  {
+   "path": "src/lib/appointments.ts",
+   "uid": "bf532496c545743b68dd56dc94ff0085576679f9"
+  },
+  {
+   "path": "src/lib/apptLabels.ts",
+   "uid": "063619ec8d3003fff2ca1f1b3655cce79b57181f"
+  },
+  {
+   "path": "src/lib/auth.ts",
+   "uid": "62abd3837cf41d3526146968803a9fd1c9f093e0"
+  },
+  {
+   "path": "src/lib/billing.ts",
+   "uid": "40053f4c0ad6cf2c77f968322144264690075ab7"
+  },
+  {
+   "path": "src/lib/booking.ts",
+   "uid": "e3f4d7981ef4f7e9f92bd2786cde52389bc61fdd"
+  },
+  {
+   "path": "src/lib/db.ts",
+   "uid": "232b2e70af4e850bc5f2e5b56e058ef5f87dc6fd"
+  },
+  {
+   "path": "src/lib/email.ts",
+   "uid": "b17b893f56a69642df65769b60dcaa1a88223543"
+  },
+  {
+   "path": "src/lib/followup.ts",
+   "uid": "07f2379682144180d9bd5aed01cc44d328a3d3cd"
+  },
+  {
+   "path": "src/lib/stages.ts",
+   "uid": "ca9b685a2daf6e7a763bb2278af6dd6facc5c8e7"
+  },
+  {
+   "path": "src/middleware.ts",
+   "uid": "d5d10049a90d2c163c372aac3dabd6ea2b051649"
+  },
+  {
+   "path": "tsconfig.json",
+   "uid": "a31493a7b9a50a1220481e42b85bf19bbeff6f77"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "b8a397e2923402a821e3a627e283d3d40ad9a7b8"
+  }
+ ]
+}

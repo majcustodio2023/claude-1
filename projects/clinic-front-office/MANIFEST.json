@@ -1,0 +1,209 @@
+{
+ "deploymentId": "dpl_sLdpU4jyiurLfEV5HqVpC6Sdiwp4",
+ "files": [
+  {
+   "path": ".env.example",
+   "uid": "97a95caadff8ca5069f4a2f9afcaecd6c203387c"
+  },
+  {
+   "path": ".vercelignore",
+   "uid": "45d71e51a2e1ace3e0d498578be1e6f9cdce5498"
+  },
+  {
+   "path": "Dockerfile",
+   "uid": "ce283360e829ecf00e5161ade053b9daa333845a"
+  },
+  {
+   "path": "README.md",
+   "uid": "ac431248f2e62997a58c40110f2af2e81752a5c2"
+  },
+  {
+   "path": "deploy/deploy.sh",
+   "uid": "2dfd59d75d26ccf8e9aeb341fb4bff9043376bfd"
+  },
+  {
+   "path": "deploy/nginx/clinic.majcustodioph.com.conf",
+   "uid": "a5091adbc1c08fcec497104547d9a385a5e452e2"
+  },
+  {
+   "path": "docker-compose.yml",
+   "uid": "b852587145b8776ffed02bdcc918f77658b8e378"
+  },
+  {
+   "path": "ecosystem.config.js",
+   "uid": "6a3472e0ab2bebeeb61ded8ee142df7e1ce71615"
+  },
+  {
+   "path": "next-env.d.ts",
+   "uid": "68380a26d094bb3b37470b0182d9ff4015b14854"
+  },
+  {
+   "path": "next.config.mjs",
+   "uid": "54e1b7adeb7addeb84861c86276a4c059772e24d"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "2f30dcca94889f8d67212c830a72a770b7e848ff"
+  },
+  {
+   "path": "package.json",
+   "uid": "1292691967f144dc871a74b8071b323c2c541c14"
+  },
+  {
+   "path": "postcss.config.mjs",
+   "uid": "c687693f4d50b920eb3694f3db3f527d5b1b3d79"
+  },
+  {
+   "path": "public/robots.txt",
+   "uid": "63657cbb7d7086c56b0cd4e5c6999bb683664868"
+  },
+  {
+   "path": "scripts/prepare-standalone.mjs",
+   "uid": "c8a86c6017648388ec228216453aba74fe0a4038"
+  },
+  {
+   "path": "src/app/(app)/analytics/page.tsx",
+   "uid": "817c11f4e0773b3e9d7a8639ef02687c70a5e205"
+  },
+  {
+   "path": "src/app/(app)/automations/page.tsx",
+   "uid": "af14dd58de42fd45cca32e7a5b384f289c9db792"
+  },
+  {
+   "path": "src/app/(app)/calendar/page.tsx",
+   "uid": "9336fd1af858456d0809a35aab2e267e158f304e"
+  },
+  {
+   "path": "src/app/(app)/dashboard/page.tsx",
+   "uid": "76ce77b00925a4c566e8cb200ff9d37980a8a1b8"
+  },
+  {
+   "path": "src/app/(app)/inbox/page.tsx",
+   "uid": "5fc4440fafbdfb71bbb1e1a7f727840a0af4dc18"
+  },
+  {
+   "path": "src/app/(app)/layout.tsx",
+   "uid": "f22fcbf8b4a7315e25937318b0b2ab822a7d9d10"
+  },
+  {
+   "path": "src/app/(app)/patients/[id]/page.tsx",
+   "uid": "abcb23f4d23a8df6f039ec0c879166e74bf18192"
+  },
+  {
+   "path": "src/app/(app)/patients/page.tsx",
+   "uid": "9bf8d0190922edfcf70d7295f1cc4bebb1ad6b47"
+  },
+  {
+   "path": "src/app/(app)/settings/page.tsx",
+   "uid": "f67e864fc7edc727d2ba0d2d7b2801faa46f8e9c"
+  },
+  {
+   "path": "src/app/(app)/template.tsx",
+   "uid": "25520ca21983ec0547c24f9dab71421ee3e8b8cf"
+  },
+  {
+   "path": "src/app/book/page.tsx",
+   "uid": "1821568d2385e849989072027b8be1578ec27ba5"
+  },
+  {
+   "path": "src/app/globals.css",
+   "uid": "f05709c2f4259a8e49118602f0661ee88a960fa1"
+  },
+  {
+   "path": "src/app/icon.svg",
+   "uid": "ad6dee31c7da8365c25315920d9b20d97a20fc2c"
+  },
+  {
+   "path": "src/app/layout.tsx",
+   "uid": "ce166ba193b793a18c4ab14dab8529193d103b52"
+  },
+  {
+   "path": "src/app/page.tsx",
+   "uid": "871b3ddb81cdf08b07fc9c1f4452235a04f4447f"
+  },
+  {
+   "path": "src/components/appointments/AppointmentDrawer.tsx",
+   "uid": "d3529a964621293103c1916774976c259403d349"
+  },
+  {
+   "path": "src/components/appointments/NewAppointmentModal.tsx",
+   "uid": "417b0b1f401468ed2883dfb3adcf5740b5f80a9c"
+  },
+  {
+   "path": "src/components/inbox/ChannelIcon.tsx",
+   "uid": "ac223545efe7d5dfa430580c42ddd73f41e49564"
+  },
+  {
+   "path": "src/components/patients/InteractionTimeline.tsx",
+   "uid": "3139e49bb697a08dbfec275c62de0054ff29df10"
+  },
+  {
+   "path": "src/components/patients/Odontogram.tsx",
+   "uid": "8a46c968b429a0c7db681387eb9e56ed8ce02c12"
+  },
+  {
+   "path": "src/components/shell/CommandPalette.tsx",
+   "uid": "fd821305e8512273e3a9fc9dac53bf3e1d1b1a57"
+  },
+  {
+   "path": "src/components/shell/LiveSimulator.tsx",
+   "uid": "18f33d7f8d468d394d10f53ad7f3d28bfe1f5e73"
+  },
+  {
+   "path": "src/components/shell/Shell.tsx",
+   "uid": "be62e0e8921437db22a2057828fd76fc00d0777d"
+  },
+  {
+   "path": "src/components/ui/primitives.tsx",
+   "uid": "a32ea303adc66205b6384ec5a17f37afa033805e"
+  },
+  {
+   "path": "src/lib/ai.ts",
+   "uid": "11ea08a261b84b52cb3315942f99c5521db80250"
+  },
+  {
+   "path": "src/lib/api.ts",
+   "uid": "d4445e26bb610831c9ff1ee0c3839b5c451efa22"
+  },
+  {
+   "path": "src/lib/hooks.ts",
+   "uid": "8c594c312c1d3aab60397400c477795327a99f7e"
+  },
+  {
+   "path": "src/lib/mock/catalog.ts",
+   "uid": "63afb475622fc3fa2fb7d3570526e0b26c283ca2"
+  },
+  {
+   "path": "src/lib/mock/seed.ts",
+   "uid": "a93c8eb206833dbb96a3d7da6c2c2eb68e5d630b"
+  },
+  {
+   "path": "src/lib/scheduling.ts",
+   "uid": "c75d9c0dc2221686bea696af6398a4aa779afe2a"
+  },
+  {
+   "path": "src/lib/selectors.ts",
+   "uid": "c01a32f2c3bd308732f516435e8c9c458d4e9e4e"
+  },
+  {
+   "path": "src/lib/store.ts",
+   "uid": "3a30846feee7a26ceb4796911674917400e6f9b0"
+  },
+  {
+   "path": "src/lib/types.ts",
+   "uid": "761e1e90bc4a88f9dbb652d06c6edb6086526db9"
+  },
+  {
+   "path": "src/lib/utils.ts",
+   "uid": "d12e0e31c0b8a231a3605d7112abf4065bfa19b7"
+  },
+  {
+   "path": "tailwind.config.ts",
+   "uid": "5f2495e323f7df7964807d6340a830ce0bce9129"
+  },
+  {
+   "path": "tsconfig.json",
+   "uid": "186d9a3166cb8ecdea04bfff83a8159477fb081e"
+  }
+ ]
+}

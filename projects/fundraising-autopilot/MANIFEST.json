@@ -1,0 +1,189 @@
+{
+ "deploymentId": "dpl_8uWrhsG5kGcNFN4oyStuToCynywv",
+ "files": [
+  {
+   "path": ".env.example",
+   "uid": "8ddce53a992dd71e7a729532ebceba89b0e21111"
+  },
+  {
+   "path": ".vercelignore",
+   "uid": "a447eddf7126c6569fbf15f657d1bf26328f340e"
+  },
+  {
+   "path": "Dockerfile",
+   "uid": "2c0f280a012c935fd5fc53c461b279ce0508544b"
+  },
+  {
+   "path": "README.md",
+   "uid": "7acb8538f896f5410483f2d90276afa31eafa498"
+  },
+  {
+   "path": "deploy/DEPLOY.md",
+   "uid": "4355a46a0ade17463a25b8a503273e1117084e2e"
+  },
+  {
+   "path": "deploy/deploy.sh",
+   "uid": "08ffb5061711d1e3b77d650b6f7df20dabdb7fa9"
+  },
+  {
+   "path": "deploy/nginx.conf",
+   "uid": "10e21ca99fec67032f5669d50213f329338ad748"
+  },
+  {
+   "path": "docker-compose.yml",
+   "uid": "8697405f2227c1d952b7827843ecfb59227644fa"
+  },
+  {
+   "path": "ecosystem.config.cjs",
+   "uid": "d4580ef1944356211cca12e0a91995f9c02a9a0f"
+  },
+  {
+   "path": "next-env.d.ts",
+   "uid": "68380a26d094bb3b37470b0182d9ff4015b14854"
+  },
+  {
+   "path": "next.config.mjs",
+   "uid": "52f88f47eb40ef27a77c5ae84fe88241ec413c42"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "3a8d3ea46480b50ba3c311c14639726c4f96dff1"
+  },
+  {
+   "path": "package.json",
+   "uid": "a116ae63bf3d4a85423581ee01a762a93a68b00a"
+  },
+  {
+   "path": "postcss.config.mjs",
+   "uid": "c687693f4d50b920eb3694f3db3f527d5b1b3d79"
+  },
+  {
+   "path": "public/icon.svg",
+   "uid": "3d3f29d785f52989f86d0b6bb6dc766b93d99b61"
+  },
+  {
+   "path": "scripts/postbuild.mjs",
+   "uid": "59da0e6819f013fd1fffe0e247b6416ed1f099c2"
+  },
+  {
+   "path": "src/app/(app)/ads/page.tsx",
+   "uid": "37e8f5de144cb0d37625ca29c626d59361417311"
+  },
+  {
+   "path": "src/app/(app)/automations/page.tsx",
+   "uid": "c886ae2c57da208d7ba20ca9f47bd34525576359"
+  },
+  {
+   "path": "src/app/(app)/campaigns/page.tsx",
+   "uid": "5561a326859ffe7c1b35d935b1f2288cbc986e96"
+  },
+  {
+   "path": "src/app/(app)/dashboard/page.tsx",
+   "uid": "889648a4b2270a9261b64682b3cdafc780e40209"
+  },
+  {
+   "path": "src/app/(app)/donors/page.tsx",
+   "uid": "0ea19461cf981d1e2986ff83b0d4979b981a978a"
+  },
+  {
+   "path": "src/app/(app)/feed/page.tsx",
+   "uid": "4bf784d74012973fd7770390afef4c5f2850e2b5"
+  },
+  {
+   "path": "src/app/(app)/layout.tsx",
+   "uid": "660f64708df85c445c5e9641bdd65f44ac8e805b"
+  },
+  {
+   "path": "src/app/(app)/studio/page.tsx",
+   "uid": "f44fcd3c4db8ecb8625c2a118bc91dbfa367abf8"
+  },
+  {
+   "path": "src/app/give/[slug]/page.tsx",
+   "uid": "2fb9a5a06bd18c77d419067832bec5341c747f6b"
+  },
+  {
+   "path": "src/app/globals.css",
+   "uid": "b37db031e1e07a2fb3c3c68a8cb183d6a2d72ee8"
+  },
+  {
+   "path": "src/app/layout.tsx",
+   "uid": "e4b7b60c383f04ea264e88df9e0991def1ab99ca"
+  },
+  {
+   "path": "src/app/onboarding/page.tsx",
+   "uid": "f5ec9ee155686644b90e8647fe898757ad4aae2f"
+  },
+  {
+   "path": "src/app/page.tsx",
+   "uid": "a70a07fe54c1ada2809f381fdd2be0a2555ee0a8"
+  },
+  {
+   "path": "src/components/DonorProfile.tsx",
+   "uid": "758aba55b751d3779b4a460e7fef3ebf54e0f7a5"
+  },
+  {
+   "path": "src/components/feed.tsx",
+   "uid": "97e936a51f47d4a7012457e73429abc03bb5414a"
+  },
+  {
+   "path": "src/components/layout/AppShell.tsx",
+   "uid": "75c26108b7eda80115b9c775cf496566f9bd4d34"
+  },
+  {
+   "path": "src/components/layout/CommandPalette.tsx",
+   "uid": "831f16870e133f36d640e3bbe13c685bac6d34ff"
+  },
+  {
+   "path": "src/components/layout/LiveEngine.tsx",
+   "uid": "34b341fea0647c9af8afdab7ffe7c781a8c8005c"
+  },
+  {
+   "path": "src/components/layout/Providers.tsx",
+   "uid": "10659efcb009e10ab3a9e78e3399229cec112076"
+  },
+  {
+   "path": "src/components/layout/nav.ts",
+   "uid": "15940fdd59181a48322fae57e9f0d858959e9bc9"
+  },
+  {
+   "path": "src/components/ui/index.tsx",
+   "uid": "5fbc149cacab913d1bcc59f265d9f0c3aeac7c98"
+  },
+  {
+   "path": "src/lib/api.ts",
+   "uid": "5ce5f9fc3248688743c7da4afa3c5ddb723e0c14"
+  },
+  {
+   "path": "src/lib/mock/ai.ts",
+   "uid": "d8f50fc4f2f6b5d449a145153f8f4fe4f667b51a"
+  },
+  {
+   "path": "src/lib/mock/seed.ts",
+   "uid": "34c36e2ac63542262fe10766bf358483e84681a5"
+  },
+  {
+   "path": "src/lib/status.ts",
+   "uid": "e1ec1837d827eec51715b02d8948f60339b653e7"
+  },
+  {
+   "path": "src/lib/types.ts",
+   "uid": "8401d9afb7f4f44ec160f636a2c9dfe67abbfd20"
+  },
+  {
+   "path": "src/lib/utils.ts",
+   "uid": "963fc4f5443c131d5b4d05b92317305d2dde9186"
+  },
+  {
+   "path": "src/store/useStore.ts",
+   "uid": "7e3e560f7da49cd1f37436c74bb29dfff4bd9d70"
+  },
+  {
+   "path": "tailwind.config.ts",
+   "uid": "091cb8c85cf75dbbf05872fe378cff9b07a22897"
+  },
+  {
+   "path": "tsconfig.json",
+   "uid": "fd144d4994d066ff7b088e0e442677b434bd1b31"
+  }
+ ]
+}

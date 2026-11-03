@@ -1,0 +1,189 @@
+{
+ "deploymentId": "dpl_WXC1ChDXhUTNc9nX74JUD78nFcZP",
+ "files": [
+  {
+   "path": ".env.example",
+   "uid": "362e37024f3fa97af998ef51be2e2c6fa2326ad1"
+  },
+  {
+   "path": "Dockerfile",
+   "uid": "db150ca1232638633aefdf2db71395edc3cc8662"
+  },
+  {
+   "path": "README.md",
+   "uid": "56f9e9d8ee65f4195c9feeb049c0dc9713afde3e"
+  },
+  {
+   "path": "deploy/deploy.sh",
+   "uid": "a9f053c1b9862beea09afbf237082d0500a65ad0"
+  },
+  {
+   "path": "deploy/nginx/enroll.majcustodioph.com.conf",
+   "uid": "f8098fdace9b49e72f251c071f8e1503f552401b"
+  },
+  {
+   "path": "docker-compose.yml",
+   "uid": "acff0168c653c578f6be16f607f5ada49834c620"
+  },
+  {
+   "path": "ecosystem.config.js",
+   "uid": "47e2ff79c0f279f09d979d7de9fa77ea31fa5387"
+  },
+  {
+   "path": "next-env.d.ts",
+   "uid": "950b66f914b7326f00e20617679825d53b72da2b"
+  },
+  {
+   "path": "next.config.mjs",
+   "uid": "52f88f47eb40ef27a77c5ae84fe88241ec413c42"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "12dfadd185ba2aad63318bdac3758da680df4a1a"
+  },
+  {
+   "path": "package.json",
+   "uid": "458133c4c3d6cce600de7509b19d9eda29a3f295"
+  },
+  {
+   "path": "postcss.config.mjs",
+   "uid": "c687693f4d50b920eb3694f3db3f527d5b1b3d79"
+  },
+  {
+   "path": "public/favicon.svg",
+   "uid": "40944c03cc2faaeaad6c89769b226ed5b7b3a495"
+  },
+  {
+   "path": "src/app/analytics/page.tsx",
+   "uid": "d5cee485d6a225323fb2fdc60462d496a4a35031"
+  },
+  {
+   "path": "src/app/counselor/page.tsx",
+   "uid": "f41c0f0fd35219535732821dcf377f6125f9e4bb"
+  },
+  {
+   "path": "src/app/globals.css",
+   "uid": "75dc8bfc66a187d25e516773b1e183eb77f11dbb"
+  },
+  {
+   "path": "src/app/layout.tsx",
+   "uid": "9b2c71f6c72ff3d5e0c0dfe3d687cf9c5ed36f63"
+  },
+  {
+   "path": "src/app/not-found.tsx",
+   "uid": "c6aadfc51c3558976601412fcc8f883dbbe19eee"
+  },
+  {
+   "path": "src/app/nurture/page.tsx",
+   "uid": "29edd1acb3ad25070f713696394e467641074331"
+  },
+  {
+   "path": "src/app/page.tsx",
+   "uid": "8cecdbd69b6cbddc26dd7bdc983a9e9b62cef605"
+  },
+  {
+   "path": "src/app/pipeline/page.tsx",
+   "uid": "49c2c2e5b3138fee287d0dc59d800dac19432e46"
+  },
+  {
+   "path": "src/app/recovery/page.tsx",
+   "uid": "844a998422089cfddcc609e16a17f12acabf35e1"
+  },
+  {
+   "path": "src/app/reenrollment/page.tsx",
+   "uid": "f34446f64c0935511d7225ce1669fecb90c138a0"
+  },
+  {
+   "path": "src/app/students/page.tsx",
+   "uid": "240b8cdd2b4ae8522d7ed4937cb1b8839d0a587d"
+  },
+  {
+   "path": "src/app/tuition/page.tsx",
+   "uid": "eefa1f8a57187b0d35e9ff86d86ea6f84afe8702"
+  },
+  {
+   "path": "src/components/dashboard/Funnel.tsx",
+   "uid": "2c01a60cf5910d0e9b330c6eceb98f8edf68639d"
+  },
+  {
+   "path": "src/components/dashboard/KpiCard.tsx",
+   "uid": "f28623fe87f8f692f9a89801f2288d41a5596f3c"
+  },
+  {
+   "path": "src/components/shell/AppShell.tsx",
+   "uid": "975280bf54eb0866ee86cb8201d49983bb4b843c"
+  },
+  {
+   "path": "src/components/shell/CommandPalette.tsx",
+   "uid": "26d2d4cc3f36d4eef64b177f84fb3bd39b456d96"
+  },
+  {
+   "path": "src/components/shell/Logo.tsx",
+   "uid": "4387f779c44a54db9495989fb4a62dfc2572cbe3"
+  },
+  {
+   "path": "src/components/shell/Sidebar.tsx",
+   "uid": "cb38e17b526b11ff87be1de557b2ba45bcb3c390"
+  },
+  {
+   "path": "src/components/shell/Topbar.tsx",
+   "uid": "2fb740555b69d2052155964415fc598255bab777"
+  },
+  {
+   "path": "src/components/students/StudentActions.tsx",
+   "uid": "37ad5346bbceda35d936fb0ceb6970bba66e0560"
+  },
+  {
+   "path": "src/components/students/StudentDrawer.tsx",
+   "uid": "e2a8d857ac3da621d68b9ff4ee6bb727fa23c904"
+  },
+  {
+   "path": "src/components/ui/ChartTooltip.tsx",
+   "uid": "72a307d925287d604f3b2eee1c5aa8de2676fca3"
+  },
+  {
+   "path": "src/components/ui/Confetti.tsx",
+   "uid": "121e79427f63b9ef3a52c92394497b0e75868eec"
+  },
+  {
+   "path": "src/components/ui/primitives.tsx",
+   "uid": "bb02e0133e881a04c6ad6afbe06e4db5730eb717"
+  },
+  {
+   "path": "src/lib/api/ai.ts",
+   "uid": "ea0e9da356e3b813e3e6e83a6ab235ecd1469184"
+  },
+  {
+   "path": "src/lib/api/index.ts",
+   "uid": "81880c207f41f57c6dccf91805698f08be9fe378"
+  },
+  {
+   "path": "src/lib/constants.ts",
+   "uid": "235100ccff21ab0c443944a108e848d5eec68cc7"
+  },
+  {
+   "path": "src/lib/mock/seed.ts",
+   "uid": "2dffea855104f4129c184111f3ec6411d4ee628f"
+  },
+  {
+   "path": "src/lib/store.ts",
+   "uid": "60532caaea863a3ff8f3cd9ce08924818ca4a6cf"
+  },
+  {
+   "path": "src/lib/types.ts",
+   "uid": "463f12c46117524979b1753022a9ac048f757705"
+  },
+  {
+   "path": "src/lib/utils.ts",
+   "uid": "8aff58adbd67493354ec06db8e20203eee2ee58d"
+  },
+  {
+   "path": "tailwind.config.ts",
+   "uid": "79449fcc982b71e44ee17a291b017fa7ee997347"
+  },
+  {
+   "path": "tsconfig.json",
+   "uid": "fd144d4994d066ff7b088e0e442677b434bd1b31"
+  }
+ ]
+}

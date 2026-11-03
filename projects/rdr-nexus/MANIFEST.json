@@ -1,0 +1,41 @@
+{
+ "deploymentId": "dpl_DK87g5FxdCvWpXZYPAxLjkVqinii",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "c543cee53f4400152ad1e2da86d28043591c8b76"
+  },
+  {
+   "path": "app.js",
+   "uid": "b61b46b8a174c185efba6cff2e12debc9c58b4de"
+  },
+  {
+   "path": "book.html",
+   "uid": "5c618ad1e9b313d9ad06b12441005a4a1fd647ce"
+  },
+  {
+   "path": "data.js",
+   "uid": "90273671144c62246a4af2b736a7a9475e8a1d53"
+  },
+  {
+   "path": "favicon.svg",
+   "uid": "f899a996168c448a15135cf47c129a1a461ef8a4"
+  },
+  {
+   "path": "index.html",
+   "uid": "f2214904c88f71da095fc0e65d5a546b8bbff38f"
+  },
+  {
+   "path": "onboard.html",
+   "uid": "dfffdc985ea4fb2c415b8b2889ea43ca8bffe1b0"
+  },
+  {
+   "path": "styles.css",
+   "uid": "41cd1aa7e84b345a307f5770fbfda14d2a03ff29"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "a9b6125e33500d1fcb2db2f684a10c4310fb4c9f"
+  }
+ ]
+}

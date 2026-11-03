@@ -1,0 +1,117 @@
+{
+ "deploymentId": "dpl_GkJnNPdQA8FS9XzxKZNhfUeFQwCt",
+ "files": [
+  {
+   "path": ".vercel/output/builds.json",
+   "uid": "c3db7318ccfbe482bdfe7de5e455fd704a12bbc7"
+  },
+  {
+   "path": ".vercel/output/config.json",
+   "uid": "93b0b5c92f1e306d71f90015969ea7db33ebcad8"
+  },
+  {
+   "path": ".vercel/output/diagnostics/deploy-manifest.json",
+   "uid": "b66032218030483819b5f0fda8c443ed1fd97ab4"
+  },
+  {
+   "path": ".vercel/output/diagnostics/project-manifest.json",
+   "uid": "cde8e22cb15a46328cd559e6590986d36730980d"
+  },
+  {
+   "path": ".vercel/output/static/assets/botilage.jpg",
+   "uid": "107c52c1d6696f1c6a3886411bb7ad7dcdcd3178"
+  },
+  {
+   "path": ".vercel/output/static/assets/client-jelly.jpg",
+   "uid": "cb8448af58741e53c4ec49d93257a38d102bf171"
+  },
+  {
+   "path": ".vercel/output/static/assets/client-marivic.jpg",
+   "uid": "d905f8e456f1da86d3e0ef79af06f324be29d6e2"
+  },
+  {
+   "path": ".vercel/output/static/assets/facial.jpg",
+   "uid": "cd5a4fde5f9e2f56ad394224bb4c79e20e464f06"
+  },
+  {
+   "path": ".vercel/output/static/assets/filler.jpg",
+   "uid": "248bca6f4753a4d9d5145de38ef9514ddad85d5a"
+  },
+  {
+   "path": ".vercel/output/static/assets/mirror.jpg",
+   "uid": "1bc2d96ef240276c599f0944488ca010f26813fa"
+  },
+  {
+   "path": ".vercel/output/static/assets/portrait-dark.jpg",
+   "uid": "69d7ce3ab961fc068cef3fd5587f9059f1848a85"
+  },
+  {
+   "path": ".vercel/output/static/assets/pose-1.jpg",
+   "uid": "8369dce1729fbfbec73d475873ff411ff6aa6943"
+  },
+  {
+   "path": ".vercel/output/static/assets/pose-2.jpg",
+   "uid": "2cdef98cc98c5077f4af6c6a4d7c8cbf1fa516b9"
+  },
+  {
+   "path": ".vercel/output/static/assets/pose-3.jpg",
+   "uid": "afe71fb2a3b65e19c0459c898e2d5e0acb268a31"
+  },
+  {
+   "path": ".vercel/output/static/assets/pose-4.jpg",
+   "uid": "0d97630308f3a17c776c5b582ec9937181099b75"
+  },
+  {
+   "path": ".vercel/output/static/assets/pose-5.jpg",
+   "uid": "e9ebd2da5bd6c028c631f29be951bb415484c23a"
+  },
+  {
+   "path": ".vercel/output/static/assets/promo-barbie.jpg",
+   "uid": "ec727220890067db73ae7ce9c2472cfc3d06704f"
+  },
+  {
+   "path": ".vercel/output/static/assets/promo-botox.jpg",
+   "uid": "c72620faaabcdc11f7fa5c53967f40fdc6fe6a20"
+  },
+  {
+   "path": ".vercel/output/static/assets/promo-dollup.jpg",
+   "uid": "cbe1dc079569b77e19233328164df795a49d9f3f"
+  },
+  {
+   "path": ".vercel/output/static/assets/promo-finalday.jpg",
+   "uid": "a0243b21be8c3217a5207ee64de8555e8d0830c5"
+  },
+  {
+   "path": ".vercel/output/static/assets/promo-jawtox.jpg",
+   "uid": "d98403aa77ae9074264604155c2defc4c6e28f1c"
+  },
+  {
+   "path": ".vercel/output/static/assets/promo-lemon.jpg",
+   "uid": "55194575ee155a87503cf723d82dece66f4bf9a1"
+  },
+  {
+   "path": ".vercel/output/static/assets/promo-radiance.jpg",
+   "uid": "2a12a1ea5faf43b268f254c9ff6e1ce6959a62ab"
+  },
+  {
+   "path": ".vercel/output/static/assets/promo-treatments.jpg",
+   "uid": "5052decd2a6509e575b770bebbffd43d49b672a4"
+  },
+  {
+   "path": ".vercel/output/static/assets/serum.jpg",
+   "uid": "c34bea3905e1120c9dbf08359dcee9a510996215"
+  },
+  {
+   "path": ".vercel/output/static/assets/strip.jpg",
+   "uid": "3f1cfefcd6d6ceb01716c9002a280a7a9f866ce3"
+  },
+  {
+   "path": ".vercel/output/static/assets/thread.jpg",
+   "uid": "43b14a0163bd92fbd6b8fbd580c80cd5c198aeeb"
+  },
+  {
+   "path": ".vercel/output/static/index.html",
+   "uid": "21ed9671fcb50b09bcd077e8f34185887f2dad2a"
+  }
+ ]
+}

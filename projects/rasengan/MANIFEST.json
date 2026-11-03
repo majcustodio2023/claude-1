@@ -1,0 +1,641 @@
+{
+ "deploymentId": "dpl_EqDsQqaSZ67tdpXYue3jFzL4qvzY",
+ "files": [
+  {
+   "path": ".claude/launch.json",
+   "uid": "7558851b06fefec63e4f53abae021b4b5aebb10f"
+  },
+  {
+   "path": ".env.example",
+   "uid": "7d01bab7d5ff6a5ba57af774feff5dbbfdc6e91f"
+  },
+  {
+   "path": ".vercelignore",
+   "uid": "adacfd540566467c9239d7aedcf9f8b1680462ee"
+  },
+  {
+   "path": "AGENTS.md",
+   "uid": "5ec4789692f7fa325f3c83427e98e934987d1bac"
+  },
+  {
+   "path": "README.md",
+   "uid": "3d1cf3b8a76ecd624fd6bed30b19b5874e9d2145"
+  },
+  {
+   "path": "eslint.config.mjs",
+   "uid": "44d5bed565a8dd284af3e17f3b16a1c752008d0e"
+  },
+  {
+   "path": "next-env.d.ts",
+   "uid": "915946e261450f4fb6aab2ca862c8b440b748240"
+  },
+  {
+   "path": "next.config.ts",
+   "uid": "4de566253802c91012b448444892c5f750c595ee"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "0e52e593ce60eac0688b81f8b051f7b398892683"
+  },
+  {
+   "path": "package.json",
+   "uid": "02cd1fc9650512d14604d0a6b2f00292e6d44f28"
+  },
+  {
+   "path": "public/file.svg",
+   "uid": "fb380eeffe87d50b597383664c02982964d0d28c"
+  },
+  {
+   "path": "public/globe.svg",
+   "uid": "2eba23b01a46733bb8423e6d38ebf5f7e95abec5"
+  },
+  {
+   "path": "public/next.svg",
+   "uid": "3f3e95622612b989c5bd6a03299a308c6f3c7e6b"
+  },
+  {
+   "path": "public/vercel.svg",
+   "uid": "cebb8852d58c8886be3e9051a26957f42bb82f1a"
+  },
+  {
+   "path": "public/window.svg",
+   "uid": "54c48e0daa6caa317fe1b4c419007fd93e948db9"
+  },
+  {
+   "path": "src/app/(auth)/actions.ts",
+   "uid": "9af7ecabbe9fb4f7c25a3bfae078cd1404d18436"
+  },
+  {
+   "path": "src/app/(auth)/forgot-password/forgot-form.tsx",
+   "uid": "115e97201018e395cc244fb84db78957046bfc63"
+  },
+  {
+   "path": "src/app/(auth)/forgot-password/page.tsx",
+   "uid": "c09c011cef2b0336f6d88500a4887cfb395e73bd"
+  },
+  {
+   "path": "src/app/(auth)/layout.tsx",
+   "uid": "23f289bb40ad72506992fbd6daf2489d259d6825"
+  },
+  {
+   "path": "src/app/(auth)/login/login-form.tsx",
+   "uid": "fe7ebdc1cc12e4ecedb1e5ba601c576f82aec627"
+  },
+  {
+   "path": "src/app/(auth)/login/page.tsx",
+   "uid": "9e5e2a02f130794af745583f61826fe15cd01eda"
+  },
+  {
+   "path": "src/app/(auth)/reset-password/page.tsx",
+   "uid": "ba7a5247e11b13c9b1e428577c6d36b76086d680"
+  },
+  {
+   "path": "src/app/(auth)/reset-password/reset-form.tsx",
+   "uid": "3a795abfbb92369695d900b6fd6a211316aef79a"
+  },
+  {
+   "path": "src/app/(auth)/signup/page.tsx",
+   "uid": "b0317a718adae500bfb39fd644fb281baf0f0449"
+  },
+  {
+   "path": "src/app/(auth)/signup/signup-form.tsx",
+   "uid": "676218e883bc3e372c519459dbfbd6466da3f5aa"
+  },
+  {
+   "path": "src/app/admin/actions.ts",
+   "uid": "3d6a561520293e3b1e667a1211217a09b63b68f2"
+  },
+  {
+   "path": "src/app/admin/audit/page.tsx",
+   "uid": "135fc64b07c63b35b2a3c4db897aa04fcf71abac"
+  },
+  {
+   "path": "src/app/admin/inbox/page.tsx",
+   "uid": "2029d5e6481dc62e4773024e8cae1b3c2dba6210"
+  },
+  {
+   "path": "src/app/admin/layout.tsx",
+   "uid": "49f22516279db647a55e328ff98be4c2082dc3ee"
+  },
+  {
+   "path": "src/app/admin/messages/page.tsx",
+   "uid": "ee05589490db3fe04732ca9552b5630984b9c8d5"
+  },
+  {
+   "path": "src/app/admin/page.tsx",
+   "uid": "bfbadbc49c7b69b2604401c6e2c9e667181dd23e"
+  },
+  {
+   "path": "src/app/admin/security/page.tsx",
+   "uid": "adc596fed5d4ead8e70e1519dc3e4e173421abc4"
+  },
+  {
+   "path": "src/app/admin/updates/page.tsx",
+   "uid": "af388ce6c03b6b3a17cc6a3045e10a17f583e037"
+  },
+  {
+   "path": "src/app/admin/users/[id]/page.tsx",
+   "uid": "4087971d44688050e1a4e631f1ede4095c4a2a63"
+  },
+  {
+   "path": "src/app/admin/users/page.tsx",
+   "uid": "3401893565e36677a2fac93658efd75020a16af8"
+  },
+  {
+   "path": "src/app/api/cron/followups/route.ts",
+   "uid": "79907d5646ffacda7008a59ba603170feeac4958"
+  },
+  {
+   "path": "src/app/api/google/callback/route.ts",
+   "uid": "cbf1df142bb82f1cda20511c9c0958da6ba49c75"
+  },
+  {
+   "path": "src/app/api/google/connect/route.ts",
+   "uid": "a0fdb98875819fff56aa903285a4030a4f5ff381"
+  },
+  {
+   "path": "src/app/api/webhooks/email/route.ts",
+   "uid": "52595920128e1c45240e2838711cb7d4b2c4256f"
+  },
+  {
+   "path": "src/app/api/webhooks/sms/route.ts",
+   "uid": "b8f054d0e75a3ea998b9ea55dc7409af5a2f4313"
+  },
+  {
+   "path": "src/app/app/actions.ts",
+   "uid": "8ed4c456fc4ca4536405198e42ed142abb8d262c"
+  },
+  {
+   "path": "src/app/app/brand/page.tsx",
+   "uid": "a7d345037473133c4f574255283b40a6320194c5"
+  },
+  {
+   "path": "src/app/app/call-actions.ts",
+   "uid": "265083b3ec04c33cc2aa7f559f1d03e5b7e1c7e5"
+  },
+  {
+   "path": "src/app/app/calls/page.tsx",
+   "uid": "6c9136baf7f401f8af6ad2efe9f76f18fb3272b8"
+  },
+  {
+   "path": "src/app/app/compose-actions.ts",
+   "uid": "a0276a4ec5b99efd319e0e0bb89b3fa552dab0fb"
+  },
+  {
+   "path": "src/app/app/compose/page.tsx",
+   "uid": "f7761add8549cc93ae7f9ff5b758e51639595f48"
+  },
+  {
+   "path": "src/app/app/contacts/page.tsx",
+   "uid": "0f503d895f78701968f55d3cb78f7705f90c8558"
+  },
+  {
+   "path": "src/app/app/email-actions.ts",
+   "uid": "c678948a6735ad6e2812a359120108402680909d"
+  },
+  {
+   "path": "src/app/app/email/page.tsx",
+   "uid": "a34f9507c2dc729abd80d0802e8591b672b4d086"
+  },
+  {
+   "path": "src/app/app/inbox/page.tsx",
+   "uid": "350bcc3cb2e8e140ec48654b4e34979b2014c416"
+  },
+  {
+   "path": "src/app/app/layout.tsx",
+   "uid": "b05e62284945bf979450262a9eafad5a42d80f4c"
+  },
+  {
+   "path": "src/app/app/leads/page.tsx",
+   "uid": "3715000e6cc1715e257a3d17dc70e4874aff3c5b"
+  },
+  {
+   "path": "src/app/app/loading.tsx",
+   "uid": "91f6437139f5ed83b967b9ffb77b29e06d3b20c7"
+  },
+  {
+   "path": "src/app/app/page.tsx",
+   "uid": "134db25053801dedb117c42997feffa9535cdc9c"
+  },
+  {
+   "path": "src/app/app/phone/page.tsx",
+   "uid": "f39e980ed34099e3702a5651b4bfd05b1ed18b94"
+  },
+  {
+   "path": "src/app/app/pipeline/page.tsx",
+   "uid": "6bd90bdf9ce8e81003e1f1bdc97e39b2a136ff9a"
+  },
+  {
+   "path": "src/app/app/sequence/page.tsx",
+   "uid": "39550b7394d973ced68dd7e884765cdcf2215c4e"
+  },
+  {
+   "path": "src/app/app/settings/page.tsx",
+   "uid": "988e40fa2acaa7ef9a5071a69382239ce8b7b029"
+  },
+  {
+   "path": "src/app/app/support-actions.ts",
+   "uid": "3e4b83a557677f7ccf1a87341fd8faa2885fae27"
+  },
+  {
+   "path": "src/app/app/updates/page.tsx",
+   "uid": "5c5eceffb0cc5c6580007be370b533c8ce415fbb"
+  },
+  {
+   "path": "src/app/auth/confirm/route.ts",
+   "uid": "dea1fc68387ed5d5eb41d4890c0b057eb614a589"
+  },
+  {
+   "path": "src/app/favicon.ico",
+   "uid": "9bd95591db1b6ee579ed9485a4d4a957e7a90354"
+  },
+  {
+   "path": "src/app/globals.css",
+   "uid": "d14030ddf3b3d1f24e3cab072887da7acd1a47eb"
+  },
+  {
+   "path": "src/app/layout.tsx",
+   "uid": "8a76b45095660d704af1a84ec222bfa5e403d45f"
+  },
+  {
+   "path": "src/app/onboarding/page.tsx",
+   "uid": "ed041a024bd6c229850e98c4ada16a3b34e054a1"
+  },
+  {
+   "path": "src/app/page.tsx",
+   "uid": "eba45d67f09d45ceda0e0cfe22bd3d28b08c12c1"
+  },
+  {
+   "path": "src/app/privacy/page.tsx",
+   "uid": "1599b567d6c8e6c2798dcb0ab0b02fff653d1f14"
+  },
+  {
+   "path": "src/app/suspended/page.tsx",
+   "uid": "6fd1421457e3645f910f67fcec41fee506a8a102"
+  },
+  {
+   "path": "src/app/terms/page.tsx",
+   "uid": "59c25b7dac2c78e35a368e587415dda55c3ec385"
+  },
+  {
+   "path": "src/components/admin/admin-inbox.tsx",
+   "uid": "281887bf4da093bf18ceade8d2d230e3f1d83b5b"
+  },
+  {
+   "path": "src/components/admin/admin-shell.tsx",
+   "uid": "b0870da0261725b40b987b41a9cb7c1d2e0614ea"
+  },
+  {
+   "path": "src/components/admin/announcement-form.tsx",
+   "uid": "bd482c4dda73ca11c7f43eef6989ee48a99b61f9"
+  },
+  {
+   "path": "src/components/admin/bar-chart.tsx",
+   "uid": "5214d0e5a6592da7ec59e1913171c7d0cc329f22"
+  },
+  {
+   "path": "src/components/admin/changelog-form.tsx",
+   "uid": "e6eb91c9f9bbfef25d1ee95713bfe92ac520e2da"
+  },
+  {
+   "path": "src/components/admin/row-actions.tsx",
+   "uid": "e1adc7a061c783f71bf28a786da88ce5f7147a55"
+  },
+  {
+   "path": "src/components/admin/user-actions.tsx",
+   "uid": "8193937f50f297ce321a196abe307bd2d2ea3232"
+  },
+  {
+   "path": "src/components/admin/users-table.tsx",
+   "uid": "ee454784b56018a23951082130753f0b414b204a"
+  },
+  {
+   "path": "src/components/app/announcements.tsx",
+   "uid": "a5d4946ee582165502b6c7b3cc4f6828dff1e15a"
+  },
+  {
+   "path": "src/components/app/auth-side.tsx",
+   "uid": "123f0f131be818bb01eeb24614ceb211288fc84b"
+  },
+  {
+   "path": "src/components/app/brand-studio.tsx",
+   "uid": "063a3816471345cdffb9383cb50d887665f57bee"
+  },
+  {
+   "path": "src/components/app/business-form.tsx",
+   "uid": "296361f778e7e4986c745422e0bb8e4a0200ed31"
+  },
+  {
+   "path": "src/components/app/call-desk.tsx",
+   "uid": "6dbbe84660d3159f176dba2d5897df7bc70d3e04"
+  },
+  {
+   "path": "src/components/app/call-script.tsx",
+   "uid": "bc079ae8bb996404f687b1c28597e8f9d10d0bbe"
+  },
+  {
+   "path": "src/components/app/channels-form.tsx",
+   "uid": "273284127cc303c4f213a51e2a9a454bbe5e6522"
+  },
+  {
+   "path": "src/components/app/compose-view.tsx",
+   "uid": "ee7e8017f4a80a2275f0de7340aab9f394d7e92e"
+  },
+  {
+   "path": "src/components/app/contacts-view.tsx",
+   "uid": "02f6725ca0fd6d3c942f95753981100bf8de0f24"
+  },
+  {
+   "path": "src/components/app/csv-import.tsx",
+   "uid": "9d9e0d32f8eba5b1144b4a912e8c71e21d7276b2"
+  },
+  {
+   "path": "src/components/app/email-setup.tsx",
+   "uid": "2b631d0439e502b2062161457eabb1f98ba17f8d"
+  },
+  {
+   "path": "src/components/app/how-to.tsx",
+   "uid": "34166dd3b5ea7d6193ebe5b24ef71158c7512d47"
+  },
+  {
+   "path": "src/components/app/inbox-view.tsx",
+   "uid": "0d1dcee77286f07e78938caf71c53232997b7432"
+  },
+  {
+   "path": "src/components/app/lead-finder.tsx",
+   "uid": "c2b7daf18d4c318868d442a7895820d5c37507b5"
+  },
+  {
+   "path": "src/components/app/phone-wizard.tsx",
+   "uid": "e05e80f183ced2b993889834ce490735679efe86"
+  },
+  {
+   "path": "src/components/app/pipeline-board.tsx",
+   "uid": "4c0a71f7e1be6f8bfa986fd481a9a7881da82aa9"
+  },
+  {
+   "path": "src/components/app/scan-game.tsx",
+   "uid": "c6476847841dce5313b508cb89d0975d3f38bd2e"
+  },
+  {
+   "path": "src/components/app/sequence-view.tsx",
+   "uid": "5c936abb2c4d20b75d8d83725d9a935902669a64"
+  },
+  {
+   "path": "src/components/app/shell.tsx",
+   "uid": "63edfec5c91a173d8c59c1b4756f3afcfcf4f930"
+  },
+  {
+   "path": "src/components/app/sms-service-panel.tsx",
+   "uid": "c7c8c6000b8d598b38c685060edcae1493a9dec8"
+  },
+  {
+   "path": "src/components/app/sms-setup.tsx",
+   "uid": "701e670133bca32bb204303ab3923b8daee2633f"
+  },
+  {
+   "path": "src/components/app/support-chat.tsx",
+   "uid": "0761a1710e681cc791e3fc469888412044f299a8"
+  },
+  {
+   "path": "src/components/app/template-editor.tsx",
+   "uid": "525b49aa2d8a70dd874fc2212d633b80f105ecd1"
+  },
+  {
+   "path": "src/components/app/tour.tsx",
+   "uid": "ed00d70fc9deb7240e90502848f78e7b975c49a4"
+  },
+  {
+   "path": "src/components/fx/background.tsx",
+   "uid": "1abd4dfdd1492c42cb3a9055f353ddcbd5583836"
+  },
+  {
+   "path": "src/components/fx/chakra-field.tsx",
+   "uid": "483059bf6a71b0f278f71703be5866efd6564a05"
+  },
+  {
+   "path": "src/components/fx/cursor.tsx",
+   "uid": "b8d0c319de14626b4961c1e12991c7b378110a9f"
+  },
+  {
+   "path": "src/components/fx/loading-scene.tsx",
+   "uid": "93d51e53645b37b562028327c3e817d9da2ab717"
+  },
+  {
+   "path": "src/components/fx/nav-progress.tsx",
+   "uid": "810444802dd79bd4080b552213ea97771ea5a26d"
+  },
+  {
+   "path": "src/components/fx/rasengan-orb.tsx",
+   "uid": "ede2b197a04117be72494f48763754058f5a1a92"
+  },
+  {
+   "path": "src/components/fx/reveal.tsx",
+   "uid": "c69bd49e20ea98e2b2ab8ca8ca98953f9dd95d9c"
+  },
+  {
+   "path": "src/components/fx/sound.tsx",
+   "uid": "6f6fbb349ebdad2ba505e9415020518cd5569a3f"
+  },
+  {
+   "path": "src/components/fx/theme-picker.tsx",
+   "uid": "567c38c323dd3682b03943ac8d231f1fdba701c1"
+  },
+  {
+   "path": "src/components/landing/features.tsx",
+   "uid": "f5ba0162bcb24d155a6b00aa309f1969ed00e8e6"
+  },
+  {
+   "path": "src/components/landing/hero.tsx",
+   "uid": "2c43ca7dabbff8ed890e8276acab7ffcd958de5e"
+  },
+  {
+   "path": "src/components/landing/how-it-works.tsx",
+   "uid": "77347d4535f778b4dff4307b8f05a39189623f76"
+  },
+  {
+   "path": "src/components/landing/nav.tsx",
+   "uid": "56e73d5b938ea963865e457c6734f45c305de5e0"
+  },
+  {
+   "path": "src/components/legal/legal-page.tsx",
+   "uid": "6e5b4300781e0db83675fbdfc459266164984d61"
+  },
+  {
+   "path": "src/components/ui/button.tsx",
+   "uid": "db5bbf2001eb9821c02da292c5dcb2622ecd305a"
+  },
+  {
+   "path": "src/components/ui/field.tsx",
+   "uid": "7b347e555b7429961613fb1d185a8da39b63fb23"
+  },
+  {
+   "path": "src/components/ui/loader.tsx",
+   "uid": "5057082e7ac8727bff6d2e1d41f70052b634eaaa"
+  },
+  {
+   "path": "src/lib/admin-data.ts",
+   "uid": "0a11d8623ceac4c77fa892eedb00918953877dc9"
+  },
+  {
+   "path": "src/lib/admin.ts",
+   "uid": "5667145e8ced1eead7560e6331b8dbafed9f723f"
+  },
+  {
+   "path": "src/lib/ai.ts",
+   "uid": "617a5ea5eecb8940788348e7e676d7b9bb845731"
+  },
+  {
+   "path": "src/lib/changelog.ts",
+   "uid": "1a101cce036d5817b208737ba8cde47cb2b314b7"
+  },
+  {
+   "path": "src/lib/compose.ts",
+   "uid": "962bd0fc58342ca2b62da5e4e7f4cfc4a61916f1"
+  },
+  {
+   "path": "src/lib/crypto.ts",
+   "uid": "9d86956d2ca8b8d759d70e1e024bf4289a24d082"
+  },
+  {
+   "path": "src/lib/data.ts",
+   "uid": "a4c28022eb4e0b91a6c31575981e85b43f3185a8"
+  },
+  {
+   "path": "src/lib/email-render.ts",
+   "uid": "ab3635810bfc2a22b4cb4ce81411a7410c9abd5e"
+  },
+  {
+   "path": "src/lib/email.ts",
+   "uid": "40c809e27d2cb56b6a314c9df437da2f8ca8e88e"
+  },
+  {
+   "path": "src/lib/engine.ts",
+   "uid": "6eb454009249634747beb2b63491c65e70c94fd9"
+  },
+  {
+   "path": "src/lib/env.ts",
+   "uid": "7c7e065526506f2bce0323485b7c6ed6da4c8f29"
+  },
+  {
+   "path": "src/lib/esp.ts",
+   "uid": "056f837c6a39889f01f51d13cfce21edd38e2cc3"
+  },
+  {
+   "path": "src/lib/gmail.ts",
+   "uid": "377172d60d5865c8591259b6b021f0b8dd376a29"
+  },
+  {
+   "path": "src/lib/inbound.ts",
+   "uid": "68061f47e2c394aeae7b09f6390ebcd1ea1ea0e9"
+  },
+  {
+   "path": "src/lib/leads.ts",
+   "uid": "e8183317f753de130255d2936f243641ab137e22"
+  },
+  {
+   "path": "src/lib/pipeline.ts",
+   "uid": "4a267b4df8e5b728daa0348ac49e2295796d53cc"
+  },
+  {
+   "path": "src/lib/reset.ts",
+   "uid": "02be4c51a4ce70fe412ffb480f86879823672fc8"
+  },
+  {
+   "path": "src/lib/setter.ts",
+   "uid": "55973782e57d8923194aaab3d743b5af7e75db44"
+  },
+  {
+   "path": "src/lib/sfx.ts",
+   "uid": "8ee5fa0b5d5bc8b6887100ccf32be9fa4c63a564"
+  },
+  {
+   "path": "src/lib/sms.ts",
+   "uid": "df41bc077f6031127381c7915a532a28369714ed"
+  },
+  {
+   "path": "src/lib/supabase/client.ts",
+   "uid": "5cf69522c287769fd7ce8f5d54116e17b34c958b"
+  },
+  {
+   "path": "src/lib/supabase/server.ts",
+   "uid": "32217e2a238bd8823b376324d57b1a84eaffe080"
+  },
+  {
+   "path": "src/lib/themes.ts",
+   "uid": "5978329241ccfa1ba07abeca63605b2bd6a9404b"
+  },
+  {
+   "path": "src/lib/toast.ts",
+   "uid": "3bca004b80535046e45108dc665718938eff2b9b"
+  },
+  {
+   "path": "src/lib/track.ts",
+   "uid": "60495706bcc7877e6ba041f0e41a895dfe25e133"
+  },
+  {
+   "path": "src/lib/types.ts",
+   "uid": "98a5bb24b68545c3bb6913ab06c4fab41bc17fe4"
+  },
+  {
+   "path": "src/lib/use-accent.ts",
+   "uid": "4af6a1a028c002933ce0760439a832b54450ffbd"
+  },
+  {
+   "path": "src/lib/utils.ts",
+   "uid": "618f61a17144fac9d9c87753f1dc31b898d2b58f"
+  },
+  {
+   "path": "src/proxy.ts",
+   "uid": "b050f03a83597621a08fdd9ac6f8e4bca77f8627"
+  },
+  {
+   "path": "supabase/migrations/0001_init.sql",
+   "uid": "356772e02360e500bbeba21f7c2e8a67a458946e"
+  },
+  {
+   "path": "supabase/migrations/0002_branding_templates.sql",
+   "uid": "5dd7dcd52fb883399bc2feb632d623a27d14f2e1"
+  },
+  {
+   "path": "supabase/migrations/0003_gmail_oauth.sql",
+   "uid": "c0d6f921843803cf08f91d0998020bc3e7bb4e65"
+  },
+  {
+   "path": "supabase/migrations/0004_esp_provider.sql",
+   "uid": "66a2c971b3af80afbd2aac49b25b9c84b15facdc"
+  },
+  {
+   "path": "supabase/migrations/0005_deliverability.sql",
+   "uid": "13cb32fdcf0615f8259ea252c9650eaf7ef1241d"
+  },
+  {
+   "path": "supabase/migrations/0006_sms_services.sql",
+   "uid": "1bcafa2c62805ba133e50ef26a523266d0f91fe1"
+  },
+  {
+   "path": "supabase/migrations/0007_admin_security.sql",
+   "uid": "8f23523857a697d94930afe6fcfba0492134959b"
+  },
+  {
+   "path": "supabase/migrations/0008_support_chat.sql",
+   "uid": "ca6575d3e31e71bc60ebe36f495af10267a4e99d"
+  },
+  {
+   "path": "supabase/migrations/0009_setter.sql",
+   "uid": "df38b3ea6661bba2b0fe92feff4196b94d0d8ea7"
+  },
+  {
+   "path": "supabase/migrations/0010_opener_angle.sql",
+   "uid": "73918181ba17df4fba73c9c0240240ebf7b787e5"
+  },
+  {
+   "path": "supabase/migrations/0011_call_desk.sql",
+   "uid": "1f232354fa0f2c1283e6ab7250cb6e06c6b99d53"
+  },
+  {
+   "path": "tsconfig.json",
+   "uid": "27dded29dc880f958ee67c9ed276fb2b1412f515"
+  }
+ ]
+}

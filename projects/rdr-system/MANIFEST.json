@@ -1,0 +1,473 @@
+{
+ "deploymentId": "dpl_84sQHizP2EXE85PWc9QTHhQyUQSo",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "d81ef419060e41a409939fc50d0cc61293363587"
+  },
+  {
+   "path": "AGENTS.md",
+   "uid": "5ec4789692f7fa325f3c83427e98e934987d1bac"
+  },
+  {
+   "path": "README.md",
+   "uid": "7ba16f1bf099196063e5d413cf00a5aa850b043d"
+  },
+  {
+   "path": "eslint.config.mjs",
+   "uid": "44d5bed565a8dd284af3e17f3b16a1c752008d0e"
+  },
+  {
+   "path": "next-env.d.ts",
+   "uid": "b23d2b0e9411866941f1dd73e7477766d205cb8e"
+  },
+  {
+   "path": "next.config.ts",
+   "uid": "f7ce435338c38a61beec92fecd0217cef471a65f"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "0c5da86e0c26ff17bef9c3a703db984dd1c347c7"
+  },
+  {
+   "path": "package.json",
+   "uid": "e76b9102c751b5b8ad8773a0041a588cc4d6c7b5"
+  },
+  {
+   "path": "public/file.svg",
+   "uid": "fb380eeffe87d50b597383664c02982964d0d28c"
+  },
+  {
+   "path": "public/globe.svg",
+   "uid": "2eba23b01a46733bb8423e6d38ebf5f7e95abec5"
+  },
+  {
+   "path": "public/icon-192.png",
+   "uid": "bd14ca3e1a84a73d66a8420c8b40dd0e54784461"
+  },
+  {
+   "path": "public/icon-512.png",
+   "uid": "3c0dc38fc1d73ef85215a76aaf45ac71bd9f116b"
+  },
+  {
+   "path": "public/icon.svg",
+   "uid": "02306f806ccf5fac61e74bd6ef646f5c11182822"
+  },
+  {
+   "path": "public/next.svg",
+   "uid": "3f3e95622612b989c5bd6a03299a308c6f3c7e6b"
+  },
+  {
+   "path": "public/vercel.svg",
+   "uid": "cebb8852d58c8886be3e9051a26957f42bb82f1a"
+  },
+  {
+   "path": "public/window.svg",
+   "uid": "54c48e0daa6caa317fe1b4c419007fd93e948db9"
+  },
+  {
+   "path": "src/app/(app)/assets/mine/page.tsx",
+   "uid": "5f2f337469292f53c0cd00284d4cba699268935a"
+  },
+  {
+   "path": "src/app/(app)/assets/page.tsx",
+   "uid": "6748ab36021999cd63c2b61db0c62273b0f808fc"
+  },
+  {
+   "path": "src/app/(app)/finance/bank-accounts/page.tsx",
+   "uid": "4076b53057aeac9593a8581e044d3e727cbba171"
+  },
+  {
+   "path": "src/app/(app)/finance/cards/page.tsx",
+   "uid": "bfcbc2ce4cf9525d77c0a2ff06b1a999d0cd513c"
+  },
+  {
+   "path": "src/app/(app)/finance/cash-advance/page.tsx",
+   "uid": "03a151fca1279ba8d4d030426e61e6fdba1a5265"
+  },
+  {
+   "path": "src/app/(app)/finance/commissions/page.tsx",
+   "uid": "8267c3e7f34b8316081b13a10e1dc4678a342251"
+  },
+  {
+   "path": "src/app/(app)/finance/compensation/page.tsx",
+   "uid": "1ce4cbb33405a124c044f83262fa40c1d4bdd7fb"
+  },
+  {
+   "path": "src/app/(app)/finance/deductions/page.tsx",
+   "uid": "bd50252d4f0efe7540a37118d06c05ff3a107454"
+  },
+  {
+   "path": "src/app/(app)/finance/my-commissions/page.tsx",
+   "uid": "f92d9ad37cc0b22d26b5ea0dff146ece3bdbbfb6"
+  },
+  {
+   "path": "src/app/(app)/finance/payouts/page.tsx",
+   "uid": "248dddedbb8422dafe6198f7d6e21caf019e7e93"
+  },
+  {
+   "path": "src/app/(app)/finance/payroll/page.tsx",
+   "uid": "2578082a5b32dbc6e17170b2dcdf6b41497f895f"
+  },
+  {
+   "path": "src/app/(app)/finance/rates/page.tsx",
+   "uid": "3c6ab8b16efa919050ebe564bd7535acffac7487"
+  },
+  {
+   "path": "src/app/(app)/finance/reports/page.tsx",
+   "uid": "3b9d3528fa41cf1b3634637b899fd3bd7aca484e"
+  },
+  {
+   "path": "src/app/(app)/finance/sales-report/page.tsx",
+   "uid": "aa74ec1e302cbabda2abd0d55c19e467106b3962"
+  },
+  {
+   "path": "src/app/(app)/finance/subscriptions/page.tsx",
+   "uid": "e36d4c7c36216dbc6e85acd09181b5841d2b315b"
+  },
+  {
+   "path": "src/app/(app)/hr/approvals/page.tsx",
+   "uid": "0198a1b5dcf1d3e1257460d09fb2913c7ca3f3d3"
+  },
+  {
+   "path": "src/app/(app)/hr/attendance-delete/page.tsx",
+   "uid": "f0f62840f6c16457662a6d341134b1e2a3f8469b"
+  },
+  {
+   "path": "src/app/(app)/hr/attendance/page.tsx",
+   "uid": "372694285cfad94a4a580415a1d6fe6cd7975d8e"
+  },
+  {
+   "path": "src/app/(app)/hr/employees/page.tsx",
+   "uid": "132e3a784f012149a5fcdbd0bb6f80aca7caab24"
+  },
+  {
+   "path": "src/app/(app)/hr/filing/page.tsx",
+   "uid": "7eb653b949d1c713ef0d5a5cd680d94143958eab"
+  },
+  {
+   "path": "src/app/(app)/hr/kiosk/page.tsx",
+   "uid": "f7124ffb80f40492f198d67b863e3efdff07a249"
+  },
+  {
+   "path": "src/app/(app)/hr/management/page.tsx",
+   "uid": "7ffd23b9cefef88f6a546d83977e031235bccb35"
+  },
+  {
+   "path": "src/app/(app)/hr/me/page.tsx",
+   "uid": "038046c1ce7d45ddebdb284e61a016617f34b8a2"
+  },
+  {
+   "path": "src/app/(app)/hr/memo/page.tsx",
+   "uid": "92247ff1907a1f45715da8e675ef532afc80f76c"
+  },
+  {
+   "path": "src/app/(app)/hr/today/page.tsx",
+   "uid": "f4a526276878b47f337c98badc281be5226e71a3"
+  },
+  {
+   "path": "src/app/(app)/it/accounts/page.tsx",
+   "uid": "7119007acb2e54b3dd2a8f6280d5068fcedf509e"
+  },
+  {
+   "path": "src/app/(app)/it/filing/page.tsx",
+   "uid": "3f5377983c8e05811199d2dd5a1fc666e988b2f4"
+  },
+  {
+   "path": "src/app/(app)/it/page.tsx",
+   "uid": "a2aadb8436a6ca7abc4da25b36eeb85778452b6a"
+  },
+  {
+   "path": "src/app/(app)/it/support/page.tsx",
+   "uid": "0be0f3a8b4a1284695ad6e815002d6d0448c6e8d"
+  },
+  {
+   "path": "src/app/(app)/landing/icon/page.tsx",
+   "uid": "f5759ed88667a13295ee33dc0affe6afb25cb338"
+  },
+  {
+   "path": "src/app/(app)/layout.tsx",
+   "uid": "a21c02ed157b6271d62b65ed21c627ff61eca09f"
+  },
+  {
+   "path": "src/app/(app)/notifications/page.tsx",
+   "uid": "6372f35a4474ba7703a6775fc958e637ac0d5fb9"
+  },
+  {
+   "path": "src/app/(app)/page.tsx",
+   "uid": "cf0379b229e7987beeed7440b1c643fdd271fc56"
+  },
+  {
+   "path": "src/app/(app)/project/deliverables/page.tsx",
+   "uid": "69d92932af277d777da18ba24c2bbebe88f18dae"
+  },
+  {
+   "path": "src/app/(app)/project/me/page.tsx",
+   "uid": "22d3a10704a9d549150a1196edbb0826aa2244d5"
+  },
+  {
+   "path": "src/app/(app)/project/page.tsx",
+   "uid": "18070a1b09a6df7a69454a461f653916249bff49"
+  },
+  {
+   "path": "src/app/(app)/project/workspace/page.tsx",
+   "uid": "e3ee375c6e8ec2c5004f0bebd3deaab81a6d27a1"
+  },
+  {
+   "path": "src/app/(app)/sales/calendar/page.tsx",
+   "uid": "9c7967fd9e4eabd5b390d5a814c3c9261244ae81"
+  },
+  {
+   "path": "src/app/(app)/sales/campaigns/page.tsx",
+   "uid": "d556d442e193a1a9cfd7192705e71fd2f4e1b7ee"
+  },
+  {
+   "path": "src/app/(app)/sales/clients/page.tsx",
+   "uid": "4b41388f8c7702c2cffed694df9100f3ed37f599"
+  },
+  {
+   "path": "src/app/(app)/sales/collections/page.tsx",
+   "uid": "2699081807ea1b73329ef97627aab0bf6c50d981"
+  },
+  {
+   "path": "src/app/(app)/sales/engagements/[id]/page.tsx",
+   "uid": "3954def6af23b9527b7c32f80dd59702c2b0d6e6"
+  },
+  {
+   "path": "src/app/(app)/sales/engagements/page.tsx",
+   "uid": "0cca9faec79b387ff64d6f364bb1133db54b136c"
+  },
+  {
+   "path": "src/app/(app)/sales/entry/page.tsx",
+   "uid": "f0d56ea65dbea9a6b1a9bd052634a638c57669e6"
+  },
+  {
+   "path": "src/app/(app)/sales/filing-approval/page.tsx",
+   "uid": "e359c3eca22522c56c5839a393a4d54808652741"
+  },
+  {
+   "path": "src/app/(app)/sales/filing/page.tsx",
+   "uid": "16bf3c0a451741ba524dd1f73c43cbfc0b9ac907"
+  },
+  {
+   "path": "src/app/(app)/sales/me/page.tsx",
+   "uid": "ffc7a4e62a55e71d428e1a6cb6170a19eaf905c2"
+  },
+  {
+   "path": "src/app/(app)/sales/page.tsx",
+   "uid": "0b8307a8584a583f92ac410c2dd2c7dd48eff098"
+  },
+  {
+   "path": "src/app/(app)/sales/pricing/page.tsx",
+   "uid": "67400f31dc83cabf979d8833590f62217663b67a"
+  },
+  {
+   "path": "src/app/(app)/settings/access/page.tsx",
+   "uid": "a19dee81c0d9850be4ce4f1a2329843142c90e3a"
+  },
+  {
+   "path": "src/app/(app)/settings/notifications/page.tsx",
+   "uid": "8ab0176ccc9f3e734ccc4a08bf88b686351d6dc0"
+  },
+  {
+   "path": "src/app/(app)/settings/org-chart/page.tsx",
+   "uid": "4b4ee367a02792ec7025105b52034ef542a2195f"
+  },
+  {
+   "path": "src/app/(app)/settings/rules/page.tsx",
+   "uid": "7a25ad4cb0a35579b7cb646d6766c1e77bfd4f60"
+  },
+  {
+   "path": "src/app/(app)/settings/teams/page.tsx",
+   "uid": "d772bd1630a44c1666ddd5ede87f22ff9153673e"
+  },
+  {
+   "path": "src/app/(app)/settings/wfh/page.tsx",
+   "uid": "a046332990dca20040293cf38545ea88f39cc8a7"
+  },
+  {
+   "path": "src/app/auth/callback/route.ts",
+   "uid": "aa287a37af23f67ded8a152c31c18f1c9a511f0a"
+  },
+  {
+   "path": "src/app/favicon.ico",
+   "uid": "9bd95591db1b6ee579ed9485a4d4a957e7a90354"
+  },
+  {
+   "path": "src/app/globals.css",
+   "uid": "a7061b080671423468c0fe721304280c4a028a74"
+  },
+  {
+   "path": "src/app/layout.tsx",
+   "uid": "9e0a5c454dbc1fca0d00f665828858d6851715fa"
+  },
+  {
+   "path": "src/app/login/page.tsx",
+   "uid": "b00402a6ac4b53a31b4d18785a3e4d0f90bb36ae"
+  },
+  {
+   "path": "src/app/manifest.ts",
+   "uid": "c65f3ed1414d4c601b45b7704cd857f173a9960e"
+  },
+  {
+   "path": "src/app/not-found.tsx",
+   "uid": "81c6df6a4c2afbca7ca7f3b854b583515d33af9c"
+  },
+  {
+   "path": "src/components/alerts/attention.tsx",
+   "uid": "b4d9fbe64e025fc09a8ff0fc95b483327e6cb0c0"
+  },
+  {
+   "path": "src/components/charts/index.tsx",
+   "uid": "089733c2be3c4ef37f44f8bac1438e1a714a2157"
+  },
+  {
+   "path": "src/components/coming-soon.tsx",
+   "uid": "66d460738bcf0fb755ae86d73fb38993be4a15dd"
+  },
+  {
+   "path": "src/components/crud.tsx",
+   "uid": "113c33f0ec61fb512c92eab80ada9e52f84ddc77"
+  },
+  {
+   "path": "src/components/hr/clock-punch.tsx",
+   "uid": "0fee9d0640b7129c5bbb7c3c798feeb22064e0c7"
+  },
+  {
+   "path": "src/components/motion/boot-loader.tsx",
+   "uid": "984a78bc78d19a6c76ff2065d253e447c6d32eb0"
+  },
+  {
+   "path": "src/components/motion/navigation.tsx",
+   "uid": "6953d5e3f02970d3dedfb6f875789f405f832813"
+  },
+  {
+   "path": "src/components/motion/page.tsx",
+   "uid": "1ec1eadc1d2fa2851b010ced8729df9e47872142"
+  },
+  {
+   "path": "src/components/providers.tsx",
+   "uid": "ec7b389045758e0c3c9c405f9da34e48a67c77cb"
+  },
+  {
+   "path": "src/components/shell/app-shell.tsx",
+   "uid": "5422c4ec12594f5b6c40a7ba17957a1010513d48"
+  },
+  {
+   "path": "src/components/shell/command.tsx",
+   "uid": "c138e328dc1b82aed00acc5a46e46f385f89f3cc"
+  },
+  {
+   "path": "src/components/shell/mobile-nav.tsx",
+   "uid": "48af38afea41347d020ddb1c762717c68b468255"
+  },
+  {
+   "path": "src/components/shell/nav-link.tsx",
+   "uid": "9cc45bfc1521f83404b77e3e45ecd3ae7385c304"
+  },
+  {
+   "path": "src/components/shell/sidebar.tsx",
+   "uid": "41f1725277c827cd9e774ec60ec550bb09b2564b"
+  },
+  {
+   "path": "src/components/shell/topbar.tsx",
+   "uid": "3f5d339b2a4c3c27244f4db81b50218ceddb472a"
+  },
+  {
+   "path": "src/components/ui/avatar.tsx",
+   "uid": "7a0e935fb4b5bea5fec99a64501129149441fc45"
+  },
+  {
+   "path": "src/components/ui/badge.tsx",
+   "uid": "d140f10ca472d400269adc7cf018a1d763e88180"
+  },
+  {
+   "path": "src/components/ui/button.tsx",
+   "uid": "cf91852261521330b45713eb5f19dcc746333a8a"
+  },
+  {
+   "path": "src/components/ui/card.tsx",
+   "uid": "80a250f366d9f8c1fb6c07be298a59b25e2c99ad"
+  },
+  {
+   "path": "src/components/ui/count-up.tsx",
+   "uid": "167aa6506dfaa3b054ce21384a82a51a9bac7469"
+  },
+  {
+   "path": "src/components/ui/empty.tsx",
+   "uid": "aa60e52bfacdd370762a0a91e135142843168a84"
+  },
+  {
+   "path": "src/components/ui/input.tsx",
+   "uid": "6bf53a0a37bb828570f1626f943e73e78db0f0c3"
+  },
+  {
+   "path": "src/components/ui/sheet.tsx",
+   "uid": "1fcaa8c9b1a9c3d5594a6c709df7d039d3297576"
+  },
+  {
+   "path": "src/components/ui/skeleton.tsx",
+   "uid": "b858e3429cca1447bb1c3bf94b07f247b8c9d51a"
+  },
+  {
+   "path": "src/components/ui/stat.tsx",
+   "uid": "48fd8cacea88b0809baa5884857fd05c1a2fd7eb"
+  },
+  {
+   "path": "src/components/ui/table.tsx",
+   "uid": "ab45802ff6ddad8cdc0602415f8c77ff67c45da5"
+  },
+  {
+   "path": "src/components/ui/tabs.tsx",
+   "uid": "db445403be666eff8dd971989093139ddec7ab24"
+  },
+  {
+   "path": "src/components/ui/toast.tsx",
+   "uid": "3559db3cea82b1a52093c38c60028c04f882612c"
+  },
+  {
+   "path": "src/lib/access.ts",
+   "uid": "b3fdb4b5a2ae9babfe374ce2e5864d4f2048377d"
+  },
+  {
+   "path": "src/lib/demo.ts",
+   "uid": "8f62a62b8325f281743465ada46f8adc440d38ea"
+  },
+  {
+   "path": "src/lib/mock/data.ts",
+   "uid": "ddb58de3fe24cbdb7f4a6755731ff3e2a08eea69"
+  },
+  {
+   "path": "src/lib/mock/query.ts",
+   "uid": "4987cce1a19335f5344c3f385f7c9aa74efdb01c"
+  },
+  {
+   "path": "src/lib/nav.ts",
+   "uid": "e2565a2efeb1306c75bc4b3003560c01c4a46504"
+  },
+  {
+   "path": "src/lib/queries.ts",
+   "uid": "bf2cad7a97ec7e9fbe764ea00a45396cc826e883"
+  },
+  {
+   "path": "src/lib/supabase/client.ts",
+   "uid": "0798e291029b070f76b697aa4626a712010d84e6"
+  },
+  {
+   "path": "src/lib/supabase/server.ts",
+   "uid": "daa1b90c470da7558617bc78b137db20300b4696"
+  },
+  {
+   "path": "src/lib/utils.ts",
+   "uid": "10466e7065f4e6a9aade9252f273de5a32837a33"
+  },
+  {
+   "path": "src/proxy.ts",
+   "uid": "de920b1dd7218468b9d39b41a8c05bbfe68aeef9"
+  },
+  {
+   "path": "tsconfig.json",
+   "uid": "27dded29dc880f958ee67c9ed276fb2b1412f515"
+  }
+ ]
+}

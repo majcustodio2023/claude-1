@@ -1,0 +1,181 @@
+{
+ "deploymentId": "dpl_7GukDTDePogaaGYvd4HWkG8Ufv54",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "a5909bf8fe01957eabb388393a18591212208003"
+  },
+  {
+   "path": "README.md",
+   "uid": "86f728dfca628f406a8f5f9efaaaff0691484732"
+  },
+  {
+   "path": "next-env.d.ts",
+   "uid": "950b66f914b7326f00e20617679825d53b72da2b"
+  },
+  {
+   "path": "next.config.mjs",
+   "uid": "52f88f47eb40ef27a77c5ae84fe88241ec413c42"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "325f8e63c8be4b52ab0328a0a49b9ca629908b03"
+  },
+  {
+   "path": "package.json",
+   "uid": "e473050ee36a65a2f1ebefa1f78fbd259a3c295b"
+  },
+  {
+   "path": "postcss.config.mjs",
+   "uid": "c687693f4d50b920eb3694f3db3f527d5b1b3d79"
+  },
+  {
+   "path": "public/favicon.svg",
+   "uid": "54c582552f27d60060bf6a146edcba4141956353"
+  },
+  {
+   "path": "scripts/postbuild.mjs",
+   "uid": "129109778c13e37b0b0d5448e4bb921aa814b30c"
+  },
+  {
+   "path": "src/app/app/calendar/page.tsx",
+   "uid": "9eabb25c2d6fc31aab765f57675b65f5f8ff29f5"
+  },
+  {
+   "path": "src/app/app/channels/page.tsx",
+   "uid": "45922f204ac7391d6678f70a1bd7c64f68611950"
+  },
+  {
+   "path": "src/app/app/engine/page.tsx",
+   "uid": "8b339d30e7ba2c07ae753a6355b818fb037fbf46"
+  },
+  {
+   "path": "src/app/app/guests/page.tsx",
+   "uid": "eb95627d18e2960fb65004e4878926fa44f31762"
+  },
+  {
+   "path": "src/app/app/layout.tsx",
+   "uid": "a8c7cef3e45d14b6309e1a839156e631f9ab8af7"
+  },
+  {
+   "path": "src/app/app/notifications/page.tsx",
+   "uid": "545e586dec51fd40f50ec7a0bb0641f685262177"
+  },
+  {
+   "path": "src/app/app/page.tsx",
+   "uid": "00d6756a342cab6993706be67da4aea7a3f1d6bd"
+  },
+  {
+   "path": "src/app/app/pricing/page.tsx",
+   "uid": "b1ef6841c272c45a725e81cdebe3c0d60bf0ca67"
+  },
+  {
+   "path": "src/app/app/reports/page.tsx",
+   "uid": "9c8148bbca077bdc18138970ae30d71f51dd1022"
+  },
+  {
+   "path": "src/app/app/reservations/page.tsx",
+   "uid": "6386c2e5deb79eb2199162fa0c119bdcab9181d9"
+  },
+  {
+   "path": "src/app/app/settings/page.tsx",
+   "uid": "474a449223a6202ad2adc2cc0dac2ad280209020"
+  },
+  {
+   "path": "src/app/app/setup/page.tsx",
+   "uid": "82928c4f37c5b17d8121fa01e41bfef3cf6a19e6"
+  },
+  {
+   "path": "src/app/app/social/page.tsx",
+   "uid": "9533c309a04e84a3ff1c104d445d778035e5862a"
+  },
+  {
+   "path": "src/app/app/template.tsx",
+   "uid": "fd3519e269c1aeb9f5d6b7679e096d219f81539f"
+  },
+  {
+   "path": "src/app/globals.css",
+   "uid": "1fbe0c8fcfc9a47db9ab23578a7f1764dfdecd6a"
+  },
+  {
+   "path": "src/app/layout.tsx",
+   "uid": "6142e0a671116183f2c9b8beffec8c9ff7488fdd"
+  },
+  {
+   "path": "src/app/login/page.tsx",
+   "uid": "2e5ffb6b92ed966f6fdb7186c3850ab95a21fc19"
+  },
+  {
+   "path": "src/app/onboarding/page.tsx",
+   "uid": "3c8bbc0af948aaa013e31ed12b211699475d6be8"
+  },
+  {
+   "path": "src/app/page.tsx",
+   "uid": "6e1af67bc483346d58adbaddfbd449539251e927"
+  },
+  {
+   "path": "src/components/logo.tsx",
+   "uid": "d5f892f89b20e76db7fad4b50c5534f6bb216d01"
+  },
+  {
+   "path": "src/components/new-booking.tsx",
+   "uid": "448e320eddfca8d7d1ce6efb47cebd69470f1c69"
+  },
+  {
+   "path": "src/components/providers.tsx",
+   "uid": "875aac9a28a0eebd2a4d618a7f37f6453d1b5488"
+  },
+  {
+   "path": "src/components/shell/command-palette.tsx",
+   "uid": "e1b27cd51602013b3680ffca7c43533d0e8f2950"
+  },
+  {
+   "path": "src/components/shell/nav.ts",
+   "uid": "c005ea95635abd35d203ebc8d5922b708dce23e1"
+  },
+  {
+   "path": "src/components/shell/sidebar.tsx",
+   "uid": "3992c35aaad0bc4c7e8fcc85f3962e434976f614"
+  },
+  {
+   "path": "src/components/shell/topbar.tsx",
+   "uid": "18ff10c0b19bcaf9e873f970e885b31baff09751"
+  },
+  {
+   "path": "src/components/ui.tsx",
+   "uid": "b28ad223b98aaa7e9fad719075746a03acfe1aac"
+  },
+  {
+   "path": "src/lib/domain.ts",
+   "uid": "f73cee6bd6b7d57d38989e9eff6aab09744466ca"
+  },
+  {
+   "path": "src/lib/seed.ts",
+   "uid": "59d6ce67b555a4600a7e03320ae74364452058d5"
+  },
+  {
+   "path": "src/lib/store.ts",
+   "uid": "a5c00e6094714cd480deeb72f303e072f76ffd04"
+  },
+  {
+   "path": "src/lib/types.ts",
+   "uid": "877413ad66aaefedefca46398148371643af78f8"
+  },
+  {
+   "path": "src/lib/utils.ts",
+   "uid": "75517a78347cf7b6b9d881c8c05df0b64d0dac1e"
+  },
+  {
+   "path": "src/services/index.ts",
+   "uid": "35caffae74b4fd7307cd859be8200aef206b7018"
+  },
+  {
+   "path": "tailwind.config.ts",
+   "uid": "2a02a82de4efa051985fea394d36d2de66c869a5"
+  },
+  {
+   "path": "tsconfig.json",
+   "uid": "186d9a3166cb8ecdea04bfff83a8159477fb081e"
+  }
+ ]
+}

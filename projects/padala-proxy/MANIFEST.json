@@ -1,0 +1,13 @@
+{
+ "deploymentId": "dpl_2Udm6bMdoH3kqbwg32inSnkc1roS",
+ "files": [
+  {
+   "path": "README.md",
+   "uid": "47febee732e66bbdaed126574e70c3d00ffc2910"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "5c73a035fef4d3396f27fded39398c95453e83ed"
+  }
+ ]
+}

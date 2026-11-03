@@ -1,0 +1,639 @@
+{
+  "teamId": "team_7TMvjA3mhfMiAEHMXYivSf4l",
+  "teamSlug": "aacio",
+  "exportedAt": "2026-11-03",
+  "projects": {
+    "jaytees": {
+      "projectId": "prj_HRBnVDaF5KGpNQD7DTaoLPeYcNRe",
+      "deploymentId": "dpl_EXFaYJ8pLoMyXRaAyatbL21t68Xg",
+      "framework": "nextjs",
+      "domains": [
+        "jaytees.vercel.app",
+        "jaytees.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 268,
+      "filesPresent": 6,
+      "liveUrl": "https://jaytees.vercel.app",
+      "supabase": {
+        "ref": "qanzoabxpglcuhzscwha",
+        "project": "jaytees"
+      }
+    },
+    "rdr-andoy": {
+      "projectId": "prj_oYBlprUuN85Y0GYiZgw92Dch1zq1",
+      "deploymentId": "dpl_ACvBzVptLHvamtbMAXSdwHbVAZY6",
+      "framework": null,
+      "domains": [
+        "rdr-andoy.vercel.app",
+        "andoy.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 38,
+      "filesPresent": 0,
+      "liveUrl": "https://rdr-andoy.vercel.app"
+    },
+    "claude-1": {
+      "projectId": "prj_lFIQNjyNZ3Lc4LhLFhzZdpkzRxhr",
+      "deploymentId": "dpl_6g8Vu5QraAG4FEFHc7aq7e53X5Zi",
+      "framework": "nextjs",
+      "domains": [
+        "claude-1-kohl.vercel.app",
+        "tracker.majcustodioph.com",
+        "prototypemaker.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "git",
+      "fileCount": 0,
+      "filesPresent": 0,
+      "liveUrl": "https://claude-1-kohl.vercel.app",
+      "supabase": {
+        "ref": "wsiajfkjjbhpieuvjikz",
+        "project": "agency-tracker",
+        "schema": "public (tracker_*, prototype_*)"
+      }
+    },
+    "viomi-ph": {
+      "projectId": "prj_jgVp4ltOgnsW2T2xG8mUJnhGc6Vs",
+      "deploymentId": "dpl_GF9wUWFv7WoQFkhQ7MbpxL7pBj3z",
+      "framework": null,
+      "domains": [
+        "viomi-ph.vercel.app",
+        "viomiofficialph.com",
+        "viomi.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 123,
+      "filesPresent": 0,
+      "liveUrl": "https://viomi-ph.vercel.app"
+    },
+    "viomi-unveil": {
+      "projectId": "prj_V0GvJ7XxWtKGuEA8ZSYYX7jhhGHo",
+      "deploymentId": "dpl_F21nt8c6G16Q1H22txtaxR59M6KT",
+      "framework": null,
+      "domains": [
+        "viomi-unveil.vercel.app",
+        "viomiunveil.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 220,
+      "filesPresent": 0,
+      "liveUrl": "https://viomi-unveil.vercel.app"
+    },
+    "laundrodream": {
+      "projectId": "prj_W0dK716y6yypg7fGmt8dfmVgheX8",
+      "deploymentId": "dpl_EvmU4aDftqFYCBgqUm3dmuRbrwc4",
+      "framework": null,
+      "domains": [
+        "laundrodream.vercel.app",
+        "laundrodream.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 75,
+      "filesPresent": 0,
+      "liveUrl": "https://laundrodream.vercel.app"
+    },
+    "dist": {
+      "projectId": "prj_L4J5aHb2mqsEJ29WCVfcv9Ivd5uf",
+      "deploymentId": "dpl_9gHggRRR8bnxoDoLffe3wAEa2qjp",
+      "framework": null,
+      "domains": [
+        "dist-nine-eta-24.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 220,
+      "filesPresent": 0,
+      "liveUrl": "https://dist-nine-eta-24.vercel.app"
+    },
+    "rdr-landing": {
+      "projectId": "prj_4yaOMvpw7x5mrhZqLmcVfNXWCPJE",
+      "deploymentId": "dpl_7oNW67dmjmdpGh7Z6PXyaDVBR71S",
+      "framework": null,
+      "domains": [
+        "rdr-landing.vercel.app",
+        "rdrlanding.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 50,
+      "filesPresent": 0,
+      "liveUrl": "https://rdr-landing.vercel.app"
+    },
+    "ora": {
+      "projectId": "prj_8Xy902YOaAxTdmdiBhWnfbNcGVUK",
+      "deploymentId": "dpl_CboECaniwwYrnrTQ5AmT4CSFkWjP",
+      "framework": "vite",
+      "domains": [
+        "ora-chi-roan.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 249,
+      "filesPresent": 0,
+      "liveUrl": "https://ora-chi-roan.vercel.app"
+    },
+    "valmora": {
+      "projectId": "prj_OyrdU59DTJy8BbiuiAYT9Mj5ingA",
+      "deploymentId": "dpl_AsMieRogbwhiipnXbX3kgsadtFAW",
+      "framework": "vite",
+      "domains": [
+        "valmora-ten.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 233,
+      "filesPresent": 0,
+      "liveUrl": "https://valmora-ten.vercel.app"
+    },
+    "tourist-house": {
+      "projectId": "prj_PH7Md8izxdGYT6lDhi78LhFPrI8N",
+      "deploymentId": "dpl_AZKGb8V2xKxfyi3ygkghzWM2CE7L",
+      "framework": "vite",
+      "domains": [
+        "tourist-house.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 116,
+      "filesPresent": 0,
+      "liveUrl": "https://tourist-house.vercel.app"
+    },
+    "viomi-plan": {
+      "projectId": "prj_bKnKdkk3LNazhCpycOBeWrvPxoZL",
+      "deploymentId": "dpl_2MCKRideum6MqzdsrEhinAHy1vGS",
+      "framework": null,
+      "domains": [
+        "viomi-plan.vercel.app",
+        "viomipresentation.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 14,
+      "filesPresent": 0,
+      "liveUrl": "https://viomi-plan.vercel.app"
+    },
+    "aacio-services": {
+      "projectId": "prj_A4z7Rrm9uCdZxvITOgDISOb0MblU",
+      "deploymentId": "dpl_6bmLcbj5td6nu6zEta1CJUHtYx63",
+      "framework": null,
+      "domains": [
+        "majcustodioservices.com",
+        "aacio-services.vercel.app",
+        "services.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 170,
+      "filesPresent": 0,
+      "liveUrl": "https://majcustodioservices.com"
+    },
+    "letsinvest": {
+      "projectId": "prj_9MALmOKC8dUb8uEsRoQVAexeh2e6",
+      "deploymentId": "dpl_CnApuTk4ZmcvkVpHFHvDMdWmpU5A",
+      "framework": "vite",
+      "domains": [
+        "letsinvest-sigma.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 36,
+      "filesPresent": 0,
+      "liveUrl": "https://letsinvest-sigma.vercel.app"
+    },
+    "padala-proxy": {
+      "projectId": "prj_uxbVROeI3p94C0Ysv7qTd8dAKtLA",
+      "deploymentId": "dpl_2Udm6bMdoH3kqbwg32inSnkc1roS",
+      "framework": null,
+      "domains": [
+        "padala-proxy.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 2,
+      "filesPresent": 0,
+      "liveUrl": "https://padala-proxy.vercel.app"
+    },
+    "dhs-rise": {
+      "projectId": "prj_ioykLPtgRmaC3hwckeJVxkv96zXc",
+      "deploymentId": "dpl_DMQ17QZv9gErcBu1WPoFDxzSRmfx",
+      "framework": null,
+      "domains": [
+        "dhs-rise.vercel.app",
+        "dhs.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 45,
+      "filesPresent": 0,
+      "liveUrl": "https://dhs-rise.vercel.app"
+    },
+    "cov-design-lab": {
+      "projectId": "prj_0kHVCmuCAPBZPexi46kpCs0VJK8y",
+      "deploymentId": "dpl_CrW5Qeqhgpvd5Y1urswtyi67hUeZ",
+      "framework": null,
+      "domains": [
+        "cov-design-lab.vercel.app",
+        "covdesignlab.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 6,
+      "filesPresent": 0,
+      "liveUrl": "https://cov-design-lab.vercel.app"
+    },
+    "dermatrend-aesthetics": {
+      "projectId": "prj_1xs9FxH7AzqQPbORMR9RPRvRDzIY",
+      "deploymentId": "dpl_46LjTCWeoSjgZBcDT4AxBs2L33tf",
+      "framework": null,
+      "domains": [
+        "dermatrendph.com",
+        "dermatrend.majcustodioph.com",
+        "dermatrend-aesthetics.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 88,
+      "filesPresent": 0,
+      "liveUrl": "https://dermatrendph.com",
+      "supabase": {
+        "ref": "wsiajfkjjbhpieuvjikz",
+        "project": "agency-tracker",
+        "schema": "dermatrend"
+      }
+    },
+    "ever": {
+      "projectId": "prj_QvP1x64yik68A9CTy7ReTSHh7hOT",
+      "deploymentId": "dpl_9neR9GT8a778bvR5L3D2XpYgCt1s",
+      "framework": null,
+      "domains": [
+        "ever-nine.vercel.app",
+        "ever.majcustodioph.com"
+      ],
+      "ssoProtected": false,
+      "source": "cli",
+      "fileCount": 10,
+      "filesPresent": 0,
+      "liveUrl": "https://ever-nine.vercel.app"
+    },
+    "hiverooms-davao": {
+      "projectId": "prj_15aUuaTtLFIavH5wDl6N6ggANJfC",
+      "deploymentId": "dpl_7GukDTDePogaaGYvd4HWkG8Ufv54",
+      "framework": "nextjs",
+      "domains": [
+        "hiverooms-davao.vercel.app",
+        "hiverooms.majcustodioph.com"
+      ],
+      "ssoProtected": false,
+      "source": "cli",
+      "fileCount": 44,
+      "filesPresent": 0,
+      "liveUrl": "https://hiverooms-davao.vercel.app"
+    },
+    "clinic-front-office": {
+      "projectId": "prj_2GamrbR07giVkBaRS1bVCjvSgMGD",
+      "deploymentId": "dpl_sLdpU4jyiurLfEV5HqVpC6Sdiwp4",
+      "framework": "nextjs",
+      "domains": [
+        "clinic-front-office.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 51,
+      "filesPresent": 0,
+      "liveUrl": "https://clinic-front-office.vercel.app"
+    },
+    "enrollment-engine": {
+      "projectId": "prj_roEDk5BaWR8gCJiILuEKmdg9B7Dj",
+      "deploymentId": "dpl_WXC1ChDXhUTNc9nX74JUD78nFcZP",
+      "framework": "nextjs",
+      "domains": [
+        "enroll.majcustodioph.com",
+        "enrollment-engine-kappa.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 46,
+      "filesPresent": 0,
+      "liveUrl": "https://enroll.majcustodioph.com"
+    },
+    "rdr-pursuit": {
+      "projectId": "prj_sNAbGVh1CemmbvkNgdDsLkse5Grn",
+      "deploymentId": "dpl_8xBLKb3g1sFYdnMLMPqVAzzmhQaT",
+      "framework": "nextjs",
+      "domains": [
+        "rdr-pursuit.vercel.app",
+        "pursuit.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 140,
+      "filesPresent": 0,
+      "liveUrl": "https://rdr-pursuit.vercel.app"
+    },
+    "rdr-studio": {
+      "projectId": "prj_52YgY1IgNC4oORFmNhBeZdfqoXVO",
+      "deploymentId": "dpl_2NYAD5A9YheiZAUuJmvCt2mg6uws",
+      "framework": null,
+      "domains": [
+        "rdr-studio.vercel.app",
+        "rdrstudio.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 79,
+      "filesPresent": 0,
+      "liveUrl": "https://rdr-studio.vercel.app"
+    },
+    "hebrews-cafe": {
+      "projectId": "prj_wEtS81poaAWma2G3RYyqBEZfUIV5",
+      "deploymentId": "dpl_CiYzrhVyzX6XruZSxKUKZooECrdC",
+      "framework": null,
+      "domains": [
+        "hebrews-cafe-eosin.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 44,
+      "filesPresent": 0,
+      "liveUrl": "https://hebrews-cafe-eosin.vercel.app"
+    },
+    "recruitment-autopilot": {
+      "projectId": "prj_mqy6ZGA70lHG53CAERSHVwdzKM8t",
+      "deploymentId": "dpl_9dCeqzWcuAAGaNPor1tSot4dTony",
+      "framework": "nextjs",
+      "domains": [
+        "recruitment-autopilot.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 67,
+      "filesPresent": 0,
+      "liveUrl": "https://recruitment-autopilot.vercel.app"
+    },
+    "domestica": {
+      "projectId": "prj_1sZn86raveD5qzvt8XAhQBOZ0MXJ",
+      "deploymentId": "dpl_8dsXN6tGawUf3khsUYfXnLp6hTt5",
+      "framework": "nextjs",
+      "domains": [
+        "domestica-one.vercel.app",
+        "domestica.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 92,
+      "filesPresent": 0,
+      "liveUrl": "https://domestica-one.vercel.app"
+    },
+    "fundraising-autopilot": {
+      "projectId": "prj_VhMLcssMC1tNSKUgLOakCb6HaTIf",
+      "deploymentId": "dpl_8uWrhsG5kGcNFN4oyStuToCynywv",
+      "framework": "nextjs",
+      "domains": [
+        "fundraising-autopilot.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 46,
+      "filesPresent": 0,
+      "liveUrl": "https://fundraising-autopilot.vercel.app"
+    },
+    "ofw-investor-box": {
+      "projectId": "prj_HVu0rK45KRbjSDuzvoB9o0niftbt",
+      "deploymentId": "dpl_3iSM6RQPn62dMwTqdGUvfcP2JJmm",
+      "framework": "nextjs",
+      "domains": [
+        "invest.majcustodioph.com",
+        "ofw-investor-box.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 44,
+      "filesPresent": 0,
+      "liveUrl": "https://invest.majcustodioph.com"
+    },
+    "creatopia-live": {
+      "projectId": "prj_vOvmSK8SpwOoOQ7DJZMcJqxpB8sh",
+      "deploymentId": "dpl_2xJNKCVWimnYJ5RQEJX7pXtE4zob",
+      "framework": "nextjs",
+      "domains": [
+        "creatopialive.com",
+        "creatopia-live.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 127,
+      "filesPresent": 0,
+      "liveUrl": "https://creatopialive.com",
+      "supabase": {
+        "ref": "wsiajfkjjbhpieuvjikz",
+        "project": "agency-tracker",
+        "schema": "public (creatopia_* tables) + creatopia_private"
+      }
+    },
+    "maj-insurance-funnel": {
+      "projectId": "prj_OO9b3hvlaDAaFU9Uq6Tqzz8Y3huz",
+      "deploymentId": "dpl_BuRPRL1sYZuQK31pHmHVNZZwimmJ",
+      "framework": "express",
+      "domains": [
+        "insurance.majcustodioph.com",
+        "maj-insurance-funnel.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 3,
+      "filesPresent": 0,
+      "liveUrl": "https://insurance.majcustodioph.com"
+    },
+    "aacio-ad-media": {
+      "projectId": "prj_2dg3o36u7RkGGtUpT3vBqNt4j08E",
+      "deploymentId": "dpl_BdyjrbrvHEjec5LJf9SD5UbkVMxY",
+      "framework": null,
+      "domains": [
+        "aacio-ad-media.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 22,
+      "filesPresent": 0,
+      "liveUrl": "https://aacio-ad-media.vercel.app"
+    },
+    "sarah-recode-workshop": {
+      "projectId": "prj_NLVRFxXbYkL3KZcBPMnWQQqd37m0",
+      "deploymentId": "dpl_71k5VjBYC7R7uY81nhEkxttzgjKd",
+      "framework": "nextjs",
+      "domains": [
+        "sarah.majcustodioph.com",
+        "sarah-recode-workshop.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 165,
+      "filesPresent": 0,
+      "liveUrl": "https://sarah.majcustodioph.com"
+    },
+    "dwell-realty": {
+      "projectId": "prj_c3H4yepkk13tarJU0PnCAqQEixu3",
+      "deploymentId": "dpl_6887ggXAo3vYAKNrLAQV9zN84ghS",
+      "framework": "nextjs",
+      "domains": [
+        "dwellrealtyph.com",
+        "dwell-realty.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 105,
+      "filesPresent": 0,
+      "liveUrl": "https://dwellrealtyph.com",
+      "supabase": {
+        "ref": "zzhnkdvidtoirgmbbkmd",
+        "project": "dwell-realty"
+      }
+    },
+    "rasengan": {
+      "projectId": "prj_aK4ZCSaU5CjijLPLkPaAAcGWfPl7",
+      "deploymentId": "dpl_EqDsQqaSZ67tdpXYue3jFzL4qvzY",
+      "framework": "nextjs",
+      "domains": [
+        "rasenganapp.com",
+        "rasengan.majcustodioph.com",
+        "rasengan-seven.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 159,
+      "filesPresent": 0,
+      "liveUrl": "https://rasenganapp.com",
+      "supabase": {
+        "ref": "wsiajfkjjbhpieuvjikz",
+        "project": "agency-tracker",
+        "schema": "public (rasengan_* tables) + rasengan_private"
+      }
+    },
+    "insightcma": {
+      "projectId": "prj_YPVuG9xiJ977cCoAmlW0HJkAjbK6",
+      "deploymentId": "dpl_3tpm1vGLEVvCnMWuDvbnAe3NcogT",
+      "framework": "nextjs",
+      "domains": [
+        "insightscma.com",
+        "insightcma.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 108,
+      "filesPresent": 0,
+      "liveUrl": "https://insightscma.com",
+      "supabase": {
+        "ref": "wsiajfkjjbhpieuvjikz",
+        "project": "agency-tracker",
+        "schema": "insightcma"
+      }
+    },
+    "rdr-nexus": {
+      "projectId": "prj_pgkAQXpqm4w9yXdjrhfO8xVNaktg",
+      "deploymentId": "dpl_DK87g5FxdCvWpXZYPAxLjkVqinii",
+      "framework": null,
+      "domains": [
+        "rdr-nexus.vercel.app",
+        "nexus.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 9,
+      "filesPresent": 0,
+      "liveUrl": "https://rdr-nexus.vercel.app"
+    },
+    "rdr-meta-domination": {
+      "projectId": "prj_dbUWHeDhA8TV5Z0bQbYKC4Z0voDg",
+      "deploymentId": "dpl_AD94LdXbVPVgfXjg2r178DjrbmTY",
+      "framework": null,
+      "domains": [
+        "rdrmeta.majcustodioph.com",
+        "rdr-meta-domination.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 66,
+      "filesPresent": 0,
+      "liveUrl": "https://rdrmeta.majcustodioph.com"
+    },
+    "rdr-system": {
+      "projectId": "prj_iRMBuz9I6c9oCiy4S3GmHFkWKbGd",
+      "deploymentId": "dpl_84sQHizP2EXE85PWc9QTHhQyUQSo",
+      "framework": "nextjs",
+      "domains": [
+        "rdr-system.vercel.app",
+        "rdr.majcustodioph.com"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 117,
+      "filesPresent": 0,
+      "liveUrl": "https://rdr-system.vercel.app"
+    },
+    "ebook-majcustodioph": {
+      "projectId": "prj_N3lGP2bIGSOnVufWdKYP8Mvnoyfd",
+      "deploymentId": "dpl_5oZEWdhnLARiojnC6suHmMegCREV",
+      "framework": null,
+      "domains": [
+        "ebook.majcustodioph.com",
+        "ebook-majcustodioph.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 2,
+      "filesPresent": 0,
+      "liveUrl": "https://ebook.majcustodioph.com"
+    },
+    "maj-custodio": {
+      "projectId": "prj_QTdwBMic3dgI2d69EeCj7tY62ERl",
+      "deploymentId": "dpl_GiGUwYdsEb4kuHGTRVV5rPEFbxH1",
+      "framework": null,
+      "domains": [
+        "maj-custodio.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 2,
+      "filesPresent": 0,
+      "liveUrl": "https://maj-custodio.vercel.app"
+    },
+    "temporary-agile-celesta-jx4zwfh": {
+      "projectId": "prj_N2WJIMtmB0hfLw7tdXryklhXbR6V",
+      "deploymentId": "dpl_GkJnNPdQA8FS9XzxKZNhfUeFQwCt",
+      "framework": null,
+      "domains": [
+        "temporary-agile-celesta-jx4zwfh.vercel.app"
+      ],
+      "ssoProtected": true,
+      "source": "cli",
+      "fileCount": 28,
+      "filesPresent": 0,
+      "liveUrl": "https://temporary-agile-celesta-jx4zwfh.vercel.app"
+    },
+    "shift-founder-webinar": {
+      "projectId": "prj_b9uy4tkM0vCqoz2CTPkDrBMP7qrH",
+      "deploymentId": "dpl_4kx3oTStt5qb3cNSJA2NMUkYWciN",
+      "framework": null,
+      "domains": [
+        "wendyalferez.com",
+        "shift-founder-webinar.vercel.app"
+      ],
+      "ssoProtected": false,
+      "source": "cli",
+      "fileCount": 37,
+      "filesPresent": 0,
+      "liveUrl": "https://wendyalferez.com",
+      "supabase": {
+        "ref": "gbjniglezninsaybharr",
+        "project": "shift-founder-webinar",
+        "status": "INACTIVE (paused)"
+      }
+    }
+  }
+}

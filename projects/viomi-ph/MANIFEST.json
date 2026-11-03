@@ -1,0 +1,497 @@
+{
+ "deploymentId": "dpl_GF9wUWFv7WoQFkhQ7MbpxL7pBj3z",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "b7486f17c569995e7763129c4366b34c5581416e"
+  },
+  {
+   "path": "admin/index.html",
+   "uid": "e9cdda1524a46c909a0a030b7a4bac0148b24271"
+  },
+  {
+   "path": "api/_lib.js",
+   "uid": "3196c638d3511de750724afb9abab94634c467bf"
+  },
+  {
+   "path": "api/admin.js",
+   "uid": "232dde49b55a0a5dd85c9916405ef033c3b1ac40"
+  },
+  {
+   "path": "api/booking.js",
+   "uid": "a20605ad6829ebf38a259018ea3635fc9c1c4b0d"
+  },
+  {
+   "path": "api/courier.js",
+   "uid": "fe110d909d99ffe1f37b19eb32b97cc1b375299b"
+  },
+  {
+   "path": "api/order.js",
+   "uid": "1d85f312da7e7b00ee5a77049e1b00ddfe9e3e57"
+  },
+  {
+   "path": "api/track.js",
+   "uid": "8da17ec3a444f153db2e6adb0dade77d058adc35"
+  },
+  {
+   "path": "app.js",
+   "uid": "ea06b8f089258df488fc21d3c944b3ab75c293e9"
+  },
+  {
+   "path": "assets/img/booth.jpg",
+   "uid": "079e5db518f7d2828adb520cc1871706ec9cceff"
+  },
+  {
+   "path": "assets/img/cartridges.jpg",
+   "uid": "0b8f98501ac5e0c03f32687a5559e305e50a2ef6"
+  },
+  {
+   "path": "assets/img/event.jpg",
+   "uid": "5828c3751bd3e9fa2a39b5233e43a2c4ead46cdd"
+  },
+  {
+   "path": "assets/img/expo.jpg",
+   "uid": "3037228d7dff1ae34f0bbb3de99123475463bc7b"
+  },
+  {
+   "path": "assets/img/faucet-macro.jpg",
+   "uid": "84ae2aa439ed31ca60fa5166faf5d4b43dfb162c"
+  },
+  {
+   "path": "assets/img/hero.jpg",
+   "uid": "fca61592e9f5d548f4fc47979904673f00c0a3d6"
+  },
+  {
+   "path": "assets/img/kitchen.jpg",
+   "uid": "9baa9e4f3f3375ff5fa397887734619033afe9b3"
+  },
+  {
+   "path": "assets/img/lifestyle-family.jpg",
+   "uid": "da27ec3350bd1db0ffd2ac57698ae253ee69994f"
+  },
+  {
+   "path": "assets/img/lifestyle-morning.jpg",
+   "uid": "0fd69532d4f8af77607577d68541f7a79b6754c2"
+  },
+  {
+   "path": "assets/img/rdr/chair-unit.jpg",
+   "uid": "82647e5ce8f387bbab86597e9e467c9ace931068"
+  },
+  {
+   "path": "assets/img/rdr/double-faucet.jpg",
+   "uid": "c63043c34fff79b84933fd3fe420f10d75936988"
+  },
+  {
+   "path": "assets/img/rdr/drink-mineral.jpg",
+   "uid": "52d607b2f3f3e89684352418c0b823a2f35434a4"
+  },
+  {
+   "path": "assets/img/rdr/face-mineralpro.jpg",
+   "uid": "0bbafae4674c27262d4125bb9eeedf7ea3965701"
+  },
+  {
+   "path": "assets/img/rdr/faucet-point.jpg",
+   "uid": "9015c0aebf05fb80a0fcd4b905941842984c5a31"
+  },
+  {
+   "path": "assets/img/rdr/hero-rdr.jpg",
+   "uid": "3cec72a84ab5f52c6454dd450f713b537b532410"
+  },
+  {
+   "path": "assets/img/rdr/holding-unit.jpg",
+   "uid": "d175502fdf8f56810e74a82b3638dc24a35d6a2d"
+  },
+  {
+   "path": "assets/img/rdr/install-cabinet.jpg",
+   "uid": "7d4cc4c03ea57b7764f343c7d93ec65acb85f38f"
+  },
+  {
+   "path": "assets/img/rdr/kitchen-pour.jpg",
+   "uid": "0ebcae1c90d669dbf9fc02bf903e1da1af0fffc4"
+  },
+  {
+   "path": "assets/img/rdr/lean-mineralpro.jpg",
+   "uid": "8bcb406a690f7734ae05b3d2c057ef657236e064"
+  },
+  {
+   "path": "assets/img/rdr/mineralpro-lean2.jpg",
+   "uid": "24e036974e324be1b93157f273fcb37f6bee18ef"
+  },
+  {
+   "path": "assets/img/rdr/offer-glass.jpg",
+   "uid": "e1a24c4df681f9613b31bb112c4bf8e3febdd62d"
+  },
+  {
+   "path": "assets/img/rdr/present-mineral.jpg",
+   "uid": "27c65104433f245d3751ce6ddadb7d251dd59389"
+  },
+  {
+   "path": "assets/img/rdr/rdr-avatar.jpg",
+   "uid": "f2ba26bdbcfa5797d22b42f7bcc320dfabc7e40c"
+  },
+  {
+   "path": "assets/img/rdr/rdr-brown.webp",
+   "uid": "e9b6104aaec1935adb8c8708b3d3ab59e11d03f4"
+  },
+  {
+   "path": "assets/img/rdr/rdr-chair.webp",
+   "uid": "afea3dbbdd832d1c6f582fe6025b206fb6ebeb5b"
+  },
+  {
+   "path": "assets/img/rdr/rdr-hero.webp",
+   "uid": "c325674fbdc72c6c1f90aea09138a6078b9b3f3a"
+  },
+  {
+   "path": "assets/img/rdr/rdr-warm.webp",
+   "uid": "1b6b8ad7a6ed02b7549d6f3c23bf45a53d41b0e0"
+  },
+  {
+   "path": "assets/img/rdr/stage-wide.jpg",
+   "uid": "2d838956755f15159e1fde20644acf2aabc8957a"
+  },
+  {
+   "path": "assets/img/rdr/vital-think.jpg",
+   "uid": "386019eab65b8b5353d4caca9ac5bca52714fb32"
+  },
+  {
+   "path": "assets/img/seq-poster.jpg",
+   "uid": "c3fdb0ccf11380abe2f564d680fb4f14d9de9f00"
+  },
+  {
+   "path": "assets/img/studio-mineral-pro.jpg",
+   "uid": "41f49ec1b400257ac9b9b64e36ac1a1e4654942e"
+  },
+  {
+   "path": "assets/img/studio-mineral.jpg",
+   "uid": "00feef886fc02739673a5cc82f1e6b58a3d0b4fa"
+  },
+  {
+   "path": "assets/img/studio-vital-pro.jpg",
+   "uid": "5fc4ddafdaf34b4032c99816d6ab74cc4a8df13d"
+  },
+  {
+   "path": "assets/img/teaser.jpg",
+   "uid": "e7d1469e20a77bf380111c997552e5e507fa1e97"
+  },
+  {
+   "path": "assets/img/xray.jpg",
+   "uid": "79ea87e88b76e31cc93fc7e6e9122e8adfa1566f"
+  },
+  {
+   "path": "assets/seq/f001.jpg",
+   "uid": "760350e9c17fef25432d5e0d235e678256975277"
+  },
+  {
+   "path": "assets/seq/f002.jpg",
+   "uid": "220336549a13f370996bb5575c4be8ee49d20299"
+  },
+  {
+   "path": "assets/seq/f003.jpg",
+   "uid": "52a54a80a6ae16cafc07e1237d23b17eae588f3a"
+  },
+  {
+   "path": "assets/seq/f004.jpg",
+   "uid": "d5a02024c74360187d618930a10a17396f805db7"
+  },
+  {
+   "path": "assets/seq/f005.jpg",
+   "uid": "fe0f8b18c9fa28d5db38f1c714615f8c860dbcd2"
+  },
+  {
+   "path": "assets/seq/f006.jpg",
+   "uid": "44f8a8499e1d8615ca1469fa32ab30c11707f211"
+  },
+  {
+   "path": "assets/seq/f007.jpg",
+   "uid": "792e8267f52552b50e4a4580b4b1e1d7ffb4b8a8"
+  },
+  {
+   "path": "assets/seq/f008.jpg",
+   "uid": "627d5b2f34c81f0621ac1ff95f44696013680661"
+  },
+  {
+   "path": "assets/seq/f009.jpg",
+   "uid": "30dba1ba68a4402a6e0bdac050597cb41abb3f58"
+  },
+  {
+   "path": "assets/seq/f010.jpg",
+   "uid": "a0adeb234bb52b282e5d1e6ac22231559ccc1cd2"
+  },
+  {
+   "path": "assets/seq/f011.jpg",
+   "uid": "7ea730a3da09aa1dcbd167ed73e5c61a2605df3e"
+  },
+  {
+   "path": "assets/seq/f012.jpg",
+   "uid": "2a375d62b70ce81079c684fc6694c2790fec547a"
+  },
+  {
+   "path": "assets/seq/f013.jpg",
+   "uid": "b55f3d58f623b397ee42ec9b7750e685263aceb9"
+  },
+  {
+   "path": "assets/seq/f014.jpg",
+   "uid": "bdf610746b2bb513376b894922159994f65a1bea"
+  },
+  {
+   "path": "assets/seq/f015.jpg",
+   "uid": "a2c3ebb0fc254e4d4a78b94c2ee07a19cb937e16"
+  },
+  {
+   "path": "assets/seq/f016.jpg",
+   "uid": "57999b39e20b37a516618933f7c2b9c765f54336"
+  },
+  {
+   "path": "assets/seq/f017.jpg",
+   "uid": "d5f4870e62437f7bd0257737cae48cadf1fe2b1b"
+  },
+  {
+   "path": "assets/seq/f018.jpg",
+   "uid": "922cdf4f6958de08a34fbce79dce73071910479d"
+  },
+  {
+   "path": "assets/seq/f019.jpg",
+   "uid": "774c6007456290feba92df10764e9d63612421e6"
+  },
+  {
+   "path": "assets/seq/f020.jpg",
+   "uid": "d2dc14a0ddc88cde1728c8f0ebde7ff0077dd22a"
+  },
+  {
+   "path": "assets/seq/f021.jpg",
+   "uid": "f9bc7324cd9ea1fa779abaa23e2ddcbc88a61773"
+  },
+  {
+   "path": "assets/seq/f022.jpg",
+   "uid": "e425d1c78e790ddd393760ccbe0ff4d92304ddfe"
+  },
+  {
+   "path": "assets/seq/f023.jpg",
+   "uid": "35d30470d34e861fb26e4f5ee91ca442e4ce400a"
+  },
+  {
+   "path": "assets/seq/f024.jpg",
+   "uid": "86a5839efa3c75f76032907e5b84b3a8978ede1f"
+  },
+  {
+   "path": "assets/seq/f025.jpg",
+   "uid": "61da3412899b64b2efaa75c2f87d842245f0174e"
+  },
+  {
+   "path": "assets/seq/f026.jpg",
+   "uid": "d25c4c6011a2695e84c9bc798e88a4c1600749b3"
+  },
+  {
+   "path": "assets/seq/f027.jpg",
+   "uid": "c825384ae59050836df0a4f2503548ac9088a611"
+  },
+  {
+   "path": "assets/seq/f028.jpg",
+   "uid": "ca1f4b8ca46dbe53f8c06447037dea7c3a4449e5"
+  },
+  {
+   "path": "assets/seq/f029.jpg",
+   "uid": "d77d6d52cc586d8e89a5184bae8b1b02c5e58947"
+  },
+  {
+   "path": "assets/seq/f030.jpg",
+   "uid": "c94e680e827054b5085b313085f138ac76907bfb"
+  },
+  {
+   "path": "assets/seq/f031.jpg",
+   "uid": "2ce682686c060c7acae5de8b42af09b3615886ec"
+  },
+  {
+   "path": "assets/seq/f032.jpg",
+   "uid": "36c68f6c45594779c166e5171eb627612e58f3c5"
+  },
+  {
+   "path": "assets/seq/f033.jpg",
+   "uid": "feafdbe913506fb5566ed60c03477ca0dadaecd5"
+  },
+  {
+   "path": "assets/seq/f034.jpg",
+   "uid": "fc0e28caf73092bbab9ce47e1549fe56a05491c1"
+  },
+  {
+   "path": "assets/seq/f035.jpg",
+   "uid": "0c773967b3206a2f081e37d3ab7d1e30e275bf74"
+  },
+  {
+   "path": "assets/seq/f036.jpg",
+   "uid": "428a4d1ce99cd92ce42c7c00ef46537c52260d49"
+  },
+  {
+   "path": "assets/seq/f037.jpg",
+   "uid": "1a6096a6f5fd52015515ef1bfda8d565d126d909"
+  },
+  {
+   "path": "assets/seq/f038.jpg",
+   "uid": "355645a1646f96cb5470568bdb3145daba8c8193"
+  },
+  {
+   "path": "assets/seq/f039.jpg",
+   "uid": "784e0edef0e6f5aacfba34fd6103881eeee19b32"
+  },
+  {
+   "path": "assets/seq/f040.jpg",
+   "uid": "6b1005700f4d1f66dc50d41a208eb0ef34dad699"
+  },
+  {
+   "path": "assets/seq/f041.jpg",
+   "uid": "470e1e238f369ea909e184cca5a3bab45cc8253f"
+  },
+  {
+   "path": "assets/seq/f042.jpg",
+   "uid": "e77c2aebbf13d2ec486e80ca98256c53b3a09b70"
+  },
+  {
+   "path": "assets/seq/f043.jpg",
+   "uid": "28646d172122037899240f3be6f1c7ac9598918d"
+  },
+  {
+   "path": "assets/seq/f044.jpg",
+   "uid": "718f4b549205a088ebd3db4d272e1380795de243"
+  },
+  {
+   "path": "assets/seq/f045.jpg",
+   "uid": "8ffacb005ef0fd65b3c86a9feb2f1f7b28b14ce5"
+  },
+  {
+   "path": "assets/seq/f046.jpg",
+   "uid": "dcd258ddcc3d63a53b6ef305d2f6f311120ebd53"
+  },
+  {
+   "path": "assets/seq/f047.jpg",
+   "uid": "92e607c296bbe6c98984be3f513fdd30a0e24c7f"
+  },
+  {
+   "path": "assets/seq/f048.jpg",
+   "uid": "af33f137d89c6540dc364a9bc426d71b47dc9cf9"
+  },
+  {
+   "path": "assets/seq/f049.jpg",
+   "uid": "d4eea682e83549540639ae5f2c5de8f5f8496ea0"
+  },
+  {
+   "path": "assets/seq/f050.jpg",
+   "uid": "be7342621b8b77d846a1fc8932426d0468bf4768"
+  },
+  {
+   "path": "assets/seq/f051.jpg",
+   "uid": "ccf28c1a3d431d91ef6371fd4a0c95c7373ef2e6"
+  },
+  {
+   "path": "assets/seq/f052.jpg",
+   "uid": "7ee9a2e621ba61468710128d30e5b2b1a16c99cb"
+  },
+  {
+   "path": "assets/seq/f053.jpg",
+   "uid": "0122ca7ace74881b9e880c400f8e19fe4b27d4f7"
+  },
+  {
+   "path": "assets/seq/f054.jpg",
+   "uid": "236331af0e8c5c82aed2bc4dcc9af4f5b5e43e99"
+  },
+  {
+   "path": "assets/seq/f055.jpg",
+   "uid": "8e7ac5f7d08db0e89b00cfff2e18b629f017b1a1"
+  },
+  {
+   "path": "assets/seq/f056.jpg",
+   "uid": "73db7d9e27aab81194bc019b131bd14dc2dc867d"
+  },
+  {
+   "path": "assets/seq/f057.jpg",
+   "uid": "b567d05b90cbbc7314a8e2048bd3967b4942fed2"
+  },
+  {
+   "path": "assets/seq/f058.jpg",
+   "uid": "8974bee9547c3d81a1e9494ac6855e8b08453b83"
+  },
+  {
+   "path": "assets/seq/f059.jpg",
+   "uid": "cbbce06a7de36e64cf0d3eb2856be18cf439d987"
+  },
+  {
+   "path": "assets/seq/f060.jpg",
+   "uid": "58162a1e67acd168e6f340bc2d6f636f579265dc"
+  },
+  {
+   "path": "assets/seq/f061.jpg",
+   "uid": "0017df5da88ce0bbd5294b775a88607493b2aae6"
+  },
+  {
+   "path": "assets/seq/f062.jpg",
+   "uid": "05ac5f8b68f36253b444d26cd422251e9f3021ec"
+  },
+  {
+   "path": "assets/seq/f063.jpg",
+   "uid": "0efb146e4aa76c4305f15e3d30af50284df54858"
+  },
+  {
+   "path": "assets/seq/f064.jpg",
+   "uid": "7c2ea9626122d4cc931401bb28d1deffe12e1a5d"
+  },
+  {
+   "path": "assets/seq/f065.jpg",
+   "uid": "5393c7e1829a66ac31c76b2e5e11ce55d9fdd2d5"
+  },
+  {
+   "path": "assets/seq/f066.jpg",
+   "uid": "8571046bca5591265b058f597fb3d622c9bd7e22"
+  },
+  {
+   "path": "assets/seq/f067.jpg",
+   "uid": "ab27bcb6732deb72cbab197a2174929533ba7a7d"
+  },
+  {
+   "path": "assets/seq/f068.jpg",
+   "uid": "66806e9c3e23f0458283460c6624d7c5915bd8bc"
+  },
+  {
+   "path": "assets/seq/f069.jpg",
+   "uid": "9d3edd002c2b7e20f2d8f778be9b619cc2fb0869"
+  },
+  {
+   "path": "assets/seq/f070.jpg",
+   "uid": "e8731a51dde0453b3bcbfe8107c8810aad1493f0"
+  },
+  {
+   "path": "assets/seq/f071.jpg",
+   "uid": "f34c3e47c26967977fdbbfc15f5e414d65ce2c2e"
+  },
+  {
+   "path": "assets/seq/f072.jpg",
+   "uid": "f2e97b2c95d7c004906bf9c9ae8b4b79c018b81e"
+  },
+  {
+   "path": "assets/seq/f073.jpg",
+   "uid": "e8741eb6553f1e62598a81d2260871058f3557aa"
+  },
+  {
+   "path": "assets/video/hero-loop.mp4",
+   "uid": "0ef455ec4c7826d957fa1b5baeb72d8d2f595850"
+  },
+  {
+   "path": "courier/index.html",
+   "uid": "508066088193f42180d1c1d940b4555e9d6aa83a"
+  },
+  {
+   "path": "index.html",
+   "uid": "c5606f48b0142a1ca1edf847cfb9083a6f9d81c1"
+  },
+  {
+   "path": "styles.css",
+   "uid": "6fef6ab93fb8c6ed6043d3ee02656c3ad0b853a5"
+  },
+  {
+   "path": "track.html",
+   "uid": "f3cf76935bfbf09431e6d967b4c5e7a9d9845616"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "4f3b07cc3b852cd223184984d8e5fcd2b790b90b"
+  }
+ ]
+}
