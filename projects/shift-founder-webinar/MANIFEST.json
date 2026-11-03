@@ -1,0 +1,153 @@
+{
+ "deploymentId": "dpl_4kx3oTStt5qb3cNSJA2NMUkYWciN",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "78ee83646dfee5c12ebc4451bf841b201434d276"
+  },
+  {
+   "path": "api/_automation.js",
+   "uid": "1b2a612ee9aae4f1ccfe3548e1d794bda7f985f8"
+  },
+  {
+   "path": "api/_lib.js",
+   "uid": "2cb9a71ac194600a06bf8a77653ec1f097334a79"
+  },
+  {
+   "path": "api/_mail.js",
+   "uid": "7aff687dc8d445a32795723be9560ab526a67349"
+  },
+  {
+   "path": "api/_webinar.js",
+   "uid": "90bfb09957afb348fdff504a5c6a993eb9db956f"
+  },
+  {
+   "path": "api/broadcast.js",
+   "uid": "92cf5825a1e7e535b7b4efa538dae54414bf0dd1"
+  },
+  {
+   "path": "api/leads.js",
+   "uid": "c6fcb613d50f25746cb85584bd54c837357de61b"
+  },
+  {
+   "path": "api/page.js",
+   "uid": "cfbfac5faec90180f7ace24385cc4673c4d46bc8"
+  },
+  {
+   "path": "api/recon.js",
+   "uid": "520a6a2dfb54eb722cb13c65e6a87184cf62c2ff"
+  },
+  {
+   "path": "api/register.js",
+   "uid": "f8c2d463bf172f0fc41b4a523ed50f078a70d054"
+  },
+  {
+   "path": "api/tick.js",
+   "uid": "9f4af433945d7ae78219da5465e87eb1cf491f90"
+  },
+  {
+   "path": "api/unsubscribe.js",
+   "uid": "e191a7576df9fa928bd30206bfa52471ebbde7e4"
+  },
+  {
+   "path": "package.json",
+   "uid": "f43958f113c438e268934b3c6289ed53bf71d38e"
+  },
+  {
+   "path": "public/admin.html",
+   "uid": "65518a218602f5b11cfa25e3b4e51f043f776907"
+  },
+  {
+   "path": "public/app.js",
+   "uid": "093e58be764f703b69b6461707a6c993a801887d"
+  },
+  {
+   "path": "public/img/call-amexpediting.jpg",
+   "uid": "7409b89a39c309c1ec867caccd32cdb7bd8317a3"
+  },
+  {
+   "path": "public/img/call-casillas.jpg",
+   "uid": "2689c770308c4b404b3d56bb28f26974b163a73c"
+  },
+  {
+   "path": "public/img/call-gsdesign.jpg",
+   "uid": "022e7029f2176bcfb68b428117d5cdcddcd9640a"
+  },
+  {
+   "path": "public/img/call-jcgrigg.jpg",
+   "uid": "ad0c79b0fdfccdc9447e7a70e2180862a137a4ab"
+  },
+  {
+   "path": "public/img/call-meintu.jpg",
+   "uid": "6b86576fd423fe6e6e52a3bbce069cfcde9956ed"
+  },
+  {
+   "path": "public/img/call-mrkflooring.jpg",
+   "uid": "b5192bfda4000cf9ab1af68fb68832f084da5ec2"
+  },
+  {
+   "path": "public/img/call-siren.jpg",
+   "uid": "516a5e30864ba58476cb5a650fecb6da02f62910"
+  },
+  {
+   "path": "public/img/call-tristate.jpg",
+   "uid": "db1bc1a82a74d9e5e7222736ed5041d2077d3d81"
+  },
+  {
+   "path": "public/img/call-vw.jpg",
+   "uid": "b8429eb37bd6e5401ac9e7aeeab940c00137f38c"
+  },
+  {
+   "path": "public/img/wendy-bootcamp.jpg",
+   "uid": "2bfdf1071261a6d430534a8f57e926763803fa46"
+  },
+  {
+   "path": "public/img/wendy-call.jpg",
+   "uid": "ae5ba9072ee838f893eece50f9638d2f716f895b"
+  },
+  {
+   "path": "public/img/wendy-hero.jpg",
+   "uid": "b3be74d4abfd70cbc750a8cdc882773e77a9fcc4"
+  },
+  {
+   "path": "public/img/wendy-portrait.jpg",
+   "uid": "c72a80fcce20043c8dcb0ab39c5d88b652fd9ad8"
+  },
+  {
+   "path": "public/img/wendy-team.jpg",
+   "uid": "abea47f98e1c341ef6679a46eca2609cb7e72e48"
+  },
+  {
+   "path": "public/index.html",
+   "uid": "6ce1906b2442a48021d8783f68cfdafc791c241f"
+  },
+  {
+   "path": "public/media/wendy-avatar.jpg",
+   "uid": "44ac76c141616a5271ef9e32bd4062d2c42589f7"
+  },
+  {
+   "path": "public/media/wendy-maison.jpg",
+   "uid": "ae8179caddf3a3db5c5b9c5ae56e3c4ce72d2ebb"
+  },
+  {
+   "path": "public/site.css",
+   "uid": "b0fb74c59021650197ce7e7627d6e1a3f20d63bf"
+  },
+  {
+   "path": "public/site.js",
+   "uid": "b48d538592fb2fef05ef68583707822eb8cdd4a7"
+  },
+  {
+   "path": "public/styles.css",
+   "uid": "4c6b10038c2f6c6da72d64d7551456bc12162dfb"
+  },
+  {
+   "path": "public/thank-you.html",
+   "uid": "8501de0a3dd94ea888781b3bd221213ceee96a96"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "efc7b4ec26edb102e144d4c08ea7ee8fec926d30"
+  }
+ ]
+}

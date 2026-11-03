@@ -1,0 +1,29 @@
+{
+ "deploymentId": "dpl_CrW5Qeqhgpvd5Y1urswtyi67hUeZ",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "62f8884975880bbdf852fa28aaaac4b0541f69b5"
+  },
+  {
+   "path": "app.js",
+   "uid": "ae293178d9e3f2a198ee9acc31b54f3e7c2d8668"
+  },
+  {
+   "path": "data.js",
+   "uid": "59dbaccf101ad71b1de11bdd2b3531ab85e7ca9d"
+  },
+  {
+   "path": "index.html",
+   "uid": "2b7d976bf60a1f8bea3037da42cc959e914b2ab6"
+  },
+  {
+   "path": "render.js",
+   "uid": "4f12a5488ab05077d8f85649f9812878f889ba6b"
+  },
+  {
+   "path": "styles.css",
+   "uid": "36b06e7fbf9ae1108d577da8726e5ca7dadbd6e5"
+  }
+ ]
+}

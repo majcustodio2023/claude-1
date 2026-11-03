@@ -1,0 +1,469 @@
+{
+ "deploymentId": "dpl_AZKGb8V2xKxfyi3ygkghzWM2CE7L",
+ "files": [
+  {
+   "path": "README.md",
+   "uid": "5976d1f9c667a38f3c4b90049d2c6722a10c19ad"
+  },
+  {
+   "path": "public/favicon.svg",
+   "uid": "3f5bb8f3a6a05b7ca68a62581d2dd5bc88812caf"
+  },
+  {
+   "path": "public/frames/frame-0001.jpg",
+   "uid": "6c15fec2909fa444ad7dd404d7880459e5baa84a"
+  },
+  {
+   "path": "public/frames/frame-0002.jpg",
+   "uid": "4a474130fdb176147bd3d781877d0f0340ef40b0"
+  },
+  {
+   "path": "public/frames/frame-0003.jpg",
+   "uid": "46697aafb484d8b40e2b7bfd003e8700437b8579"
+  },
+  {
+   "path": "public/frames/frame-0004.jpg",
+   "uid": "0d8f71dabf3c8392d4109bc47ad2287a3495e640"
+  },
+  {
+   "path": "public/frames/frame-0005.jpg",
+   "uid": "5de3f5ce57acc2e5a06698614d6998985c6a45cf"
+  },
+  {
+   "path": "public/frames/frame-0006.jpg",
+   "uid": "7a9d078b906a30876c0bc3fa91de787d1dc7d688"
+  },
+  {
+   "path": "public/frames/frame-0007.jpg",
+   "uid": "a19228c2d0e1af97fdf5fb44b8f6198c0f6e4907"
+  },
+  {
+   "path": "public/frames/frame-0008.jpg",
+   "uid": "922cac95b2a5c7b618d8d303737a35a74df9cb40"
+  },
+  {
+   "path": "public/frames/frame-0009.jpg",
+   "uid": "cd543e637c42582f575ee5bd8c284811af8882bc"
+  },
+  {
+   "path": "public/frames/frame-0010.jpg",
+   "uid": "2e92d23c154a82a3df902480c44ea4fd97d2a296"
+  },
+  {
+   "path": "public/frames/frame-0011.jpg",
+   "uid": "cecfbdbb5ac9cce58779a486f0901c654fc0c098"
+  },
+  {
+   "path": "public/frames/frame-0012.jpg",
+   "uid": "40beb6ce815092fa803e66fd0693221ca69fc08a"
+  },
+  {
+   "path": "public/frames/frame-0013.jpg",
+   "uid": "40beb6ce815092fa803e66fd0693221ca69fc08a"
+  },
+  {
+   "path": "public/frames/frame-0014.jpg",
+   "uid": "e4d2df8f49d1b084317de153ad2c4e1fde5d61a6"
+  },
+  {
+   "path": "public/frames/frame-0015.jpg",
+   "uid": "b8f365217903868f9393b468b3c2711622f58496"
+  },
+  {
+   "path": "public/frames/frame-0016.jpg",
+   "uid": "745000bfe158459dc4c235c155d4333549b33600"
+  },
+  {
+   "path": "public/frames/frame-0017.jpg",
+   "uid": "8f7c5dc052e23aade3a8641286701cffbdc251c4"
+  },
+  {
+   "path": "public/frames/frame-0018.jpg",
+   "uid": "8f7c5dc052e23aade3a8641286701cffbdc251c4"
+  },
+  {
+   "path": "public/frames/frame-0019.jpg",
+   "uid": "3bdf5206cfef6b51bc82a6aa73a49572b9277246"
+  },
+  {
+   "path": "public/frames/frame-0020.jpg",
+   "uid": "5af5aecaf37913f4a7bbdfd750bc7479ae2ad02f"
+  },
+  {
+   "path": "public/frames/frame-0021.jpg",
+   "uid": "6616520160b5e862b8224c3bea5a04801ca068d5"
+  },
+  {
+   "path": "public/frames/frame-0022.jpg",
+   "uid": "a6974152631de92dc4a8cc6819913ace3aa42d00"
+  },
+  {
+   "path": "public/frames/frame-0023.jpg",
+   "uid": "a6974152631de92dc4a8cc6819913ace3aa42d00"
+  },
+  {
+   "path": "public/frames/frame-0024.jpg",
+   "uid": "3b446dbd48cbb7f8ba025adfd3523e673985e36b"
+  },
+  {
+   "path": "public/frames/frame-0025.jpg",
+   "uid": "6bc42bdd9ca00719c052e9a78a85ee52f2d1d990"
+  },
+  {
+   "path": "public/frames/frame-0026.jpg",
+   "uid": "057f385c4a653beaccfcbcb2b25bbad9aa0bfabb"
+  },
+  {
+   "path": "public/frames/frame-0027.jpg",
+   "uid": "69f2e189a79b70605f34dc97052fc243a01c0c84"
+  },
+  {
+   "path": "public/frames/frame-0028.jpg",
+   "uid": "69f2e189a79b70605f34dc97052fc243a01c0c84"
+  },
+  {
+   "path": "public/frames/frame-0029.jpg",
+   "uid": "28331d7640164e9670dae0b76e0eef3ae3f6038e"
+  },
+  {
+   "path": "public/frames/frame-0030.jpg",
+   "uid": "d81a2dd341e86cc6f149c6b10792eda42a0b2140"
+  },
+  {
+   "path": "public/frames/frame-0031.jpg",
+   "uid": "b06facd8310941faa6df2e613ac04a52c175491d"
+  },
+  {
+   "path": "public/frames/frame-0032.jpg",
+   "uid": "9cfe9ae7a4cca502835829c069f9ce656a0884ef"
+  },
+  {
+   "path": "public/frames/frame-0033.jpg",
+   "uid": "9cfe9ae7a4cca502835829c069f9ce656a0884ef"
+  },
+  {
+   "path": "public/frames/frame-0034.jpg",
+   "uid": "cd87c7db9d1132d12a65ba489a2b02da4b337090"
+  },
+  {
+   "path": "public/frames/frame-0035.jpg",
+   "uid": "cad89f167a960e999b86a338aefb571f1430cf8a"
+  },
+  {
+   "path": "public/frames/frame-0036.jpg",
+   "uid": "d97cda34c206fb0fd47defc6d022b992fef1b0bc"
+  },
+  {
+   "path": "public/frames/frame-0037.jpg",
+   "uid": "7d70522744c743631239da07d5f21bf2aa642759"
+  },
+  {
+   "path": "public/frames/frame-0038.jpg",
+   "uid": "7d70522744c743631239da07d5f21bf2aa642759"
+  },
+  {
+   "path": "public/frames/frame-0039.jpg",
+   "uid": "44cbc5b4fda16e22a57d5beb2d98310c5371d053"
+  },
+  {
+   "path": "public/frames/frame-0040.jpg",
+   "uid": "cc0d5aad4e2c2f605dc60d55f80f24729c833126"
+  },
+  {
+   "path": "public/frames/frame-0041.jpg",
+   "uid": "0b12e3b38923789dbc2929c07789724a55ef3dcd"
+  },
+  {
+   "path": "public/frames/frame-0042.jpg",
+   "uid": "42d1fb592b3ea758dfe59738be23a424d14819da"
+  },
+  {
+   "path": "public/frames/frame-0043.jpg",
+   "uid": "42d1fb592b3ea758dfe59738be23a424d14819da"
+  },
+  {
+   "path": "public/frames/frame-0044.jpg",
+   "uid": "68ec55250365d2db4556e21ec6a921ed7116f33e"
+  },
+  {
+   "path": "public/frames/frame-0045.jpg",
+   "uid": "1eae242c9840849d8a547b29ca7c2aace240b913"
+  },
+  {
+   "path": "public/frames/frame-0046.jpg",
+   "uid": "f37286c3dc7a49419adc6571be75284eb7334a9b"
+  },
+  {
+   "path": "public/frames/frame-0047.jpg",
+   "uid": "d4317a16fda9db313a56ac1ab046a5b21c8773fd"
+  },
+  {
+   "path": "public/frames/frame-0048.jpg",
+   "uid": "d4317a16fda9db313a56ac1ab046a5b21c8773fd"
+  },
+  {
+   "path": "public/frames/frame-0049.jpg",
+   "uid": "3480c01f37c206832aeb9171a7b86382778741fb"
+  },
+  {
+   "path": "public/frames/frame-0050.jpg",
+   "uid": "56615d34caf1fc79df63b6184cbf90f56c910bd1"
+  },
+  {
+   "path": "public/frames/frame-0485.jpg",
+   "uid": "b82a45f175e8edc02ecc2f477610fe11513eae47"
+  },
+  {
+   "path": "public/frames/frame-0486.jpg",
+   "uid": "c3cc45dd2d6ec8d57285960e3b023f8072465209"
+  },
+  {
+   "path": "public/frames/frame-0487.jpg",
+   "uid": "bb02b9de9cde2c876c88b89ca35f9521e918ebb8"
+  },
+  {
+   "path": "public/frames/frame-0488.jpg",
+   "uid": "bb02b9de9cde2c876c88b89ca35f9521e918ebb8"
+  },
+  {
+   "path": "public/frames/frame-0489.jpg",
+   "uid": "f4929a53cc195a6dd49a28e33d357cd1064ccb9b"
+  },
+  {
+   "path": "public/frames/frame-0490.jpg",
+   "uid": "46c397d52976bbdfccea1c8c4ce8b0ce44573513"
+  },
+  {
+   "path": "public/frames/frame-0491.jpg",
+   "uid": "a7f8f878d16a7d14c676ada48c5b1bac2b9c7e56"
+  },
+  {
+   "path": "public/frames/frame-0492.jpg",
+   "uid": "70bc433212feded05a024e7262a2b6e3a62318b2"
+  },
+  {
+   "path": "public/frames/frame-0493.jpg",
+   "uid": "70bc433212feded05a024e7262a2b6e3a62318b2"
+  },
+  {
+   "path": "public/frames/frame-0494.jpg",
+   "uid": "9673c7f125a7e5f3d83b8d88f3e5b3586ebcfa24"
+  },
+  {
+   "path": "public/frames/frame-0495.jpg",
+   "uid": "43dfee2c35d3ce917bf73e4b3b4d7f9da05a440a"
+  },
+  {
+   "path": "public/frames/frame-0496.jpg",
+   "uid": "4121cd55b30448de995770f63756c5d5c1c78629"
+  },
+  {
+   "path": "public/frames/frame-0497.jpg",
+   "uid": "2868c5e948967cee71ec8b5d3753da72282e46f7"
+  },
+  {
+   "path": "public/frames/frame-0498.jpg",
+   "uid": "2868c5e948967cee71ec8b5d3753da72282e46f7"
+  },
+  {
+   "path": "public/frames/frame-0499.jpg",
+   "uid": "d88c16acd8ebe932b0e283ac23ec6ddc2a385561"
+  },
+  {
+   "path": "public/frames/frame-0500.jpg",
+   "uid": "258c0f33f64be109021d1f7df9a2305dd52bc81a"
+  },
+  {
+   "path": "public/frames/frame-0501.jpg",
+   "uid": "799005bdf444a755bc329279a063e752001d4b69"
+  },
+  {
+   "path": "public/frames/frame-0502.jpg",
+   "uid": "ad363be029a10b4e6784b95a0f879169bc8cd5a0"
+  },
+  {
+   "path": "public/frames/frame-0503.jpg",
+   "uid": "ad363be029a10b4e6784b95a0f879169bc8cd5a0"
+  },
+  {
+   "path": "public/frames/frame-0504.jpg",
+   "uid": "33992c79a249eb72682ac4ee7beb156051f5e033"
+  },
+  {
+   "path": "public/frames/frame-0505.jpg",
+   "uid": "208bdf77cf048e7911477ba1aa0f454056314b6d"
+  },
+  {
+   "path": "public/frames/frame-0506.jpg",
+   "uid": "badf814340359a47299bc0e240bd222660b60bdc"
+  },
+  {
+   "path": "public/frames/frame-0507.jpg",
+   "uid": "f28a673de5663493b7553f21055dfd9cd1bc5b58"
+  },
+  {
+   "path": "public/frames/frame-0508.jpg",
+   "uid": "f28a673de5663493b7553f21055dfd9cd1bc5b58"
+  },
+  {
+   "path": "public/frames/frame-0509.jpg",
+   "uid": "d9c65c93f274dc0cab8f7ad9f34d67687ec3fada"
+  },
+  {
+   "path": "public/frames/frame-0510.jpg",
+   "uid": "e11e0ee2343bd0b1266057f350adacbe87810acf"
+  },
+  {
+   "path": "public/frames/frame-0511.jpg",
+   "uid": "6997e351b871dd74604d9833589ef26c113815c4"
+  },
+  {
+   "path": "public/frames/frame-0512.jpg",
+   "uid": "b2ea1f5cf9bd6ccbec6fbe3a369a3779bf1ac920"
+  },
+  {
+   "path": "public/frames/frame-0513.jpg",
+   "uid": "b2ea1f5cf9bd6ccbec6fbe3a369a3779bf1ac920"
+  },
+  {
+   "path": "public/frames/frame-0514.jpg",
+   "uid": "08075eb09a41f85d81bb399ee743b80d1a32b36c"
+  },
+  {
+   "path": "public/frames/frame-0515.jpg",
+   "uid": "0bb6d509322abfe9c88ce1f0276032c2edfbbc13"
+  },
+  {
+   "path": "public/frames/frame-0516.jpg",
+   "uid": "286b83a2b8eb669ac6e9d9880a46499b8b1fe669"
+  },
+  {
+   "path": "public/frames/frame-0517.jpg",
+   "uid": "b4a75549a194dfc02d6881ef60528128cd7c581f"
+  },
+  {
+   "path": "public/frames/frame-0518.jpg",
+   "uid": "b4a75549a194dfc02d6881ef60528128cd7c581f"
+  },
+  {
+   "path": "public/frames/frame-0519.jpg",
+   "uid": "6eef252b4be74473210ffa348242dd0ccf8449e0"
+  },
+  {
+   "path": "public/frames/frame-0520.jpg",
+   "uid": "c1ed3a63a176536b798f143ec756dc6b89b6a04c"
+  },
+  {
+   "path": "public/frames/frame-0521.jpg",
+   "uid": "83f7106956bb5f8c6627324352e89eec6622a749"
+  },
+  {
+   "path": "public/frames/frame-0522.jpg",
+   "uid": "0a036b1dea06ad7fe4a68c17131714e171236abb"
+  },
+  {
+   "path": "public/frames/frame-0523.jpg",
+   "uid": "0a036b1dea06ad7fe4a68c17131714e171236abb"
+  },
+  {
+   "path": "public/frames/frame-0524.jpg",
+   "uid": "c8945420be3052f11ff1211619dca47e680ba6c3"
+  },
+  {
+   "path": "public/frames/frame-0525.jpg",
+   "uid": "58ebe2dd8579f7833012931a166a541b8a9b16cd"
+  },
+  {
+   "path": "public/frames/frame-0526.jpg",
+   "uid": "b498828614682d5005a1d7e67bec3c376909ed42"
+  },
+  {
+   "path": "public/frames/frame-0527.jpg",
+   "uid": "aa8780d0314ad83590e2abad4405b94a8fcaf0db"
+  },
+  {
+   "path": "public/frames/frame-0528.jpg",
+   "uid": "aa8780d0314ad83590e2abad4405b94a8fcaf0db"
+  },
+  {
+   "path": "public/frames/frame-0529.jpg",
+   "uid": "71d29d38914f4e4a733b5011d55719505dfda730"
+  },
+  {
+   "path": "public/frames/frame-0530.jpg",
+   "uid": "5c99d46bec05b364a8e10bdd8a74c822986448f2"
+  },
+  {
+   "path": "public/frames/frame-0531.jpg",
+   "uid": "cff2108d6148ae7994657d64e8bddbb6a0477e85"
+  },
+  {
+   "path": "public/frames/frame-0532.jpg",
+   "uid": "7c2aae6ececb082136ac16412cd00312e6eea594"
+  },
+  {
+   "path": "public/frames/frame-0533.jpg",
+   "uid": "7c2aae6ececb082136ac16412cd00312e6eea594"
+  },
+  {
+   "path": "public/frames/frame-0534.jpg",
+   "uid": "9fe0c2fd60f7ff61aa4d4f6210b9b241ab29c41c"
+  },
+  {
+   "path": "eslint.config.js",
+   "uid": "3116d59387be2d09c009a58063e5ea17c4165148"
+  },
+  {
+   "path": "index.html",
+   "uid": "711b3a96c1f7dd52df08275c13916637a385bef8"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "8435c18a5cfba623aad78ad3848dff5319e80e3f"
+  },
+  {
+   "path": "package.json",
+   "uid": "cd74aa22bd8680c58bbe78faeab71702419c1ac5"
+  },
+  {
+   "path": "src/App.tsx",
+   "uid": "bddedf42a6d19281d2db4173d1d2ddd2c78d2be9"
+  },
+  {
+   "path": "src/components/Closing.tsx",
+   "uid": "5a1a1957e7354e8bd5f5b791cac422f4146bf83b"
+  },
+  {
+   "path": "src/components/Navbar.tsx",
+   "uid": "c939785fd00b0121cd4906f730f3e1554a5d2998"
+  },
+  {
+   "path": "src/components/Scrollymation.tsx",
+   "uid": "42b46d82bcc507ef61a19726b26c53f92870ec04"
+  },
+  {
+   "path": "src/index.css",
+   "uid": "7ccc6b6287007a5012bc8d2ad2367a657b8f434f"
+  },
+  {
+   "path": "src/main.tsx",
+   "uid": "05e4446135e24d135b8156df773fda104cbfb10f"
+  },
+  {
+   "path": "tsconfig.app.json",
+   "uid": "ca5966179fa193648570021411f8e823e546debc"
+  },
+  {
+   "path": "tsconfig.json",
+   "uid": "916168243c072245e89f349fb50e0d11696086fb"
+  },
+  {
+   "path": "tsconfig.node.json",
+   "uid": "67721cb381c707da636fc3d0d3e05746c60f1da4"
+  },
+  {
+   "path": "vite.config.ts",
+   "uid": "0b0ce1c16aee51a741418d548b038b3323dd63b2"
+  }
+ ]
+}

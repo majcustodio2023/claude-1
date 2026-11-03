@@ -1,0 +1,205 @@
+{
+ "deploymentId": "dpl_7oNW67dmjmdpGh7Z6PXyaDVBR71S",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "5d3ac915568614219916720e8e8339d6d7772c60"
+  },
+  {
+   "path": "app.js",
+   "uid": "b203c606ba8bc86cd5454e14e01e0193c87301a2"
+  },
+  {
+   "path": "assets/gen/figure_a.png",
+   "uid": "2f3f94a1c189a34b23690b0f4109f6e4881a8c67"
+  },
+  {
+   "path": "assets/gen/figure_b.png",
+   "uid": "aa340dc1d836eb4ac730713d8ec8e21f23fca95e"
+  },
+  {
+   "path": "assets/gen/figures_preview.png",
+   "uid": "87e8bc03007902a3fc63d0d195e798be1e13e870"
+  },
+  {
+   "path": "assets/hero/boss-rdr-cutout-d.png",
+   "uid": "67801e21ca0966617c5571613b22d4344b61df61"
+  },
+  {
+   "path": "assets/hero/boss-rdr-cutout-m.png",
+   "uid": "c32034632ce9db873c995bc69fc7e1aa565dfee4"
+  },
+  {
+   "path": "assets/hero/boss-rdr-cutout.png",
+   "uid": "847e6db80ed1683743c3b4534fee0613f3926438"
+  },
+  {
+   "path": "assets/hero/stage.svg",
+   "uid": "f062e634312760260aaf0e1173fda0532feeb66d"
+  },
+  {
+   "path": "assets/img/boss-desk.jpg",
+   "uid": "53df40c0d11abab5ec956336afaae0155c6abbdf"
+  },
+  {
+   "path": "assets/img/boss-godfathers.jpg",
+   "uid": "60662947898e86bb538002ac661bbf7728d7bf03"
+  },
+  {
+   "path": "assets/img/boss-keynote.jpg",
+   "uid": "b82eafe0b93e03a1a555b8c6c147ada4ce4e2dcf"
+  },
+  {
+   "path": "assets/img/boss-portrait.jpg",
+   "uid": "35c26ea7281dd79b638ca0dd1f71d277e99601e9"
+  },
+  {
+   "path": "assets/img/cinema-cover.jpg",
+   "uid": "5d9ca67742fbac98a60c067a15ae690783ed003e"
+  },
+  {
+   "path": "assets/img/events.jpg",
+   "uid": "422ba1117b21f595a1c42ae7412d24da30b8864e"
+  },
+  {
+   "path": "assets/img/films.jpg",
+   "uid": "d731d5317aeeb7027bfca788378fe45cca01bcec"
+  },
+  {
+   "path": "assets/img/gci.jpg",
+   "uid": "bdc1e171fba495c47845b8d7187b227c843d274b"
+  },
+  {
+   "path": "assets/img/n1m.jpg",
+   "uid": "d4ba3377296031d056327b8017d895e11c589a0e"
+  },
+  {
+   "path": "assets/img/rdr-crest-white.png",
+   "uid": "d12a4738ff26cc5a22bc70fa5194ad483982e596"
+  },
+  {
+   "path": "assets/img/rdr-logo-navy.png",
+   "uid": "2ffface876a731960a7dfbc3f114b92eb9bd961f"
+  },
+  {
+   "path": "assets/img/rdr-talks-set.jpg",
+   "uid": "61dc96c1ce75863c4c5d6c2eada00c0ac988f021"
+  },
+  {
+   "path": "assets/img/stories.jpg",
+   "uid": "765e6131496f7c44c8e026cbbeebf7a463529b75"
+  },
+  {
+   "path": "assets/img/studio-2.jpg",
+   "uid": "f1b4c8d717104c6f4e8afa054176f412017da1ec"
+  },
+  {
+   "path": "assets/img/studio-3.jpg",
+   "uid": "7355626cdf60a8a2150228768f30a323c7e6ef4b"
+  },
+  {
+   "path": "assets/img/studio-4.jpg",
+   "uid": "b83d01b6f2dda0c1e414c05c22ed7b7533666a3d"
+  },
+  {
+   "path": "assets/img/team.jpg",
+   "uid": "98b3167397e0accdef17856625815c069d12aa3a"
+  },
+  {
+   "path": "assets/img/vlog.jpg",
+   "uid": "f836a06c553aa8ff7521c03f407f2a2497d2751d"
+  },
+  {
+   "path": "assets/logos/brands-sprite.jpg",
+   "uid": "5a9e208fe8999e4217b8b70b9023ebaa79eef77a"
+  },
+  {
+   "path": "assets/logos/clients-sprite.webp",
+   "uid": "69781ae806688de2ebf74a63db05ef5d9514c3de"
+  },
+  {
+   "path": "assets/logos/media-sprite.webp",
+   "uid": "4512f179aa42f412bf236d9af2e767b2f41c7345"
+  },
+  {
+   "path": "assets/logos/media/100.png",
+   "uid": "4cb86e70a598c021edd2cfc45f5a0c177a5e881b"
+  },
+  {
+   "path": "assets/logos/media/101.png",
+   "uid": "aab8abff87cbb14a786f513a29ac692552e85c49"
+  },
+  {
+   "path": "assets/logos/media/102.png",
+   "uid": "e7fa5d657726c541bcf16faf9d77add2139d7587"
+  },
+  {
+   "path": "assets/logos/media/103.png",
+   "uid": "2e388f8c610b758ea78a7d053fefd04189ff5d63"
+  },
+  {
+   "path": "assets/logos/media/104.png",
+   "uid": "6e792dc531cba400ce394871986fd33e83cedfbe"
+  },
+  {
+   "path": "assets/logos/media/105.png",
+   "uid": "dd3e57aac1e5f808ef62e32d02dc63feec52a42d"
+  },
+  {
+   "path": "assets/logos/media/106.png",
+   "uid": "dfee1c0722d84502afd7e355fd708e2ee5174fd7"
+  },
+  {
+   "path": "assets/logos/media/107.png",
+   "uid": "43fcdc196bdb5943e6fc7c3b175fe71cfa20967f"
+  },
+  {
+   "path": "assets/logos/media/108.png",
+   "uid": "89abc4c497c93f4091f0b2463829521667af2ea4"
+  },
+  {
+   "path": "assets/logos/media/109.png",
+   "uid": "ec890c7980758277be9fd34f7e01b97bf3d90f7e"
+  },
+  {
+   "path": "assets/logos/media/110.png",
+   "uid": "2d753b5974a55666115e7bfb12b57de8bfcaf22e"
+  },
+  {
+   "path": "assets/logos/media/111.png",
+   "uid": "0657c816b52de419878b9e2e39f76c63c91745d9"
+  },
+  {
+   "path": "assets/logos/media/112.png",
+   "uid": "93ad65920bd04cd98fd7d84482695c04563f2f3b"
+  },
+  {
+   "path": "assets/logos/media/113.png",
+   "uid": "6f6bbca105cedc1ac53073cf5f0321f3453e0011"
+  },
+  {
+   "path": "assets/logos/media/114.png",
+   "uid": "530db64c634e55a3afedfeda800e2e29de0ecf59"
+  },
+  {
+   "path": "assets/logos/media/98.png",
+   "uid": "7d4fa36316ecc48e845f16780640505b08d502ae"
+  },
+  {
+   "path": "assets/logos/media/99.png",
+   "uid": "e22dd012a7c83aa4741db9c04c60f0db183f1e14"
+  },
+  {
+   "path": "assets/results/results-sprite.jpg",
+   "uid": "428e23e55973fbf22a51285a648e649db711feaa"
+  },
+  {
+   "path": "index.html",
+   "uid": "61260071303226041c7c24766b7f52d5fea14c98"
+  },
+  {
+   "path": "styles.css",
+   "uid": "674548e7d87156b6547660de813093adcdc8cf7d"
+  }
+ ]
+}

@@ -1,0 +1,357 @@
+{
+ "deploymentId": "dpl_46LjTCWeoSjgZBcDT4AxBs2L33tf",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "167516915d5338d78dca6e845797e69afe69ecdd"
+  },
+  {
+   "path": "admin/index.html",
+   "uid": "d3881426f095004ca47775844ef6ef974b169f7b"
+  },
+  {
+   "path": "api/admin.js",
+   "uid": "532ded9451447ac5f51011524e70e0ee84669ea5"
+  },
+  {
+   "path": "api/book.js",
+   "uid": "03870a940cbdd9de9d88dc81f03832f205f9d4cf"
+  },
+  {
+   "path": "api/cron.js",
+   "uid": "a70e9d7f25d0b6a9a9c48d02711990cca81efeaf"
+  },
+  {
+   "path": "api/onboarding.js",
+   "uid": "4fd1410f180e610443cf19fcb37ca89d787c8424"
+  },
+  {
+   "path": "api/receipt.js",
+   "uid": "adfcd41bc193e590c45c7fafca7cd33393f7f6f5"
+  },
+  {
+   "path": "api/upload-file.js",
+   "uid": "38f6696c1ea77c2ec8176cfdcd55476b7a937246"
+  },
+  {
+   "path": "api/upload.js",
+   "uid": "4fbaa7000b23c4e9051229ee7d260999ed837b7b"
+  },
+  {
+   "path": "assets/client-jelly.jpg",
+   "uid": "cb8448af58741e53c4ec49d93257a38d102bf171"
+  },
+  {
+   "path": "assets/client-marivic.jpg",
+   "uid": "d905f8e456f1da86d3e0ef79af06f324be29d6e2"
+  },
+  {
+   "path": "assets/clinic/1.jpg",
+   "uid": "d6a5a0d8a00e5af5721950a34ef7c40a818c951d"
+  },
+  {
+   "path": "assets/clinic/10.jpg",
+   "uid": "dd3f33825ea6796a49e1e8d8964c946c9a5714ee"
+  },
+  {
+   "path": "assets/clinic/11.jpg",
+   "uid": "5f8d71f5ee9644b46d1849208964a2e6a3074368"
+  },
+  {
+   "path": "assets/clinic/12.jpg",
+   "uid": "9b308bf274823ab7a74a6c6f1e451d55c86d4837"
+  },
+  {
+   "path": "assets/clinic/13.jpg",
+   "uid": "556450d837b58157010dcd3f604ddcc3c9cfbbbd"
+  },
+  {
+   "path": "assets/clinic/14.jpg",
+   "uid": "88c9383198c49f5aea94ddfabaf1c82f0b09618d"
+  },
+  {
+   "path": "assets/clinic/15.jpg",
+   "uid": "6be54b692dd35eb13fba40b88bd174c4c2e11d41"
+  },
+  {
+   "path": "assets/clinic/16.jpg",
+   "uid": "5bcd77ce3d8c71a008ef0f59149f4fd48322f2f1"
+  },
+  {
+   "path": "assets/clinic/17.jpg",
+   "uid": "bf734ad4a92b2e0fbd215c3d986429ef3282d532"
+  },
+  {
+   "path": "assets/clinic/18.jpg",
+   "uid": "147e0e15e255ea55025916ce729c27ffcd84c8ff"
+  },
+  {
+   "path": "assets/clinic/19.jpg",
+   "uid": "dd143291f765715374d81a235cee8a7b537c5480"
+  },
+  {
+   "path": "assets/clinic/2.jpg",
+   "uid": "6e4d73954295b0646ad6916bff1ca9f059a79a97"
+  },
+  {
+   "path": "assets/clinic/20.jpg",
+   "uid": "c1256db1537cc46ab05ec46bd1202546d5988b03"
+  },
+  {
+   "path": "assets/clinic/3.jpg",
+   "uid": "e78b9b5511598215a15f5b204f72ca231d55b6da"
+  },
+  {
+   "path": "assets/clinic/4.jpg",
+   "uid": "2a3b5069cee6a12d9079944f4bfa58e878c60d46"
+  },
+  {
+   "path": "assets/clinic/5.jpg",
+   "uid": "3c6b15ea44d3706635a2b55e1801933320bb39af"
+  },
+  {
+   "path": "assets/clinic/6.jpg",
+   "uid": "cff8e7a60dea23275512df936f3f065d80465214"
+  },
+  {
+   "path": "assets/clinic/7.jpg",
+   "uid": "5ea53d07c60f156319bfbd8fcef4443665ca0569"
+  },
+  {
+   "path": "assets/clinic/8.jpg",
+   "uid": "50e4aa156bf2d810382c90e84b5810ca7d5f7ca9"
+  },
+  {
+   "path": "assets/clinic/9.jpg",
+   "uid": "f44e580c441187da715101be358c156e9f2109fc"
+  },
+  {
+   "path": "assets/creatives/12d-hifu.jpg",
+   "uid": "b32cc121f5b482ad8ea2cfc12de54c49338e036d"
+  },
+  {
+   "path": "assets/creatives/acne-scar-program.jpg",
+   "uid": "baaef0ee28fcd9c2e8fa32dd23a0be454ddc427c"
+  },
+  {
+   "path": "assets/creatives/barbie-arms.jpg",
+   "uid": "773d6862bc5371c0da7809069010d24b292157cb"
+  },
+  {
+   "path": "assets/creatives/barbie-face-collection.jpg",
+   "uid": "994e03fbecb093c835fefc162539300d1d67e948"
+  },
+  {
+   "path": "assets/creatives/botulinum-toxin-face-treatments.jpg",
+   "uid": "20ea21bf4866861568c7052fc16b9f3a5da39926"
+  },
+  {
+   "path": "assets/creatives/dermal-fillers-collection.jpg",
+   "uid": "80600d927c4be5d0963f05e97d104a480f98b6c7"
+  },
+  {
+   "path": "assets/creatives/dmt-face-360.jpg",
+   "uid": "4314e4ab38d707028cc626b748043029ad57eb49"
+  },
+  {
+   "path": "assets/creatives/jawtox-facetox-packages.jpg",
+   "uid": "e5c997c0b5cb6c0d8118ca0e760a9818e98b21c4"
+  },
+  {
+   "path": "assets/creatives/ken-face-collection.jpg",
+   "uid": "b53708cece90b6041783ec839e8219b60e994af6"
+  },
+  {
+   "path": "assets/creatives/lemon-bottle-arms.jpg",
+   "uid": "00f45beb993f3b75e98b2840c6760dcb4b74acd7"
+  },
+  {
+   "path": "assets/creatives/lemon-bottle-collection.jpg",
+   "uid": "11f0071b933b4bb499250b3d28a99614418e91d8"
+  },
+  {
+   "path": "assets/creatives/lemon-bottle-face.jpg",
+   "uid": "399270ec74b54aa0bd52065e82efe3b6d555032a"
+  },
+  {
+   "path": "assets/creatives/lemon-bottle-tummy.jpg",
+   "uid": "72669ab2c85d8c3bbc0724da706d5bc8cc573c37"
+  },
+  {
+   "path": "assets/creatives/melasma-pigmentation-recovery-program.jpg",
+   "uid": "a4a69cff260b17cbafc0b05cef203aa5e9c3bb34"
+  },
+  {
+   "path": "assets/creatives/picoglow-laser-program.jpg",
+   "uid": "025448761a9ab7598a5dccc7489c984221e5712e"
+  },
+  {
+   "path": "assets/creatives/sculpted-v-lift.jpg",
+   "uid": "e3324f0acdbc2fb171710608d8208fc6b2f125ab"
+  },
+  {
+   "path": "assets/creatives/signature-face-upgrade.jpg",
+   "uid": "db6d45991fe54b920bd523a640092ff97671f307"
+  },
+  {
+   "path": "assets/creatives/superior-lift.jpg",
+   "uid": "44026446088c6f9317ee3585374c70b2a811fe34"
+  },
+  {
+   "path": "assets/logo-white.png",
+   "uid": "808a525da7a7ad9547bd34c35cf1d14a716bd1a6"
+  },
+  {
+   "path": "assets/logo.png",
+   "uid": "7448cdac2170b1a88b48c4e056a520659c32215e"
+  },
+  {
+   "path": "assets/pose-1.jpg",
+   "uid": "8369dce1729fbfbec73d475873ff411ff6aa6943"
+  },
+  {
+   "path": "assets/pose-2.jpg",
+   "uid": "2cdef98cc98c5077f4af6c6a4d7c8cbf1fa516b9"
+  },
+  {
+   "path": "assets/pose-3.jpg",
+   "uid": "afe71fb2a3b65e19c0459c898e2d5e0acb268a31"
+  },
+  {
+   "path": "assets/pose-4.jpg",
+   "uid": "0d97630308f3a17c776c5b582ec9937181099b75"
+  },
+  {
+   "path": "assets/pose-5.jpg",
+   "uid": "e9ebd2da5bd6c028c631f29be951bb415484c23a"
+  },
+  {
+   "path": "assets/results/1.jpg",
+   "uid": "85c762e1aabe56291ce764307eb7e6805d33bba5"
+  },
+  {
+   "path": "assets/results/10.jpg",
+   "uid": "4bda2ac8e13e64b82942b1bd021502d70e384cbf"
+  },
+  {
+   "path": "assets/results/11.jpg",
+   "uid": "0fcc213f588bc9c2e4391fd756ddb7bb5dcb3a78"
+  },
+  {
+   "path": "assets/results/12.jpg",
+   "uid": "3480412ea97c10d15be393f8f9bada1c8ad4c36e"
+  },
+  {
+   "path": "assets/results/13.jpg",
+   "uid": "edf32a7fa2bddc1825f5b05072fa8783db701bb2"
+  },
+  {
+   "path": "assets/results/14.jpg",
+   "uid": "6cd90348c5905228ea295d93821603108865965f"
+  },
+  {
+   "path": "assets/results/15.jpg",
+   "uid": "4e0de96d31d8ce88cdba331df118b69f75415210"
+  },
+  {
+   "path": "assets/results/2.jpg",
+   "uid": "d6882a2f1e18bb2f5ece36b45d5f8020b1e18a48"
+  },
+  {
+   "path": "assets/results/3.jpg",
+   "uid": "d2726784c861d804f49f2f17ec87ce12fdccbb1d"
+  },
+  {
+   "path": "assets/results/4.jpg",
+   "uid": "858cb5e2f2c57dcd99f42368c79adf79f5be7df2"
+  },
+  {
+   "path": "assets/results/5.jpg",
+   "uid": "f4e0352779d4885423293e6e43f9033c1a8514ea"
+  },
+  {
+   "path": "assets/results/6.jpg",
+   "uid": "a1f02399c199604745db3e919b5fe951310ef3eb"
+  },
+  {
+   "path": "assets/results/7.jpg",
+   "uid": "f2b42f824de1600d08d0a2eda56f3d41702bbddc"
+  },
+  {
+   "path": "assets/results/8.jpg",
+   "uid": "7ff955de01af80c4c0317a6d3fe8b19843046af4"
+  },
+  {
+   "path": "assets/results/9.jpg",
+   "uid": "2ee1877573c2d865987abe0a36846db8eff11524"
+  },
+  {
+   "path": "assets/sm/client-jelly.jpg",
+   "uid": "44f8323da51c8d7afa9a77c75493ec80c506f0ae"
+  },
+  {
+   "path": "assets/sm/client-marivic.jpg",
+   "uid": "fbe5ddc653d3d2289f061ce0c72db6dea6228d6c"
+  },
+  {
+   "path": "assets/sm/pose-1.jpg",
+   "uid": "36fb3a1b7e713ad193a118669341f749b08a4df4"
+  },
+  {
+   "path": "assets/sm/pose-2.jpg",
+   "uid": "5abffe5012c0b420db2dd68855d4effa5de9a7b2"
+  },
+  {
+   "path": "assets/sm/pose-3.jpg",
+   "uid": "2ac70122a0f05ff8e8b2849974df8c0377ab7199"
+  },
+  {
+   "path": "assets/sm/pose-4.jpg",
+   "uid": "c8888ba1b2fb5c0bb3f91c19823a62785c7b3724"
+  },
+  {
+   "path": "assets/sm/pose-5.jpg",
+   "uid": "aa062a5a2da1f4e828d02bee927b47ed235c6017"
+  },
+  {
+   "path": "data/catalog.json",
+   "uid": "8b3523bac4e704b721adb7fd25b23431519f41d2"
+  },
+  {
+   "path": "index.html",
+   "uid": "7cc3a5b3fd7d335d969303775468976b8099031f"
+  },
+  {
+   "path": "lib/auth.js",
+   "uid": "876f88a062cc7ce545ac9fa26c3aedd79b9535b4"
+  },
+  {
+   "path": "lib/db.js",
+   "uid": "5252a0ca7f9d2d428c076e72c342f66fc351eb23"
+  },
+  {
+   "path": "lib/sms.js",
+   "uid": "aea7422d11ff49088367abd1b34ec42aeb8c4db6"
+  },
+  {
+   "path": "onboarding/index.html",
+   "uid": "9f6e2377ec37f2f95823db0340ddc03eb5568917"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "68a5e045d445dffbd7d925140ed7e1d9e25db363"
+  },
+  {
+   "path": "package.json",
+   "uid": "075ebc0d587c1b33429a527190990420a1ff3228"
+  },
+  {
+   "path": "receipt/index.html",
+   "uid": "dd5d030778939b2f03d5cc5a7fee82320314b3bc"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "0842ec7bc7801d701d54d63a18d7a98259cba118"
+  }
+ ]
+}

@@ -1,0 +1,181 @@
+{
+ "deploymentId": "dpl_3iSM6RQPn62dMwTqdGUvfcP2JJmm",
+ "files": [
+  {
+   "path": ".env.example",
+   "uid": "de16235e73e70426cf27ee4b3df92ad6c7215d03"
+  },
+  {
+   "path": "Dockerfile",
+   "uid": "0c4b987b2c19317e0cdeb3fb56c9c54b0c2a3dfe"
+  },
+  {
+   "path": "README.md",
+   "uid": "c5eeeaa40948e8a511f13571657fe1f10a8a7da7"
+  },
+  {
+   "path": "deploy/DEPLOY.md",
+   "uid": "4a17d00bd48113fcb2d29ff2c9f778dddf438fa9"
+  },
+  {
+   "path": "deploy/deploy.sh",
+   "uid": "d0b6422090a2e6db661adaebe926a5c794751ff6"
+  },
+  {
+   "path": "deploy/nginx.conf",
+   "uid": "af40fd4c7745871d22397db8ab7feb24c08c9033"
+  },
+  {
+   "path": "docker-compose.yml",
+   "uid": "4ad01cb9d789894d9911dfae4c6e4b926d45aad9"
+  },
+  {
+   "path": "ecosystem.config.cjs",
+   "uid": "4158a282c2367caf951b1e43f056a6e295c9ebbb"
+  },
+  {
+   "path": "next-env.d.ts",
+   "uid": "950b66f914b7326f00e20617679825d53b72da2b"
+  },
+  {
+   "path": "next.config.mjs",
+   "uid": "52f88f47eb40ef27a77c5ae84fe88241ec413c42"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "98a99c0b994c0c2df48e0c5f94db62b6cb0ce255"
+  },
+  {
+   "path": "package.json",
+   "uid": "9e052dadc77513aa58a33192e32c75e0b6b77d9b"
+  },
+  {
+   "path": "postcss.config.mjs",
+   "uid": "c687693f4d50b920eb3694f3db3f527d5b1b3d79"
+  },
+  {
+   "path": "public/.gitkeep",
+   "uid": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+  },
+  {
+   "path": "src/app/admin/layout.tsx",
+   "uid": "6ba406a38ad4f20866fd2eb43144610e6440082f"
+  },
+  {
+   "path": "src/app/admin/page.tsx",
+   "uid": "cd334a99888f53dab1cb4a2a145d1589e6127920"
+  },
+  {
+   "path": "src/app/business/apply/page.tsx",
+   "uid": "cd03c1f6a97cd0bab8b9d3da4bfa8278fe821677"
+  },
+  {
+   "path": "src/app/business/layout.tsx",
+   "uid": "20afcae6ba830d3e865728c8a52ee63fb5aad4cf"
+  },
+  {
+   "path": "src/app/business/page.tsx",
+   "uid": "4ab7596eddd972c1abe0d1288c4e04acfb4de1fb"
+  },
+  {
+   "path": "src/app/business/status/page.tsx",
+   "uid": "85eadb61c10224a46d6dcdda402f63140102bd47"
+  },
+  {
+   "path": "src/app/globals.css",
+   "uid": "3d75aca2b1aaef3a01eb63bb80cf466ed218f42c"
+  },
+  {
+   "path": "src/app/icon.svg",
+   "uid": "59ebc2c0ef5b95fbea667962885cb0cffe6b8cab"
+  },
+  {
+   "path": "src/app/layout.tsx",
+   "uid": "4160fa25ee4993030533527a82b78a8b85122669"
+  },
+  {
+   "path": "src/app/ofw/business/[id]/page.tsx",
+   "uid": "4c7d6e654e2da959cf0be8f67c24a855ca0f33d3"
+  },
+  {
+   "path": "src/app/ofw/calculator/page.tsx",
+   "uid": "0c04915b80cc6aff164910150400bb0b68e15715"
+  },
+  {
+   "path": "src/app/ofw/layout.tsx",
+   "uid": "795997f2ce5d2d654720cd4ee5c3e94e95932a83"
+  },
+  {
+   "path": "src/app/ofw/marketplace/page.tsx",
+   "uid": "5d557008b9b56a7e9f28a0285908bb7038b20fa7"
+  },
+  {
+   "path": "src/app/ofw/page.tsx",
+   "uid": "9509f2458390510721a011ecc2874569d11554f5"
+  },
+  {
+   "path": "src/app/ofw/portfolio/page.tsx",
+   "uid": "ac6ef0b33289dc6963578b0d644cb5c3ad68355c"
+  },
+  {
+   "path": "src/app/page.tsx",
+   "uid": "582a2de76e50948eb1f6e43358cbcb7e73d26e8b"
+  },
+  {
+   "path": "src/components/BusinessCard.tsx",
+   "uid": "0307f3e01d223a367bd9d8d54b46ee975a33d46d"
+  },
+  {
+   "path": "src/components/InvestFlow.tsx",
+   "uid": "e585ea4f405f89aae79c0712d06a39bd09aa1732"
+  },
+  {
+   "path": "src/components/RoiCalculator.tsx",
+   "uid": "000c6a4baf2c482c6eedc03a308e10941f487704"
+  },
+  {
+   "path": "src/components/Shell.tsx",
+   "uid": "1215458f5749b8fb2177c9fe0dab4dc031c0d136"
+  },
+  {
+   "path": "src/components/ui.tsx",
+   "uid": "606339fe9e9391d26eae91364cf45b551797d646"
+  },
+  {
+   "path": "src/lib/api.ts",
+   "uid": "643f3390a2755ed821a984ed6a21daee3afe8e56"
+  },
+  {
+   "path": "src/lib/data.ts",
+   "uid": "49559e5af91a9503c9a48457717bc725fbaf3a4b"
+  },
+  {
+   "path": "src/lib/hooks.ts",
+   "uid": "776e24e5c6cf1fecfa57b1ca8931aca1c3753fde"
+  },
+  {
+   "path": "src/lib/roi.ts",
+   "uid": "decb5455f39cb21006b47280532d0aa462de19e0"
+  },
+  {
+   "path": "src/lib/store.ts",
+   "uid": "3abe5a25cf541e38e15b5bb0a24085ea0bbdefe6"
+  },
+  {
+   "path": "src/lib/types.ts",
+   "uid": "153dade5357e311400932fbc17b53d790fee3241"
+  },
+  {
+   "path": "src/lib/utils.ts",
+   "uid": "57b65152c27d94ca452aaab2f89ebc443afb8ed1"
+  },
+  {
+   "path": "tailwind.config.ts",
+   "uid": "e9b786c23372654dba21de1552fdf963294920ea"
+  },
+  {
+   "path": "tsconfig.json",
+   "uid": "f96d36e4eb9d8991d94b58491a6d74f2e68c33a6"
+  }
+ ]
+}

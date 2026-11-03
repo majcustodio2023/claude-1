@@ -1,0 +1,17 @@
+{
+ "deploymentId": "dpl_BuRPRL1sYZuQK31pHmHVNZZwimmJ",
+ "files": [
+  {
+   "path": "build.mjs",
+   "uid": "014448f90d61287725ecdf9d51c6ecd5aabe4b6f"
+  },
+  {
+   "path": "package.json",
+   "uid": "ae911871a29d11f3f32c8a8c83fb1d4f97ff0a01"
+  },
+  {
+   "path": "server.js",
+   "uid": "df0a4ac0a15cb833af3d5c49def07f0a93f0f8d8"
+  }
+ ]
+}

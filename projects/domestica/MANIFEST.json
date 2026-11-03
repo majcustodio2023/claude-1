@@ -1,0 +1,373 @@
+{
+ "deploymentId": "dpl_8dsXN6tGawUf3khsUYfXnLp6hTt5",
+ "files": [
+  {
+   "path": ".claude/launch.json",
+   "uid": "5f6d9bab0a2ce9b5987363a10de540a5cc2ded27"
+  },
+  {
+   "path": ".env.example",
+   "uid": "98f4127868f8822a72247394efcc249947b9f178"
+  },
+  {
+   "path": ".vercelignore",
+   "uid": "a447eddf7126c6569fbf15f657d1bf26328f340e"
+  },
+  {
+   "path": "Dockerfile",
+   "uid": "14caf027df386e980d8e50cfd54246eedd316dd2"
+  },
+  {
+   "path": "README.md",
+   "uid": "637ef4c309096a85e31debff5b7a503510736506"
+  },
+  {
+   "path": "deploy/DEPLOY.md",
+   "uid": "b68a22c2dd1d52e02201a452a61759b07c09344b"
+  },
+  {
+   "path": "deploy/deploy.sh",
+   "uid": "0c9e83bd59d3373a064c1a1d5a1fb5730cce4008"
+  },
+  {
+   "path": "deploy/nginx.conf",
+   "uid": "00e234b3e073d9fb3a39f054e470d026cf662f96"
+  },
+  {
+   "path": "docker-compose.yml",
+   "uid": "8c1aca10ca091d25e2147220ce33a96a22592332"
+  },
+  {
+   "path": "ecosystem.config.cjs",
+   "uid": "a7eeccae573aaa41edd02118e74152eb75134aa8"
+  },
+  {
+   "path": "next-env.d.ts",
+   "uid": "68380a26d094bb3b37470b0182d9ff4015b14854"
+  },
+  {
+   "path": "next.config.mjs",
+   "uid": "52f88f47eb40ef27a77c5ae84fe88241ec413c42"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "8844e7a5e8960cd856b9722fde9f662de1b1b30b"
+  },
+  {
+   "path": "package.json",
+   "uid": "e828c53c4c68d151f516a530d639b1ec773e222d"
+  },
+  {
+   "path": "postcss.config.mjs",
+   "uid": "c687693f4d50b920eb3694f3db3f527d5b1b3d79"
+  },
+  {
+   "path": "public/favicon.svg",
+   "uid": "ec71e16ec2014b52de85910044205e92027e7acc"
+  },
+  {
+   "path": "public/img/CREDITS.md",
+   "uid": "e8bada306d5a6b276f68f4a4c6448fa285f8e267"
+  },
+  {
+   "path": "public/img/f1.jpg",
+   "uid": "f3da71059f7e0ba5fb6e32d978322c97d625016b"
+  },
+  {
+   "path": "public/img/f2.jpg",
+   "uid": "c3f059b15912e563a4137fecd4f1b9ee71f2bf25"
+  },
+  {
+   "path": "public/img/f3.jpg",
+   "uid": "f24bf90da6790273e3f0de55fc002f9116cd903f"
+  },
+  {
+   "path": "public/img/f4.jpg",
+   "uid": "eab9c01651f93edf1303ec64aff816bd10cad429"
+  },
+  {
+   "path": "public/img/f5.jpg",
+   "uid": "462efa784ab5c062521c5a6aa637507ef125e267"
+  },
+  {
+   "path": "public/img/f6.jpg",
+   "uid": "0b44d94df6168924be71ba9f4a5082f33a33cf5e"
+  },
+  {
+   "path": "public/img/f7.jpg",
+   "uid": "e04b0768a77d114d18b0dcebffc280a128fd12cf"
+  },
+  {
+   "path": "public/img/f8.jpg",
+   "uid": "901867779b17584c610030f360e1a6fbb8d44c59"
+  },
+  {
+   "path": "public/img/f9.jpg",
+   "uid": "d26910b0efaed61b5bfc3d224b10a0a3aba92df1"
+  },
+  {
+   "path": "public/img/h1.jpg",
+   "uid": "4d13ddd6fc073f0cf8a4727579c35df7088e9b91"
+  },
+  {
+   "path": "public/img/h10.jpg",
+   "uid": "19bdd762619a4ee32e20b426f1ffae8e74676ee7"
+  },
+  {
+   "path": "public/img/h11.jpg",
+   "uid": "8c935044d1d4895aa774136155e50fa4f9ae845a"
+  },
+  {
+   "path": "public/img/h12.jpg",
+   "uid": "d84fa877ea7e3c9a67aecdfcbad1373bbe49ed33"
+  },
+  {
+   "path": "public/img/h13.jpg",
+   "uid": "626bb40872bff64a879f539ff901a55424837350"
+  },
+  {
+   "path": "public/img/h14.jpg",
+   "uid": "80c702a089a7091cc66aafbcc64b321a83ae632b"
+  },
+  {
+   "path": "public/img/h15.jpg",
+   "uid": "4db88e5918f19d0dfe8a43a1f552a330f55ce334"
+  },
+  {
+   "path": "public/img/h16.jpg",
+   "uid": "6e54ab3c6b24d1827ab9910681ac2bb3106386be"
+  },
+  {
+   "path": "public/img/h2.jpg",
+   "uid": "dbac50004148b2f09e2c51616032c5d4a0cc2f08"
+  },
+  {
+   "path": "public/img/h3.jpg",
+   "uid": "bf701bd30ba602bfa41ef61ba45896655f74ea56"
+  },
+  {
+   "path": "public/img/h4.jpg",
+   "uid": "8f35e8c9294b0ebc854bc6026de715eaaed63023"
+  },
+  {
+   "path": "public/img/h5.jpg",
+   "uid": "a98d66e4c70375ed6e811dee85ef707f0e0c7b3c"
+  },
+  {
+   "path": "public/img/h6.jpg",
+   "uid": "767d357de4d56a11176c648461727c83aab36870"
+  },
+  {
+   "path": "public/img/h7.jpg",
+   "uid": "53063a97f878d4878884cc46cded58c11d8a959d"
+  },
+  {
+   "path": "public/img/h8.jpg",
+   "uid": "5ee36852c197cc26b717eb17c3039b9b2fcb05c3"
+  },
+  {
+   "path": "public/img/h9.jpg",
+   "uid": "46d9a6ab6e49fefe7cd919fa2c68d1c83525dd51"
+  },
+  {
+   "path": "public/img/m1.jpg",
+   "uid": "3dc6d4b7bc6e106eeec77192f7be23c36476149c"
+  },
+  {
+   "path": "public/img/m2.jpg",
+   "uid": "880d549289ad40360aef705db1a7c41cd4457cb1"
+  },
+  {
+   "path": "public/img/m3.jpg",
+   "uid": "98b57391daa47745256f82dee075026b4a6825f8"
+  },
+  {
+   "path": "public/img/m4.jpg",
+   "uid": "89ab78f145dccd17f35d6c5444b10deef1dbe4cb"
+  },
+  {
+   "path": "public/img/r1.jpg",
+   "uid": "13ae9d128fab76e327e8c5dc9468ce268c47539e"
+  },
+  {
+   "path": "public/img/r2.jpg",
+   "uid": "d2143768dabebe4a56137d9919d4ee0f1396b4e2"
+  },
+  {
+   "path": "public/img/r3.jpg",
+   "uid": "d4723ed9934af38d57d3df6ffd780592123c77bc"
+  },
+  {
+   "path": "public/img/r4.jpg",
+   "uid": "fb5266ccbaf802919080b33cef9a465d90ad0843"
+  },
+  {
+   "path": "scripts/postbuild.mjs",
+   "uid": "59da0e6819f013fd1fffe0e247b6416ed1f099c2"
+  },
+  {
+   "path": "src/app/(app)/chat/[id]/page.tsx",
+   "uid": "732cae293db3779e22222004f7bd20b7fdbcfc03"
+  },
+  {
+   "path": "src/app/(app)/discover/page.tsx",
+   "uid": "d003ecc284c41772f5a5037834944003d56810ad"
+  },
+  {
+   "path": "src/app/(app)/helpers/[id]/page.tsx",
+   "uid": "1487d05eaaec149d299b15ead5443c7cd75d9861"
+  },
+  {
+   "path": "src/app/(app)/home/page.tsx",
+   "uid": "37bf2242f52ddc92febbd8e0cb67e23007703063"
+  },
+  {
+   "path": "src/app/(app)/interviews/page.tsx",
+   "uid": "be662819fca4b0294e08f9b71cded257b9979aea"
+  },
+  {
+   "path": "src/app/(app)/jobs/[id]/page.tsx",
+   "uid": "ed86db376e2d10e00193f49c6efc0ccc3d933296"
+  },
+  {
+   "path": "src/app/(app)/layout.tsx",
+   "uid": "a21c02ed157b6271d62b65ed21c627ff61eca09f"
+  },
+  {
+   "path": "src/app/(app)/matches/page.tsx",
+   "uid": "4946129fe66af91ca46b611a50702d31bcc953c6"
+  },
+  {
+   "path": "src/app/(app)/me/page.tsx",
+   "uid": "04f35272080f00b347389d6b9a646d519ad09853"
+  },
+  {
+   "path": "src/app/(app)/premium/page.tsx",
+   "uid": "ae65d3f05d380b76d416f4035419906f330448cc"
+  },
+  {
+   "path": "src/app/(app)/verify/page.tsx",
+   "uid": "1198172688adea619c9e450b925e79e4265f4989"
+  },
+  {
+   "path": "src/app/globals.css",
+   "uid": "646e4320027cfe14e597dd2049fa713f0ad0f1e9"
+  },
+  {
+   "path": "src/app/layout.tsx",
+   "uid": "a2c561208ee0d35a3c1f05b638232b71614e1f53"
+  },
+  {
+   "path": "src/app/page.tsx",
+   "uid": "7f3023fec1c5977d80995f9a0c346bfbee389753"
+  },
+  {
+   "path": "src/components/ai-sequence.tsx",
+   "uid": "b14c7eb32766b8aa973d8fe4d49c90dce9a70e77"
+  },
+  {
+   "path": "src/components/chat/action-sheets.tsx",
+   "uid": "5cb2f7cd1e18a3912df783416197cdc2d12794da"
+  },
+  {
+   "path": "src/components/chat/message-cards.tsx",
+   "uid": "462764290126d342ac3236e9ef419a5de8762b31"
+  },
+  {
+   "path": "src/components/discover/cards.tsx",
+   "uid": "a5567339bb2cacb854dbfe7b34fb67c4d447610e"
+  },
+  {
+   "path": "src/components/discover/swipe-deck.tsx",
+   "uid": "6c2af649eb5e819b0354fc07ff33b7b8c6187c9f"
+  },
+  {
+   "path": "src/components/home/charts.tsx",
+   "uid": "226925ab252ea4d581ac8d0cf3a8afb6d0db68c4"
+  },
+  {
+   "path": "src/components/interview-sheet.tsx",
+   "uid": "f2289138f6ba2d34cc54b324468f2b4b831dca0f"
+  },
+  {
+   "path": "src/components/service-meta.tsx",
+   "uid": "c9fdc0e30c7dbdbfc891854780ad94a7fb981365"
+  },
+  {
+   "path": "src/components/shell/app-shell.tsx",
+   "uid": "293a5af80de7a74fbb6db0e07e5b7e5044ea6406"
+  },
+  {
+   "path": "src/components/shell/command-palette.tsx",
+   "uid": "259ba040d2fefd8a8974ceba3ea26fb09ff5c85e"
+  },
+  {
+   "path": "src/components/shell/match-overlay.tsx",
+   "uid": "ba20932804dd5663a5eb39c60e2ff30c609dc20d"
+  },
+  {
+   "path": "src/components/shell/notifications.tsx",
+   "uid": "8899cc65b362c9ec63c8212dd15ecabed35a3587"
+  },
+  {
+   "path": "src/components/ui.tsx",
+   "uid": "3bba83b2681414cd8e23a544a01812d49e713695"
+  },
+  {
+   "path": "src/components/upsell.tsx",
+   "uid": "5343cf2687b1c0bc5c3fb9ba8d7da2da3b3d962b"
+  },
+  {
+   "path": "src/lib/ai.ts",
+   "uid": "7f55f75eabdd611a81c01c682474068cc31f92c2"
+  },
+  {
+   "path": "src/lib/api/index.ts",
+   "uid": "5b651fae129fbb168a2100516c009d51379c320d"
+  },
+  {
+   "path": "src/lib/data/helpers.ts",
+   "uid": "4ddd1e4a0e80d9b24de8ac846b5a70397e2326b7"
+  },
+  {
+   "path": "src/lib/data/jobs.ts",
+   "uid": "08405403b95285301f4262a6839190c6b7b792ef"
+  },
+  {
+   "path": "src/lib/data/seed.ts",
+   "uid": "06c01c56ba350e2426ed26af8f5200ae82476ad5"
+  },
+  {
+   "path": "src/lib/partner.ts",
+   "uid": "36664167ee39ee8db4472b3dd0311e9a073132e8"
+  },
+  {
+   "path": "src/lib/store.ts",
+   "uid": "a947542f18e49ac4efea6eb9254f1e0ed9540f08"
+  },
+  {
+   "path": "src/lib/types.ts",
+   "uid": "3a171318fbe96259228532cfe391ed5f45b4ca77"
+  },
+  {
+   "path": "src/lib/use-hydrated.ts",
+   "uid": "21ea1b8732a185d2de0f2beeb74024ed785d218c"
+  },
+  {
+   "path": "src/lib/utils.ts",
+   "uid": "4a86da443e45f9b0a79699d53e5be41e202815cc"
+  },
+  {
+   "path": "src/lib/verify.ts",
+   "uid": "1cb8b27d5d065ce0390f5e01a6a1bd05098d659f"
+  },
+  {
+   "path": "tailwind.config.ts",
+   "uid": "1c57fc4ceea496568207b6569c7a8e20b7a851c3"
+  },
+  {
+   "path": "tsconfig.json",
+   "uid": "fd144d4994d066ff7b088e0e442677b434bd1b31"
+  }
+ ]
+}

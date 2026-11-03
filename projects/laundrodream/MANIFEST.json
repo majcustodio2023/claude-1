@@ -1,0 +1,305 @@
+{
+ "deploymentId": "dpl_EvmU4aDftqFYCBgqUm3dmuRbrwc4",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "d6a625f6fc08aa206847f509596f82e8b2ff54f5"
+  },
+  {
+   "path": "DEPLOY.md",
+   "uid": "f970dc2cedbc6f4c4e49fb42efdf6b886b9607aa"
+  },
+  {
+   "path": "art-src/busy-shop.png",
+   "uid": "bb6058239044ffa5d4d2ed0a4a774996a269ce0e"
+  },
+  {
+   "path": "art-src/call.png",
+   "uid": "5effb4e1075d58a0f4bdbbdf684668ed763406d3"
+  },
+  {
+   "path": "art-src/checklist.png",
+   "uid": "f624ead1824abb56944c2dbe7da486ffcebe6fe0"
+  },
+  {
+   "path": "art-src/family-home.png",
+   "uid": "aaf78dfe1175d6a18de39a3948bab918f0ee4b96"
+  },
+  {
+   "path": "art-src/goals.png",
+   "uid": "4bda3fb4b4e3e5c5787db4ed7cb7b53ac62a3d1e"
+  },
+  {
+   "path": "art-src/merge.png",
+   "uid": "df4194aed3f8991205dc89cb8fa85e019e6f58b1"
+  },
+  {
+   "path": "art-src/owners.png",
+   "uid": "3b98e56d9248c8798ee097923ed6a3aa3ae022ea"
+  },
+  {
+   "path": "art-src/paying.png",
+   "uid": "83f70eb6fe86e8c3639d1ab27718e2d3dc9a8ca1"
+  },
+  {
+   "path": "art-src/store-iso.png",
+   "uid": "7a2e12f1a9e3204ceeb6ac9a46d2bbf9bd914633"
+  },
+  {
+   "path": "art-src/storefront.png",
+   "uid": "9f8e936c1bb47b13030b84b4c496d7ee08ad2fdb"
+  },
+  {
+   "path": "art-src/water-queue.png",
+   "uid": "bcad56b3821dfe3e19a94f588befd372bdeb43c7"
+  },
+  {
+   "path": "public/art/busy-shop.webp",
+   "uid": "0f79cd5e01ccc12518afde9d94f829317698efd0"
+  },
+  {
+   "path": "public/art/call.webp",
+   "uid": "9d052f1607cae53aca5e54db422a40a9716a6767"
+  },
+  {
+   "path": "public/art/checklist.webp",
+   "uid": "f09e57d116d0c46cd18001fe49132d310d5e31a9"
+  },
+  {
+   "path": "public/art/family-home.webp",
+   "uid": "85de4c407e638d62e021e8f047c0a9afafc4cb3f"
+  },
+  {
+   "path": "public/art/goals.webp",
+   "uid": "d781da859ee5a792baa9fa7353332e7a5e5d5c63"
+  },
+  {
+   "path": "public/art/merge.webp",
+   "uid": "86f52b2b30a86220c954b2fcc4c73d167f64fa06"
+  },
+  {
+   "path": "public/art/owners.webp",
+   "uid": "50a08e592c667ecf524eb9e040b03788455e37c0"
+  },
+  {
+   "path": "public/art/paying.webp",
+   "uid": "2470211547cd112a239b8c20912c2732587435dc"
+  },
+  {
+   "path": "public/art/store-iso.webp",
+   "uid": "f0c6ae41c421dc578733a143fa2a87b83b8e126f"
+  },
+  {
+   "path": "public/art/storefront.webp",
+   "uid": "b6ef821fbf7a63317f6c077d5dd5034ef8d59f41"
+  },
+  {
+   "path": "public/art/water-queue.webp",
+   "uid": "10f052a9b60360a663e10ad22f4e41cdecb1a362"
+  },
+  {
+   "path": "public/assets/founder.webp",
+   "uid": "9ce9241c4145fb66a328132469230311731a1c3d"
+  },
+  {
+   "path": "public/assets/logo.png",
+   "uid": "c319ffac0edcddb7632af8fd47c3798779d36d4b"
+  },
+  {
+   "path": "public/assets/logo.webp",
+   "uid": "f06fa4fe4f1c5fc792c87b476011873fddb10033"
+  },
+  {
+   "path": "public/book.mp4",
+   "uid": "824641685a2d01776e1b0014df755d28f88810d2"
+  },
+  {
+   "path": "public/hero-poster.jpg",
+   "uid": "4de3c3a19812181dcca2f75cab2a887d7584f7a1"
+  },
+  {
+   "path": "public/hero.mp4",
+   "uid": "243513e7bc2e0fabb6d286c87470a802ca28299a"
+  },
+  {
+   "path": "public/rdr/rdr-avatar.webp",
+   "uid": "0b99112ce3fc821eeff40ac002d9bf6310b6f264"
+  },
+  {
+   "path": "public/rdr/rdr-counter-m.webp",
+   "uid": "dce757b1a8f5917daf50a5d5de1c189623b44059"
+  },
+  {
+   "path": "public/rdr/rdr-counter.webp",
+   "uid": "772463c893385e0ff5de519b3e24f938d62939de"
+  },
+  {
+   "path": "public/rdr/rdr-laundry-m.webp",
+   "uid": "6fa1e3cbb247cf3469c4b2c02c41cf6fb9a4a229"
+  },
+  {
+   "path": "public/rdr/rdr-laundry.webp",
+   "uid": "5036a383c84c88920018098850cf2fd2c284e47c"
+  },
+  {
+   "path": "public/rdr/rdr-water-m.webp",
+   "uid": "46185b23cf24dbb15186201cff0c329854b0bc1a"
+  },
+  {
+   "path": "public/rdr/rdr-water.webp",
+   "uid": "8be02213f1a1d4d6d934898607e1a571881ea5c9"
+  },
+  {
+   "path": "public/rdr/rdr-welcome-m.webp",
+   "uid": "59ec065cd32c6c81382d4803d840d50f33a95328"
+  },
+  {
+   "path": "public/rdr/rdr-welcome.webp",
+   "uid": "8c9fbb07ddb48b2d79b7243d1f54a70bd650c1d1"
+  },
+  {
+   "path": "eslint.config.js",
+   "uid": "3116d59387be2d09c009a58063e5ea17c4165148"
+  },
+  {
+   "path": "index.html",
+   "uid": "af1005121c647d4750f7e4a96831b4d375272d7b"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "a9c4cec5cc949488fc25ad40d2cecab976645c23"
+  },
+  {
+   "path": "package.json",
+   "uid": "7251b553e44db140947d65a4444f30b5b8c5a5b9"
+  },
+  {
+   "path": "src/App.tsx",
+   "uid": "9d125ac7114e615f8bc30a955a0616b62f6c0f19"
+  },
+  {
+   "path": "src/components/Checklist.tsx",
+   "uid": "83e6f7dc528fa3fc815007199ebac786687dd2a4"
+  },
+  {
+   "path": "src/components/Close.css",
+   "uid": "aa59b8581c5e7feff65a5b6adf4bd5182a4a0049"
+  },
+  {
+   "path": "src/components/Close.tsx",
+   "uid": "0a78aca9ae45135dd805d01b8e8176e17486abf1"
+  },
+  {
+   "path": "src/components/Dream.tsx",
+   "uid": "9463d2e57cdd285dd90efbd8a7f87d662c65b1a8"
+  },
+  {
+   "path": "src/components/Endorse.tsx",
+   "uid": "9d0760ae1d6dacd7d78d6878856563d2f3b62574"
+  },
+  {
+   "path": "src/components/Equipment.tsx",
+   "uid": "1670074453237b65062754a0443cb096502f68f8"
+  },
+  {
+   "path": "src/components/Footer.tsx",
+   "uid": "62ec7316e090beb0ff5fc1d578a21b7b18b7b322"
+  },
+  {
+   "path": "src/components/Future.tsx",
+   "uid": "23c67f55a68e82cd1be86c58f135520a8d43c0ab"
+  },
+  {
+   "path": "src/components/Hero.css",
+   "uid": "1836af99f7384088650ebc4ff22fe5197b2b6d48"
+  },
+  {
+   "path": "src/components/Hero.tsx",
+   "uid": "439d54d7b3358064b14fb99cdb600bcd7c31255b"
+  },
+  {
+   "path": "src/components/Intro.tsx",
+   "uid": "0d0da408df241ee0a412b2c96822650165d609f1"
+  },
+  {
+   "path": "src/components/Navbar.css",
+   "uid": "950f488d3ceafa1ebe9e10e536bb3a7487cbab27"
+  },
+  {
+   "path": "src/components/Navbar.tsx",
+   "uid": "b8ec36636676c596e7afc45b6313521cd3816a43"
+  },
+  {
+   "path": "src/components/Numbers.css",
+   "uid": "2f987517c539fc03649f827b04b7e27a566b438b"
+  },
+  {
+   "path": "src/components/Numbers.tsx",
+   "uid": "d1813a7a3e1301b76f3e9c89ee1baedee5f18016"
+  },
+  {
+   "path": "src/components/Opportunity.tsx",
+   "uid": "a92b4295ebf60bc2ee9dc4fec26ed45a208022dd"
+  },
+  {
+   "path": "src/components/SmoothScroll.tsx",
+   "uid": "90e12c7d74507ebbf20710472fba9c8f68e7b9b3"
+  },
+  {
+   "path": "src/components/Steps.tsx",
+   "uid": "b5c39350ce9ef623184646de011de0c6d66c5e23"
+  },
+  {
+   "path": "src/components/StickyCta.tsx",
+   "uid": "ad196042b64ca108185c3a036c121fa8e465d3a0"
+  },
+  {
+   "path": "src/components/Trends.tsx",
+   "uid": "e39779deeeb38d0d52651b6e562c1bdde582f494"
+  },
+  {
+   "path": "src/components/fx.tsx",
+   "uid": "2aa0ae7dd863d73cd84a365532c43443956fbc6e"
+  },
+  {
+   "path": "src/components/icons.tsx",
+   "uid": "32e24286bf25e8b37f3a22a42b6e29b408d04b96"
+  },
+  {
+   "path": "src/components/motion.ts",
+   "uid": "662d5006f720bebd139a253c7e119ca449a56cce"
+  },
+  {
+   "path": "src/components/sections.css",
+   "uid": "2852ca7c66dc2a9619553c8904e3bb5b09a46d63"
+  },
+  {
+   "path": "src/index.css",
+   "uid": "6d82e1527749dabf4f45d74f540999fb0ee719c7"
+  },
+  {
+   "path": "src/main.tsx",
+   "uid": "05e4446135e24d135b8156df773fda104cbfb10f"
+  },
+  {
+   "path": "tsconfig.app.json",
+   "uid": "3627b2229290f1b2dd43d2321e003493d5a3e8ed"
+  },
+  {
+   "path": "tsconfig.json",
+   "uid": "916168243c072245e89f349fb50e0d11696086fb"
+  },
+  {
+   "path": "tsconfig.node.json",
+   "uid": "a92953fac71a0d4648aad424befa320f36ff775a"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "8c95db44ba3d63a113785e29ef03f1f375192321"
+  },
+  {
+   "path": "vite.config.ts",
+   "uid": "8f9e368b7be9c838a467b9cd61d6907439f5066c"
+  }
+ ]
+}

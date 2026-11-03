@@ -1,0 +1,685 @@
+{
+ "deploymentId": "dpl_6bmLcbj5td6nu6zEta1CJUHtYx63",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "094e53d6d39aa3f2fac8ff5cd393263c2f13f016"
+  },
+  {
+   "path": "api/_bot.js",
+   "uid": "59832cd765eeab28851ae0f33715f29537a53bc8"
+  },
+  {
+   "path": "api/_calendly.js",
+   "uid": "bf18954ed6a043c3a08bae1561add38ede034dba"
+  },
+  {
+   "path": "api/_prompt.js",
+   "uid": "fbcd2db871e76e4c40a4d87a945eef416400afa0"
+  },
+  {
+   "path": "api/ghl-bot.js",
+   "uid": "6aa1ffec4f40e2dc79a99c86fb8967c47427a118"
+  },
+  {
+   "path": "api/messenger.js",
+   "uid": "5e804bc7296352c0c16618b91bf3c0af1c4db150"
+  },
+  {
+   "path": "apple-touch-icon.png",
+   "uid": "f7a31987817b1f5bd46844e3b5f093d3c07e600c"
+  },
+  {
+   "path": "assets/img/aacio-product-badge.webp",
+   "uid": "3f9bbf6d7c82d8b1adc74121b727f2d941119bcc"
+  },
+  {
+   "path": "assets/img/abroad-funnel.webp",
+   "uid": "4aeda4be255d7c2f7aac2976113916a034651461"
+  },
+  {
+   "path": "assets/img/ad-01.webp",
+   "uid": "1d145ef55b21a626be7a73884b9b4a8f778eb298"
+  },
+  {
+   "path": "assets/img/ad-02.webp",
+   "uid": "5ec18d91c7b0bd00b5f64c67933945268a857dc4"
+  },
+  {
+   "path": "assets/img/ad-03.webp",
+   "uid": "4b4041d2c6a51b847c156a8efa9d95b5cb1a2a6a"
+  },
+  {
+   "path": "assets/img/ad-04.webp",
+   "uid": "1a4ac0050e967a8258c945a02056d12993e3bac0"
+  },
+  {
+   "path": "assets/img/ad-05.webp",
+   "uid": "d05ed6120846a31f1c5e53f63a27cabc703cf63a"
+  },
+  {
+   "path": "assets/img/ad-06.webp",
+   "uid": "6596bf4130a762afcdada257b92fb1a23d743694"
+  },
+  {
+   "path": "assets/img/ad-07.webp",
+   "uid": "6cd0405fce2e1171084f13b1457e7ef54233489b"
+  },
+  {
+   "path": "assets/img/ad-08.webp",
+   "uid": "4c53564e7aec847e6a54d436d214d129b8152cbd"
+  },
+  {
+   "path": "assets/img/ad-09.webp",
+   "uid": "f777ef499766e4b46c7ed285d85a5febb1a1405c"
+  },
+  {
+   "path": "assets/img/ad-10.webp",
+   "uid": "fdac6974d4b54104281c5900aa0d5f3aa7be7170"
+  },
+  {
+   "path": "assets/img/ad-11.webp",
+   "uid": "2c5684ad8c1d9ac09944ae6a7d661a22efabdc67"
+  },
+  {
+   "path": "assets/img/ad-12.webp",
+   "uid": "64bdedef9e93aff838b7bd589ff2fa399f48db4d"
+  },
+  {
+   "path": "assets/img/ad-13.webp",
+   "uid": "828aae23e21380d2b307682f47602cc291b669cf"
+  },
+  {
+   "path": "assets/img/ad-14.webp",
+   "uid": "1c6d29467ecfaef69d9f9fe4b29613f0e91bac7f"
+  },
+  {
+   "path": "assets/img/ad-15.webp",
+   "uid": "0f176415c5e9bfb4ee54053dac1e1afaa88435d8"
+  },
+  {
+   "path": "assets/img/ad-16.webp",
+   "uid": "b00f3dce73cfc2130834ca7b1cb3e8a91caf6eb8"
+  },
+  {
+   "path": "assets/img/ad-17.webp",
+   "uid": "e975dac7f34c533b9f53c669c276f0faabe729f5"
+  },
+  {
+   "path": "assets/img/ad-18.webp",
+   "uid": "41354bfe30c75306c81b3aa04138083f49c5f4ab"
+  },
+  {
+   "path": "assets/img/ad-19.webp",
+   "uid": "0141bd5dfddb6d662fda41474c9f69b66e08568d"
+  },
+  {
+   "path": "assets/img/ad-20.webp",
+   "uid": "6a4772c897289eca85c5bcc74d126b2051061eb3"
+  },
+  {
+   "path": "assets/img/ad-21.webp",
+   "uid": "0b99441f0ed3f2b1263791e3123ae7cfd78d235e"
+  },
+  {
+   "path": "assets/img/ad-22.webp",
+   "uid": "ceb17d48cff4a3f60f665b0727d963bd3a3aa741"
+  },
+  {
+   "path": "assets/img/ad-23.webp",
+   "uid": "966ba6df8e7041e6298ce5f337da120cf51c0bc2"
+  },
+  {
+   "path": "assets/img/ad-24.webp",
+   "uid": "77adffef86e12e2d0309e8481cd1dfba0aa0fb47"
+  },
+  {
+   "path": "assets/img/ad-25.webp",
+   "uid": "888c5978e04792e3a91be2e4bd053371ea45fe22"
+  },
+  {
+   "path": "assets/img/ad-26.webp",
+   "uid": "5975f1aac449f7257cb2ef5156e46b2e8fe451b6"
+  },
+  {
+   "path": "assets/img/ad-27.webp",
+   "uid": "b47defbffdcb2de68953742004bd287ea6253efb"
+  },
+  {
+   "path": "assets/img/ad-28.webp",
+   "uid": "ae52a038c1cb18c0e7c0f97530a7b667a39df2a9"
+  },
+  {
+   "path": "assets/img/ad-29.webp",
+   "uid": "53ca9c9a70a70f9232b9d8560fbccb07a8988362"
+  },
+  {
+   "path": "assets/img/ad-30.webp",
+   "uid": "8b7b43b3462223df06987622892713a0b6516afe"
+  },
+  {
+   "path": "assets/img/ads-1-2m-dashboard.webp",
+   "uid": "b39d48c2f584ddfbadf232284d2aa6f2a110e8e4"
+  },
+  {
+   "path": "assets/img/ads-stats-13m.webp",
+   "uid": "3cd820d837b5a3eed09273a35d05a7d8d7a1f1f4"
+  },
+  {
+   "path": "assets/img/ads-stats-4-9m.webp",
+   "uid": "6625e2d6d780eca4a2c49cd94985c44672668fac"
+  },
+  {
+   "path": "assets/img/ads-stats-5m.webp",
+   "uid": "091facc60ffe133d4040bee0c46cb5a2d4cf5093"
+  },
+  {
+   "path": "assets/img/ads-stats-big.webp",
+   "uid": "b295b9436a40a33f6becaf33c3a1cc0aa56334cf"
+  },
+  {
+   "path": "assets/img/ads-trio.webp",
+   "uid": "e5907c479c94c3590deb53daed6ff1fd1a3642f0"
+  },
+  {
+   "path": "assets/img/aesthetic-1-2m.webp",
+   "uid": "7d8a879181354409f3d0f09a3bb7e745ef45061c"
+  },
+  {
+   "path": "assets/img/affiliate-leaderboard.webp",
+   "uid": "da83675bab89e0902463ca20d552dbf7e7b6f260"
+  },
+  {
+   "path": "assets/img/affiliate-top10.webp",
+   "uid": "3031d5472ac2bb4078aec9308151f511193e36d1"
+  },
+  {
+   "path": "assets/img/alkaline-c.webp",
+   "uid": "b995bb2812fe5751f79d519d97397e31f88d02be"
+  },
+  {
+   "path": "assets/img/alkaline-stats.webp",
+   "uid": "90f0d58b2052828d6843162d1ad312191615d01e"
+  },
+  {
+   "path": "assets/img/app-get-discovered.webp",
+   "uid": "a7e73deaef5615114e60e06d95e0b1a5393e8cb7"
+  },
+  {
+   "path": "assets/img/appointments-slide.webp",
+   "uid": "e38c2d6818ab4bf5041a47fc54e95f77bc928d34"
+  },
+  {
+   "path": "assets/img/award-innovative.webp",
+   "uid": "c893c16876a3bb2a95b94622ef07368dae4fb3fe"
+  },
+  {
+   "path": "assets/img/baby-funnel-2.webp",
+   "uid": "c5fa641e1113248e1fff0c59414dff8be7d49b0a"
+  },
+  {
+   "path": "assets/img/baby-funnel.webp",
+   "uid": "204ad6b121a24b4c7399c516e2fbca3563cf1166"
+  },
+  {
+   "path": "assets/img/baby-stats.webp",
+   "uid": "1d7d195bec00ee28f5d7fb2018975056e130708e"
+  },
+  {
+   "path": "assets/img/baguio.webp",
+   "uid": "2b91cf08ee7907284bf70e89e2aadb6509c73999"
+  },
+  {
+   "path": "assets/img/glykozee-stats.webp",
+   "uid": "56a1dca1d55a1b0c22e35394b9975b4e6f714314"
+  },
+  {
+   "path": "assets/img/glykozee.webp",
+   "uid": "89b1c0924e2b9597f37da105ed1492a597bbc424"
+  },
+  {
+   "path": "assets/img/industry-construction.webp",
+   "uid": "68e078637fd5038d2200174cea9c51b904b348c7"
+  },
+  {
+   "path": "assets/img/industry-health.webp",
+   "uid": "ce24be23e1598dc400588bfdab9a2a68aae8787a"
+  },
+  {
+   "path": "assets/img/industry-insurance-2.webp",
+   "uid": "824203d5e2a8c693d359ed7f2b6f07fbcf10268a"
+  },
+  {
+   "path": "assets/img/industry-insurance-3.webp",
+   "uid": "da8323d22ef59f0e69774a647eced2e6f12d2e06"
+  },
+  {
+   "path": "assets/img/industry-insurance.webp",
+   "uid": "fcf7aebdd49b522df5f5bbb486e2154121da5414"
+  },
+  {
+   "path": "assets/img/industry-mlm.webp",
+   "uid": "ab21c3bf8ef7e66c59c89e4575eca31a46e28e94"
+  },
+  {
+   "path": "assets/img/industry-saas.webp",
+   "uid": "42dc9e17f62754f86369e7f597e6641b135cbd35"
+  },
+  {
+   "path": "assets/img/industry-smb.webp",
+   "uid": "ff0267b9d03cc365b0679cc9a8eeebc23866c5e6"
+  },
+  {
+   "path": "assets/img/industry-va.webp",
+   "uid": "a5c1d15254b7aef07e44fe8ff7d145589ea4a926"
+  },
+  {
+   "path": "assets/img/leads-funnel-1.webp",
+   "uid": "f7577c2ccab8c49a9ef35d8bec84400c189dc3bf"
+  },
+  {
+   "path": "assets/img/leads-funnel-2.webp",
+   "uid": "483fea62b9453c9131ea36c4ef8a68579aeff939"
+  },
+  {
+   "path": "assets/img/leads-funnel-3.webp",
+   "uid": "71d9327a485e36636c25d6fa079bfc60a4f7e6b8"
+  },
+  {
+   "path": "assets/img/leads-funnel-4.webp",
+   "uid": "0b14a87fd5869e834c0b857fa601ab6f81746f75"
+  },
+  {
+   "path": "assets/img/leads-funnel-5.webp",
+   "uid": "3078bbfa8aa4635f776492f36d6de456b08bdb6d"
+  },
+  {
+   "path": "assets/img/leads-funnel-6.webp",
+   "uid": "057870e197823a3ccfaa99a21c19d9335b3fc331"
+  },
+  {
+   "path": "assets/img/leads-funnel-7.webp",
+   "uid": "729083e62d21dd6c90b39a3a0d8d0c1f86647f5d"
+  },
+  {
+   "path": "assets/img/leads-funnel-8.webp",
+   "uid": "432ea5b012910da7f465b497b4518b71d25b0b36"
+  },
+  {
+   "path": "assets/img/lechon-food.webp",
+   "uid": "dd26ade29c4e53e512cc1766157424240f70e25d"
+  },
+  {
+   "path": "assets/img/logistics-funnel.webp",
+   "uid": "e5f8192aef9311c4b14ceb277f2ddb2c24e4d29b"
+  },
+  {
+   "path": "assets/img/maj-stage-camera.webp",
+   "uid": "f7d2af276b944956788e4eec62ce58365db61ccc"
+  },
+  {
+   "path": "assets/img/manulife-deal-doc.webp",
+   "uid": "bef6d5f02b9b6a3bddd96220c82c3cea2dcedc39"
+  },
+  {
+   "path": "assets/img/mazari-cove-2.webp",
+   "uid": "650fb13d04e53326597c0de842d5cde9d3ba732c"
+  },
+  {
+   "path": "assets/img/mazari-cove-3.webp",
+   "uid": "c13c78ab37123ebb137cc1d1088990d3d0ed0d56"
+  },
+  {
+   "path": "assets/img/mazari-cove.webp",
+   "uid": "9e18994d3e11507793ccacb64153f7108b05329a"
+  },
+  {
+   "path": "assets/img/niche-automotive.webp",
+   "uid": "908c167888cf75745012f4fd70fc1e0ace17f7ad"
+  },
+  {
+   "path": "assets/img/niche-coaching.webp",
+   "uid": "94f7ae99ea479dc35f6fce600c5b1ef380a9322d"
+  },
+  {
+   "path": "assets/img/niche-dental.webp",
+   "uid": "e8d04857f38859130b8fbb19cbf4373fa574a17b"
+  },
+  {
+   "path": "assets/img/niche-ecommerce.webp",
+   "uid": "7110ec96841aea9264db997fd9284c9e1272e568"
+  },
+  {
+   "path": "assets/img/niche-events.webp",
+   "uid": "84f3bf3bf3fa75e2c9a0726246e95cf3af569c78"
+  },
+  {
+   "path": "assets/img/niche-food.webp",
+   "uid": "c22ed3597d787660cfdf936c0c84690ded37a5fe"
+  },
+  {
+   "path": "assets/img/niche-insurance.webp",
+   "uid": "1d850ac9648107109b74726b2e63d86a4dbc3863"
+  },
+  {
+   "path": "assets/img/niche-realestate.webp",
+   "uid": "8e45d67e4d01570f15f6dc6fbea079ad4ab11e85"
+  },
+  {
+   "path": "assets/img/niche-travel.webp",
+   "uid": "4d6bf5a5722e016219ca6efc4fcd0c5f4412d6d6"
+  },
+  {
+   "path": "assets/img/pipeline-board.webp",
+   "uid": "e1dbde9beb2701e135e71dc7b2bc321b05f84ea6"
+  },
+  {
+   "path": "assets/img/practitioner-zoom.webp",
+   "uid": "57142fcc068350bb54e91fc167a347470c323fd4"
+  },
+  {
+   "path": "assets/img/quickpro-eric.webp",
+   "uid": "95dd869027744fb71dffead7b48c0cd6ef678fc1"
+  },
+  {
+   "path": "assets/img/real-estate-deals-grid.webp",
+   "uid": "6247f8404f33f0319ce427210dcb87277d08e9b5"
+  },
+  {
+   "path": "assets/img/saas-pipeline.webp",
+   "uid": "93463d1360b001107f52ed3598b2043036f9394d"
+  },
+  {
+   "path": "assets/img/saas-renewal-120m.webp",
+   "uid": "2df5b33efc33f0eec2e7f0a6f7489bee67d9c006"
+  },
+  {
+   "path": "assets/img/spreadsheet-old.webp",
+   "uid": "98197b21a925e0849e0333cd4fc2e83c657100b3"
+  },
+  {
+   "path": "assets/img/student-results-collage.webp",
+   "uid": "6b2774a37c4e789054dfd17028d1aac1166d6457"
+  },
+  {
+   "path": "assets/img/travel-funnel-2.webp",
+   "uid": "50852b3a9e768e6cbf081a24907aa503bd4e2f26"
+  },
+  {
+   "path": "assets/img/travel-funnel.webp",
+   "uid": "311a6cddb3443189e3fc63d31271bfa79562ed78"
+  },
+  {
+   "path": "assets/img/two-recent-clients.webp",
+   "uid": "ac922b7cc36a3c5355bd56e8db7dd229c36f866c"
+  },
+  {
+   "path": "assets/img/webinar-pipeline.webp",
+   "uid": "9688709914ac81a8627f9bb7d649bdf1d2646d81"
+  },
+  {
+   "path": "assets/img/zoom-call-640.webp",
+   "uid": "80e3c4901a1afb8c21661dc98a38c9031a15d563"
+  },
+  {
+   "path": "assets/img/zoom-call.webp",
+   "uid": "216cedfd33d26e335498397241d764a0e7c815c0"
+  },
+  {
+   "path": "assets/img/zoom-clients-collage.webp",
+   "uid": "e6e30669a154f25d23fb9b76f0a5f15956855225"
+  },
+  {
+   "path": "assets/people/abe-brown.webp",
+   "uid": "83aa1b197003606e41ef49f7495c51e59e6397a2"
+  },
+  {
+   "path": "assets/people/chinkee-tan.webp",
+   "uid": "fee47919d1837de5d9ad50fb4ed762253fd54369"
+  },
+  {
+   "path": "assets/people/dillon-kivo.webp",
+   "uid": "d412045d70507032f2045d3b7bf540744f794053"
+  },
+  {
+   "path": "assets/people/fibo-lim.webp",
+   "uid": "4eaf51f4375de246b4d6b567d04146b3e33139d2"
+  },
+  {
+   "path": "assets/people/maj-grey-suit-800.webp",
+   "uid": "b2b9e6be3da3d5020d1c0e69b9321f0e2dce4211"
+  },
+  {
+   "path": "assets/people/maj-grey-suit.webp",
+   "uid": "89d10b6ae1155466b7dfb70d4b4857694fe1dadb"
+  },
+  {
+   "path": "assets/people/maj-laptop-khaki-800.webp",
+   "uid": "e259a4e1e1d27db4e20868dee9bbf829c3c62b71"
+  },
+  {
+   "path": "assets/people/maj-laptop-khaki.webp",
+   "uid": "83a86c2869e64fdb92c7ad95b2241951381cae26"
+  },
+  {
+   "path": "assets/people/maj-laptop-navy-800.webp",
+   "uid": "69808dd5c77ceb48b570bcb9a69dde7791baea32"
+  },
+  {
+   "path": "assets/people/maj-laptop-navy.webp",
+   "uid": "88c71f1692144dd2abc23aeb158c33046d59ebe1"
+  },
+  {
+   "path": "assets/people/maj-lounge-wide-800.webp",
+   "uid": "82d458a1c57ffdccdc0f0286fddf640e76a2e031"
+  },
+  {
+   "path": "assets/people/maj-lounge-wide.webp",
+   "uid": "d50a74a38e1b08cb6655df5be22cdde71d90a18e"
+  },
+  {
+   "path": "assets/people/maj-phone-call-800.webp",
+   "uid": "3d105255e2b1665ee2ac36461492781d2f3fb443"
+  },
+  {
+   "path": "assets/people/maj-phone-call.webp",
+   "uid": "4093f0d6e05658337c5585553d784303dd6196b8"
+  },
+  {
+   "path": "assets/people/maj-speaking-hall-800.webp",
+   "uid": "d70353f1795a98a22547fe87217748eb3b104670"
+  },
+  {
+   "path": "assets/people/maj-speaking-hall.webp",
+   "uid": "0a15cbb6fea621d311161668255b6d8b9b2ff582"
+  },
+  {
+   "path": "assets/people/maj-white-suit-800.webp",
+   "uid": "30796bb767b18da1d7b85b16d20422005afebae8"
+  },
+  {
+   "path": "assets/people/maj-white-suit.webp",
+   "uid": "74cf00387fee3326cd4034ac5e7a8df8667204cf"
+  },
+  {
+   "path": "assets/video/pitch-poster.webp",
+   "uid": "ffc8ae02ad42cc6c134dfae17558848b310f0677"
+  },
+  {
+   "path": "assets/video/pitch.mp4",
+   "uid": "c997637beaafcf128988163b1fa22aff220ae3cb"
+  },
+  {
+   "path": "assets/video/testimonial-breakthrough-poster.webp",
+   "uid": "3a5e0836544d421aae99f55647ea80999525ce70"
+  },
+  {
+   "path": "assets/video/testimonial-breakthrough.mp4",
+   "uid": "3f0fb8e0002c9b9861583e60b420863739bce41b"
+  },
+  {
+   "path": "assets/video/testimonial-final-poster.webp",
+   "uid": "5bec99939a26c9404c62f08d5e5993f9b65e9d95"
+  },
+  {
+   "path": "assets/video/testimonial-final.mp4",
+   "uid": "817482a15c27c46a88416be9236910fdd37b55e1"
+  },
+  {
+   "path": "assets/video/testimonial-maj-poster.webp",
+   "uid": "80f14a932344fbbd621c32f864206a1be5f727f5"
+  },
+  {
+   "path": "assets/video/testimonial-maj.mp4",
+   "uid": "d315889a593f2684e2e10681210370057a760659"
+  },
+  {
+   "path": "assets/video/testimonial-vertical-poster.webp",
+   "uid": "101a135625dc9c1b5d78a41b65e0345c8b5a1814"
+  },
+  {
+   "path": "assets/video/testimonial-vertical.mp4",
+   "uid": "d604f819fa4948af74e1a2a7f87ff1be4e952b55"
+  },
+  {
+   "path": "assets/video/vsl-720.mp4",
+   "uid": "5c8278de7ea3676bdcb03b432e7e6f6f0ce4f28e"
+  },
+  {
+   "path": "assets/video/vsl-poster-960.webp",
+   "uid": "ba5ff7c6a624680e2ec6298ea04ec6264db4c53b"
+  },
+  {
+   "path": "assets/video/vsl-poster.webp",
+   "uid": "b7f6f9e2b051a82845172ea4b4b42bbf71fea517"
+  },
+  {
+   "path": "assets/video/vsl.mp4",
+   "uid": "7b4266f8e3493bd2dd6f0f90cf8ee73f7de99d7f"
+  },
+  {
+   "path": "css/styles.css",
+   "uid": "055dac2c8d3ca9deb5757f6eedf6b30ebf6ac119"
+  },
+  {
+   "path": "favicon.svg",
+   "uid": "ba157fe496a5c1fcd745c4d72f80fdfe2e757d9f"
+  },
+  {
+   "path": "fonts/bricolage-latin-wght-normal.woff2",
+   "uid": "9b03f9ffed05a02525543a8c18c45bc7032c772b"
+  },
+  {
+   "path": "fonts/poppins-latin-400-normal.woff2",
+   "uid": "ac6d71b4d5fdd2b3dabc9a06ff6c001e4251da0b"
+  },
+  {
+   "path": "fonts/poppins-latin-500-normal.woff2",
+   "uid": "0da2d17e738f46d2a09e6fb7969da451719a9820"
+  },
+  {
+   "path": "fonts/poppins-latin-600-normal.woff2",
+   "uid": "179f97ec0275f09603a8db94d4380eb584d81cd5"
+  },
+  {
+   "path": "fonts/poppins-latin-700-normal.woff2",
+   "uid": "cb726212d5d525021752a1d8470a0fb593e0c49e"
+  },
+  {
+   "path": "fonts/sora-latin-wght-normal.woff2",
+   "uid": "93f322133a56cd58cb13fd9d3e3555426875e255"
+  },
+  {
+   "path": "home.html",
+   "uid": "a35175942f7237b22f1c7e674fa542f042297f28"
+  },
+  {
+   "path": "icon-512.png",
+   "uid": "311b17e54f50d8f0309310d664c129e542486bd7"
+  },
+  {
+   "path": "js/main.js",
+   "uid": "0b0b6d99e28807bf10e2919a47630da8df5dec38"
+  },
+  {
+   "path": "js/vendor/ScrollTrigger.min.js",
+   "uid": "ecd3242f5dac796b8d205d4084d877d0663e040f"
+  },
+  {
+   "path": "js/vendor/gsap.min.js",
+   "uid": "fa1aeabcead11241607d9249ff20c8bcbbac2012"
+  },
+  {
+   "path": "js/vendor/lenis.min.js",
+   "uid": "d86ac0c8e135d4c6ecff80578d37059820172d7b"
+  },
+  {
+   "path": "og-image.jpg",
+   "uid": "27142536dd5e852020c9e12d45427d0ab76bc9c7"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "984d76aa98fd36745add7e1179120c85ed27441f"
+  },
+  {
+   "path": "package.json",
+   "uid": "6914b9ba1edde555eb8ce8a3803895dc7ef6e6cf"
+  },
+  {
+   "path": "privacy.html",
+   "uid": "2ce891b8e42d96e5390050e0e0b219f8f59e9d62"
+  },
+  {
+   "path": "robots-noindex.txt",
+   "uid": "88a8390db1c2c7a883f0590d8e50eed4bac2ef63"
+  },
+  {
+   "path": "robots.txt",
+   "uid": "0e264e459339903cb6c30a8ce13e4eae66cc25ca"
+  },
+  {
+   "path": "site.webmanifest",
+   "uid": "5f46cb5909ffee5a31bd6e5bd1a1fc69bcc436a5"
+  },
+  {
+   "path": "sitemap.xml",
+   "uid": "85afcfd3aa1d473dbbaeee81139f625438ce1d09"
+  },
+  {
+   "path": "social/post-1-leaking-bucket.jpg",
+   "uid": "ed85c6f95112dac5990d4158d8080c5a14464d87"
+  },
+  {
+   "path": "social/post-2-stop-chasing.jpg",
+   "uid": "11123d8357678f25ac807de8ecc88aed63316922"
+  },
+  {
+   "path": "social/post-3-machine.jpg",
+   "uid": "14e38f28abd8d9bdfc431a39a886f8f0049901db"
+  },
+  {
+   "path": "social/post-4-followup-math.jpg",
+   "uid": "ff61a3f02c223f155fe06bde4db7de0693998aeb"
+  },
+  {
+   "path": "social/post-5-fix-order.jpg",
+   "uid": "b0804ee88cbe942b429abebe48489e07ae5bfcbf"
+  },
+  {
+   "path": "social/post-6-one-deal.jpg",
+   "uid": "d8b61898037fa755e3da966dfe6bc66eef68f492"
+  },
+  {
+   "path": "social/um-logo.png",
+   "uid": "3ef08a06b412beebbc7d5b60db9908dbb7d097f5"
+  },
+  {
+   "path": "thank-you.html",
+   "uid": "fd139f3d77fe3d434628885ce22d21d47f0e8365"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "ff6e6879a1653d4233c94df1f0cbd7fd5930b232"
+  }
+ ]
+}

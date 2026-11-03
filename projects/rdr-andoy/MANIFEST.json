@@ -1,0 +1,157 @@
+{
+ "deploymentId": "dpl_ACvBzVptLHvamtbMAXSdwHbVAZY6",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "3d07b8c47609ba4f165c38b4139328b77122e89a"
+  },
+  {
+   "path": "FOOTAGE-GAPS.md",
+   "uid": "db912488ca9b5c9e7803185753a1f5f4fdc0150a"
+  },
+  {
+   "path": "api/hq.js",
+   "uid": "d5e92057d63293ab002df40d35897a46638b0ac8"
+  },
+  {
+   "path": "api/schedule.js",
+   "uid": "4bc1971e4e876cbb5c4d463b96128e3a256f56fc"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "2c3c3be035f24723fc415dd46ec1bac3bbfc0dae"
+  },
+  {
+   "path": "package.json",
+   "uid": "fdefde797bd5ac8be2d66bc5f095714ff0a3d815"
+  },
+  {
+   "path": "public/app.js",
+   "uid": "f5be18c4ff8c73fb0ded52b5f19d7931fda8b976"
+  },
+  {
+   "path": "public/assets/andoy-f1.jpg",
+   "uid": "a7f184956853ed2389d302c18571a47ae80e00e6"
+  },
+  {
+   "path": "public/assets/andoy-f2.jpg",
+   "uid": "35933cd3a7b7dd902dc96e833b741b888330b7fe"
+  },
+  {
+   "path": "public/assets/andoy-f3.jpg",
+   "uid": "0f8d9ab22014d7da26544789279d73de51b08f41"
+  },
+  {
+   "path": "public/assets/andoy-key.jpg",
+   "uid": "9ef7c7fb190bf918483d2b0f690cbe66f5dd3b36"
+  },
+  {
+   "path": "public/assets/andoy-logo.png",
+   "uid": "7cf1c821d4d1178cb913b0e8fd0419a0fcfdfa9d"
+  },
+  {
+   "path": "public/assets/andoy-p1.jpg",
+   "uid": "43aa04d8fe9a1d4d073ebf62cde8eb3844143842"
+  },
+  {
+   "path": "public/assets/andoy-p2.jpg",
+   "uid": "f7a0f1b2dab7bb0cdda0a852ab6956707ce67289"
+  },
+  {
+   "path": "public/assets/andoy-p3.jpg",
+   "uid": "33f43157495c6bffb2676ad0a7081a4d11b4325a"
+  },
+  {
+   "path": "public/assets/film-f1.jpg",
+   "uid": "1adf03ed3d6d88fbf842481b718d5f7400811edc"
+  },
+  {
+   "path": "public/assets/film-f2.jpg",
+   "uid": "34ed45d09361e09a671c8572859aad886aa03ff1"
+  },
+  {
+   "path": "public/assets/film-f3.jpg",
+   "uid": "5fa491ed049ef0d820e0919facb9b31c95525784"
+  },
+  {
+   "path": "public/assets/film-maxresdefault.jpg",
+   "uid": "5058083e0988e5f01b56fe8571fc68bb6e70cf65"
+  },
+  {
+   "path": "public/assets/logo-w.png",
+   "uid": "3de0aecb4476508541a52dbe54ee6b2cf4169ca2"
+  },
+  {
+   "path": "public/assets/logo.png",
+   "uid": "40928b3f59d245833baf37f8a2960140f50ac955"
+  },
+  {
+   "path": "public/assets/rdr-suit.jpg",
+   "uid": "5b0e6a9dc771db364be9c62b1f896c62c1fbba62"
+  },
+  {
+   "path": "public/data.js",
+   "uid": "d2a5eeed6b2627e861145452be551e1fc778a08d"
+  },
+  {
+   "path": "public/deck.css",
+   "uid": "bb21ed719e6089d81af852d1fd8f8b463780b486"
+  },
+  {
+   "path": "public/deck.js",
+   "uid": "c1eefa0b4c071c2d9f6c05ab7bc355ba8e51d9c5"
+  },
+  {
+   "path": "public/guide.html",
+   "uid": "628c644d9e5d52ea815ec8464c04f33901d1507e"
+  },
+  {
+   "path": "public/hq.css",
+   "uid": "304a05e84c7e20a9af03ba2f2916405b502156f5"
+  },
+  {
+   "path": "public/hq.html",
+   "uid": "a45d7e2f370993ff3fd6f4f15241a7e79b7d7210"
+  },
+  {
+   "path": "public/hq.js",
+   "uid": "6e26f89a204e4f6114db382ec19a0ba5c6135e0c"
+  },
+  {
+   "path": "public/index.html",
+   "uid": "b2c498c7dd1da619b88c835dae07c4c268383f8c"
+  },
+  {
+   "path": "public/schedule.css",
+   "uid": "204e11c311d91339d1fdcf62c229cead0a8d72d7"
+  },
+  {
+   "path": "public/schedule.html",
+   "uid": "e62ede6a0266cf46ac98e06f7b39e0da38f66c34"
+  },
+  {
+   "path": "public/schedule.js",
+   "uid": "9743e10bf88dd067c8143b08c93688c138dc3672"
+  },
+  {
+   "path": "public/style.css",
+   "uid": "4f42f0bbfb146c2819a8a6550b76c48e5ce0f13f"
+  },
+  {
+   "path": "public/work.css",
+   "uid": "5bf2fa4b961f25aa5f07ba3030965b00a8bae7e2"
+  },
+  {
+   "path": "public/work.html",
+   "uid": "c671a3929c59288120c93a066c2cde929198ffca"
+  },
+  {
+   "path": "public/work.js",
+   "uid": "e247087236138bebf023cd806eea5b8ea1cc4d3c"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "d96771f17f0e9212869d308aa3c7bb34485713b3"
+  }
+ ]
+}

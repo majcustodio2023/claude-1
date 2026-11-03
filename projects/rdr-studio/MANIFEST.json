@@ -1,0 +1,321 @@
+{
+ "deploymentId": "dpl_2NYAD5A9YheiZAUuJmvCt2mg6uws",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "637704771ca70e66e4fa1645f97f29a9e0e346e3"
+  },
+  {
+   "path": "api/agent.js",
+   "uid": "02eff22a05862415b1fee0b59d97b37739f68f45"
+  },
+  {
+   "path": "api/publish.js",
+   "uid": "493ea44a011f200218fa0aa092ecb1c7feaf5de9"
+  },
+  {
+   "path": "api/studio.js",
+   "uid": "67f8bd45fbdfd0b6149dc7ffc30577acd30b95a4"
+  },
+  {
+   "path": "api/upload.js",
+   "uid": "4e5d6244b227a78cc82f34eec4ad6d8f5e604281"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "7a6ea943917c1bdef21fb1108ff309d715c06798"
+  },
+  {
+   "path": "package.json",
+   "uid": "c46fd527f7608c68afdd925d44928d8b9760a413"
+  },
+  {
+   "path": "public/assets/banner.jpg",
+   "uid": "4a6fde222b57d9947000b69ef855ab353eb6c320"
+  },
+  {
+   "path": "public/assets/bg-city.jpg",
+   "uid": "edd5e6c4d686aba925ddd22e8102fc9b406f35d2"
+  },
+  {
+   "path": "public/assets/bg.jpg",
+   "uid": "b1c6a0e8b75cc12bedb8f46d82e3f5210347c088"
+  },
+  {
+   "path": "public/assets/boss-rdr-hero-desk.jpg",
+   "uid": "7fa7e9fb501b062cd35228ccb4804d0feae62e84"
+  },
+  {
+   "path": "public/assets/brands-accelerated.png",
+   "uid": "484869c40d5e6e517d5915cbd638d148f411068f"
+  },
+  {
+   "path": "public/assets/clients/client-1.png",
+   "uid": "fb6b36533309f4ce129ee21a106751b22c2faa12"
+  },
+  {
+   "path": "public/assets/clients/client-10.png",
+   "uid": "50d655ada5fdc8355245329066cdb4ce34dc6f5e"
+  },
+  {
+   "path": "public/assets/clients/client-11.png",
+   "uid": "89d268636010d1e2cc6e28f7bbc5f6eef21afa11"
+  },
+  {
+   "path": "public/assets/clients/client-12.png",
+   "uid": "b7ab46035a3702609906588f26c4913c82852ab4"
+  },
+  {
+   "path": "public/assets/clients/client-13.png",
+   "uid": "0224e32bb09153475fef651e4751dfe24e4d96df"
+  },
+  {
+   "path": "public/assets/clients/client-14.png",
+   "uid": "3a615f7770ea654d9522ea05024069c46d234e00"
+  },
+  {
+   "path": "public/assets/clients/client-15.png",
+   "uid": "377ef6c9ad28c97764927b24a0e88be1affea1ca"
+  },
+  {
+   "path": "public/assets/clients/client-16.png",
+   "uid": "9fbb5d53f9267804d7a84933528e99345d932ad3"
+  },
+  {
+   "path": "public/assets/clients/client-17.png",
+   "uid": "1f29415a3758608879f573d303cdaed109e9aa64"
+  },
+  {
+   "path": "public/assets/clients/client-18.png",
+   "uid": "7097c6037babf191622f3352f48be204d9933310"
+  },
+  {
+   "path": "public/assets/clients/client-19.png",
+   "uid": "9c3b07e1a39e81338b7acc89cc1ed90d6601df13"
+  },
+  {
+   "path": "public/assets/clients/client-2.png",
+   "uid": "5dd51c9fe452c890ed721691993de48ff256a384"
+  },
+  {
+   "path": "public/assets/clients/client-20.png",
+   "uid": "30f92df638c128a82e360a8f144a2f2f3a61e74e"
+  },
+  {
+   "path": "public/assets/clients/client-21.png",
+   "uid": "834ad1beb9522457de5ed69563d6dbb7bab2cd26"
+  },
+  {
+   "path": "public/assets/clients/client-22.png",
+   "uid": "bb58bedf00147b1b4d805a8d3c8a23ad4bc7c18f"
+  },
+  {
+   "path": "public/assets/clients/client-23.png",
+   "uid": "1c3010e3febd86f64ae3bba90017d3391835a5c1"
+  },
+  {
+   "path": "public/assets/clients/client-24.png",
+   "uid": "babdd308617905ea0684ccdaeca6b557c5823575"
+  },
+  {
+   "path": "public/assets/clients/client-3.png",
+   "uid": "5c415d827c11111d01a37514dd20744562c3bf1d"
+  },
+  {
+   "path": "public/assets/clients/client-4.png",
+   "uid": "bf8f6c9c0f6ed3b83c7ddfd0c99e23ec3da1e685"
+  },
+  {
+   "path": "public/assets/clients/client-5.png",
+   "uid": "5ca5cf7010b0247b8982274e338c52c6b3aeaef9"
+  },
+  {
+   "path": "public/assets/clients/client-6.png",
+   "uid": "ea2f587e02704fa8d54451d625122414a990538e"
+  },
+  {
+   "path": "public/assets/clients/client-7.png",
+   "uid": "fa5bfde720da5e49e28189d028cb062b8c7ff852"
+  },
+  {
+   "path": "public/assets/clients/client-8.png",
+   "uid": "a6615744e352474c3798e865359c353467f5e699"
+  },
+  {
+   "path": "public/assets/clients/client-9.png",
+   "uid": "34f405bf886fa8558d59eeca9cd632ab67b86c05"
+  },
+  {
+   "path": "public/assets/clients/media-100.png",
+   "uid": "c7f459dd61cd9e84448d1922f245699a30e089ae"
+  },
+  {
+   "path": "public/assets/clients/media-101.png",
+   "uid": "0cf00543836a9ba9bb34e4f80b645da230289138"
+  },
+  {
+   "path": "public/assets/clients/media-102.png",
+   "uid": "6273736047696a8a986691f8f1fa3077fc448d1e"
+  },
+  {
+   "path": "public/assets/clients/media-103.png",
+   "uid": "7e28eb1441e136b08830589ea64c8a2cb61bed6e"
+  },
+  {
+   "path": "public/assets/clients/media-104.png",
+   "uid": "b4fa23f5cfe6f24e1b6c23f7528c1d68afa4a5cc"
+  },
+  {
+   "path": "public/assets/clients/media-105.png",
+   "uid": "b320730011d0c86a58283873bc5e93786b112ba2"
+  },
+  {
+   "path": "public/assets/clients/media-106.png",
+   "uid": "46ca44cc1bb45e0c940c726157dd69ed52387352"
+  },
+  {
+   "path": "public/assets/clients/media-107.png",
+   "uid": "18965d21374696304e9ebd1f4add79dfb01b5c02"
+  },
+  {
+   "path": "public/assets/clients/media-108.png",
+   "uid": "b2075ff825ff73e2561c6ef4003ad7fc1dbd67b4"
+  },
+  {
+   "path": "public/assets/clients/media-109.png",
+   "uid": "90ba69c256933bc57f51a13ff5abceeb97f6536f"
+  },
+  {
+   "path": "public/assets/clients/media-110.png",
+   "uid": "2e5797b013c1fdcf00ca4e516cabfe7ce7ce7958"
+  },
+  {
+   "path": "public/assets/clients/media-111.png",
+   "uid": "e1ee5faa6861ea632ea669a5895cbd5d39d81f70"
+  },
+  {
+   "path": "public/assets/clients/media-112.png",
+   "uid": "7cfb61910a9adc3519cc077f95824fd2232d364a"
+  },
+  {
+   "path": "public/assets/clients/media-113.png",
+   "uid": "c4602ba02d10e400327521ff31d4f7acec66c672"
+  },
+  {
+   "path": "public/assets/clients/media-114.png",
+   "uid": "9cf310665a96fc2648aab2532d0ebe0ee03a6633"
+  },
+  {
+   "path": "public/assets/clients/media-98.png",
+   "uid": "8655854a591c5a69de5dbd8c561d5a47b244ccdc"
+  },
+  {
+   "path": "public/assets/clients/media-99.png",
+   "uid": "9d8a7e7d895573c087e4dcaac449cca6f1376b5e"
+  },
+  {
+   "path": "public/assets/hero.jpg",
+   "uid": "835b3e2ccc27f374b52a081f811b498f1ba5654b"
+  },
+  {
+   "path": "public/assets/iotw-1.jpg",
+   "uid": "617b96f0c03add1ec467d07f452499a499641274"
+  },
+  {
+   "path": "public/assets/iotw-2.jpg",
+   "uid": "121efb335a48794a5df7e29888f1dd34a518c31f"
+  },
+  {
+   "path": "public/assets/iotw-3.jpg",
+   "uid": "eeb020655d3eaffb5e8a58fbe9004e09a91b6aaa"
+  },
+  {
+   "path": "public/assets/iotw-4.jpg",
+   "uid": "37dce920953fff416eb96aab0f04c226d7887e1f"
+  },
+  {
+   "path": "public/assets/iotw-5.jpg",
+   "uid": "d25db351eca41f9590703d0adfede1a880dd6182"
+  },
+  {
+   "path": "public/assets/iotw-6.jpg",
+   "uid": "814a2f0222f42f00919c2d8ac66d0050c2b50b6f"
+  },
+  {
+   "path": "public/assets/logo-w.png",
+   "uid": "3de0aecb4476508541a52dbe54ee6b2cf4169ca2"
+  },
+  {
+   "path": "public/assets/logo.png",
+   "uid": "40928b3f59d245833baf37f8a2960140f50ac955"
+  },
+  {
+   "path": "public/assets/portrait-s.jpg",
+   "uid": "3ae67b385645f3947c580ca7c1b9cb2798ba8f6a"
+  },
+  {
+   "path": "public/assets/portrait.jpg",
+   "uid": "baa94099d4b1256ef8ca5da4f80ba2b2e5fdb640"
+  },
+  {
+   "path": "public/assets/rdr-crest.png",
+   "uid": "d12a4738ff26cc5a22bc70fa5194ad483982e596"
+  },
+  {
+   "path": "public/assets/rdr-suit.jpg",
+   "uid": "5b0e6a9dc771db364be9c62b1f896c62c1fbba62"
+  },
+  {
+   "path": "public/assets/skyline.jpg",
+   "uid": "c6e36b03332ecdac9b5ec45c812780e55776eebe"
+  },
+  {
+   "path": "public/data.js",
+   "uid": "a6756c21be432d1e25ebacfb3f43ebcc2594fc79"
+  },
+  {
+   "path": "public/deck.css",
+   "uid": "2e4e6dc2c9f4563681d15cabf7146d97f9c49987"
+  },
+  {
+   "path": "public/deck.js",
+   "uid": "d65f474fdb0aa2737633e935f135b9b76b93c56d"
+  },
+  {
+   "path": "public/index.html",
+   "uid": "0d0430c949471eeb356276e8f6321686d01cf6d2"
+  },
+  {
+   "path": "public/office.css",
+   "uid": "54e71a2da92de5362db9c3d710dc8dd67a503dbd"
+  },
+  {
+   "path": "public/office.html",
+   "uid": "d8b9d78a3a4ad626df91236f0110a4492e466022"
+  },
+  {
+   "path": "public/office.js",
+   "uid": "ec9c536e390726096843a776097c1063aa385d1c"
+  },
+  {
+   "path": "public/studio.css",
+   "uid": "2702fd705d199f7abb04735d22734ed2cbe291c2"
+  },
+  {
+   "path": "public/studio.html",
+   "uid": "0f4ab7939419af1504bd19d3c10959da894facc8"
+  },
+  {
+   "path": "public/studio.js",
+   "uid": "8284cb943262c19c3926ea963d4b61b89b4e6663"
+  },
+  {
+   "path": "public/ui.css",
+   "uid": "7792fee85c260e58668fbdf843181593927cb9ad"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "cd7ddd38cc44aee8b7ed2a27fa57d85ea992c556"
+  }
+ ]
+}

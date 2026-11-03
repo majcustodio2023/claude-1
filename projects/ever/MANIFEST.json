@@ -1,0 +1,45 @@
+{
+ "deploymentId": "dpl_9neR9GT8a778bvR5L3D2XpYgCt1s",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "ae7a7720b946ac88a866e57ca25b5ee3d87a12ff"
+  },
+  {
+   "path": "app.js",
+   "uid": "840b6bd77414de942037f1900153fee4892c6bbd"
+  },
+  {
+   "path": "img/founder-1.webp",
+   "uid": "8853c0e9a5c6f4b5b8526c5ed5ebc1e566f32906"
+  },
+  {
+   "path": "img/founder-2.webp",
+   "uid": "ebe2ed28849d7a8a5902509128f296549277873d"
+  },
+  {
+   "path": "img/founder-3.webp",
+   "uid": "57b26fdec2c99014c9de1ab0ea9bca6590365274"
+  },
+  {
+   "path": "img/founder-4.webp",
+   "uid": "3d4b3ce6462166358f48a96f3a9e768207f26d48"
+  },
+  {
+   "path": "index.html",
+   "uid": "e4edb687d8e14a74d269e2ac9a4c550870ba7ad2"
+  },
+  {
+   "path": "styles.css",
+   "uid": "9a485699e74acb1b063ca6a85defd7790d0ebf35"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "ae7a7266b8bcc695c1146d1b2bbd059883dde6c1"
+  },
+  {
+   "path": "world.css",
+   "uid": "3beac109a1f05b36611ed2f85a0b5428aa931084"
+  }
+ ]
+}

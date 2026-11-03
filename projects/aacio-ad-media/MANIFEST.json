@@ -1,0 +1,93 @@
+{
+ "deploymentId": "dpl_BdyjrbrvHEjec5LJf9SD5UbkVMxY",
+ "files": [
+  {
+   "path": "index.html",
+   "uid": "ae423381df599ec000868d6265cecaa458a636fb"
+  },
+  {
+   "path": "v/img1500.mp4",
+   "uid": "e310271b3524035dd777b4c394326f992bced97e"
+  },
+  {
+   "path": "v/img1501.mp4",
+   "uid": "c07337a635d251dc98ebac8923d137435758f050"
+  },
+  {
+   "path": "v/img1502.mp4",
+   "uid": "8e0598eab00f98fb28bf7b6fc0d766298df4cb8f"
+  },
+  {
+   "path": "v/maj14.mp4",
+   "uid": "2f527ed9a15789f2a3e45a018ddabc55760ee4f6"
+  },
+  {
+   "path": "v/maj15.mp4",
+   "uid": "f8ddaf7f1223225477a88a803062e57f86379767"
+  },
+  {
+   "path": "v/maj22.mp4",
+   "uid": "a448cbe5ec3d7ea4844a4539e5e73f0be5d7bb6f"
+  },
+  {
+   "path": "v/thumb_img1500.jpg",
+   "uid": "f2cc8c3e5440b15802b6781219541edd0994d926"
+  },
+  {
+   "path": "v/thumb_img1501.jpg",
+   "uid": "57e5f78a542719ecea97044a1d13cdebaf90f01e"
+  },
+  {
+   "path": "v/thumb_img1502.jpg",
+   "uid": "5fb940edd01ef684b735921bd38b09e00b4b037f"
+  },
+  {
+   "path": "v/thumb_maj14.jpg",
+   "uid": "1539d087104c06f10096e27a5d3a1bbf6f199af1"
+  },
+  {
+   "path": "v/thumb_maj15.jpg",
+   "uid": "b8a12bd6c32e256f2a886ccefd722451eae584e6"
+  },
+  {
+   "path": "v/thumb_maj22.jpg",
+   "uid": "a5610dbbc0e57553b260f86c7ab9931619893126"
+  },
+  {
+   "path": "v/thumb_wl1.jpg",
+   "uid": "00d71e6eedad18c3823d50571ade596100137935"
+  },
+  {
+   "path": "v/thumb_wl2.jpg",
+   "uid": "316cfdd8563bad620c10a6ff9f468f2a03282dc0"
+  },
+  {
+   "path": "v/thumb_wl3.jpg",
+   "uid": "876a7679f13c200647575c462b5568a4dbea5c6f"
+  },
+  {
+   "path": "v/thumb_wl4.jpg",
+   "uid": "78fdd9f0e4ca4bbb58779403054340211844ed10"
+  },
+  {
+   "path": "v/wl1.mp4",
+   "uid": "08d74bac5636169fd741759b35e38a6ec1f0bcef"
+  },
+  {
+   "path": "v/wl2.mp4",
+   "uid": "0297ede0db8663e6eaf361bafd9293734687b5d0"
+  },
+  {
+   "path": "v/wl3.mp4",
+   "uid": "faa51d5bd4247127182cb89d0cc5e5a28456aa43"
+  },
+  {
+   "path": "v/wl4.mp4",
+   "uid": "37e213b5823e77703a339920564305d38bb7cc7c"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "3b25e2c6dcbf884934443412b141591fb7ddf053"
+  }
+ ]
+}

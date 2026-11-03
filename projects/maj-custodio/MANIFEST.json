@@ -1,0 +1,13 @@
+{
+ "deploymentId": "dpl_GiGUwYdsEb4kuHGTRVV5rPEFbxH1",
+ "files": [
+  {
+   "path": "build.mjs",
+   "uid": "5a1134ac4d78b85b821c6a791496319ab2eb64e1"
+  },
+  {
+   "path": "package.json",
+   "uid": "1f535efb91a483afbf07a04a0cb63956880b8174"
+  }
+ ]
+}

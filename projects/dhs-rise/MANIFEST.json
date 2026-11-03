@@ -1,0 +1,185 @@
+{
+ "deploymentId": "dpl_DMQ17QZv9gErcBu1WPoFDxzSRmfx",
+ "files": [
+  {
+   "path": ".vercelignore",
+   "uid": "22a1188f99b4ab2ee33ec9ad9a67e7b180ce3c98"
+  },
+  {
+   "path": "public/app.js",
+   "uid": "cfab292aa859407da5dbede79a8a5f64277f3602"
+  },
+  {
+   "path": "public/confirmed.html",
+   "uid": "65d6a0abd58422521dfc6351fb7356c782092104"
+  },
+  {
+   "path": "public/img/backdrop.jpg",
+   "uid": "a67e9d52504c00b1e8796040d442fb918742679d"
+  },
+  {
+   "path": "public/img/brand-hero.jpg",
+   "uid": "708e4c1e3163f661c2f6c9376a0ce1233d6e704e"
+  },
+  {
+   "path": "public/img/chef.jpg",
+   "uid": "9174682bcc9b465c57c7c5d5aaf85c2d5079ee8a"
+  },
+  {
+   "path": "public/img/dhs-logo.jpg",
+   "uid": "b34e840a5441bc00341bcd58217936fe0ca15843"
+  },
+  {
+   "path": "public/img/g1.jpg",
+   "uid": "61d6a595a3c2401c0d4ed3964e8eb897115c909d"
+  },
+  {
+   "path": "public/img/g2.jpg",
+   "uid": "acf413dd2e0eb60fb971e514753bd588f876a6d6"
+  },
+  {
+   "path": "public/img/g3.jpg",
+   "uid": "93c0c592a32d22e08ba674ce7fd64da24bf5cab8"
+  },
+  {
+   "path": "public/img/g4.jpg",
+   "uid": "90ec6123f8a860f2b4d8a2ecd66834d8b36f35b0"
+  },
+  {
+   "path": "public/img/g5.jpg",
+   "uid": "a4a4b47ca867c55cfbe7d93dcf83b14d9c5e80ae"
+  },
+  {
+   "path": "public/img/g6.jpg",
+   "uid": "c8b4cf8b292e896d90390b755e8f3a30f28a0162"
+  },
+  {
+   "path": "public/img/grads.jpg",
+   "uid": "346e9f88618b9c661221fa564b491ddbf5ff75c5"
+  },
+  {
+   "path": "public/img/hero-group.jpg",
+   "uid": "d485c7ae37e24545b367b049d4e587485ee246b8"
+  },
+  {
+   "path": "public/img/hero.jpg",
+   "uid": "1b86aed362d2fa9f05fda16966d069eead62597a"
+  },
+  {
+   "path": "public/img/icym-campus.jpg",
+   "uid": "aa0a98c9eaff087c9b69b7c51da453e1723c0c1b"
+  },
+  {
+   "path": "public/img/icym-logo.jpg",
+   "uid": "9195302c0fb8eb4263b912061299608a897f6fe3"
+  },
+  {
+   "path": "public/img/kl.jpg",
+   "uid": "e99a49f63257a3b68299f7efb6cb6a093f434216"
+  },
+  {
+   "path": "public/img/lobby.jpg",
+   "uid": "c7e41373dba59c83e8ff2eb9592c6b54f1a83c31"
+  },
+  {
+   "path": "public/img/office.jpg",
+   "uid": "8f72f928d1796a2800b1929cad651aa4c0238ca7"
+  },
+  {
+   "path": "public/img/slides/s01.jpg",
+   "uid": "fadbe9a8a57bfd05059071eabcc93c29d26892c2"
+  },
+  {
+   "path": "public/img/slides/s02.jpg",
+   "uid": "7ab23feb33e6e60cbfedb2aefb7677e3bfe15fec"
+  },
+  {
+   "path": "public/img/slides/s03.jpg",
+   "uid": "d3e238870b5c444d22e30da1fb194dc19f5e10b2"
+  },
+  {
+   "path": "public/img/slides/s04.jpg",
+   "uid": "39f606ceeeee193d83817797a672f09f12054d74"
+  },
+  {
+   "path": "public/img/slides/s05.jpg",
+   "uid": "3dea47fe6a53eabb54f06c8225508754e864c3c0"
+  },
+  {
+   "path": "public/img/slides/s06.jpg",
+   "uid": "755c2cbd4488ef67e0bb712e5a881d212d00aaf3"
+  },
+  {
+   "path": "public/img/slides/s07.jpg",
+   "uid": "d1f81e761d1be184b2c2af1d63eeb2143e440a09"
+  },
+  {
+   "path": "public/img/slides/s08.jpg",
+   "uid": "9325e84729917945737d0a48c597ac575d98142c"
+  },
+  {
+   "path": "public/img/slides/s09.jpg",
+   "uid": "5bac7af49d6501e1d03dd1f197dda13b28ab9b8c"
+  },
+  {
+   "path": "public/img/slides/s10.jpg",
+   "uid": "27cd4caa8a76b1d32e29f531455817c6f96a2193"
+  },
+  {
+   "path": "public/img/slides/s11.jpg",
+   "uid": "1153c8c71512b32f126787dcbda409be1f319f12"
+  },
+  {
+   "path": "public/img/slides/s12.jpg",
+   "uid": "e41818696004de8195521223194c50b866f4fa07"
+  },
+  {
+   "path": "public/img/slides/s13.jpg",
+   "uid": "6afa669bb23bc9861549a0b794e430db26356dcd"
+  },
+  {
+   "path": "public/img/slides/s14.jpg",
+   "uid": "0458cc852010e0a32f22646f7dccbc8c9d77c371"
+  },
+  {
+   "path": "public/img/slides/s15.jpg",
+   "uid": "e382491224e612126e533501e62e97d1c1d07c5c"
+  },
+  {
+   "path": "public/img/sp-francis.jpg",
+   "uid": "77a3ae0a5ad98e53938d47c1ca0717e12548298c"
+  },
+  {
+   "path": "public/img/sp-heidi.jpg",
+   "uid": "cc5894fe527825a52f38db3bf6fd266d29e69186"
+  },
+  {
+   "path": "public/img/sp-srikumar.jpg",
+   "uid": "ef0969c8f522dc9ce471784fecb3a90d708953a3"
+  },
+  {
+   "path": "public/img/stage.jpg",
+   "uid": "2ece2d10eec96185b4a8711a9e0215b9e0939eee"
+  },
+  {
+   "path": "public/index.html",
+   "uid": "3604cd75fa5a66a084833cc1feef0810e702391e"
+  },
+  {
+   "path": "public/landing.js",
+   "uid": "4da41d2ad728bed38b1435691ff7ed9a0c41e087"
+  },
+  {
+   "path": "public/room.html",
+   "uid": "e585bb7dc53ae8aaeb358dc682564785f32431e3"
+  },
+  {
+   "path": "public/styles.css",
+   "uid": "03b69d0343be5a9c2d86714caf1e291a741ea3e0"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "e9e93b0bced426291da6dc43dfdbf24e47f678a0"
+  }
+ ]
+}

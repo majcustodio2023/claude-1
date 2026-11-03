@@ -1,0 +1,61 @@
+{
+ "deploymentId": "dpl_2MCKRideum6MqzdsrEhinAHy1vGS",
+ "files": [
+  {
+   "path": "assets/event.jpg",
+   "uid": "5828c3751bd3e9fa2a39b5233e43a2c4ead46cdd"
+  },
+  {
+   "path": "assets/faucet-macro.jpg",
+   "uid": "84ae2aa439ed31ca60fa5166faf5d4b43dfb162c"
+  },
+  {
+   "path": "assets/hero.jpg",
+   "uid": "fca61592e9f5d548f4fc47979904673f00c0a3d6"
+  },
+  {
+   "path": "assets/lifestyle-family.jpg",
+   "uid": "da27ec3350bd1db0ffd2ac57698ae253ee69994f"
+  },
+  {
+   "path": "assets/rdr-desk.jpg",
+   "uid": "7fa7e9fb501b062cd35228ccb4804d0feae62e84"
+  },
+  {
+   "path": "assets/rdr-keynote.jpg",
+   "uid": "01ea1a3c2777e668f2115575e1e05b869d0804bd"
+  },
+  {
+   "path": "assets/rdr-portrait.jpg",
+   "uid": "dacfcab7a37352ceb83331900abe22034a297879"
+  },
+  {
+   "path": "assets/seq-poster.jpg",
+   "uid": "c3fdb0ccf11380abe2f564d680fb4f14d9de9f00"
+  },
+  {
+   "path": "assets/studio-mineral-pro.jpg",
+   "uid": "41f49ec1b400257ac9b9b64e36ac1a1e4654942e"
+  },
+  {
+   "path": "assets/studio-mineral.jpg",
+   "uid": "00feef886fc02739673a5cc82f1e6b58a3d0b4fa"
+  },
+  {
+   "path": "assets/studio-vital-pro.jpg",
+   "uid": "5fc4ddafdaf34b4032c99816d6ab74cc4a8df13d"
+  },
+  {
+   "path": "deck.css",
+   "uid": "ee6ba72e281f204250fec8b92bd2f6c964cb7fbd"
+  },
+  {
+   "path": "deck.js",
+   "uid": "dec74eac657283e276de996c6d0c78ec25446404"
+  },
+  {
+   "path": "index.html",
+   "uid": "1ec34141032a99d7ccd225f0dc5ec1506eb09f8e"
+  }
+ ]
+}

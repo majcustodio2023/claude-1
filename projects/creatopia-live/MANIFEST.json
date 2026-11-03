@@ -1,0 +1,513 @@
+{
+ "deploymentId": "dpl_2xJNKCVWimnYJ5RQEJX7pXtE4zob",
+ "files": [
+  {
+   "path": ".claude/launch.json",
+   "uid": "7ad2536b0a527c466ddaf4b89ef08e08a2987987"
+  },
+  {
+   "path": ".env.example",
+   "uid": "c2b37693a8e80ed6888be7339357be6d31e67925"
+  },
+  {
+   "path": "README.md",
+   "uid": "b8bb05dcc9bc568e12b642264fdf526734371093"
+  },
+  {
+   "path": "app/admin/admin.css",
+   "uid": "96bdbd5ce7f272f99f9807dceec5347527b02d5f"
+  },
+  {
+   "path": "app/admin/broadcasts/new/page.tsx",
+   "uid": "65e918581ce3614dbca1423002790b12c2dd4d99"
+  },
+  {
+   "path": "app/admin/broadcasts/page.tsx",
+   "uid": "8e61461744962821e8c0a31406229000d52bbbd3"
+  },
+  {
+   "path": "app/admin/emails/page.tsx",
+   "uid": "f0282b2cf1f9157ad99a5c954c29ece01d37691d"
+  },
+  {
+   "path": "app/admin/event/page.tsx",
+   "uid": "5e14985af3df357359788b52aceb263b6de9c6a4"
+  },
+  {
+   "path": "app/admin/inbox/[thread]/page.tsx",
+   "uid": "cb8c678c55df0ff6321d210dd82a4488e55cec0f"
+  },
+  {
+   "path": "app/admin/inbox/page.tsx",
+   "uid": "f9ac48852ba1f6e7e1258ad678d07135344fece1"
+  },
+  {
+   "path": "app/admin/loading.tsx",
+   "uid": "b973aa21624aba264647829840d8cda7acc6e1df"
+  },
+  {
+   "path": "app/admin/login/page.tsx",
+   "uid": "f8a11c9eb8f8647e41cefb09b1dff8a60724263e"
+  },
+  {
+   "path": "app/admin/page.tsx",
+   "uid": "e2eb0e85ddd2699ac10978d8d27563889cffe579"
+  },
+  {
+   "path": "app/admin/speakers/page.tsx",
+   "uid": "4cf0f11b90e7155a21dc6f1e022fcad8f7dffb3a"
+  },
+  {
+   "path": "app/admin/waitlist/page.tsx",
+   "uid": "cf51d3a7d51126ea661326822229b852f25a81c2"
+  },
+  {
+   "path": "app/api/admin/broadcast/route.ts",
+   "uid": "16d795a24cacc724c1102df92305ddaccf6f1d61"
+  },
+  {
+   "path": "app/api/admin/event/route.ts",
+   "uid": "c29dd6af6f25fdced606b0ad71aa0f7db45496c8"
+  },
+  {
+   "path": "app/api/admin/export/route.ts",
+   "uid": "90f892e6aa706953ac6e93b14ca2f6b52e54853e"
+  },
+  {
+   "path": "app/api/admin/inbox/reply/route.ts",
+   "uid": "da2835679c1920067b7b2fd9bb1577fd92b2f98d"
+  },
+  {
+   "path": "app/api/admin/login/route.ts",
+   "uid": "5df71aedbc715f14e7aeee138b113a03a0138a3f"
+  },
+  {
+   "path": "app/api/admin/logout/route.ts",
+   "uid": "01bdefb31d8fa0943f230f098690e3daa3068499"
+  },
+  {
+   "path": "app/api/admin/registrations.csv/route.ts",
+   "uid": "aab99de718224c2d7589d0ec72719ce85bb7da69"
+  },
+  {
+   "path": "app/api/admin/speakers/route.ts",
+   "uid": "a4ff079ef6cf7886392cbfa5e5cfd9aa1c3e125f"
+  },
+  {
+   "path": "app/api/admin/templates/route.ts",
+   "uid": "d9be7ba71e47eb9530af375293f0b1d683b8ef83"
+  },
+  {
+   "path": "app/api/cron/reminders/route.ts",
+   "uid": "3aa84add8f3ccfb31f2ab633a64fce08e94a0839"
+  },
+  {
+   "path": "app/api/register/route.ts",
+   "uid": "d31c13f2c8e0c0826d2a3080238fe4e3fd04d210"
+  },
+  {
+   "path": "app/api/speaker-photo/[id]/route.ts",
+   "uid": "3361e80c9b5cc874084c124ad52595a3099a1de4"
+  },
+  {
+   "path": "app/api/unsubscribe/route.ts",
+   "uid": "081ae65f349a953b035ffb83a64563125420506a"
+  },
+  {
+   "path": "app/api/waitlist/route.ts",
+   "uid": "34847fa8e71a1332e426263659fb79e6fab304e8"
+  },
+  {
+   "path": "app/congratulations/congrats.css",
+   "uid": "35bed3eadd1bc2a1ef9b50f99727faf7187f244c"
+  },
+  {
+   "path": "app/congratulations/page.tsx",
+   "uid": "432d362127227f7480fadc1180d354a39e25f1e1"
+  },
+  {
+   "path": "app/event-extra.css",
+   "uid": "a8b4b2020d16281148e00aa96d75103f9601e8ba"
+  },
+  {
+   "path": "app/event.css",
+   "uid": "896482d65e5bd9ae32f297e5081d0267d1cd7c04"
+  },
+  {
+   "path": "app/fonts/fredoka.woff2",
+   "uid": "6438e7de08adb0a989e1947ff06284771f884eb6"
+  },
+  {
+   "path": "app/fonts/jakarta.woff2",
+   "uid": "a389d97de580a2d6a3723112234bd2b3839ce0db"
+  },
+  {
+   "path": "app/globals.css",
+   "uid": "0c47b5cbe968977cf9ad48b49cb5420267aea631"
+  },
+  {
+   "path": "app/icon.svg",
+   "uid": "8589fc09c1b9dd2cb3870685646abef408d2a6cc"
+  },
+  {
+   "path": "app/layout.tsx",
+   "uid": "ca5dbd10ffd0a2bcf0b6597933e30ba2c098fcdb"
+  },
+  {
+   "path": "app/page.tsx",
+   "uid": "7546070a7410f54b70b24ac05662085649145ca9"
+  },
+  {
+   "path": "app/waitlist/page.tsx",
+   "uid": "70f385b097f27ecae99894c6e2d90a534143af88"
+  },
+  {
+   "path": "public/fonts/fredoka.woff2",
+   "uid": "6438e7de08adb0a989e1947ff06284771f884eb6"
+  },
+  {
+   "path": "public/fonts/jakarta.woff2",
+   "uid": "a389d97de580a2d6a3723112234bd2b3839ce0db"
+  },
+  {
+   "path": "public/img/c1-beauty-thumb.webp",
+   "uid": "356be3230dbacaaa5c5b2f71a51ece7964db1c8f"
+  },
+  {
+   "path": "public/img/c1-beauty.webp",
+   "uid": "425de205b292d6ec3f39056043641d049baec5a1"
+  },
+  {
+   "path": "public/img/c2-anime-thumb.webp",
+   "uid": "9feeac6223e9322b81752ec05bda0d1f2830d4ce"
+  },
+  {
+   "path": "public/img/c2-anime.webp",
+   "uid": "c1fbee159d193a06b33ebb2aba96ec963b6640a5"
+  },
+  {
+   "path": "public/img/c3-3d-thumb.webp",
+   "uid": "e74be44031f92a36fcad2a9739aa56a2bafcc4e5"
+  },
+  {
+   "path": "public/img/c3-3d.webp",
+   "uid": "bedec87e844bf78cb3a02a71e50c64b284ad48cd"
+  },
+  {
+   "path": "public/img/c4-vlogger-thumb.webp",
+   "uid": "9032bb048a3f349652ced7bd5aa2e59cf4cae2c9"
+  },
+  {
+   "path": "public/img/c4-vlogger.webp",
+   "uid": "ffbb7f8bf480c8efdf9d9fe5617f312d82e80dce"
+  },
+  {
+   "path": "public/img/c5-founder-thumb.webp",
+   "uid": "e2a4f868c18a4293dea28badd32d6b471e7d5ff3"
+  },
+  {
+   "path": "public/img/c5-founder.webp",
+   "uid": "d2e295580924d8b9313017813d2a5308bc2cfbb3"
+  },
+  {
+   "path": "public/img/c6-dancer-thumb.webp",
+   "uid": "d859dd6111d87036723640684e53b925cc047cff"
+  },
+  {
+   "path": "public/img/c6-dancer.webp",
+   "uid": "b25e401b1b5abaef1d90eda038bdc9dca5cd4b1a"
+  },
+  {
+   "path": "public/img/crowd-hero-sm.webp",
+   "uid": "d372a56d8d2f3c87305777d788fc90c37c7acd2e"
+  },
+  {
+   "path": "public/img/crowd-hero.webp",
+   "uid": "6d666cf6fb85dfab940658c1bd1c8d13f71bb859"
+  },
+  {
+   "path": "public/img/cut-3d.webp",
+   "uid": "12d7b0575d9379a188696595d6943928f43d59bc"
+  },
+  {
+   "path": "public/img/cut-anime.webp",
+   "uid": "55ad07a180bfc0af8885dfd70cc2d5b024042eed"
+  },
+  {
+   "path": "public/img/cut-beauty.webp",
+   "uid": "011ef19a442749d7cf235dcec7f4c2cd18d098c6"
+  },
+  {
+   "path": "public/img/cut-dancer.webp",
+   "uid": "a95b21b15c4892b8f56f748a19c27bd52f979585"
+  },
+  {
+   "path": "public/img/cut-founder.webp",
+   "uid": "7867a02ae8d79eb1ce2a732e072b122be5d63a27"
+  },
+  {
+   "path": "public/img/cut-vlogger.webp",
+   "uid": "b21175e72292aafb2e016f210900a6045398ca6d"
+  },
+  {
+   "path": "public/img/event-hero-mobile.webp",
+   "uid": "4078efaaa5a4ed0b81382095dd266e16cebda008"
+  },
+  {
+   "path": "public/img/event-hero.webp",
+   "uid": "cf6ddc9bc778b940c609ea17801be043d65bdc41"
+  },
+  {
+   "path": "public/img/faces/face-3d.webp",
+   "uid": "471429d6ee78827e6289ed475abcb33b9fd63b4e"
+  },
+  {
+   "path": "public/img/faces/face-3dgirl.webp",
+   "uid": "9e8655847909002900bb2bb972d684b47f6798d3"
+  },
+  {
+   "path": "public/img/faces/face-ai.webp",
+   "uid": "d9491957c900d0ad243e67b373c5f74cb4d39845"
+  },
+  {
+   "path": "public/img/faces/face-ai2.webp",
+   "uid": "0ba0dd1a2bc228a48148243fdf846af03805e356"
+  },
+  {
+   "path": "public/img/faces/face-anime2.webp",
+   "uid": "9f086e22e61810ed5bfd2d8fbd4efd11bfc65e55"
+  },
+  {
+   "path": "public/img/faces/face-animeboy.webp",
+   "uid": "0650a60bab4bbbea3ab912f11bffcde130743dc3"
+  },
+  {
+   "path": "public/img/faces/face-beauty.webp",
+   "uid": "beed456201fe04b889f25c5051061f1397ac0f1d"
+  },
+  {
+   "path": "public/img/faces/face-dancer.webp",
+   "uid": "e34e595491f9162db666f28f6664841621311932"
+  },
+  {
+   "path": "public/img/faces/face-fashion.webp",
+   "uid": "227bf0d58e7b5e7d35a79351f8f61866bdd5ca24"
+  },
+  {
+   "path": "public/img/faces/face-foodie.webp",
+   "uid": "ec021151273ef87c966ada8afba09bd054a9377e"
+  },
+  {
+   "path": "public/img/faces/face-founder.webp",
+   "uid": "7a634e4c40635b44f2b6caf79f81e30b8a993f7d"
+  },
+  {
+   "path": "public/img/faces/face-gamer.webp",
+   "uid": "1a0997f77372ad8e49024d436355c26fb1ecc725"
+  },
+  {
+   "path": "public/img/faces/face-hijab.webp",
+   "uid": "8ce1fd952bad1e9cb9b3c2eef5416ec4ff479e5c"
+  },
+  {
+   "path": "public/img/faces/face-idol.webp",
+   "uid": "f7c69e88bf58f48190f3beb91c7d3e1554a15501"
+  },
+  {
+   "path": "public/img/faces/face-liveseller.webp",
+   "uid": "0bc67c05168e8dd6633d4de3c206d6b8ffa24a2b"
+  },
+  {
+   "path": "public/img/faces/face-podcaster.webp",
+   "uid": "44647bc6a6be545cf8f2ad83fa9a6b2b229f0ddf"
+  },
+  {
+   "path": "public/img/faces/face-tita.webp",
+   "uid": "29b8e2818f069cd2d2971e6a266b90890806e1ba"
+  },
+  {
+   "path": "public/img/faces/face-vlogger.webp",
+   "uid": "d0a673a073c948dc68de69e8e72cda674cb7d5bf"
+  },
+  {
+   "path": "public/img/hero-mobile.webp",
+   "uid": "104360ad89c75543ab257f5ca82f074b20bb3a52"
+  },
+  {
+   "path": "public/img/hero.webp",
+   "uid": "9e95b155c5577b1c22018b19d824fdc226d09865"
+  },
+  {
+   "path": "public/img/og-event.jpg",
+   "uid": "087fe07fb4a865fbf0ec0c4dc103dc5d153be35d"
+  },
+  {
+   "path": "public/img/og.jpg",
+   "uid": "371f06bccb725ab0e934f3196a72569f4315b3dc"
+  },
+  {
+   "path": "public/overlay.html",
+   "uid": "87914b8cd6e52b62e983997222ea74af5de355ad"
+  },
+  {
+   "path": "public/scene.html",
+   "uid": "fdaf8b1d2927565999e83e729f040e8c9c448596"
+  },
+  {
+   "path": "public/zetaverse.html",
+   "uid": "de1ee49b3e3b71ec8f286a0b09ffa583ade1dcde"
+  },
+  {
+   "path": "components/AdminShell.tsx",
+   "uid": "3a27c58185b5e582872b7abac6b6be602172076b"
+  },
+  {
+   "path": "components/BroadcastComposer.tsx",
+   "uid": "4d3d957c3b7ba2dabbd35d3534209a5b6693b0a4"
+  },
+  {
+   "path": "components/ClickFeedback.tsx",
+   "uid": "84c6a118299cf200d5fcd7c91dfd5b9c81613ad3"
+  },
+  {
+   "path": "components/Cursor.tsx",
+   "uid": "31b6d18fa604e4273144a99cd7a8a923999cd4cc"
+  },
+  {
+   "path": "components/EventForm.tsx",
+   "uid": "7b04b11c59a1f25d8a0c5c0071476cffdaf74272"
+  },
+  {
+   "path": "components/HeroParticles.tsx",
+   "uid": "03106f2f7868b9fc22ed490c589925643c0343b8"
+  },
+  {
+   "path": "components/MetaPixel.tsx",
+   "uid": "41e1420ce91a8fc8d0a8a07963b1d1bae1b4b8b2"
+  },
+  {
+   "path": "components/Motion.tsx",
+   "uid": "5d132f23c1e7da22c25cacdfdf7f372677df963d"
+  },
+  {
+   "path": "components/ReminderPanel.tsx",
+   "uid": "c1010ce36f2c57189ba68dd935ee9f62a07c3e75"
+  },
+  {
+   "path": "components/ReplyForm.tsx",
+   "uid": "a44ddb4d32330997b1cdc8b8f15e8241311f7caa"
+  },
+  {
+   "path": "components/SpeakerEditor.tsx",
+   "uid": "9c717fd8b1a684df4bafae72e61cf76dfb7f182f"
+  },
+  {
+   "path": "components/TemplateEditor.tsx",
+   "uid": "57394cde6a57c4d87a6e71bdf5181452d1935709"
+  },
+  {
+   "path": "components/WaitlistForm.tsx",
+   "uid": "3c7cb48256c0c8c35de780275780ff4073615e02"
+  },
+  {
+   "path": "components/Wordmark.tsx",
+   "uid": "dcc0f5dadeeb01a8596f36f3187e6cf1612ac4ae"
+  },
+  {
+   "path": "components/event/AuroraCanvas.tsx",
+   "uid": "69721fe03b690413d1ba224b2c28a470ab579c35"
+  },
+  {
+   "path": "components/event/Countdown.tsx",
+   "uid": "778b737131e7f333b1bf1e4cd56eb9640129f6f8"
+  },
+  {
+   "path": "components/event/EventMotion.tsx",
+   "uid": "17059f45d63a07110623d121e2a4bd6002bc9784"
+  },
+  {
+   "path": "components/event/RegisterModal.tsx",
+   "uid": "04a927ae6b9c651384c70985b6b597b7b0e60502"
+  },
+  {
+   "path": "components/event/StackMock.tsx",
+   "uid": "24d9d818769759856b3b63b000acdac57aaff90f"
+  },
+  {
+   "path": "lib/admin-auth.ts",
+   "uid": "bfea0605040ecdaea65953d642227f5bee7346d8"
+  },
+  {
+   "path": "lib/crowd.ts",
+   "uid": "3fcffb7b9ce17f38dbf14d830f7e18b369ddf553"
+  },
+  {
+   "path": "lib/email-templates.ts",
+   "uid": "17e7bf34ce059f91aa9a7792c17eeba419b60015"
+  },
+  {
+   "path": "lib/event-admin.ts",
+   "uid": "e72c1e37102b2dd2161ef0497cbf658aa0229ce9"
+  },
+  {
+   "path": "lib/event-content.ts",
+   "uid": "b7753addf1200b0bca55c796dc31b2431a05c2be"
+  },
+  {
+   "path": "lib/events.ts",
+   "uid": "640278f33f458cfa13974c3815138735b4875443"
+  },
+  {
+   "path": "lib/inbox-sync.ts",
+   "uid": "82a18bb3c5405946405d59b32b584c1f4ee3e3e5"
+  },
+  {
+   "path": "lib/plain-email.ts",
+   "uid": "31d2dee8b44bcab1d1f60db777934026e724d60a"
+  },
+  {
+   "path": "lib/reminders.ts",
+   "uid": "cce3041e9bfca4743b39c267631a18a3a360ac18"
+  },
+  {
+   "path": "lib/resend.ts",
+   "uid": "25120cab06d5ee608677356a574bd0bcc04283a7"
+  },
+  {
+   "path": "lib/supabase-admin.ts",
+   "uid": "3f72255917a5f0f7e6cab657bc671b6ee581ac06"
+  },
+  {
+   "path": "lib/validate.ts",
+   "uid": "ed9f85e4b1573b535b216eaa0a543a907c42a3b2"
+  },
+  {
+   "path": "next-env.d.ts",
+   "uid": "18c914c761d5644b44e7e6e22d79cbe186093ba0"
+  },
+  {
+   "path": "next.config.ts",
+   "uid": "737fed3a9a6bb3b871dfaad27d54ef28d9fbe161"
+  },
+  {
+   "path": "package-lock.json",
+   "uid": "fcc18101b804562adfbd0883ad7b3859e3c43b0e"
+  },
+  {
+   "path": "package.json",
+   "uid": "5389a4eb0f510310705bd563f8c408a9946aa4b5"
+  },
+  {
+   "path": "tools/fetch-speakers.js",
+   "uid": "ff68a55a97705e00906e14a0e82c810e75b33c68"
+  },
+  {
+   "path": "tsconfig.json",
+   "uid": "f3c35d5387e0fcf11d2298d06431fae73a6b22d2"
+  },
+  {
+   "path": "vercel.json",
+   "uid": "dc152f9d239ccaa2ceea95d816719a3f9a7a1969"
+  }
+ ]
+}
