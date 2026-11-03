@@ -7,6 +7,7 @@ import { useId, type ReactNode } from "react";
 import { BG, EMBLEM_ICONS, EYE, FUR, HAIR, METAL, MONSTER, OUTFIT, SKIN, resolveAvatar, type AvatarKind, type AvatarSpec } from "@/lib/avatar";
 import { shade } from "./characters";
 import { Icon } from "./icons";
+import { PixelImg, usePixelStyle } from "./pixelate";
 
 const INK = "#0b0a14";
 const SW = 2.2;
@@ -14,12 +15,13 @@ const SW = 2.2;
 export function Avatar({ value, seed = "", kind = "person", size = 56, className = "", spec: specProp, title }: { value?: string; seed?: string; kind?: AvatarKind; size?: number; className?: string; spec?: AvatarSpec; title?: string }) {
   const spec = specProp ?? resolveAvatar(value, seed, kind);
   const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const pixel = usePixelStyle();
   const t = spec.t;
   const body =
     spec.kind === "person" ? <Person t={t} /> : spec.kind === "beast" ? <Beast t={t} /> : spec.kind === "monster" ? <Monster t={t} /> : spec.kind === "robot" ? <Robot t={t} /> : <Emblem t={t} />;
   const bgColor = BG[t[0]];
   const pattern = spec.kind === "emblem" ? 1 : t[1];
-  return (
+  const art = (
     <svg viewBox="0 0 100 100" width={size} height={size} className={`shrink-0 ${className}`} role="img" aria-label={title ?? "Avatar"}>
       <defs>
         <clipPath id={`c${uid}`}>
@@ -37,6 +39,9 @@ export function Avatar({ value, seed = "", kind = "person", size = 56, className
       <circle cx="50" cy="50" r="47" fill="none" stroke={INK} strokeWidth="3.5" />
     </svg>
   );
+  // Dawnterra pixel style: the same portrait, redrawn as pixel art (about 2 screen px per art pixel).
+  if (pixel) return <PixelImg node={art} width={size} height={size} grid={Math.min(48, Math.max(20, size / 2))} className={className} label={title ?? "Avatar"} />;
+  return art;
 }
 
 function Backdrop({ kind, color, dots }: { kind: number; color: string; dots: string }) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext } from "react";
+import { PixelImg, usePixelStyle } from "./pixelate";
 
 // Kit the fox sidekick. Each personality has its own look (fur, eyes, mouth, extras),
 // the owner can recolour fur and eyes, and Kit can wear shop items (lib/items.ts, "kit-" slots).
@@ -51,6 +52,7 @@ export function Kit({
   eyes?: string;
 }) {
   const ctx = useContext(KitStyleContext);
+  const pixel = usePixelStyle();
   const base = KIT_LOOKS[personaProp ?? ctx.persona ?? "kit"] ?? KIT_LOOKS.kit;
   const items = itemsProp ?? ctx.items ?? [];
   const fur = furProp ?? ctx.fur ?? base.fur;
@@ -61,7 +63,7 @@ export function Kit({
   const dark = fur === KIT_LOOKS.shadow.fur;
   const earInner = dark ? "#ff2a4f" : "#3a1d0b";
 
-  return (
+  const art = (
     <svg viewBox="-10 -26 180 180" width={size} height={size} className={className} role="img" aria-label="Kit the fox sidekick">
       {s.extra === "wisps" && (
         <g className="aura-flicker" opacity="0.8">
@@ -117,6 +119,9 @@ export function Kit({
       <KitItems items={items} />
     </svg>
   );
+  // Dawnterra pixel style: Kit redrawn as pixel art, bobbing while talking.
+  if (pixel) return <PixelImg node={art} width={size} height={size} grid={Math.min(56, Math.max(24, size / 2.5))} className={`${className} ${talking ? "pix-bob" : ""}`} label="Kit the fox sidekick" />;
+  return art;
 }
 
 function KitEyes({ shape, color }: { shape: Eyes; color: string }) {

@@ -1,10 +1,14 @@
 import { NextResponse } from "next/server";
 import { directMediaUrl, guessKind } from "@/lib/creative";
-import { newCreative, refreshCreatives } from "@/lib/creative-server";
-import { getHiggsfieldKey, updateCreatives } from "@/lib/store";
+import { fetchableUrl, newCreative, refreshCreatives } from "@/lib/creative-server";
+import { getData, getHiggsfieldKey, getOpenAIKey, saveImage, updateCreatives } from "@/lib/store";
 import { submitImage, submitImageToVideo } from "@/lib/higgsfield";
+import { openaiImage, type ImageShape } from "@/lib/openaiImage";
+import { uid } from "@/lib/finance";
 
 export const dynamic = "force-dynamic";
+// ChatGPT images are made while you wait (up to a couple of minutes for a detailed ad image).
+export const maxDuration = 300;
 
 // GET: the creatives list, after checking on anything Higgsfield is still making.
 export async function GET() {
@@ -17,7 +21,7 @@ export async function GET() {
 
 type Body =
   | { op: "link"; url: string; kind?: "image" | "video" }
-  | { op: "image"; prompt: string }
+  | { op: "image"; prompt: string; engine?: "higgsfield" | "openai"; shape?: ImageShape }
   | { op: "video"; prompt: string; imageUrl: string; duration?: number }
   | { op: "delete"; id: string };
 
@@ -35,6 +39,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ creatives: await updateCreatives((l) => [c, ...l]) });
     }
 
+    if (body.op === "image" && body.engine === "openai") {
+      const key = await getOpenAIKey();
+      if (!key) return NextResponse.json({ error: "Save your OpenAI API key first (Settings → Data sources)." }, { status: 400 });
+      const prompt = (body.prompt ?? "").trim();
+      if (!prompt) return NextResponse.json({ error: "Write a prompt first." }, { status: 400 });
+      const img = await openaiImage(key, prompt, body.shape);
+      const storagePath = await saveImage(img.bytes, img.type);
+      const id = uid("cr");
+      const c = { ...newCreative({ kind: "image", source: "openai", status: "ready", prompt, storagePath, url: `/api/creative/image/${id}` }), id };
+      return NextResponse.json({ creatives: await updateCreatives((l) => [c, ...l]) });
+    }
+
     const key = await getHiggsfieldKey();
     if (!key) return NextResponse.json({ error: "Save your Higgsfield API key first." }, { status: 400 });
     const prompt = (body.prompt ?? "").trim();
@@ -44,9 +60,12 @@ export async function POST(req: Request) {
     if (body.op === "image") {
       requestId = await submitImage(key, prompt);
     } else {
-      if (!/^https:\/\//.test(body.imageUrl ?? "")) return NextResponse.json({ error: "Pick an image to animate." }, { status: 400 });
+      // The app's own pictures live in private storage: give Higgsfield a signed link to it.
+      const own = (await getData()).creatives?.find((c) => c.storagePath && c.url === body.imageUrl);
+      const imageUrl = own ? await fetchableUrl(own) : body.imageUrl;
+      if (!/^https:\/\//.test(imageUrl ?? "")) return NextResponse.json({ error: "Pick an image to animate." }, { status: 400 });
       const duration = Math.min(15, Math.max(3, Math.round(body.duration ?? 5)));
-      requestId = await submitImageToVideo(key, prompt, body.imageUrl, duration);
+      requestId = await submitImageToVideo(key, prompt, imageUrl, duration);
     }
     const c = newCreative({ kind: body.op, source: "higgsfield", status: "generating", prompt, requestId });
     return NextResponse.json({ creatives: await updateCreatives((l) => [c, ...l]) });

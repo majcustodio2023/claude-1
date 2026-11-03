@@ -6,6 +6,7 @@ import { useTracker } from "../App";
 import { Btn, Card, NumInput, TextInput } from "../ui";
 import { HELP } from "../help";
 import LookSettings from "../LookSettings";
+import DataSources from "../DataSources";
 import { Glyph, Icon } from "../icons";
 import { PERSONAS } from "@/lib/personas";
 import { DEFAULT_FUN_PERCENT } from "@/lib/fun";
@@ -55,6 +56,7 @@ export default function SettingsTab() {
           ["kit", "fox", "Kit"],
           ["sound", "speaker", "Sound"],
           ["connections", "link", "Connections"],
+          ["sources", "chart", "Data sources"],
           ["data", "gear", "Data"],
         ].map(([id, icon, label]) => (
           <a key={id} href={`#set-${id}`} onClick={(e) => (e.preventDefault(), document.getElementById(`set-${id}`)?.scrollIntoView({ behavior: "smooth" }))} className="btn btn-ghost flex items-center gap-2">
@@ -209,6 +211,9 @@ export default function SettingsTab() {
         </ul>
         <p className="text-sm text-muted mt-2">Keys are typed straight into the app and kept encrypted on the server; they never show again.</p>
       </Card>
+
+      <div id="set-sources" className="scroll-mt-4" />
+      <DataSources />
 
       <div id="set-data" className="scroll-mt-4" />
       <Card icon="⚙" title="Data">

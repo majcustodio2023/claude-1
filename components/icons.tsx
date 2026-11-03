@@ -462,11 +462,41 @@ const P: Record<string, ReactNode> = {
       <path d="M3.5 12h17M12 3.5c2.4 2.4 3.6 5.2 3.6 8.5s-1.2 6.1-3.6 8.5c-2.4-2.4-3.6-5.2-3.6-8.5s1.2-6.1 3.6-8.5z" />
     </>
   ),
+  users: (
+    <>
+      <rect {...tone} x="5" y="13" width="14" height="4" rx="1" />
+      <rect x="5" y="13" width="14" height="4" rx="1" />
+      <circle cx="7.5" cy="7.5" r="2.2" />
+      <circle cx="16.5" cy="7.5" r="2.2" />
+      <circle cx="12" cy="6" r="2.2" />
+      <path d="M8 21v-4M16 21v-4" />
+    </>
+  ),
   user: (
     <>
       <circle {...tone} cx="12" cy="8" r="4" />
       <circle cx="12" cy="8" r="4" />
       <path d="M4.5 20.5c1-4 3.8-6 7.5-6s6.5 2 7.5 6" />
+    </>
+  ),
+  skip: (
+    <>
+      <path {...tone} d="M4 5l9 7-9 7z" />
+      <path d="M4 5l9 7-9 7z M19 5v14" />
+    </>
+  ),
+  wand: (
+    <>
+      <path {...tone} d="M3.5 18.2 15.8 5.9l2.3 2.3L5.8 20.5z" />
+      <path d="M3.5 18.2 15.8 5.9l2.3 2.3L5.8 20.5zM13.6 8.1l2.3 2.3" />
+      <path d="M19 2.8v2.6M17.7 4.1h2.6M20.6 10.4v2M19.6 11.4h2M9.6 3.2v2M8.6 4.2h2" />
+    </>
+  ),
+  browser: (
+    <>
+      <path {...tone} d="M3 4.5h18v4.5H3z" />
+      <rect x="3" y="4.5" width="18" height="15" rx="1.8" />
+      <path d="M3 9h18M6 6.8h.01M8.5 6.8h.01M7 12.5h6M7 15.5h10" />
     </>
   ),
   key: (

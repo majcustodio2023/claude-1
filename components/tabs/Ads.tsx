@@ -13,6 +13,7 @@ import { Icon } from "../icons";
 import { Avatar } from "../avatars";
 import { AvatarButton } from "../AvatarPicker";
 import { EditButton, EditableText, SaveButton } from "../editable";
+import { TokenBadge } from "../DataSources";
 
 const PRESETS: [DatePreset, string][] = [
   ["today", "Today"],
@@ -277,7 +278,8 @@ function AccountRow({ account }: { account: AdAccount }) {
       <div className="flex items-center gap-2 flex-wrap">
         <span className="font-medium">{account.label}</span>
         <span className="text-sm text-muted">{account.owner} · {account.accountId}</span>
-        {account.hasToken ? <Badge tone="good">Token saved</Badge> : <Badge tone="warn">No token</Badge>}
+        {account.hasToken ? <Badge tone="good">{account.tokenInfo?.source === "business" ? "Business token" : "Token saved"}</Badge> : <Badge tone="warn">No token</Badge>}
+        <TokenBadge info={account.tokenInfo} />
         <label className="flex items-center gap-1 text-sm text-muted">
           Campaigns go to <GroupPicker value={account.group} auto={autoGroupOfAccount(data, account)} onChange={(group) => update((d) => void (d.adAccounts.find((x) => x.id === account.id)!.group = group))} />
         </label>
@@ -303,7 +305,7 @@ function AccountRow({ account }: { account: AdAccount }) {
           if (token.trim()) saveToken(token);
         }}
       >
-        <input type="password" autoComplete="off" className="flex-1 min-w-48" placeholder={account.hasToken ? "Replace access token" : "Paste access token"} value={token} onChange={(e) => setToken(e.target.value)} />
+        <input type="password" autoComplete="off" className="flex-1 min-w-48" placeholder={account.hasToken ? "Replace access token (or set one business token in Settings › Data sources)" : "Paste access token, or one System User token in Settings › Data sources"} value={token} onChange={(e) => setToken(e.target.value)} />
         <Btn kind="primary" disabled={busy || !token.trim()}>Save token</Btn>
         {account.hasToken && <Btn type="button" onClick={() => saveToken(null)} disabled={busy}>Remove token</Btn>}
       </form>

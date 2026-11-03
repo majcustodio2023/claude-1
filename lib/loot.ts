@@ -1,12 +1,13 @@
 import { billLeft, billPaid, dealBalance, dealPaid } from "./finance";
-import { ITEMS, RARITY, itemById, type Item, type Rarity } from "./items";
+import { ITEMS, RARITY, itemById, notForSale, type Item, type Rarity } from "./items";
+import { QUESTS, questState } from "./cityLore";
 import type { GameState, TrackerData } from "./types";
 
 // Coins and loot. Finishing quests, missions and client tasks, and paying bills,
 // earns coins; some tasks carry a loot chest. Beating a boss (a deal fully paid)
 // starts a turn-based battle (lib/battle.ts), which pays out by how well you fight.
 
-export const REWARD = { quest: 10, task: 20, clientTask: 20, bill: 15 } as const;
+export const REWARD = { quest: 10, task: 20, clientTask: 20, bill: 15, service: 10 } as const;
 export const STARTER_COINS = 100;
 /** Share of tasks that carry a visible loot chest, and the surprise drop chance on the rest. */
 const CHEST_PCT = 25;
@@ -14,7 +15,7 @@ const SURPRISE = 0.08;
 
 export interface Pending {
   key: string;
-  kind: "quest" | "task" | "clientTask" | "bill" | "boss";
+  kind: "quest" | "task" | "clientTask" | "bill" | "boss" | "city";
   label: string;
   coins: number;
   /** Boss rewards wait for the battle. */
@@ -47,6 +48,12 @@ export function pendingRewards(data: TrackerData): Pending[] {
       if (billPaid(data, month, e) > 0 && billLeft(data, month, e) === 0) add({ key: `bill:${month}:${e.id}`, kind: "bill", label: `Paid ${e.name}`, coins: REWARD.bill });
     }
   }
+  // The city: building missions, using the staff's services, and townspeople's quests.
+  for (const b of data.city?.buildings ?? []) for (const t of b.todos ?? []) if (t.done) add({ key: `ctodo:${t.id}`, kind: "city", label: t.title, coins: REWARD.clientTask });
+  for (const s of data.city?.staff ?? []) for (const o of s.outputs ?? []) add({ key: `service:${o.id}`, kind: "city", label: `${s.name} wrote for you`, coins: REWARD.service });
+  for (const w of data.staffWork ?? []) if (!w.auto && w.status !== "queued") add({ key: `service:${w.id}`, kind: "city", label: `${data.city?.staff.find((s) => s.id === w.staffId)?.name ?? "Staff"} finished: ${w.label}`, coins: REWARD.service });
+  for (const r of data.city?.videoRequests ?? []) add({ key: `service:${r.id}`, kind: "city", label: `Sent a ${r.style} edit to the studio`, coins: REWARD.service });
+  for (const q of QUESTS) if (questState(data, q.id) === "done") add({ key: `cquest:${q.id}`, kind: "city", label: `Quest: ${q.title}`, coins: q.coins });
   for (const d of data.deals) {
     if (d.stage === "won" && d.value > 0 && dealPaid(d) > 0 && dealBalance(d) === 0) add({ key: `boss:${d.id}`, kind: "boss", label: d.name, coins: 0, dealId: d.id });
   }
@@ -67,7 +74,7 @@ export function ensureGame(d: TrackerData, today: string): GameState {
 /** Picks a random item you don't own yet, weighted by rarity. */
 export function rollItem(game: GameState, rand: () => number, minRarity: Rarity = "common"): Item | undefined {
   const order: Rarity[] = ["common", "rare", "epic", "legendary"];
-  const pool = ITEMS.filter((i) => i.source !== "shop" && !game.owned.includes(i.id) && order.indexOf(i.rarity) >= order.indexOf(minRarity));
+  const pool = ITEMS.filter((i) => (i.source === "loot" || i.source === "both") && !game.owned.includes(i.id) && order.indexOf(i.rarity) >= order.indexOf(minRarity));
   const total = pool.reduce((a, i) => a + RARITY[i.rarity].weight, 0);
   let r = rand() * total;
   for (const i of pool) if ((r -= RARITY[i.rarity].weight) < 0) return i;
@@ -139,12 +146,25 @@ export function finishBoss(d: TrackerData, dealId: string, rank: FightRank, toda
 export function buyItem(d: TrackerData, itemId: string, today: string): string | null {
   const game = ensureGame(d, today);
   const item = itemById(itemId);
-  if (!item || item.source === "loot") return "That item isn't for sale.";
+  if (!item || notForSale(item)) return "That item isn't for sale.";
   if (game.owned.includes(itemId)) return "You already own it.";
   if (game.coins < item.price) return `You need ${item.price - game.coins} more coins.`;
   game.coins -= item.price;
   game.owned.push(itemId);
   game.equipped[item.slot] = itemId;
   game.log = [{ at: today, text: `Bought ${item.name}`, coins: -item.price, item: itemId }, ...game.log].slice(0, 40);
+  return null;
+}
+
+/** Takes an item from a city shop: free while the shops are giving gear away, otherwise bought with coins. */
+export function takeShopItem(d: TrackerData, itemId: string, today: string): string | null {
+  if (d.city?.freeShops === false) return buyItem(d, itemId, today);
+  const game = ensureGame(d, today);
+  const item = itemById(itemId);
+  if (!item || notForSale(item)) return "That one only drops beyond the gate.";
+  if (game.owned.includes(itemId)) return "You already own it.";
+  game.owned.push(itemId);
+  game.equipped[item.slot] = itemId;
+  game.log = [{ at: today, text: `Picked up ${item.name} in town`, item: itemId }, ...game.log].slice(0, 40);
   return null;
 }

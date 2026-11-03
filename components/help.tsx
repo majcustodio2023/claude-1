@@ -160,7 +160,8 @@ export const HELP = {
   ),
   generate: (
     <ul>
-      <li>Paste your Higgsfield API key once (it&apos;s encrypted). Then describe the image you want, or turn an image into a short video.</li>
+      <li>Pick who paints: ChatGPT images (your OpenAI API key) or Higgsfield (your Higgsfield key). Paste the key once; it&apos;s encrypted. Then describe the image you want.</li>
+      <li>Turning an image into a short video uses Higgsfield.</li>
       <li>The quick prompts are editable starting points.</li>
     </ul>
   ),
@@ -250,6 +251,14 @@ export const HELP = {
       <li>Design style changes shapes, borders, fonts and effects. Layout moves the menu to the top, the side or a bottom dock.</li>
       <li>Changes apply straight away and are saved with your data, so every device you sign in on looks the same.</li>
       <li>Prefer things still? Set Motion to &ldquo;Still&rdquo; to stop the animations.</li>
+    </ul>
+  ),
+  city: (
+    <ul>
+      <li>Every client gets a building (a department) the moment you add them in Clients. The studios (Ad Creative Studio, Video Production House, Client Acquisition) and your home are built for you. In your home, press Decorate to move furniture, add new pieces or put them away.</li>
+      <li>Inside each building: the Progress Room reports real numbers, the Mission Room holds the to-do list (a client&apos;s tasks from the Clients tab), plus any rooms you add.</li>
+      <li>Each AI staff member tells you what they need. Links and handles are saved with your data; keys and passwords are encrypted on the server and never shown again.</li>
+      <li>Hire more staff, add rooms, rename the city or knock a building down here. Press Edit on a building to change it.</li>
     </ul>
   ),
   settings: (

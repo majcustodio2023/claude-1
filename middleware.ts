@@ -13,6 +13,9 @@ const FUNNEL_HOSTS: Record<string, string> = {
   "funnels.majcustodioph.com": "/funnels/hub/index.html",
 };
 
+/** The Prototype maker's own subdomain (prototypemaker.<domain> or prototype.<domain>) opens straight on it. */
+const isMakerHost = (host: string | null) => /^(prototypemaker|prototype)\./i.test(host ?? "");
+
 export async function middleware(req: NextRequest) {
   const host = (req.headers.get("host") ?? "").toLowerCase().split(":")[0];
   const { pathname } = req.nextUrl;
@@ -24,7 +27,12 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  if (await isValidSession(req.cookies.get(SESSION_COOKIE)?.value)) return NextResponse.next();
+  if (await isValidSession(req.cookies.get(SESSION_COOKIE)?.value)) {
+    if (pathname === "/" && isMakerHost(req.headers.get("host"))) {
+      return NextResponse.rewrite(new URL("/prototype", req.url));
+    }
+    return NextResponse.next();
+  }
   if (pathname.startsWith("/api/")) {
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
@@ -32,5 +40,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!login|share/|api/login|api/cron|api/calendar/ics/|_next|favicon.ico|icon.svg|icon-192.png|icon-512.png|apple-icon|manifest.webmanifest).*)"],
+  matcher: ["/((?!login|share/|p/|proto-kit\\.|api/login|api/cron|api/inbox/|api/calendar/ics/|_next|favicon.ico|icon.svg|icon-192.png|icon-512.png|apple-icon|manifest.webmanifest).*)"],
 };

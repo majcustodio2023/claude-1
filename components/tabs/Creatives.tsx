@@ -5,6 +5,7 @@ import type { Creative } from "@/lib/types";
 import { useTracker } from "../App";
 import { Badge, Btn, Card } from "../ui";
 import { HELP } from "../help";
+import { ENGINE_LABEL, EnginePicker, OpenAIKeyForm, useEngine, type Shape } from "../ImageEngine";
 
 // Starter quick prompts; each business edits its own list (saved in Settings).
 export const DEFAULT_PROMPTS: [string, string][] = [
@@ -86,6 +87,9 @@ function Generate({ hasKey, setHasKey, run, images }: { hasKey: boolean; setHasK
   const presets = data.settings.creativePrompts ?? DEFAULT_PROMPTS;
   const setPresets = (list: [string, string][]) => update((d) => void (d.settings.creativePrompts = list));
   const [busy, setBusy] = useState(false);
+  const [engine, setEngine, keys] = useEngine();
+  const [shape, setShape] = useState<Shape>("portrait");
+  const ready = engine === "openai" ? keys.openai : hasKey;
 
   const saveKey = async (value: string | null) => {
     setKeyMsg("");
@@ -101,13 +105,18 @@ function Generate({ hasKey, setHasKey, run, images }: { hasKey: boolean; setHasK
 
   const go = async () => {
     setBusy(true);
-    if (await run("/api/creative", { op: "image", prompt })) setPrompt("");
+    if (await run("/api/creative", { op: "image", prompt, engine, shape })) setPrompt("");
     setBusy(false);
   };
 
   return (
-    <Card icon="⚡" title="Generate with Higgsfield" help={HELP.generate}>
-      {!hasKey ? (
+    <Card icon="⚡" title={`Generate with ${ENGINE_LABEL[engine]}`} help={HELP.generate}>
+      <div className="mb-3">
+        <EnginePicker engine={engine} setEngine={setEngine} shape={shape} setShape={setShape} />
+      </div>
+      {engine === "openai" && !keys.openai ? (
+        <OpenAIKeyForm />
+      ) : !ready ? (
         <div className="space-y-3">
           <p className="text-lg">
             Paste your Higgsfield API key here (from <span className="font-bold">cloud.higgsfield.ai → API keys</span>). It looks like <code>KEY_ID:KEY_SECRET</code>. Don&apos;t paste it in chat.
@@ -150,19 +159,21 @@ function Generate({ hasKey, setHasKey, run, images }: { hasKey: boolean; setHasK
           <textarea className="w-full min-h-28 text-lg" placeholder="Describe the ad image you want…" value={prompt} onChange={(e) => setPrompt(e.target.value)} />
           <div className="flex flex-wrap items-center gap-3">
             <Btn kind="primary" disabled={busy || !prompt.trim()} onClick={go}>
-              {busy ? "Sending…" : "Generate image"}
+              {busy ? (engine === "openai" ? "Painting… (up to 2 minutes)" : "Sending…") : "Generate image"}
             </Btn>
             <span className="text-base text-muted">
-              {images.length ? "Then press Animate on any image to turn it into a video." : "Images take about a minute."}
+              {images.length && hasKey ? "Then press Animate on any image to turn it into a video (Higgsfield)." : engine === "openai" ? "ChatGPT images take one to two minutes." : "Images take about a minute."}
             </span>
           </div>
-          <div className="flex items-center gap-3 text-base text-muted">
-            <Badge tone="good">Key saved</Badge>
-            <button className="underline" onClick={() => confirm("Remove the saved Higgsfield key?") && saveKey(null)}>
-              Remove key
-            </button>
-            {keyMsg && <span className="font-bold">{keyMsg}</span>}
-          </div>
+          {engine === "higgsfield" && (
+            <div className="flex items-center gap-3 text-base text-muted">
+              <Badge tone="good">Key saved</Badge>
+              <button className="underline" onClick={() => confirm("Remove the saved Higgsfield key?") && saveKey(null)}>
+                Remove key
+              </button>
+              {keyMsg && <span className="font-bold">{keyMsg}</span>}
+            </div>
+          )}
         </div>
       )}
     </Card>
@@ -244,7 +255,7 @@ function Tile({ c, onDelete, onChange, setError }: { c: Creative; onDelete: () =
       <div className="p-3 space-y-2 flex-1 flex flex-col">
         <div className="flex gap-2 flex-wrap">
           <Badge tone={c.kind === "video" ? "hero" : "accent"}>{c.kind}</Badge>
-          <Badge>{c.source === "higgsfield" ? "AI" : "Your file"}</Badge>
+          <Badge>{c.source === "higgsfield" ? "AI · Higgsfield" : c.source === "openai" ? "AI · ChatGPT" : "Your file"}</Badge>
           {(c.ads?.length ?? 0) > 0 && <Badge tone="good">{c.ads!.length} test ad{c.ads!.length > 1 ? "s" : ""}</Badge>}
         </div>
         {c.prompt && <p className="text-base text-muted line-clamp-2">{c.prompt}</p>}

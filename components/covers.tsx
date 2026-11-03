@@ -6,6 +6,7 @@
 import type { ReactNode } from "react";
 import { CUSTOM_COVER } from "@/lib/covers";
 import { seeded } from "@/lib/items";
+import { PixelCover, hasPixelCover } from "./pixelScenes";
 
 const W = 1200;
 const H = 320;
@@ -282,6 +283,8 @@ const ART: Record<string, (k: string) => ReactNode> = {
 /** Small preview of a cover, for the shop and the picker. */
 export function CoverArt({ id, image, className = "" }: { id: string; image?: string; className?: string }) {
   if (id === CUSTOM_COVER && image) return <img src={image} alt="" className={`object-cover ${className}`} />;
+  // Every look is pixel art now, so covers are the Dawnterra pixel scenes.
+  if (hasPixelCover(id)) return <PixelCover id={id} className={className} />;
   const art = ART[id];
   if (!art) return <div className={`hud-hero ${className}`} />;
   return (
@@ -297,7 +300,8 @@ export function CoverLayer({ id, image }: { id: string; image?: string }) {
   return (
     <div className="absolute inset-0 pointer-events-none" aria-hidden>
       <CoverArt id={id} image={image} className="absolute inset-0 w-full h-full" />
-      <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--color-card) 55%, transparent) 22%, color-mix(in srgb, var(--color-card) 45%, transparent) 62%, color-mix(in srgb, var(--color-card) 10%, transparent) 100%)" }} />
+      {/* A solid parchment-coloured band behind the name, XP and stats, so text never sits on busy art. */}
+      <div className="absolute inset-0" style={{ background: "linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--color-card) 30%, transparent) 14%, color-mix(in srgb, var(--color-card) 86%, transparent) 24%, color-mix(in srgb, var(--color-card) 86%, transparent) 70%, color-mix(in srgb, var(--color-card) 55%, transparent) 100%)" }} />
     </div>
   );
 }

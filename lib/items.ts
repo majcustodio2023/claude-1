@@ -1,7 +1,8 @@
 import type { ItemSlot } from "./types";
 
 // Everything the hero can wear. Drawn in components/characters.tsx (by id).
-// "shop" items rotate through the shop; "loot" items only drop from tasks and bosses.
+// "shop" items rotate through the shop; "loot" items only drop from tasks and bosses;
+// "wild" items only drop from the monsters out in the Wilds beyond the north gate.
 
 export type Rarity = "common" | "rare" | "epic" | "legendary";
 
@@ -11,8 +12,13 @@ export interface Item {
   slot: ItemSlot;
   rarity: Rarity;
   price: number;
-  source: "shop" | "loot" | "both";
+  source: "shop" | "loot" | "both" | "wild";
+  /** One line of flavour for the inventory. */
+  about?: string;
 }
+
+/** Items you can't buy: they only come as loot (tasks and bosses) or from monsters. */
+export const notForSale = (i: Item) => i.source === "loot" || i.source === "wild";
 
 export const RARITY: Record<Rarity, { label: string; color: string; weight: number }> = {
   common: { label: "Common", color: "#c9d2ff", weight: 60 },
@@ -64,6 +70,19 @@ export const ITEMS: Item[] = [
   { id: "slime", name: "Pet slime", slot: "pet", rarity: "common", price: 180, source: "both" },
   { id: "ghost", name: "Pet ghost", slot: "pet", rarity: "rare", price: 380, source: "both" },
   { id: "mini-dragon", name: "Mini dragon", slot: "pet", rarity: "epic", price: 800, source: "both" },
+  // Monster drops from the Wilds (lib/wilds.ts). Never in the shop, never from task chests.
+  { id: "leaf-cap", name: "Leaf cap", slot: "hat", rarity: "common", price: 0, source: "wild", about: "Three big leaves stitched into a cap. Smells like rain." },
+  { id: "mushroom-helm", name: "Mushroom helm", slot: "hat", rarity: "rare", price: 0, source: "wild", about: "A Shroomkin's cap, dried hard as wood. Bonks bounce off." },
+  { id: "wolf-mask", name: "Mosswolf mask", slot: "face", rarity: "rare", price: 0, source: "wild", about: "Carved from a mosswolf skull. Monsters hesitate when they see it." },
+  { id: "oak-club", name: "Oak club", slot: "weapon", rarity: "common", price: 0, source: "wild", about: "A knotted branch that got very good at hitting things." },
+  { id: "fang-dagger", name: "Fang dagger", slot: "weapon", rarity: "rare", price: 0, source: "wild", about: "A wolf fang on a leather grip. Quick, and it finds the soft spots." },
+  { id: "thorn-spear", name: "Thorn spear", slot: "weapon", rarity: "rare", price: 0, source: "wild", about: "A bramble shaft with a thorn the size of a hand. Strikes before they move." },
+  { id: "grove-blade", name: "Grovewarden blade", slot: "weapon", rarity: "epic", price: 0, source: "wild", about: "Living wood that drinks a little life with every cut." },
+  { id: "moss-cloak", name: "Moss cloak", slot: "back", rarity: "common", price: 0, source: "wild", about: "Soft, green and surprisingly warm." },
+  { id: "beetle-shell", name: "Beetle shell", slot: "back", rarity: "epic", price: 0, source: "wild", about: "A thornback beetle's shell, worn like a shield on your back." },
+  { id: "firefly", name: "Firefly glow", slot: "aura", rarity: "rare", price: 0, source: "wild", about: "A swarm of fireflies decided you're their lamp now." },
+  { id: "pet-sprout", name: "Pet sprout", slot: "pet", rarity: "common", price: 0, source: "wild", about: "A tiny walking seedling. It headbutts monsters for you." },
+  { id: "pet-bee", name: "Pet bee", slot: "pet", rarity: "rare", price: 0, source: "wild", about: "Buzzy. Stings, and the stings make foes weaker." },
   { id: "kit-bow", name: "Kit: big bow", slot: "kit-head", rarity: "common", price: 100, source: "both" },
   { id: "kit-ninja", name: "Kit: ninja headband", slot: "kit-head", rarity: "common", price: 120, source: "both" },
   { id: "kit-headphones", name: "Kit: DJ headphones", slot: "kit-head", rarity: "rare", price: 260, source: "both" },
@@ -110,7 +129,7 @@ export function shopStock(today: string): { items: Item[]; restockIn: number; pe
     while (out.length < n && pool.length) out.push(pool.splice(Math.floor(rand() * pool.length), 1)[0]);
     return out;
   };
-  const forSale = ITEMS.filter((i) => i.source !== "loot");
+  const forSale = ITEMS.filter((i) => !notForSale(i));
   const items = [...pick(forSale.filter((i) => !isKitSlot(i.slot)), SHOP_SIZE - KIT_IN_SHOP), ...pick(forSale.filter((i) => isKitSlot(i.slot)), KIT_IN_SHOP)];
   return { items, restockIn: SHOP_DAYS - (day - period * SHOP_DAYS), period };
 }
