@@ -10,7 +10,7 @@ export const maxDuration = 60;
 
 // ?brand=wendy gives Wendy's list and settings; anything else is the Prototype maker.
 export async function GET(req: Request) {
-  const brand = brandOf(new URL(req.url).searchParams.get("brand"));
+  const brand = req.headers.get("x-wendy") === "1" ? "wendy" : brandOf(new URL(req.url).searchParams.get("brand"));
   try {
     const [data, jobs] = await Promise.all([getData(), listJobs(brand)]);
     return NextResponse.json({
@@ -27,7 +27,8 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const body = (await req.json().catch(() => ({}))) as { links?: unknown; description?: unknown; model?: unknown; brand?: unknown; instructions?: unknown };
-  const brand = brandOf(body.brand);
+  // On Wendy's open address every request is a Wendy request.
+  const brand = req.headers.get("x-wendy") === "1" ? "wendy" : brandOf(body.brand);
   const instructions = typeof body.instructions === "string" ? body.instructions : "";
   const links = Array.isArray(body.links) ? body.links.filter((l): l is string => typeof l === "string").slice(0, 10) : [];
   const description = typeof body.description === "string" ? body.description : "";

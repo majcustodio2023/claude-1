@@ -7,7 +7,7 @@ import type { PrototypeSettings } from "@/lib/types";
 // Saves the Prototype maker's settings. The builder's token is encrypted and never sent back.
 // ?brand=wendy saves Wendy's own settings (the builder link and token stay with the Prototype maker).
 export async function PUT(req: Request) {
-  const brand = brandOf(new URL(req.url).searchParams.get("brand"));
+  const brand = req.headers.get("x-wendy") === "1" ? "wendy" : brandOf(new URL(req.url).searchParams.get("brand"));
   const body = (await req.json().catch(() => ({}))) as PrototypeSettings & { fireToken?: string | null };
   const clean = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) || undefined : undefined);
   const fireUrl = clean(body.fireUrl, 300);
@@ -42,7 +42,8 @@ export async function PUT(req: Request) {
 }
 
 // Test the builder link: fires the scheduled task once (it finds nothing new and stops).
-export async function POST() {
+export async function POST(req: Request) {
+  if (req.headers.get("x-wendy") === "1") return NextResponse.json({ error: "Not available here" }, { status: 404 });
   const why = await fireBuilder((await getData()).settings.prototype);
   return NextResponse.json(why ? { ok: false, error: why } : { ok: true });
 }
