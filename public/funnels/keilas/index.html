@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Keila's Bike Shop Marikina Bodega — Pinakamurang Bikes & E-bikes, Free Test Ride</title>
+<title>Keila's Bike Shop Marikina Bodega — Bodega price. Showroom bike. Libre delivery.</title>
 <meta name="description" content="Marikina's biggest bike & e-bike bodega. Kids bikes from ₱1,600, MTB from ₱3,600, e-bikes with Home Credit installment and libre Metro Manila delivery. Reserve your bike and book a free test ride.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,380 +20,327 @@
   --font: 'DM Sans', system-ui, sans-serif;
 }
 .brand__mark { background: var(--dark); color: var(--accent); border-radius: 12px; }
-.sec { overflow: clip; }
-h1 { font-size: clamp(44px, 7vw, 96px); line-height: 0.98; }
-h2 { font-size: clamp(36px, 5vw, 68px); }
-.hero { background: var(--bg); padding-top: clamp(64px, 9vw, 130px); }
-.hero__grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
-@media (max-width: 940px) { .hero__grid { grid-template-columns: minmax(0, 1fr); } }
-.hero__media img, .story__media img, .price img, .dream article img { height: auto; }
-.hero__media .par { border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
-.hero__media .par img { border-radius: 0; box-shadow: none; aspect-ratio: 4 / 4.6; transform: scale(1.08); }
-.hero .blobs i:nth-child(1) { background: #fde0dd; } .hero .blobs i:nth-child(2) { background: #fff1b8; } .hero .blobs i:nth-child(3) { background: #fdd5d2; }
-@media (max-width: 600px) { .btn--xl, .hero__ctas .btn, .final .btn { white-space: normal; text-align: center; width: 100%; } .float b { font-size: 18px; } }
-.tag-yellow { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--accent-ink); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 14px; border-radius: 999px; width: max-content; max-width: 100%; }
-.tag-yellow i { width: 8px; height: 8px; border-radius: 50%; background: var(--brand); display: inline-block; animation: pulse 1.6s ease-in-out infinite; }
-@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: 0.5; } }
-.pain { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } @media (max-width: 900px) { .pain { grid-template-columns: minmax(0, 1fr); } }
-.pain__item { position: relative; }
-.pain__item.pain__item--good { background: var(--dark); color: #fff; border-color: transparent; } .pain__item--good p { color: rgba(255,255,255,0.75); } .pain__item--good i { background: var(--accent); color: var(--accent-ink); }
-.story { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 80px); align-items: start; }
-@media (max-width: 900px) { .story { grid-template-columns: minmax(0, 1fr); } .pin { position: static; } }
-.story__media { position: relative; }
-.story__media .img-par img { aspect-ratio: 4/5; object-fit: cover; width: 100%; }
-.story__chip { position: absolute; bottom: 22px; left: 22px; right: 22px; background: #fff; border-radius: 16px; padding: 14px 18px; display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; box-shadow: var(--shadow-sm); z-index: 2; }
-.story__chip .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--dark); color: var(--accent); display: grid; place-items: center; font-weight: 800; font-family: var(--font-display); }
-.story__chip b { display: block; font-size: 14px; } .story__chip span { font-size: 12px; color: var(--mute); }
-.story__copy { display: grid; gap: 22px; }
-.story__copy .pull-xl { color: var(--ink); border-left: 4px solid var(--brand); padding-left: 22px; }
-.timeline { display: grid; gap: 0; }
-.timeline li { display: grid; grid-template-columns: 92px 1fr; gap: 18px; padding: 16px 0; border-top: 1px solid var(--hair-soft); }
-.timeline li span { font-family: var(--font-display); font-weight: 800; color: var(--brand); font-size: 15px; }
-.timeline li p { color: var(--ink-2); font-size: 15px; }
-.dream { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-@media (max-width: 900px) { .dream { grid-template-columns: minmax(0, 1fr); } }
-.dream article { position: relative; border-radius: var(--radius); overflow: hidden; min-height: 520px; display: grid; align-content: end; color: #fff; isolation: isolate; }
-.dream article img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: transform 1.4s var(--ease); }
-.dream article:hover img { transform: scale(1.08); }
-.dream article::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(17,19,24,0) 30%, rgba(17,19,24,0.94) 100%); }
-.dream__body { padding: 30px; display: grid; gap: 8px; }
-.dream__body b { font-family: var(--font-display); font-size: 28px; letter-spacing: -0.02em; line-height: 1.08; }
-.dream__body span { color: rgba(255,255,255,0.78); font-size: 15px; }
-.dream__num { font-family: var(--font-display); font-size: 44px; font-weight: 800; color: var(--accent); letter-spacing: -0.03em; line-height: 1; }
-.price-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
-@media (max-width: 1000px) { .price-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 600px) { .price-grid { grid-template-columns: minmax(0, 1fr); } }
-.price { position: relative; overflow: hidden; border-radius: var(--radius); background: var(--bg); border: 1px solid var(--hair-soft); display: grid; grid-template-rows: auto 1fr; }
-.price img { width: 100%; aspect-ratio: 4/3; object-fit: cover; transition: transform 1.2s var(--ease); }
-.price:hover img { transform: scale(1.06); }
-.price__body { padding: 22px 22px 24px; display: grid; gap: 8px; align-content: start; }
-.price__from { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mute); }
-.price__amt { font-family: var(--font-display); font-size: 32px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
-.price__amt small { font-size: 14px; color: var(--mute); font-weight: 600; letter-spacing: 0; }
-.price ul { display: grid; gap: 4px; font-size: 14px; color: var(--mute); margin-top: 4px; }
-.price ul li::before { content: "✓ "; color: var(--brand); font-weight: 800; }
-.price__hot { position: absolute; top: 14px; left: 14px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; z-index: 2; }
-.booking { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 28px; align-items: start; }
-@media (max-width: 940px) { .booking { grid-template-columns: minmax(0, 1fr); } }
-.booking__card { background: #fff; border: 1px solid var(--hair-soft); border-radius: var(--radius); padding: clamp(22px, 3vw, 34px); display: grid; gap: 18px; box-shadow: var(--shadow); min-width: 0; }
-.form .btn { white-space: normal; text-align: center; }
-.form__row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } @media (max-width: 600px) { .form__row { grid-template-columns: minmax(0, 1fr); } }
-.days { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 52px), 1fr)); gap: 8px; }
-.days .chip { display: grid; justify-items: center; gap: 2px; padding: 10px 4px; border-radius: 12px; text-align: center; min-width: 0; }
-.days .chip small { font-size: 11px; font-weight: 600; opacity: 0.7; } .days .chip b { font-size: 18px; font-family: var(--font-display); }
-.slots { grid-template-columns: repeat(auto-fit, minmax(min(100%, 92px), 1fr)); } .slots .chip { text-align: center; justify-content: center; padding-inline: 8px; }
-.booking__side { display: grid; gap: 14px; } .booking__side .card { gap: 8px; }
-.sec--brand .blobs i:nth-child(1) { background: #fff; opacity: 0.35; } .sec--brand .blobs i:nth-child(2) { background: var(--accent); opacity: 0.35; } .sec--brand .blobs i:nth-child(3) { background: #7a0f0a; opacity: 0.5; }
-.sec--dark .quote { background: var(--dark-2); border-color: rgba(255,255,255,0.08); }
-.sec--dark .quote__who span { color: var(--on-dark-mute); }
-.sec--dark .quote__tag { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
-.sec--dark .result { background: var(--dark-2); border-color: rgba(255,255,255,0.08); }
-.sec--dark .result__bar { background: rgba(255,255,255,0.1); } .sec--dark .result__bar i { background: var(--accent); }
-.sec--dark .result__big.money, .sec--dark .gradient-text { background: linear-gradient(100deg, #ffd60a 0%, #ffb703 60%, #ff7a45 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.final { background: var(--brand); color: #fff; text-align: center; }
-.final .eyebrow { color: #ffe08a; } .final .eyebrow::before { background: #ffe08a; }
-.final h2 { max-width: 14ch; margin-inline: auto; color: #fff; font-size: clamp(40px, 6.5vw, 96px); }
-.final p { color: rgba(255,255,255,0.85); max-width: 56ch; margin-inline: auto; }
-.final .btn--light { color: var(--brand-ink); }
-.badge-row { display: flex; flex-wrap: wrap; gap: 10px; }
-.badge-row span { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: var(--bg-2); font-size: 13px; font-weight: 700; }
-.badge-row span svg { width: 16px; height: 16px; color: var(--brand); }
-.counter-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 40px; }
-@media (max-width: 700px) { .counter-row { grid-template-columns: minmax(0, 1fr); } }
-.counter-row div { padding: 24px; border-radius: var(--radius); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); display: grid; gap: 4px; }
-.counter-row b { font-family: var(--font-display); font-size: clamp(40px, 5vw, 64px); letter-spacing: -0.04em; line-height: 1; color: var(--accent); }
-.counter-row span { color: var(--on-dark-mute); font-size: 14px; }
-.marquee--xl { background: var(--bg); }
-.marquee--xl .marquee__track span::after { color: var(--brand); }
-.stat b { word-break: break-word; }
-.sec > .blobs, .sec > .grain, .sec > .ghost, .slide > .blobs, .slide > .grain, .slide > .slide__num, .slide > .slide__bg { position: absolute !important; }
-.slide > .slide__bg { z-index: -2 !important; } .slide > .slide__num { z-index: -1 !important; } .sec > .ghost, .sec > .blobs, .sec > .grain { z-index: 0 !important; }
-.sec > .blobs, .slide > .blobs { z-index: -1 !important; }
-.gradient-text .w { background: inherit; -webkit-background-clip: text; background-clip: text; color: transparent; }
-.slide--dark .btn--light, .slide--brand .btn--light { color: var(--dark) !important; }
+.sec { overflow: clip; position: relative; }
+/* nav: transparent over hero, solid after scroll */
+.nav { position: fixed; top: 0; left: 0; right: 0; background: transparent; border-bottom: 0; backdrop-filter: none; -webkit-backdrop-filter: none; color: #fff; transition: background .4s var(--ease), color .4s, box-shadow .4s; }
+.nav .nav__links { color: rgba(255,255,255,.85); } .nav .nav__links a:hover { color: #fff; }
+.nav .brand__mark { background: var(--accent); color: var(--dark); }
+.nav.solid { background: rgba(255,255,255,.86); color: var(--ink); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 1px 0 var(--hair-soft); }
+.nav.solid .nav__links { color: var(--ink-2); } .nav.solid .brand__mark { background: var(--dark); color: var(--accent); }
+.hero--cine .btn--accent { color: var(--accent-ink); }
+.hero--cine .btn--ghost { color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.45); }
+.hero--cine .btn--ghost:hover { background: rgba(255,255,255,.12); color: #fff; }
+.hero--cine .tag-yellow { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--accent-ink); font-weight: 800; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; padding: 8px 14px; border-radius: 999px; width: max-content; }
+.hero--cine .tag-yellow i { width: 8px; height: 8px; border-radius: 50%; background: var(--brand); animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.6); opacity: .5; } }
+.hero--cine h1 em { font-family: inherit; font-style: normal; color: var(--accent); }
+.hero__cards .glass b { font-family: var(--font-display); }
+/* light band after hero */
+.band--light { background: var(--bg); }
+.pains { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+@media (max-width: 900px) { .pains { grid-template-columns: minmax(0, 1fr); } }
+.pains .lhs { position: sticky; top: 110px; display: grid; gap: 22px; }
+@media (max-width: 900px) { .pains .lhs { position: static; } }
+.stack .pain__item { background: #fff; padding: 26px 26px; border-radius: 22px; box-shadow: 0 -12px 40px -24px rgba(17,19,24,.35), 0 1px 0 var(--hair-soft); }
+.stack .pain__item i { background: var(--brand-soft); color: var(--brand-ink); font-family: var(--font-display); }
+.stack .pain__item--good { background: var(--dark); color: #fff; } .stack .pain__item--good p { color: rgba(255,255,255,.75); } .stack .pain__item--good i { background: var(--accent); color: var(--accent-ink); }
+.stack .pain__item b { font-family: var(--font-display); font-size: 19px; }
+.band--dark .tick.money { background: linear-gradient(100deg, #ffd60a 0%, #ffb703 55%, #ff7a45 100%); -webkit-background-clip: text; background-clip: text; }
+.tickrow .pill { background: rgba(255,255,255,.1); color: rgba(255,255,255,.7); }
+.hpin { background: var(--dark); color: #fff; }
+.hpin__head h2 { color: #fff; max-width: 16ch; } .hpin__head .eyebrow { color: var(--accent); } .hpin__head .eyebrow::before { background: var(--accent); }
+.xcard .num { color: var(--accent); }
+.xcard b.price { font-family: var(--font-display); font-size: 15px; color: var(--accent); letter-spacing: .04em; }
+.story__step .k { color: var(--brand); font-family: var(--font-display); }
+.story__media .cap .pill { background: rgba(17,19,24,.75); color: #fff; backdrop-filter: blur(8px); }
+.prices { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 1000px) { .prices { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .prices { grid-template-columns: minmax(0, 1fr); } }
+.price { background: #fff; border: 1px solid var(--hair-soft); border-radius: 24px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; position: relative; }
+.price .ph { position: relative; aspect-ratio: 4/3; overflow: hidden; }
+.price .ph img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+.price:hover .ph img { transform: scale(1.06); }
+.price .badge { position: absolute; top: 14px; left: 14px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; }
+.price .pb { padding: 22px 24px 26px; display: grid; gap: 10px; align-content: start; }
+.price .pb .cat { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 800; color: var(--mute); }
+.price .pb .amt { font-family: var(--font-display); font-size: clamp(28px, 2.6vw, 36px); letter-spacing: -0.03em; line-height: 1; }
+.price .pb .amt small { font-size: 14px; letter-spacing: 0; color: var(--mute); font-weight: 600; font-family: var(--font); }
+.price ul { display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); } .price ul li::before { content: "✓ "; color: var(--brand); font-weight: 800; }
+.perks { display: flex; flex-wrap: wrap; gap: 10px; }
+.perks span { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: var(--bg-2); font-size: 14px; font-weight: 700; }
+.perks span svg { width: 18px; height: 18px; color: var(--brand); }
+.qmarq .quote { background: var(--dark-2); color: #fff; border-color: rgba(255,255,255,.08); }
+.qmarq .quote__who span { color: rgba(255,255,255,.6); } .qmarq .quote__tag { background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); }
+.qmarq .quote__who .avatar { background: var(--accent); color: var(--accent-ink); font-family: var(--font-display); }
+.resrow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .resrow { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.resrow .result { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); color: #fff; }
+.resrow .result .pill { background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); }
+.resrow .result__big.money { background: linear-gradient(100deg, #ffd60a, #ff7a45); -webkit-background-clip: text; background-clip: text; }
+.resrow .result__bar { background: rgba(255,255,255,.1); } .resrow .result__bar i { background: var(--accent); }
+.resrow .mute { color: rgba(255,255,255,.65); }
+.book-cine .eyebrow { color: var(--accent); } .book-cine .eyebrow::before { background: var(--accent); }
+.book-cine h2 { color: #fff; }
+.book-cine .btn--accent { color: var(--accent-ink); }
+.book-cine .btn--ghost { color: #fff; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.4); }
+.book-cine .slots { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.book-cine .days { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.book-cine .days .chip { display: grid; justify-items: center; gap: 0; padding: 10px 4px; line-height: 1.1; }
+.book-cine .days .chip small { font-size: 11px; opacity: .7; } .book-cine .days .chip b { font-size: 18px; font-family: var(--font-display); }
+.promise { display: grid; gap: 12px; }
+.promise div { display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start; padding: 14px 16px; border-radius: 16px; background: rgba(255,255,255,.06); }
+.promise div i { width: 40px; height: 40px; border-radius: 12px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-style: normal; font-weight: 800; }
+.promise b { display: block; } .promise span { font-size: 14px; color: rgba(255,255,255,.7); }
+.final { background: var(--brand); color: #fff; }
+.final .eyebrow { color: var(--accent); } .final .eyebrow::before { background: var(--accent); }
+.final .btn--light { color: var(--brand-ink); } .final .btn--accent { color: var(--accent-ink); }
+.final .blobs i:nth-child(1) { background: #ff7a45; } .final .blobs i:nth-child(2) { background: var(--accent); } .final .blobs i:nth-child(3) { background: #fff; opacity: .2; }
+.final .ghost { -webkit-text-stroke-color: rgba(255,255,255,.22); }
+@media (max-width: 600px) { .btn--xl, .hero__ctas .btn, .final .btn, .form .btn { white-space: normal; text-align: center; width: 100%; } }
 </style>
 </head>
 <body>
+<div class="ribbon"><span>Preview build · sample testimonials &amp; results for presentation</span></div>
 
-<header class="nav">
+<header class="nav" id="nav">
   <div class="wrap nav__in">
-    <a class="brand" href="#top" aria-label="Keila's Bike Shop">
-      <span class="brand__mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h-5l-4 11.5M15 6l3.5 11.5M15 6l-3 6h-6"/></svg></span>
-      Keila's <span class="mute" style="font-weight:600">Bike Shop</span>
-    </a>
-    <nav class="nav__links"><a href="#bikes">Bikes & E-bikes</a><a href="#story">Our Story</a><a href="#reviews">Reviews</a><a href="#faq">FAQ</a></nav>
-    <a class="btn btn--sm" href="#reserve">Reserve & Test-Ride</a>
+    <a class="brand" href="#top"><span class="brand__mark"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="M6 16l4-8h5l3 8M10 8h4"/></svg></span>Keila's <span style="font-weight:500;opacity:.8">Bike Shop</span></a>
+    <nav class="nav__links"><a href="#bikes">Bikes &amp; E-bikes</a><a href="#dream">Why ride</a><a href="#story">Our story</a><a href="#reviews">Reviews</a><a href="#faq">FAQ</a></nav>
+    <a class="btn btn--sm btn--accent" href="#book">Reserve &amp; test-ride</a>
   </div>
 </header>
 
 <main id="top">
-
-<!-- ================= HERO ================= -->
-<section class="hero">
-  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+<!-- HERO -->
+<section class="hero hero--cine" data-mouse>
+  <div class="hero__bg" data-depth="6" style="transform:translate3d(var(--mx,0),var(--my,0),0)"><img src="https://images.unsplash.com/photo-1561840884-9dda41ed54e4?w=2200&q=80&fit=crop&auto=format" alt="Rows of bikes lined up inside the bodega"></div>
   <div class="grain" aria-hidden="true"></div>
-  <div class="wrap hero__grid">
-    <div class="hero__copy">
-      <span class="tag-yellow"><i></i> Marikina's biggest bike & e-bike bodega</span>
-      <h1 data-split>Bodega price. Showroom bike. <span class="sky">Libre</span> delivery.</h1>
-      <p class="lead">Skip the mall markup and the fake online listings. Walk into 3 Lilac St., test-ride the actual unit, pay bodega price, and ride home today — or we deliver it to your door anywhere in Metro Manila for free.</p>
-      <div class="hero__ctas">
-        <a class="btn btn--xl" href="#reserve">Reserve your bike & book a free test ride <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        <a class="btn btn--ghost" href="https://m.me/KEILASBIKESHOP" target="_blank" rel="noopener">Message us on Messenger</a>
-      </div>
-      <div class="hero__proof">
-        <span><b>Kids bikes from ₱1,600</b></span><span><b>MTB from ₱3,600</b></span><span><b>Home Credit</b> installment</span><span>Open daily <b>9AM–7PM</b></span>
-      </div>
-    </div>
-    <div class="hero__media">
-      <div class="par" data-parallax="-0.12"><img src="https://images.unsplash.com/photo-1561840884-9dda41ed54e4?w=1400&q=80&fit=crop&auto=format" alt="Rows of bikes lined up inside the bodega" width="1400" height="1610"></div>
-      <div class="float float--tl"><b data-scramble>₱1,600</b><span>Kids bikes start at</span></div>
-      <div class="float float--br"><b>Since 2020</b><span>Home-grown in Marikina</span></div>
-    </div>
+  <div class="hero__cards">
+    <div class="glass g1" data-depth="22"><b>₱1,600</b><span>Kids bikes start at</span></div>
+    <div class="glass g2" data-depth="34"><b>₱3,600</b><span>Mountain bikes from</span></div>
+    <div class="glass g3" data-depth="16"><b>48 hrs</b><span>Reserved for you, no deposit</span></div>
   </div>
-</section>
-
-<div class="marquee" aria-hidden="true">
-  <div class="marquee__track">
-    <span>Wholesale · Retail · Resell</span><span>Libre delivery Metro Manila</span><span>Home Credit & card installment</span><span>E-bike batteries direct from warehouse</span><span>Free test ride in-store</span><span>2 branches in Marikina</span>
-    <span>Wholesale · Retail · Resell</span><span>Libre delivery Metro Manila</span><span>Home Credit & card installment</span><span>E-bike batteries direct from warehouse</span><span>Free test ride in-store</span><span>2 branches in Marikina</span>
-  </div>
-</div>
-
-<!-- ================= PAIN ================= -->
-<section class="sec sec--soft" id="pain">
-  <span class="ghost" aria-hidden="true">01</span>
-  <div class="wrap pain">
-    <div>
-      <div class="sec__head" style="margin-bottom:0">
-        <span class="eyebrow rv">Sound familiar?</span>
-        <h2 class="rv" data-split>You've been burned by bike shopping before.</h2>
-        <p class="lead rv rv-d2">Marikina riders tell us the same stories every week. Mall prices with a 40% markup. Online listings that look nothing like what arrives. A "warranty" that disappears the moment you have a problem. That's why we built a bodega you can actually walk into.</p>
-        <div class="rv rv-d3"><a class="btn" href="#reserve">See the real unit first — book a test ride</a></div>
-      </div>
-    </div>
-    <ul class="pain__list" data-stagger>
-      <li class="pain__item" data-tilt="4"><i>✕</i><div><b>Mall price, bodega bike.</b><p>Same frame, same parts, ₱2,000–₱6,000 more because of rent and the brand on the storefront.</p></div></li>
-      <li class="pain__item" data-tilt="4"><i>✕</i><div><b>"Hindi pala ganito yung picture."</b><p>Online listings with stock photos, missing parts, and sellers who ghost you after payment.</p></div></li>
-      <li class="pain__item" data-tilt="4"><i>✕</i><div><b>Battery patay after 4 months.</b><p>Cheap e-bike batteries with no replacement stock. You end up with a 60-kilo paperweight.</p></div></li>
-      <li class="pain__item" data-tilt="4"><i>✕</i><div><b>No test ride. No after-sales.</b><p>Nobody lets you sit on it, and nobody answers when the brakes need adjusting a month later.</p></div></li>
-      <li class="pain__item" data-tilt="4"><i>✕</i><div><b>Hidden delivery fees & confusing installment.</b><p>"Free delivery" that becomes ₱800 at checkout, and installment terms nobody explains.</p></div></li>
-      <li class="pain__item" data-tilt="4"><i>✕</i><div><b>Resellers: thin margins, unreliable supply.</b><p>You find a supplier, you sell 10 units, then the stock vanishes and the price jumps.</p></div></li>
-      <li class="pain__item pain__item--good" data-tilt="4"><i>✓</i><div><b>What you actually want</b><p>The real unit in front of you. A price that's lower than the mall, not higher. Someone who answers the phone after the sale.</p></div></li>
-    </ul>
-  </div>
-</section>
-
-<!-- ================= STORY ================= -->
-<section class="sec" id="story">
-  <span class="ghost" aria-hidden="true">02</span>
-  <div class="wrap story">
-    <div class="story__media pin">
-      <div class="img-par"><img src="https://images.unsplash.com/photo-1761634731562-c7a152d89849?w=1200&q=80&fit=crop&auto=format" alt="Bikes stacked on shelves inside the bodega" width="1200" height="1500" data-parallax="-0.08"></div>
-      <div class="story__chip"><span class="avatar">K</span><div><b>From a living room to the biggest bike bodega in Marikina</b><span>August 2020 → today</span></div></div>
-    </div>
-    <div class="story__copy">
-      <span class="eyebrow rv">Our story</span>
-      <h2 class="rv" data-split>We started selling bikes out of our own house.</h2>
-      <p class="pull-xl rv rv-d1">"Boxes in the sala, frames in the garage, test rides on the street outside."</p>
-      <p class="lead rv rv-d2">August 2020. Lockdown. Jeepneys were off the road and families needed a way to move, so we started an online bike shop from home — and when orders kept coming, we turned the house itself into a bike bodega.</p>
-      <p class="rv rv-d3" style="color:var(--ink-2)">By May 2021 we opened the real thing: the Lilac Street bodega in Concepcion Dos. The promise never changed — <em class="acc">pinakamaasahan at pinakamurang bikes & e-bikes</em>. Today we supply resellers across Metro Manila, run a second branch in Goodrich Village, and keep an e-bike battery warehouse so no customer is ever stuck with a dead unit.</p>
-      <ul class="timeline" data-stagger>
-        <li><span>Aug 2020</span><p>Home-based online bike shop opens during the pandemic.</p></li>
-        <li><span>Late 2020</span><p>The house becomes a bodega. Wholesale buyers start lining up.</p></li>
-        <li><span>May 2021</span><p>First physical bodega opens at 3 Lilac St., Concepcion Dos.</p></li>
-        <li><span>Today</span><p>Wholesale, retail & resell. Second branch in Goodrich Village. E-bike battery direct warehouse.</p></li>
-      </ul>
-      <div class="rv"><a class="btn" href="#reserve">Come see the bodega — book a test ride</a></div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= DREAM ================= -->
-<section class="sec sec--dark" id="dream">
-  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-  <div class="grain" aria-hidden="true"></div>
-  <span class="ghost" aria-hidden="true">03</span>
   <div class="wrap">
-    <div class="sec__head sec__head--center">
-      <span class="eyebrow rv">What a bike actually buys you</span>
-      <h2 class="rv" data-split>Not a bike. <span class="gradient-text">A different week.</span></h2>
-      <p class="lead rv rv-d2">Nobody dreams about spokes and sprockets. They dream about the Sunday ride, the fare money that stays in the wallet, and the side business that finally pays.</p>
+    <span class="tag-yellow rv"><i></i>Marikina's biggest bike &amp; e-bike bodega</span>
+    <h1 data-split="chars">Bodega price. Showroom bike. <em>Libre</em> delivery.</h1>
+    <p class="lead">Skip the mall markup and the fake online listings. Walk into 3 Lilac St., test-ride the actual unit, pay bodega price, and ride home today. Or we deliver it to your door anywhere in Metro Manila for free.</p>
+    <div class="hero__ctas">
+      <a class="btn btn--xl btn--accent" href="#book">Reserve your bike &amp; book a free test ride <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="btn btn--ghost" href="https://m.me/KEILASBIKESHOP" target="_blank" rel="noopener">Message us on Messenger</a>
     </div>
-    <div class="dream" data-stagger>
-      <article data-tilt="5">
-        <img src="https://images.unsplash.com/photo-1595182747080-3b43712dd27d?w=1000&q=80&fit=crop&auto=format" alt="A child riding a bike on a bright afternoon">
-        <div class="dream__body"><span class="dream__num">Every Sunday</span><b>The family that rides together.</b><span>Marikina River Park loop, kids on their first MTB, titos on e-bikes. All of it for less than one mall bike.</span></div>
-      </article>
-      <article data-tilt="5">
-        <img src="https://images.unsplash.com/photo-1620802051782-725fa33db067?w=1000&q=80&fit=crop&auto=format" alt="A commuter riding an e-bike through the city">
-        <div class="dream__body"><span class="dream__num" data-scramble>₱3,000+/mo</span><b>The commuter who stops paying fares.</b><span>Marikina to Ortigas on an e-bike: zero fare, zero traffic stress. The unit pays for itself in under a year.</span></div>
-      </article>
-      <article data-tilt="5">
-        <img src="https://images.unsplash.com/photo-1521078803125-7efd09b65b8f?w=1000&q=80&fit=crop&auto=format" alt="Dozens of bikes ready for pickup">
-        <div class="dream__body"><span class="dream__num" data-scramble>20 units/mo</span><b>The reseller who finally has supply.</b><span>Bodega pricing, consistent stock, batteries on hand. Flip 20 units a month from your own barangay.</span></div>
-      </article>
-    </div>
-    <div class="counter-row" data-stagger>
-      <div><b data-count="4400" data-prefix="₱">₱0</b><span>average saved vs. mall price on an MTB (sample)</span></div>
-      <div><b data-count="36000" data-prefix="₱">₱0</b><span>a year back in a commuter's pocket at ₱3,000/mo</span></div>
-      <div><b data-count="200" data-suffix="+">0</b><span>bikes and e-bikes on the floor at Lilac St.</span></div>
-    </div>
-    <div class="center rv" style="margin-top:40px"><a class="btn btn--accent btn--xl" href="#reserve">Reserve your bike & book a free test ride</a></div>
+    <div class="hero__proof"><span><b>Wholesale · Retail · Resell</b></span><span><b>Home Credit</b> installment</span><span>Open daily <b>9AM–7PM</b></span><span><b>2</b> branches in Marikina</span></div>
   </div>
+  <div class="hero__scroll"><i></i>Scroll</div>
 </section>
 
-<div class="marquee marquee--xl marquee--outline" aria-hidden="true">
-  <div class="marquee__track">
-    <span>Bodega price</span><span>Libre delivery</span><span>Free test ride</span><span>₱0 down</span><span>Batteries in stock</span><span>Since 2020</span>
-    <span>Bodega price</span><span>Libre delivery</span><span>Free test ride</span><span>₱0 down</span><span>Batteries in stock</span><span>Since 2020</span>
+<!-- PHOTO MARQUEE -->
+<div class="pmarq band band--light" aria-hidden="true" style="padding-top:40px">
+  <div class="pmarq__track">
+    <img src="https://images.unsplash.com/photo-1761634731562-c7a152d89849?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1620802051782-725fa33db067?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1600783794854-41292749a3d3?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1627044185459-09e6dbc39444?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1676531443468-0e2b5a57e48f?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1778574171671-fbe178537535?w=800&q=75&fit=crop&auto=format" alt="">
+    <img src="https://images.unsplash.com/photo-1761634731562-c7a152d89849?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1620802051782-725fa33db067?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1600783794854-41292749a3d3?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1627044185459-09e6dbc39444?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1676531443468-0e2b5a57e48f?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1778574171671-fbe178537535?w=800&q=75&fit=crop&auto=format" alt="">
   </div>
 </div>
 
-<!-- ================= BIKES / OFFER ================= -->
+<!-- PAINS -->
+<section class="sec band--light" id="why" style="padding-top:clamp(40px,6vw,80px)">
+  <span class="ghost ghost--scroll" data-scrub>01</span>
+  <div class="wrap pains">
+    <div class="lhs">
+      <span class="eyebrow">Sound familiar?</span>
+      <h2 class="scrubline" data-split data-scrub>You've been burned by bike shopping before.</h2>
+      <p class="lead">Marikina riders tell us the same stories every week. Mall prices with a 40% markup. Online listings that look nothing like what arrives. A "warranty" that disappears the moment you have a problem. That's why we built a bodega you can actually walk into.</p>
+      <a class="btn" href="#book">See the real unit first, book a test ride</a>
+    </div>
+    <div class="stack">
+      <div class="pain__item" style="--k:0"><i>✕</i><div><b>Mall price, bodega bike.</b><p>Same frame, same parts, ₱2,000–₱6,000 more because of rent and the brand on the storefront.</p></div></div>
+      <div class="pain__item" style="--k:1"><i>✕</i><div><b>"Hindi pala ganito yung picture."</b><p>Online listings with stock photos, missing parts, and sellers who ghost you after payment.</p></div></div>
+      <div class="pain__item" style="--k:2"><i>✕</i><div><b>Battery patay after 4 months.</b><p>Cheap e-bike batteries with no replacement stock. You end up with a 60-kilo paperweight.</p></div></div>
+      <div class="pain__item" style="--k:3"><i>✕</i><div><b>No test ride. No after-sales.</b><p>Nobody lets you sit on it, and nobody answers when the brakes need adjusting a month later.</p></div></div>
+      <div class="pain__item" style="--k:4"><i>✕</i><div><b>Hidden delivery fees &amp; confusing installment.</b><p>"Free delivery" that becomes ₱800 at checkout, and installment terms nobody explains.</p></div></div>
+      <div class="pain__item pain__item--good" style="--k:5"><i>✓</i><div><b>What you actually want.</b><p>The real unit in front of you. A price with nothing hidden. Delivery that's actually free. A shop that still picks up after you've paid.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TICK NUMBERS -->
+<section class="sec band band--dark">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap" style="display:grid;gap:40px">
+    <div class="sec__head"><span class="eyebrow">What bodega price actually means</span><h2 data-split class="rv">Numbers riders leave with.</h2></div>
+    <div class="tickrow">
+      <div><span class="pill">Sample</span><b class="tick money" data-tick="4400" data-prefix="₱">₱0</b><span>average saved vs. the mall price on the same MTB</span></div>
+      <div><span class="pill">Sample</span><b class="tick money" data-tick="48" data-suffix=" hrs">0</b><span>from reserve to ride for most customers</span></div>
+      <div><span class="pill">Sample</span><b class="tick money" data-tick="3000" data-prefix="₱" data-suffix="+">₱0</b><span>monthly fare savings for e-bike commuters</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- DREAM: HORIZONTAL PIN -->
+<section class="hpin" data-hpin id="dream">
+  <div class="hpin__sticky">
+    <div class="hpin__head"><span class="eyebrow">What a bike actually buys you</span><h2>Not a bike. A different week.</h2></div>
+    <div class="hpin__track">
+      <article class="xcard"><img src="https://images.unsplash.com/photo-1595182747080-3b43712dd27d?w=1100&q=80&fit=crop&auto=format" alt=""><span class="num">01 · Every Sunday</span><h3>The family that rides together.</h3><p>Marikina River Park loop, kids on their first MTB, titos on e-bikes. All of it for less than one mall bike.</p><b class="price">From ₱1,600 a bike</b></article>
+      <article class="xcard"><img src="https://images.unsplash.com/photo-1620802051782-725fa33db067?w=1100&q=80&fit=crop&auto=format" alt=""><span class="num">02 · ₱3,000+/mo</span><h3>The commuter who stops paying fares.</h3><p>Marikina to Ortigas on an e-bike: zero fare, zero traffic stress. The unit pays for itself in under a year.</p><b class="price">E-bikes on ₱0-down installment</b></article>
+      <article class="xcard"><img src="https://images.unsplash.com/photo-1521078803125-7efd09b65b8f?w=1100&q=80&fit=crop&auto=format" alt=""><span class="num">03 · 20 units/mo</span><h3>The reseller who finally has supply.</h3><p>Bodega pricing, consistent stock, batteries on hand. Flip 20 units a month from your own barangay.</p><b class="price">Wholesale pricelist on request</b></article>
+      <article class="xcard"><img src="https://images.unsplash.com/photo-1778574171671-fbe178537535?w=1100&q=80&fit=crop&auto=format" alt=""><span class="num">04 · Four wheels</span><h3>Freedom for Nanay and Tatay.</h3><p>Keyless 4-wheel e-bikes for anyone who finds walking hard. Delivered free, Home Credit approved in-store.</p><b class="price">₱61,999 – ₱79,999</b></article>
+      <article class="xcard"><img src="https://images.unsplash.com/photo-1600783794854-41292749a3d3?w=1100&q=80&fit=crop&auto=format" alt=""><span class="num">05 · This weekend</span><h3>Their first bike, assembled and adjusted.</h3><p>Training wheels on, seat at the right height, a lap around Lilac Street before you pay a peso.</p><b class="price">Kids bikes 12" to 20"</b></article>
+      <article class="xcard"><img src="https://images.unsplash.com/photo-1646344233160-605361f80f7e?w=1100&q=80&fit=crop&auto=format" alt=""><span class="num">06 · Group rides</span><h3>The barkada that climbs Antipolo.</h3><p>Shimano-equipped MTBs at bodega price, free tune-up after 30 days, two branches when something needs a look.</p><b class="price">MTB from ₱3,600</b></article>
+    </div>
+    <div class="hpin__bar"><i></i></div>
+  </div>
+</section>
+
+<!-- STORY: SCROLLYTELLING -->
+<section class="sec band band--light" id="story">
+  <span class="ghost ghost--scroll" data-scrub>02</span>
+  <div class="wrap" style="display:grid;gap:28px">
+    <div class="sec__head"><span class="eyebrow">Our story</span><h2 data-split class="rv">We started selling bikes out of our own house.</h2></div>
+    <div class="story">
+      <div class="story__media">
+        <img src="https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=1400&q=80&fit=crop&auto=format" alt="Bikes parked inside a room">
+        <img src="https://images.unsplash.com/photo-1761634731562-c7a152d89849?w=1400&q=80&fit=crop&auto=format" alt="Bikes stacked on shelves">
+        <img src="https://images.unsplash.com/photo-1750341472956-e69e84cc71a9?w=1400&q=80&fit=crop&auto=format" alt="A bike shop storefront">
+        <img src="https://images.unsplash.com/photo-1676531443468-0e2b5a57e48f?w=1400&q=80&fit=crop&auto=format" alt="A mechanic fixing a bike">
+        <div class="cap"><span class="pill">August 2020 → today</span><span class="pill">Concepcion Dos, Marikina</span></div>
+      </div>
+      <div class="story__steps">
+        <div class="story__step"><span class="k">AUG 2020</span><h3>Lockdown. Jeepneys off the road. Families needed a way to move.</h3><p>So we started an online bike shop from home. Orders kept coming, and the sala filled with boxes.</p></div>
+        <div class="story__step"><span class="k">LATE 2020</span><h3>The house became the bodega.</h3><p>Frames in the garage, test rides on the street outside, and the first wholesale buyers lining up at the gate.</p></div>
+        <div class="story__step"><span class="k">MAY 2021</span><h3>3 Lilac St., Concepcion Dos.</h3><p>The first real bodega opens. The promise never changed: <em class="acc">pinakamaasahan at pinakamurang bikes &amp; e-bikes.</em></p></div>
+        <div class="story__step"><span class="k">TODAY</span><h3>Two branches. One battery warehouse. Resellers across Metro Manila.</h3><p>Wholesale, retail and resell, a second branch in Goodrich Village, and an e-bike battery warehouse so no customer is ever stuck with a dead unit.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BIG MARQUEE -->
+<div class="marquee marquee--xl marquee--outline" aria-hidden="true"><div class="marquee__track"><span>Bodega price</span><span>Libre delivery</span><span>Free test ride</span><span>Home Credit</span><span>Batteries in stock</span><span>Bodega price</span><span>Libre delivery</span><span>Free test ride</span><span>Home Credit</span><span>Batteries in stock</span></div></div>
+
+<!-- PRICING -->
 <section class="sec" id="bikes">
-  <span class="ghost" aria-hidden="true">04</span>
-  <div class="wrap">
-    <div class="sec__head">
-      <span class="eyebrow rv">Bodega pricing</span>
-      <h2 class="rv" data-split>Every bike. Every budget. <span class="sky">Walang markup.</span></h2>
-      <p class="lead rv rv-d2">Prices below are starting bodega prices. Installment via Home Credit or credit card, libre delivery within Metro Manila, and every unit is checked and test-ridden before it leaves.</p>
+  <span class="ghost ghost--scroll" data-scrub>03</span>
+  <div class="wrap" style="display:grid;gap:30px">
+    <div class="sec__head" style="margin-bottom:0"><span class="eyebrow">Bodega pricing</span><h2 data-split class="rv">Every bike. Every budget. <span class="acc">Walang markup.</span></h2><p class="lead">Starting bodega prices. Installment via Home Credit or credit card, libre delivery within Metro Manila, and every unit checked and test-ridden before it leaves.</p></div>
+    <div class="prices" data-stagger>
+      <article class="price" data-tilt="4"><div class="ph wipe"><img src="https://images.unsplash.com/photo-1600783794854-41292749a3d3?w=900&q=80&fit=crop&auto=format" alt="Kid riding a red bicycle"></div><div class="pb"><span class="cat">Kids bikes · 12" to 20"</span><span class="amt">₱1,600 <small>starting</small></span><ul><li>Training wheels included</li><li>Fits ages 3–10</li><li>Assembled &amp; adjusted free</li></ul></div></article>
+      <article class="price" data-tilt="4"><div class="ph wipe"><img src="https://images.unsplash.com/photo-1627044185459-09e6dbc39444?w=900&q=80&fit=crop&auto=format" alt="Mountain bike on a trail"><span class="badge">Best seller</span></div><div class="pb"><span class="cat">Mountain bikes · 26" to 29"</span><span class="amt">₱3,600 <small>starting</small></span><ul><li>Steel &amp; alloy frames</li><li>Shimano-equipped options</li><li>Free tune-up after 30 days</li></ul></div></article>
+      <article class="price" data-tilt="4"><div class="ph wipe"><img src="https://images.unsplash.com/photo-1786441113553-43414b842378?w=900&q=80&fit=crop&auto=format" alt="An electric bicycle on a street"></div><div class="pb"><span class="cat">E-bikes · 2-wheel</span><span class="amt">₱0 down <small>installment</small></span><ul><li>Commuter &amp; cargo models</li><li>Battery stock on hand</li><li>Charger &amp; helmet included</li></ul></div></article>
+      <article class="price" data-tilt="4"><div class="ph wipe"><img src="https://images.unsplash.com/photo-1778574171671-fbe178537535?w=900&q=80&fit=crop&auto=format" alt="Two riders on electric bikes"></div><div class="pb"><span class="cat">E-bikes · 3 &amp; 4-wheel</span><span class="amt">₱61,999 <small>– ₱79,999</small></span><ul><li>Keyless start models</li><li>Free Metro Manila delivery</li><li>Home Credit approved in-store</li></ul></div></article>
     </div>
-    <div class="price-grid" data-stagger>
-      <article class="price" data-tilt="6">
-        <img src="https://images.unsplash.com/photo-1600783794854-41292749a3d3?w=900&q=80&fit=crop&auto=format" alt="Kid riding a red bicycle">
-        <div class="price__body"><span class="price__from">Kids bikes · 12" to 20"</span><span class="price__amt"><span data-scramble>₱1,600</span> <small>starting</small></span><ul><li>Training wheels included</li><li>Fits ages 3–10</li><li>Assembled & adjusted free</li></ul></div>
-      </article>
-      <article class="price" data-tilt="6">
-        <span class="price__hot">Best seller</span>
-        <img src="https://images.unsplash.com/photo-1627044185459-09e6dbc39444?w=900&q=80&fit=crop&auto=format" alt="Mountain bike on a trail">
-        <div class="price__body"><span class="price__from">Mountain bikes · 26" to 29"</span><span class="price__amt"><span data-scramble>₱3,600</span> <small>starting</small></span><ul><li>Steel & alloy frames</li><li>Shimano-equipped options</li><li>Free tune-up after 30 days</li></ul></div>
-      </article>
-      <article class="price" data-tilt="6">
-        <img src="https://images.unsplash.com/photo-1786441113553-43414b842378?w=900&q=80&fit=crop&auto=format" alt="An electric bicycle parked on a street">
-        <div class="price__body"><span class="price__from">E-bikes · 2-wheel</span><span class="price__amt">Installment <small>from ₱0 down</small></span><ul><li>Commuter & cargo models</li><li>Battery stock on hand</li><li>Charger & helmet included</li></ul></div>
-      </article>
-      <article class="price" data-tilt="6">
-        <img src="https://images.unsplash.com/photo-1778574171671-fbe178537535?w=900&q=80&fit=crop&auto=format" alt="Two riders on electric bikes">
-        <div class="price__body"><span class="price__from">E-bikes · 3 & 4-wheel</span><span class="price__amt"><span data-scramble>₱61,999</span> <small>– ₱79,999</small></span><ul><li>Keyless start models</li><li>Free Metro Manila delivery</li><li>Home Credit approved in-store</li></ul></div>
-      </article>
+    <div class="perks rv">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7z"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>Libre delivery · Metro Manila</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Home Credit &amp; credit card</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/></svg>Online booking · In-store pickup</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>Batteries &amp; parts in stock</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h7"/></svg>Reseller &amp; wholesale pricelist</span>
     </div>
-    <div class="badge-row rv" style="margin-top:28px">
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 7h13v10H3zM16 10h4l1 3v4h-5"/><circle cx="7" cy="17" r="2"/><circle cx="18" cy="17" r="2"/></svg>Libre delivery · Metro Manila</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Home Credit & credit card</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3l9 4.5v9L12 21l-9-4.5v-9z"/></svg>Online booking · In-store pickup</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M13 2L3 14h8l-1 8 10-12h-8z"/></svg>Batteries & parts in stock</span>
-      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h10M4 17h7"/></svg>Reseller & wholesale pricelist</span>
+    <div><a class="btn btn--xl" href="#book">Reserve your bike &amp; book a free test ride</a></div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="sec band band--dark" id="reviews">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap" style="display:grid;gap:30px">
+    <div class="sec__head sec__head--center" style="margin-bottom:0"><span class="eyebrow eyebrow--plain">What riders say</span><h2 data-split class="rv">"Dinagsa" for a reason.</h2><p class="lead" style="text-align:center">Sample reviews shown for presentation, to be replaced with verified customer reviews from Facebook and Google.</p></div>
+  </div>
+  <div class="qmarq" style="margin-top:36px">
+    <div class="qmarq__track">
+      <article class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"Nag-canvass kami sa mall, ₱9,800 yung MTB. Dito ₱5,400 same specs. Pinasakay pa anak ko bago bumili. Delivered the next day, libre."</p><div class="quote__who"><span class="avatar">RM</span><div><b>Rhea M.</b><span>Marikina Heights · MTB for her son</span></div></div></article>
+      <article class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"E-bike for my commute to Pasig. Home Credit approved sa store mismo, 20 minutes. Wala na akong pamasahe, ₱3,200 a month na natitira sa akin."</p><div class="quote__who"><span class="avatar">JD</span><div><b>Jerome D.</b><span>Concepcion Uno · daily commuter</span></div></div></article>
+      <article class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"Reseller ako sa Antipolo. Dati paiba-iba ang supplier ko. Keila's lang ang consistent sa stock at presyo. 18 units last month, and they had batteries when I needed them."</p><div class="quote__who"><span class="avatar">AL</span><div><b>Allan L.</b><span>Antipolo · reseller since 2023</span></div></div></article>
+      <article class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"Bumili kami ng 4-wheel e-bike para kay Tatay. Keyless, delivered sa Pasig for free, tinuruan pa siya kung paano. Lumalabas na ulit siya tuwing umaga."</p><div class="quote__who"><span class="avatar">CS</span><div><b>Carla S.</b><span>Pasig · bought for her father</span></div></div></article>
+      <article class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"Nag-canvass kami sa mall, ₱9,800 yung MTB. Dito ₱5,400 same specs. Pinasakay pa anak ko bago bumili. Delivered the next day, libre."</p><div class="quote__who"><span class="avatar">RM</span><div><b>Rhea M.</b><span>Marikina Heights · MTB for her son</span></div></div></article>
+      <article class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"E-bike for my commute to Pasig. Home Credit approved sa store mismo, 20 minutes. Wala na akong pamasahe, ₱3,200 a month na natitira sa akin."</p><div class="quote__who"><span class="avatar">JD</span><div><b>Jerome D.</b><span>Concepcion Uno · daily commuter</span></div></div></article>
+      <article class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"Reseller ako sa Antipolo. Dati paiba-iba ang supplier ko. Keila's lang ang consistent sa stock at presyo. 18 units last month, and they had batteries when I needed them."</p><div class="quote__who"><span class="avatar">AL</span><div><b>Allan L.</b><span>Antipolo · reseller since 2023</span></div></div></article>
+      <article class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"Bumili kami ng 4-wheel e-bike para kay Tatay. Keyless, delivered sa Pasig for free, tinuruan pa siya kung paano. Lumalabas na ulit siya tuwing umaga."</p><div class="quote__who"><span class="avatar">CS</span><div><b>Carla S.</b><span>Pasig · bought for her father</span></div></div></article>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:36px">
+    <div class="resrow" data-stagger>
+      <div class="result" data-tilt="5"><span class="pill">Sample</span><span class="result__big money" data-scramble>₱4,400</span><span class="mute">avg. saved vs. mall price on an MTB</span><div class="result__bar"><i data-w="78%"></i></div></div>
+      <div class="result" data-tilt="5"><span class="pill">Sample</span><span class="result__big money" data-scramble>48 hrs</span><span class="mute">reserve-to-ride for most customers</span><div class="result__bar"><i data-w="64%"></i></div></div>
+      <div class="result" data-tilt="5"><span class="pill">Sample</span><span class="result__big money" data-scramble>₱3,000+</span><span class="mute">monthly fare savings for e-bike commuters</span><div class="result__bar"><i data-w="88%"></i></div></div>
+      <div class="result" data-tilt="5"><span class="pill">Sample</span><span class="result__big money">0</span><span class="mute">units sold without a test ride offered</span><div class="result__bar"><i data-w="100%"></i></div></div>
     </div>
   </div>
 </section>
 
-<!-- ================= RESERVE ================= -->
-<section class="sec sec--brand" id="reserve">
-  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-  <span class="ghost" aria-hidden="true">05</span>
+<!-- BOOK -->
+<section class="sec" id="book">
+  <span class="ghost ghost--scroll" data-scrub>04</span>
   <div class="wrap">
-    <div class="sec__head">
-      <span class="eyebrow rv">Reserve & test-ride</span>
-      <h2 class="rv" data-split>Pick a day. We'll have your bike ready at the door.</h2>
-      <p class="lead rv rv-d2">No deposit. We set the unit aside for 48 hours, you come sit on it, ride it around Lilac Street, and decide. Takes 30 seconds to book.</p>
-    </div>
-    <div class="booking">
-      <div class="booking__card rv">
+    <div class="book-cine">
+      <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div style="display:grid;gap:20px;position:relative;z-index:1">
+        <span class="eyebrow">Reserve &amp; test-ride</span>
+        <h2 data-split class="rv">Pick a day. We'll have your bike ready at the door.</h2>
+        <p class="lead">No deposit. We set the unit aside for 48 hours, you come sit on it, ride it around Lilac Street, and decide. Takes 30 seconds to book.</p>
+        <div class="promise">
+          <div><i>✓</i><div><b>Unit set aside for 48 hours</b><span>Your pick waits for you at the counter. Walk in, ride it, decide.</span></div></div>
+          <div><i>⏱</i><div><b>Ride home the same day</b><span>Assembled, adjusted, test-ridden. Or free delivery within Metro Manila the next day.</span></div></div>
+          <div><i>₱</i><div><b>Installment approved in-store</b><span>Home Credit agent on site. Bring 2 valid IDs, ride out on installment today.</span></div></div>
+        </div>
+        <p class="small" style="color:rgba(255,255,255,.65)">Reseller or bulk buyer? Choose "Reseller bulk" and we'll send the wholesale pricelist and current stock before your visit.</p>
+      </div>
+      <div style="position:relative;z-index:1">
         <form class="form" data-demo>
           <div class="form__row">
             <label class="field">Your name<input type="text" name="name" placeholder="Juan dela Cruz" required></label>
             <label class="field">Mobile number<input type="tel" name="phone" placeholder="09XX XXX XXXX" required></label>
           </div>
           <div class="field">What are you looking for?
-            <div class="chips" data-chips="multi">
+            <div class="chips" data-chips="single">
               <button type="button" class="chip" aria-pressed="false">Kids bike</button><button type="button" class="chip" aria-pressed="true">MTB</button><button type="button" class="chip" aria-pressed="false">Folding</button><button type="button" class="chip" aria-pressed="false">E-bike 2-wheel</button><button type="button" class="chip" aria-pressed="false">E-bike 3–4 wheel</button><button type="button" class="chip" aria-pressed="false">Reseller bulk</button>
             </div>
           </div>
-          <div class="field">Pick a day<div class="chips days" data-chips id="days"></div></div>
-          <div class="field">Pick a slot
-            <div class="chips slots" data-chips>
-              <button type="button" class="chip" aria-pressed="true">9:30 AM</button><button type="button" class="chip" aria-pressed="false">11:00 AM</button><button type="button" class="chip" aria-pressed="false">1:30 PM</button><button type="button" class="chip" aria-pressed="false">3:00 PM</button><button type="button" class="chip" aria-pressed="false">4:30 PM</button><button type="button" class="chip" aria-pressed="false">6:00 PM</button>
-            </div>
-          </div>
+          <div class="field">Pick a day<div class="days chips" data-chips="single" id="days"></div></div>
+          <div class="field">Pick a slot<div class="chips slots" data-chips="single" id="slots"></div></div>
           <label class="field">Which branch?<select name="branch"><option>Lilac St. bodega — Concepcion Dos</option><option>Goodrich Village — Concepcion Uno</option><option>Deliver to me (free, Metro Manila)</option></select></label>
-          <button class="btn btn--xl" type="submit">Reserve my bike & book a free test ride</button>
+          <button class="btn btn--xl btn--accent" type="submit">Reserve my bike &amp; book a free test ride</button>
           <a class="btn btn--ghost" href="https://m.me/KEILASBIKESHOP" target="_blank" rel="noopener">Prefer chat? Message us on Messenger</a>
-          <p class="small mute center">We'll confirm by text within the hour. No deposit, no obligation.</p>
+          <p class="small center" style="color:rgba(255,255,255,.6)">We'll confirm by text within the hour. No deposit, no obligation.</p>
         </form>
-        <div class="form__done"><b>Reserved! 🚲</b>We'll text you to confirm your test-ride slot. Bring an ID — and maybe a helmet.</div>
-      </div>
-      <div class="booking__side" data-stagger>
-        <div class="card" data-tilt="4"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></div><h3>Unit set aside for 48 hours</h3><p>Your pick waits for you at the counter. Walk in, ride it, decide.</p></div>
-        <div class="card" data-tilt="4"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>Ride home the same day</h3><p>Assembled, adjusted, test-ridden. Or free delivery within Metro Manila the next day.</p></div>
-        <div class="card" data-tilt="4"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></div><h3>Installment approved in-store</h3><p>Home Credit agent on site. Bring 2 valid IDs, ride out on installment today.</p></div>
-        <div class="card card--dark" data-tilt="4"><h3 style="color:#fff">Reseller or bulk buyer?</h3><p>Choose "Reseller bulk" above and we'll send the wholesale pricelist and current stock before your visit.</p></div>
+        <div class="form__done"><b>Reserved.</b>We'll text you within the hour to confirm your test ride and set the unit aside.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= REVIEWS ================= -->
-<section class="sec sec--dark" id="reviews">
+<!-- FAQ -->
+<section class="sec sec--soft" id="faq">
+  <div class="wrap">
+    <div class="sec__head sec__head--center"><span class="eyebrow eyebrow--plain">Questions before you visit</span><h2 data-split class="rv">Straight answers.</h2></div>
+    <div class="faq">
+      <details class="rv" open><summary>Is there a warranty?</summary><p>Yes. Frames and e-bike motors carry a shop warranty, and we do a free tune-up within the first 30 days. Bring the unit back to either branch. We fix it, no runaround.</p></details>
+      <details class="rv"><summary>Can I really test-ride before paying?</summary><p>Always. Reserve online, the unit is set aside for 48 hours, and you ride it around Lilac Street before deciding. No deposit required to reserve.</p></details>
+      <details class="rv"><summary>Where do you deliver for free?</summary><p>Anywhere in Metro Manila, free, usually next day. Rizal and nearby provinces are available at a flat rate. Ask us on Messenger with your barangay.</p></details>
+      <details class="rv"><summary>How does installment work?</summary><p>A Home Credit agent is on site at the bodega. Bring two valid IDs; approval usually takes 15–20 minutes. Credit cards are also accepted for straight or installment payment.</p></details>
+      <details class="rv"><summary>I'm a reseller. How do I get wholesale pricing?</summary><p>Tick "Reseller bulk" on the reserve form or message us. We'll send the current wholesale pricelist and stock sheet. Minimum order quantities apply per model.</p></details>
+      <details class="rv"><summary>What happens when my e-bike battery dies?</summary><p>We keep a dedicated e-bike battery warehouse. Replacement batteries for the models we sell are in stock, and we install them for you. No 3-week wait for a shipment.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section class="sec final band" data-sticky-end>
   <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="grain" aria-hidden="true"></div>
-  <span class="ghost" aria-hidden="true">06</span>
-  <div class="wrap">
-    <div class="sec__head sec__head--center">
-      <span class="eyebrow rv">What riders say</span>
-      <h2 class="rv" data-split>"Dinagsa" <span class="gradient-text">for a reason.</span></h2>
-      <p class="lead rv rv-d2">Sample reviews shown for presentation — to be replaced with verified customer reviews from Facebook and Google.</p>
-    </div>
-    <div class="quotes" data-stagger>
-      <article class="quote" data-tilt="5"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"Nag-canvass kami sa mall, ₱9,800 yung MTB. Dito ₱5,400 same specs. Pinasakay pa anak ko bago bumili. Delivered the next day, libre."</p><div class="quote__who"><span class="avatar">RM</span><div><b>Rhea M.</b><span>Marikina Heights · MTB for her son</span></div></div></article>
-      <article class="quote" data-tilt="5"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"E-bike for my commute to Pasig. Home Credit approved sa store mismo, 20 minutes. Wala na akong pamasahe — ₱3,200 a month na natitira sa akin."</p><div class="quote__who"><span class="avatar">JD</span><div><b>Jerome D.</b><span>Concepcion Uno · daily commuter</span></div></div></article>
-      <article class="quote" data-tilt="5"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"Reseller ako sa Antipolo. Dati paiba-iba ang supplier ko. Keila's lang ang consistent sa stock at presyo. 18 units last month, and they had batteries when I needed them."</p><div class="quote__who"><span class="avatar">AL</span><div><b>Allan L.</b><span>Antipolo · reseller since 2023</span></div></div></article>
-    </div>
-    <div class="grid grid--4" style="margin-top:28px" data-stagger>
-      <div class="result" data-tilt="5"><span class="pill" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6)">Sample</span><span class="result__big money" data-scramble>₱4,400</span><span class="mute">avg. saved vs. mall price on an MTB</span><div class="result__bar"><i data-w="78%"></i></div></div>
-      <div class="result" data-tilt="5"><span class="pill" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6)">Sample</span><span class="result__big money" data-scramble>48 hrs</span><span class="mute">reserve-to-ride for most customers</span><div class="result__bar"><i data-w="60%"></i></div></div>
-      <div class="result" data-tilt="5"><span class="pill" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6)">Sample</span><span class="result__big money" data-scramble>₱3,000+</span><span class="mute">monthly fare savings for e-bike commuters</span><div class="result__bar"><i data-w="85%"></i></div></div>
-      <div class="result" data-tilt="5"><span class="pill" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6)">Sample</span><span class="result__big money">0</span><span class="mute">units sold without a test ride offered</span><div class="result__bar"><i data-w="100%"></i></div></div>
-    </div>
+  <span class="ghost">05</span>
+  <div class="wrap center" style="display:grid;gap:22px;justify-items:center">
+    <span class="eyebrow eyebrow--plain">Open daily 9AM–7PM · 3 Lilac St., Concepcion Dos, Marikina</span>
+    <h2 data-split class="rv" style="max-width:14ch;font-size:clamp(44px,7vw,110px);line-height:.95">Your bike is already here. Come ride it.</h2>
+    <p class="lead" style="text-align:center;color:rgba(255,255,255,.85)">Reserve in 30 seconds. Free test ride, bodega price, libre delivery. If it's not the right bike, you walk away. No deposit lost.</p>
+    <div class="hero__ctas" style="justify-content:center"><a class="btn btn--xl btn--light" href="#book">Reserve your bike &amp; book a free test ride</a><a class="btn btn--accent" href="https://m.me/KEILASBIKESHOP" target="_blank" rel="noopener">Message us on Messenger</a></div>
   </div>
 </section>
-
-<!-- ================= FAQ ================= -->
-<section class="sec" id="faq">
-  <span class="ghost" aria-hidden="true">07</span>
-  <div class="wrap">
-    <div class="sec__head sec__head--center"><span class="eyebrow rv">Questions before you visit</span><h2 class="rv" data-split>Straight answers.</h2></div>
-    <div class="faq" data-stagger>
-      <details open><summary>Is there a warranty?</summary><p>Yes. Frames and e-bike motors carry a shop warranty, and we do a free tune-up within the first 30 days. Bring the unit back to either branch — we fix it, no runaround.</p></details>
-      <details><summary>Can I really test-ride before paying?</summary><p>Always. Reserve online, the unit is set aside for 48 hours, and you ride it around Lilac Street before deciding. No deposit required to reserve.</p></details>
-      <details><summary>Where do you deliver for free?</summary><p>Anywhere in Metro Manila, free, usually next day. Rizal and nearby provinces are available at a flat rate — ask us on Messenger with your barangay.</p></details>
-      <details><summary>How does installment work?</summary><p>A Home Credit agent is on site at the bodega. Bring two valid IDs; approval usually takes 15–20 minutes. Credit cards are also accepted for straight or installment payment.</p></details>
-      <details><summary>I'm a reseller. How do I get wholesale pricing?</summary><p>Tick "Reseller bulk" on the reserve form or message us. We'll send the current wholesale pricelist and stock sheet. Minimum order quantities apply per model.</p></details>
-      <details><summary>What happens when my e-bike battery dies?</summary><p>We keep a dedicated e-bike battery warehouse. Replacement batteries for the models we sell are in stock, and we install them for you — no 3-week wait for a shipment.</p></details>
-    </div>
-  </div>
-</section>
-
-<!-- ================= FINAL CTA ================= -->
-<section class="sec final sec--brand" data-sticky-end>
-  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-  <div class="wrap">
-    <span class="eyebrow eyebrow--plain rv">Open daily 9AM–7PM · 3 Lilac St., Concepcion Dos, Marikina</span>
-    <h2 class="rv" data-split style="margin:18px auto 16px">Your bike is already here. Come ride it.</h2>
-    <p class="rv rv-d2">Reserve in 30 seconds. Free test ride, bodega price, libre delivery. If it's not the right bike, you walk away — no deposit lost.</p>
-    <div class="hero__ctas rv rv-d3" style="justify-content:center;margin-top:28px">
-      <a class="btn btn--light btn--xl" href="#reserve">Reserve your bike & book a free test ride</a>
-      <a class="btn btn--accent" href="https://m.me/KEILASBIKESHOP" target="_blank" rel="noopener">Message us on Messenger</a>
-    </div>
-  </div>
-</section>
-
 </main>
 
 <footer class="footer">
   <div class="wrap">
     <div class="footer__grid">
-      <div><a class="brand" href="#top"><span class="brand__mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h-5l-4 11.5M15 6l3.5 11.5M15 6l-3 6h-6"/></svg></span>Keila's Bike Shop</a><p>Pinakamaasahan at pinakamurang bikes & e-bikes bodega. Wholesale · Retail · Resell.</p></div>
+      <div><a class="brand" href="#top"><span class="brand__mark"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="M6 16l4-8h5l3 8M10 8h4"/></svg></span>Keila's Bike Shop</a><p>Pinakamaasahan at pinakamurang bikes &amp; e-bikes bodega. Wholesale · Retail · Resell.</p></div>
       <div><span class="eyebrow eyebrow--plain">Visit</span><p>3 Lilac St., Concepcion Dos<br>Marikina City<br>Branch 2: Goodrich Village, Concepcion Uno<br>Daily 9:00 AM – 7:00 PM</p></div>
       <div><span class="eyebrow eyebrow--plain">Talk</span><p><a href="tel:+639245718347">+63 924 571 8347</a><br><a href="https://m.me/KEILASBIKESHOP" target="_blank" rel="noopener">Messenger</a></p></div>
       <div><span class="eyebrow eyebrow--plain">Follow</span><p><a href="https://www.facebook.com/KEILASBIKESHOP" target="_blank" rel="noopener">facebook.com/KEILASBIKESHOP</a><br><a href="https://www.instagram.com/keilasbikeshopmarikinabodega/" target="_blank" rel="noopener">@keilasbikeshopmarikinabodega</a></p></div>
@@ -402,21 +349,19 @@ h2 { font-size: clamp(36px, 5vw, 68px); }
   </div>
 </footer>
 
-<div class="sticky"><span>Free test ride · libre delivery · bodega price</span><a class="btn btn--accent" href="#reserve">Reserve now</a></div>
-<div class="ribbon"><span>Preview build · sample testimonials & results for presentation</span></div>
+<div class="sticky"><span>Free test ride · unit reserved 48 hrs</span><a class="btn btn--accent" href="#book">Reserve now</a></div>
 
 <script src="/funnels/shared/charts.js" defer></script>
 <script src="/funnels/shared/fx.js" defer></script>
-<script defer>
-document.addEventListener('DOMContentLoaded', function () {
-  var host = document.getElementById('days'); if (!host) return;
-  var dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var d = new Date(); d.setDate(d.getDate() + 1);
-  for (var i = 0; i < 6; i++) {
-    var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
-    b.innerHTML = '<small>' + dn[d.getDay()] + '</small><b>' + d.getDate() + '</b><small>' + mn[d.getMonth()] + '</small>';
-    host.appendChild(b); d.setDate(d.getDate() + 1);
-  }
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const nav = document.getElementById('nav');
+  const onS = () => nav.classList.toggle('solid', scrollY > 80);
+  addEventListener('scroll', onS, { passive: true }); onS();
+  const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const days = document.getElementById('days'), d = new Date(); d.setDate(d.getDate() + 1);
+  for (let k = 0; k < 6; k++) { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.setAttribute('aria-pressed', k === 0 ? 'true' : 'false'); b.innerHTML = `<small>${dn[d.getDay()]}</small><b>${d.getDate()}</b><small>${mn[d.getMonth()]}</small>`; days.appendChild(b); d.setDate(d.getDate() + 1); }
+  const slots = document.getElementById('slots'); ['9:30 AM','11:00 AM','1:30 PM','3:00 PM','4:30 PM','6:00 PM'].forEach((s, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false'); b.textContent = s; slots.appendChild(b); });
 });
 </script>
 </body>
