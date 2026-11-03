@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,800;1,9..40,500&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/funnels/shared/ui.css">
 <style>
+  .sec { position: relative; overflow: hidden; }
   :root {
     --brand: #2f8fc4; --brand-ink: #1b6a99; --brand-soft: #e8f4fb; --bg-2: #f3f9fd; --bg-3: #e8f4fb;
     --accent: #fd5db6; --accent-ink: #fff; --dark: #0b1324; --dark-2: #121c30;
@@ -62,10 +63,11 @@
 <main id="top">
 <!-- HERO -->
 <section class="hero">
-  <div class="wrap hero__grid">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div><div class="grain" aria-hidden="true"></div>
+  <div class="wrap hero__grid" style="position:relative;z-index:1">
     <div class="hero__copy">
       <span class="eyebrow rv">LG commercial laundry · Setup · Training · 24/7 repair</span>
-      <h1 class="rv rv-d1">Own a laundry shop that pays you <em class="acc sky">every single month.</em></h1>
+      <h1 data-split>Own a laundry shop that pays you <em class="acc sky">every single month.</em></h1>
       <p class="lead rv rv-d2">Dirty clothes never stop. Drinking water never stops. LaundroDream gives you both income streams in one store, with LG commercial machines, full setup and the support to hit a <b>₱100,000-a-month profit target</b>.</p>
       <div class="hero__ctas rv rv-d3">
         <a class="btn btn--xl" href="#book">Book my free consultation <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
@@ -77,15 +79,15 @@
         <span><b>24/7</b> emergency repair</span>
       </div>
     </div>
-    <div class="hero__media rv rv-d2">
-      <img src="https://images.unsplash.com/photo-1604335398980-ededcadcc37d?w=1400&q=80&fit=crop&auto=format" alt="A clean, bright self-service laundry shop with rows of LG commercial washers">
-      <div class="float float--tl"><b>₱384K</b><span>Monthly sales scenario</span></div>
+    <div class="hero__media">
+      <div data-parallax="0.08"><img src="https://images.unsplash.com/photo-1604335398980-ededcadcc37d?w=1400&q=80&fit=crop&auto=format" alt="A clean, bright self-service laundry shop with rows of LG commercial washers"></div>
+      <div class="float float--tl"><b data-scramble>₱384K</b><span>Monthly sales scenario</span></div>
       <div class="float float--br"><b>2</b><span>Income streams, 1 store</span></div>
     </div>
   </div>
 </section>
 
-<div class="marquee" aria-hidden="true">
+<div class="marquee marquee--xl marquee--outline" aria-hidden="true">
   <div class="marquee__track">
     <span>Clean clothes</span><span>Clean water</span><span>Two ways to earn daily</span><span>LG commercial machines</span><span>Installation included</span><span>Owner training</span><span>24/7 repair</span>
     <span>Clean clothes</span><span>Clean water</span><span>Two ways to earn daily</span><span>LG commercial machines</span><span>Installation included</span><span>Owner training</span><span>24/7 repair</span>
@@ -94,41 +96,43 @@
 
 <!-- PAIN -->
 <section class="sec sec--soft" id="why">
+  <span class="ghost">01</span>
   <div class="wrap pain">
     <div>
       <div class="sec__head">
         <span class="eyebrow rv">Sound familiar?</span>
-        <h2 class="rv rv-d1">You've saved for years. You're scared to put it into something that <em class="acc">doesn't sell.</em></h2>
+        <h2 data-split class="rv rv-d1">You've saved for years. You're scared to put it into something that <em class="acc">doesn't sell.</em></h2>
         <p class="lead rv rv-d2">Most people we talk to aren't short on capital. They're short on certainty. The fear isn't the washing machines. It's waking up in month four with an empty shop and a loan to pay.</p>
       </div>
       <a class="btn rv" href="#book">Show me a business that sells every day</a>
     </div>
     <div class="pain__list">
-      <div class="pain__item rv"><i>!</i><div><b>The trend trap</b><p>Milk tea. Samgyupsal. The viral product of the year. Trends spike, then everyone copies it, then it dies, and your capital dies with it.</p></div></div>
-      <div class="pain__item rv rv-d1"><i>!</i><div><b>Salary ceiling</b><p>You work harder every year and your income barely moves. One job, one paycheck, zero leverage.</p></div></div>
-      <div class="pain__item rv rv-d2"><i>!</i><div><b>Franchise fees that eat your profit</b><p>Royalties, marketing fees, mandatory supplies. You own the risk; someone else owns the upside.</p></div></div>
-      <div class="pain__item rv rv-d3"><i>!</i><div><b>Nobody to call when a machine breaks</b><p>A dead dryer on a Saturday is a week of lost sales and refunds. Most suppliers vanish after delivery.</p></div></div>
-      <div class="pain__item pain__item--good rv rv-d4"><i>✓</i><div><b>What you actually want</b><p>A store that sells a need, not a trend. A number you can plan around. A partner who picks up the phone.</p></div></div>
+      <div class="pain__item rv" data-tilt="5"><i>!</i><div><b>The trend trap</b><p>Milk tea. Samgyupsal. The viral product of the year. Trends spike, then everyone copies it, then it dies, and your capital dies with it.</p></div></div>
+      <div class="pain__item rv rv-d1" data-tilt="5"><i>!</i><div><b>Salary ceiling</b><p>You work harder every year and your income barely moves. One job, one paycheck, zero leverage.</p></div></div>
+      <div class="pain__item rv rv-d2" data-tilt="5"><i>!</i><div><b>Franchise fees that eat your profit</b><p>Royalties, marketing fees, mandatory supplies. You own the risk; someone else owns the upside.</p></div></div>
+      <div class="pain__item rv rv-d3" data-tilt="5"><i>!</i><div><b>Nobody to call when a machine breaks</b><p>A dead dryer on a Saturday is a week of lost sales and refunds. Most suppliers vanish after delivery.</p></div></div>
+      <div class="pain__item pain__item--good rv rv-d4" data-tilt="5"><i>✓</i><div><b>What you actually want</b><p>A store that sells a need, not a trend. A number you can plan around. A partner who picks up the phone.</p></div></div>
     </div>
   </div>
 </section>
 
 <!-- TWO STREAMS -->
 <section class="sec" id="streams">
+  <span class="ghost">02</span>
   <div class="wrap">
     <div class="sec__head sec__head--center">
       <span class="eyebrow eyebrow--plain rv">The opportunity</span>
-      <h2 class="rv rv-d1">Why settle for one revenue stream when your location can support <span class="sky">two?</span></h2>
+      <h2 data-split class="rv rv-d1">Why settle for one revenue stream when your location can support <span class="sky">two?</span></h2>
       <p class="lead rv rv-d2">Laundry brings customers in every week. Water refilling brings them in every two days. Same rent, same staff, two cash registers.</p>
     </div>
     <div class="two">
-      <article class="two__card rv">
-        <img src="https://images.unsplash.com/photo-1638949493140-edb10b7be2f3?w=1200&q=80&fit=crop&auto=format" alt="Row of commercial washers and dryers">
+      <article class="two__card img-par rv" data-tilt="4">
+        <img data-parallax="-0.08" src="https://images.unsplash.com/photo-1638949493140-edb10b7be2f3?w=1200&q=80&fit=crop&auto=format" alt="Row of commercial washers and dryers">
         <div><span class="eyebrow">Stream 01 · Laundry</span><b class="big">₱264,000<span class="mute" style="font-size:16px"> / month</span></b><p class="mute">40 wash-dry-fold tickets a day at an average ₱220. Rain or shine, payday or not, the hamper fills up.</p></div>
       </article>
       <div class="two__plus" aria-hidden="true">+</div>
-      <article class="two__card rv rv-d1">
-        <img src="https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=1200&q=80&fit=crop&auto=format" alt="Basket of fresh, clean laundry">
+      <article class="two__card img-par rv rv-d1" data-tilt="4">
+        <img data-parallax="-0.08" src="https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=1200&q=80&fit=crop&auto=format" alt="Basket of fresh, clean laundry">
         <div><span class="eyebrow">Stream 02 · Water refilling</span><b class="big">₱120,000<span class="mute" style="font-size:16px"> / month</span></b><p class="mute">100 refills a day at ₱40. Families don't skip drinking water, and they rarely switch stations once they trust yours.</p></div>
       </article>
     </div>
@@ -137,11 +141,12 @@
 
 <!-- NUMBERS -->
 <section class="sec sec--dark" id="numbers">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div><span class="ghost">03</span>
   <div class="wrap calc">
     <div>
       <div class="sec__head">
         <span class="eyebrow rv">The ₱100K math</span>
-        <h2 class="rv rv-d1">Move the sliders. Watch the profit line.</h2>
+        <h2 data-split class="rv rv-d1">Move the sliders. Watch the profit line.</h2>
         <p class="lead rv rv-d2">This is the scenario we build with you on the call, using your actual location, rent and utility rates. Illustrative, not a promise, but it's the same model our shops are run on.</p>
       </div>
       <div class="grid" style="gap:18px">
@@ -166,33 +171,35 @@
 
 <!-- DREAM -->
 <section class="sec sec--brand" id="dream">
+  <span class="ghost">04</span>
   <div class="wrap">
     <div class="sec__head sec__head--center">
       <span class="eyebrow eyebrow--plain rv">The real dream</span>
-      <h2 class="rv rv-d1">You don't want a laundry shop. You want what a laundry shop <em class="acc">gives you.</em></h2>
+      <h2 data-split class="rv rv-d1">You don't want a laundry shop. You want what a laundry shop <em class="acc">gives you.</em></h2>
     </div>
-    <div class="grid grid--3">
-      <div class="card rv"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><h3>An extra ₱50K, ₱100K or more every month</h3><p>Income that lands whether you clocked in or not. The kind that makes a salary feel like a bonus.</p></div>
-      <div class="card rv rv-d1"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></div><h3>The next property, fully funded</h3><p>Owners use month-12 profit as the down payment on the lot, the condo or the second branch.</p></div>
-      <div class="card rv rv-d2"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10l-10-5-10 5 10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><h3>Tuition that's never a question again</h3><p>A store that quietly pays the school fees, the tutors and the trips while you keep your day job or finally leave it.</p></div>
-      <div class="card rv rv-d1"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><h3>Time that belongs to you</h3><p>Trained staff run the floor. You review the day's sales from your phone and show up when you want to.</p></div>
-      <div class="card rv rv-d2"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg></div><h3>An asset you can expand or sell</h3><p>Equipment, a customer base and a proven P&amp;L. Unlike a trend, a laundry shop is worth something to the next buyer.</p></div>
-      <div class="card card--brand rv rv-d3"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12a8 8 0 1 1-16 0 8 8 0 0 1 16 0z"/><path d="M12 8v4l2 2"/></svg></div><h3>Start in 45 to 60 days</h3><p>Location check, layout, LG delivery, installation, training, opening day. We've run this playbook thousands of times.</p></div>
+    <div class="grid grid--3" data-stagger>
+      <div class="card rv" data-tilt="5"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><h3>An extra ₱50K, ₱100K or more every month</h3><p>Income that lands whether you clocked in or not. The kind that makes a salary feel like a bonus.</p></div>
+      <div class="card rv rv-d1" data-tilt="5"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></div><h3>The next property, fully funded</h3><p>Owners use month-12 profit as the down payment on the lot, the condo or the second branch.</p></div>
+      <div class="card rv rv-d2" data-tilt="5"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10l-10-5-10 5 10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div><h3>Tuition that's never a question again</h3><p>A store that quietly pays the school fees, the tutors and the trips while you keep your day job or finally leave it.</p></div>
+      <div class="card rv rv-d1" data-tilt="5"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><h3>Time that belongs to you</h3><p>Trained staff run the floor. You review the day's sales from your phone and show up when you want to.</p></div>
+      <div class="card rv rv-d2" data-tilt="5"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg></div><h3>An asset you can expand or sell</h3><p>Equipment, a customer base and a proven P&amp;L. Unlike a trend, a laundry shop is worth something to the next buyer.</p></div>
+      <div class="card card--brand rv rv-d3" data-tilt="5"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12a8 8 0 1 1-16 0 8 8 0 0 1 16 0z"/><path d="M12 8v4l2 2"/></svg></div><h3>Start in 45 to 60 days</h3><p>Location check, layout, LG delivery, installation, training, opening day. We've run this playbook thousands of times.</p></div>
     </div>
   </div>
 </section>
 
 <!-- FOUNDER -->
 <section class="sec" id="story">
-  <div class="wrap founder">
-    <div class="founder__media rv">
+  <span class="ghost">05</span>
+  <div class="wrap founder" style="align-items:start">
+    <div class="founder__media pin rv" data-tilt="3">
       <img src="https://images.unsplash.com/photo-1639580133969-48cbbce72e1f?w=1200&q=80&fit=crop&auto=format" alt="A laundry shop owner at her store">
       <div class="founder__tag"><b>Las Piñas, Metro Manila</b>Home base of the LaundroDream team</div>
     </div>
     <div class="founder__copy">
       <span class="eyebrow rv">Why LaundroDream exists</span>
-      <h2 class="rv rv-d1">Built by people who got tired of watching good savings go into bad businesses.</h2>
-      <p class="pull rv rv-d2">"We've seen too many Filipinos put ₱1M into a trend and lose it in a year. Laundry is boring. Boring is what pays."</p>
+      <h2 data-split class="rv rv-d1">Built by people who got tired of watching good savings go into bad businesses.</h2>
+      <p class="pull pull-xl rv rv-d2" style="border:0;padding:0">"We've seen too many Filipinos put ₱1M into a trend and lose it in a year. Laundry is boring. Boring is what pays."</p>
       <p class="rv rv-d2">LaundroDream started as a machine supplier and became something closer to a business partner: an official LG commercial laundry provider that handles the location check, the layout, the installation, the owner training and the 24/7 emergency repair line, because a machine that's down is a store that's bleeding.</p>
       <p class="rv rv-d3">Today the team reports more than 6,000 laundry shops served across the Philippines, from first-time owners to OFWs building a business back home to entrepreneurs adding a second income stream beside their existing store.</p>
       <div class="trust rv rv-d3">
@@ -207,14 +214,15 @@
 
 <!-- PACKAGE -->
 <section class="sec sec--soft" id="package">
+  <span class="ghost">06</span>
   <div class="wrap">
     <div class="sec__head">
       <span class="eyebrow rv">What you get</span>
-      <h2 class="rv rv-d1">Not a franchise. <em class="acc">Your</em> store, our system, zero royalties.</h2>
+      <h2 data-split class="rv rv-d1">Not a franchise. <em class="acc">Your</em> store, our system, zero royalties.</h2>
       <p class="lead rv rv-d2">You keep 100% of your profit. We make money once, on the equipment and setup, so our only incentive is to make your store work.</p>
     </div>
     <div class="offer">
-      <ul class="offer__list">
+      <ul class="offer__list" data-stagger>
         <li class="rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg><div><b>LG commercial washers and dryers</b><span>Sized to your location: a compact starter set or a full self-service floor, with priority allocation and partner pricing.</span></div></li>
         <li class="rv rv-d1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg><div><b>Water-refilling station option</b><span>Filtration, dispensing and a second income stream from the same space and staff.</span></div></li>
         <li class="rv rv-d2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg><div><b>Location check and store layout</b><span>Foot traffic, competition, water and power requirements, then a floor plan that fits the machines and the queue.</span></div></li>
@@ -240,36 +248,39 @@
   </div>
 </section>
 
+<div class="marquee marquee--xl" aria-hidden="true"><div class="marquee__track"><span>₱100K months</span><span>Zero royalties</span><span>Two income streams</span><span>45-day launch</span><span>24/7 repair</span><span>₱100K months</span><span>Zero royalties</span><span>Two income streams</span><span>45-day launch</span><span>24/7 repair</span></div></div>
 <!-- STORIES (sample) -->
 <section class="sec" id="stories">
+  <span class="ghost">07</span>
   <div class="wrap">
     <div class="sec__head sec__head--center">
       <span class="eyebrow eyebrow--plain rv">Owner stories</span>
-      <h2 class="rv rv-d1">Ordinary people. Boring business. <em class="acc">Extraordinary months.</em></h2>
+      <h2 data-split class="rv rv-d1">Ordinary people. Boring business. <em class="acc">Extraordinary months.</em></h2>
       <p class="lead rv rv-d2">Sample stories for this preview, written in the voice of the three owners we see most often: the first-timer, the OFW investor and the expanding entrepreneur.</p>
     </div>
-    <div class="quotes">
-      <div class="quote rv"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"I kept my job in BGC and opened in Imus. By month three the shop was clearing the rent and my staff's salary before the 10th. By month seven I hit my first ₱100K profit month. I'm scouting a second location now."</p><div class="quote__who"><span class="avatar">JR</span><div><b>Jessa R.</b><span>First-time owner · Cavite</span></div></div></div>
-      <div class="quote rv rv-d1"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"I'm in Dubai. My sister runs the floor, I run the numbers from my phone. The LaundroDream team did the location check, the install and the training while I was abroad. The water station alone pays the electricity."</p><div class="quote__who"><span class="avatar">MD</span><div><b>Mark D.</b><span>OFW investor · Bulacan</span></div></div></div>
-      <div class="quote rv rv-d2"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"We already had a sari-sari and a water station. Adding four LG washers turned a ₱40K-a-month corner into a ₱180K-a-month store. A dryer went down once on a Sunday; the technician was there Monday morning."</p><div class="quote__who"><span class="avatar">AL</span><div><b>Ana &amp; Lito</b><span>Expanding entrepreneurs · Laguna</span></div></div></div>
+    <div class="quotes" data-stagger>
+      <div class="quote rv" data-tilt="5"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"I kept my job in BGC and opened in Imus. By month three the shop was clearing the rent and my staff's salary before the 10th. By month seven I hit my first ₱100K profit month. I'm scouting a second location now."</p><div class="quote__who"><span class="avatar">JR</span><div><b>Jessa R.</b><span>First-time owner · Cavite</span></div></div></div>
+      <div class="quote rv rv-d1" data-tilt="5"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"I'm in Dubai. My sister runs the floor, I run the numbers from my phone. The LaundroDream team did the location check, the install and the training while I was abroad. The water station alone pays the electricity."</p><div class="quote__who"><span class="avatar">MD</span><div><b>Mark D.</b><span>OFW investor · Bulacan</span></div></div></div>
+      <div class="quote rv rv-d2" data-tilt="5"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"We already had a sari-sari and a water station. Adding four LG washers turned a ₱40K-a-month corner into a ₱180K-a-month store. A dryer went down once on a Sunday; the technician was there Monday morning."</p><div class="quote__who"><span class="avatar">AL</span><div><b>Ana &amp; Lito</b><span>Expanding entrepreneurs · Laguna</span></div></div></div>
     </div>
     <div class="grid grid--4" style="margin-top:22px">
-      <div class="result rv"><span class="pill">Sample result</span><div class="result__big money">₱412K</div><span class="mute">First full month of sales, 6-washer self-service store</span><div class="result__bar"><i data-w="92%"></i></div></div>
-      <div class="result rv rv-d1"><span class="pill">Sample result</span><div class="result__big money">7 mo</div><span class="mute">To first ₱100K profit month</span><div class="result__bar"><i data-w="58%"></i></div></div>
-      <div class="result rv rv-d2"><span class="pill">Sample result</span><div class="result__big money">18 mo</div><span class="mute">Average payback on a ₱1.2M setup in the model</span><div class="result__bar"><i data-w="75%"></i></div></div>
-      <div class="result rv rv-d3"><span class="pill">Sample result</span><div class="result__big money">31%</div><span class="mute">Owners who open a second branch within 2 years (illustrative)</span><div class="result__bar"><i data-w="31%"></i></div></div>
+      <div class="result rv" data-tilt="5"><span class="pill">Sample result</span><div class="result__big money" data-scramble>₱412K</div><span class="mute">First full month of sales, 6-washer self-service store</span><div class="result__bar"><i data-w="92%"></i></div></div>
+      <div class="result rv rv-d1" data-tilt="5"><span class="pill">Sample result</span><div class="result__big money" data-scramble>7 mo</div><span class="mute">To first ₱100K profit month</span><div class="result__bar"><i data-w="58%"></i></div></div>
+      <div class="result rv rv-d2" data-tilt="5"><span class="pill">Sample result</span><div class="result__big money" data-scramble>18 mo</div><span class="mute">Average payback on a ₱1.2M setup in the model</span><div class="result__bar"><i data-w="75%"></i></div></div>
+      <div class="result rv rv-d3" data-tilt="5"><span class="pill">Sample result</span><div class="result__big money" data-scramble>31%</div><span class="mute">Owners who open a second branch within 2 years (illustrative)</span><div class="result__bar"><i data-w="31%"></i></div></div>
     </div>
   </div>
 </section>
 
 <!-- STEPS -->
 <section class="sec sec--soft" id="steps">
+  <span class="ghost">08</span>
   <div class="wrap">
     <div class="sec__head">
       <span class="eyebrow rv">From "someday" to opening day</span>
-      <h2 class="rv rv-d1">Five steps. We hold your hand through all of them.</h2>
+      <h2 data-split class="rv rv-d1">Five steps. We hold your hand through all of them.</h2>
     </div>
-    <div class="steps">
+    <div class="steps" data-stagger>
       <div class="step rv"><h3>Free consultation</h3><p>Tell us where you want to open, the space you have and the capital range you're considering. We build your scenario live.</p></div>
       <div class="step rv rv-d1"><h3>Location &amp; layout</h3><p>We assess the market, the foot traffic, the water and power supply, then design the floor around the queue.</p></div>
       <div class="step rv rv-d2"><h3>Equipment &amp; install</h3><p>LG machines delivered, installed and commissioned by our technicians. Water station included if you want stream two.</p></div>
@@ -281,15 +292,16 @@
 
 <!-- BOOK -->
 <section class="sec" id="book">
+  <span class="ghost">09</span>
   <div class="wrap booking">
     <div>
       <span class="eyebrow rv">Book your free consultation</span>
-      <h2 class="rv rv-d1">Thirty minutes. Your numbers. Zero pressure.</h2>
+      <h2 data-split class="rv rv-d1">Thirty minutes. Your numbers. Zero pressure.</h2>
       <p class="lead rv rv-d2">You'll leave the call knowing exactly how much capital you need, what you'd earn in three scenarios and whether your location can support it. If it can't, we'll tell you.</p>
       <div class="guarantee rv rv-d3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg><div><b>The honest-numbers promise.</b> We'd rather lose a sale than open a store that won't make it. Every scenario we show you comes with the assumptions written down.</div></div>
       <p class="rv rv-d3">Prefer to talk now? Call <b>0946 923 5583</b> or <b>0908 899 8089</b>, Mon–Sun 8:00 AM–6:00 PM, or message <a class="sky" href="https://m.me/laundrodreamph" target="_blank" rel="noopener"><b>LaundroDream on Messenger</b></a>.</p>
     </div>
-    <div class="booking__card rv rv-d1">
+    <div class="booking__card rv rv-d1" data-tilt="2">
       <form class="form" data-demo>
         <div class="form__row">
           <label class="field">Full name<input type="text" name="name" placeholder="Juan dela Cruz" required></label>
@@ -320,7 +332,7 @@
 <!-- FAQ -->
 <section class="sec sec--soft" id="faq">
   <div class="wrap">
-    <div class="sec__head sec__head--center"><span class="eyebrow eyebrow--plain rv">Questions</span><h2 class="rv rv-d1">Everything people ask before they book</h2></div>
+    <div class="sec__head sec__head--center"><span class="eyebrow eyebrow--plain rv">Questions</span><h2 data-split class="rv rv-d1">Everything people ask before they book</h2></div>
     <div class="faq">
       <details class="rv"><summary>How much capital do I need?</summary><p>It depends on the number of machines, your space and whether you add the water station. The consultation gives you an exact figure for your setup; most starter stores fall between a compact 2-washer setup and a full self-service floor.</p></details>
       <details class="rv"><summary>Is this a franchise? Are there royalties?</summary><p>No. You own the store and the equipment outright. There are no royalties or monthly franchise fees. LaundroDream supplies the machines, setup, training and support.</p></details>
@@ -334,9 +346,10 @@
 
 <!-- FINAL -->
 <section class="sec sec--dark" data-sticky-end>
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div><div class="grain" aria-hidden="true"></div>
   <div class="wrap center" style="display:grid;gap:22px;justify-items:center">
     <span class="eyebrow rv">Your move</span>
-    <h2 class="rv rv-d1" style="max-width:16ch">Twelve months from now, the hamper will still be full. Will it be <em class="acc">your</em> store?</h2>
+    <h2 data-split class="rv rv-d1" style="max-width:16ch">Twelve months from now, the hamper will still be full. Will it be <em class="acc">your</em> store?</h2>
     <p class="lead rv rv-d2" style="text-align:center">Book the free consultation. Get your real numbers. Decide with certainty.</p>
     <a class="btn btn--xl btn--light rv rv-d3" href="#book">Book my free consultation</a>
   </div>
@@ -358,6 +371,7 @@
 <div class="sticky"><span>Free 30-min consultation · 12 slots/week</span><a class="btn" href="#book">Book now</a></div>
 
 <script src="/funnels/shared/charts.js" defer></script>
+<script src="/funnels/shared/fx.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const peso = (n) => '₱' + Math.round(n).toLocaleString('en-PH');

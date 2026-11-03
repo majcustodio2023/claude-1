@@ -4,96 +4,140 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LaundroDream · 90-day projections</title>
-<meta name="description" content="Projected results for the LaundroDream consultation funnel and ads plan: interactive calculator, funnel, revenue scenarios and ROI.">
+<meta name="description" content="Projected results for the LaundroDream consultation funnel and ads plan, presented as slides with a live calculator.">
+<meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,800;1,9..40,500&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/funnels/shared/ui.css">
+<link rel="stylesheet" href="/funnels/shared/deck.css">
 <style>
   :root { --brand: #2f8fc4; --brand-ink: #1b6a99; --brand-soft: #e8f4fb; --bg-2: #f3f9fd; --bg-3: #e8f4fb; --accent: #fd5db6; --accent-ink: #fff; --dark: #0b1324; --dark-2: #121c30; --money: linear-gradient(100deg, #155f8c 0%, #2f8fc4 42%, #6cc1ea 100%); }
-  .links { display: flex; flex-wrap: wrap; gap: 10px; }
-  .links a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; border: 1.5px solid var(--hair); font-size: 14px; font-weight: 700; }
-  .links a[aria-current] { background: var(--dark); color: #fff; border-color: var(--dark); }
-  .controls { display: grid; gap: 16px; background: var(--bg); border: 1px solid var(--hair-soft); border-radius: var(--radius); padding: 26px; position: sticky; top: 90px; }
-  @media (max-width: 900px) { .controls { position: static; } }
-  .controls h3 { font-size: 18px; }
-  .scen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-  @media (max-width: 900px) { .scen { grid-template-columns: 1fr; } }
-  .scen .card b.big { font-size: 34px; letter-spacing: -0.03em; }
-  .assume { display: grid; gap: 8px; font-size: 14px; color: var(--ink-2); }
-  .assume li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--hair-soft); padding: 6px 0; }
+  .controls { display: grid; gap: 14px; background: var(--bg); border: 1px solid var(--hair-soft); border-radius: var(--radius); padding: 24px; }
+  .controls h3 { font-size: 17px; }
+  .scenario { display: grid; gap: 20px; }
+  .scenario .meta { display: flex; flex-wrap: wrap; gap: 22px 36px; font-size: 15px; }
+  .scenario .meta div { display: grid; gap: 2px; }
+  .scenario .meta b { font-size: 26px; letter-spacing: -0.02em; }
+  .scenario .meta span { color: inherit; opacity: 0.7; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  .assume { display: grid; gap: 8px; font-size: 14px; }
+  .assume li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--hair-soft); padding: 7px 0; }
+  .slide--dark .assume li { border-color: rgba(255,255,255,0.12); }
+  .one { display: grid; gap: 20px; justify-items: center; text-align: center; }
 </style>
 </head>
-<body>
+<body class="deck-body">
 <div class="ribbon"><span>Preview build · projections, not guarantees</span></div>
-<header class="nav"><div class="wrap nav__in">
-  <a class="brand" href="#top"><span class="brand__mark"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="5"/><path d="M4 5h16v16H4z"/><path d="M8 5V3h8v2"/></svg></span>LaundroDream <span class="mute" style="font-weight:500">· Projections</span></a>
-  <nav class="nav__links"><a href="#calc">Calculator</a><a href="#funnel">Funnel</a><a href="#scenarios">Scenarios</a><a href="#roi">ROI</a><a href="#store">Store P&amp;L</a></nav>
-  <a class="btn btn--sm" href="https://laundrodream-ads.majcustodioph.com">See the ads plan</a>
-</div></header>
+<a class="deck-brand" href="#s1"><span class="brand__mark"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="5"/><path d="M4 5h16v16H4z"/><path d="M8 5V3h8v2"/></svg></span>LaundroDream · Projections</a>
+<nav class="deck-links"><a href="https://laundrodream-funnel.majcustodioph.com">① Funnel</a><a href="https://laundrodream-ads.majcustodioph.com">② Ads plan</a><a href="https://laundrodream-results.majcustodioph.com" aria-current="page">③ Projections</a></nav>
 
-<main id="top">
-<section class="hero" style="padding-bottom:32px">
-  <div class="wrap" style="display:grid;gap:22px;max-width:900px">
-    <span class="eyebrow rv">90-day projection · consultation funnel</span>
-    <h1 class="rv rv-d1">What ₱75,000 a month in ads could turn into: <em class="acc sky">a pipeline worth millions.</em></h1>
-    <p class="lead rv rv-d2">Every number on this page is computed live from the assumptions on the left. Change one slider and the funnel, the scenarios and the ROI table all re-run. Projection, not a guarantee.</p>
-    <div class="links rv rv-d3">
-      <a href="https://laundrodream-funnel.majcustodioph.com">① Funnel page</a>
-      <a href="https://laundrodream-ads.majcustodioph.com">② Ads plan</a>
-      <a href="https://laundrodream-results.majcustodioph.com" aria-current="page">③ Projections</a>
+<main class="deck">
+<!-- 1 TITLE -->
+<section class="slide slide--dark">
+  <div class="slide__bg"><img src="https://images.unsplash.com/photo-1638949493140-edb10b7be2f3?w=2000&q=80&fit=crop&auto=format" alt=""></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap" style="display:grid;gap:22px">
+    <span class="eyebrow" data-anim>90-day projection · consultation funnel</span>
+    <div class="big-num money" data-anim="scale" id="heroRev">₱13.8M</div>
+    <h1 class="slide__title" data-anim style="font-size:clamp(28px,3.6vw,52px);max-width:22ch">What ₱75,000 a month in ads could turn into: a pipeline worth millions.</h1>
+    <p class="lead" data-anim style="max-width:56ch">Every number in this deck is computed live from the assumptions on the calculator slide. Change one slider and every chart re-runs. Projection, not a guarantee.</p>
+    <div class="hero__ctas" data-anim><a class="btn btn--light" href="#s2">Walk through it →</a></div>
+  </div>
+  <span class="slide__num">01</span>
+</section>
+
+<!-- 2 KPIs -->
+<section class="slide">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap" style="display:grid;gap:30px">
+    <div><span class="eyebrow" data-anim>The headline</span><h2 class="slide__title" data-anim>Ninety days. Four numbers.</h2></div>
+    <div class="stats">
+      <div class="stat" data-anim data-tilt="4"><b id="kLeads">0</b><span>Consultation requests</span><small>90 days, expected scenario</small></div>
+      <div class="stat" data-anim data-tilt="4"><b id="kOwners">0</b><span>New store owners</span><small>Expected value, one decimal</small></div>
+      <div class="stat" data-anim data-tilt="4"><b class="money" id="kRev">₱0</b><span>Projected revenue</span><small>Equipment + setup orders</small></div>
+      <div class="stat" data-anim data-tilt="4"><b id="kRoas">0×</b><span>Return on ad spend</span><small>Revenue ÷ ad spend</small></div>
+    </div>
+    <p class="lead" data-anim>High-ticket B2B math: a ₱750K order means a handful of closed owners pays for a year of ads. The whole plan hinges on consultation show-rate and close-rate, which is why the calculator exposes both.</p>
+  </div>
+  <span class="slide__num">02</span>
+</section>
+
+<!-- 3 CALCULATOR + FUNNEL -->
+<section class="slide slide--soft">
+  <div class="wrap" style="display:grid;gap:22px">
+    <div class="panel__head"><div><span class="eyebrow" data-anim>Interactive calculator</span><h2 class="slide__title" data-anim style="font-size:clamp(28px,4vw,56px)">Your assumptions, your funnel.</h2></div><span class="pill" data-anim>Projection · not a guarantee</span></div>
+    <div class="calc-slide">
+      <aside class="controls" data-anim="left">
+        <h3>Assumptions</h3>
+        <label class="range"><span class="range__row"><span>Daily ad budget</span><b id="vBud">₱2,500</b></span><input type="range" id="bud" min="500" max="10000" step="100" value="2500"></label>
+        <label class="range"><span class="range__row"><span>CPM</span><b id="vCpm">₱150</b></span><input type="range" id="cpm" min="60" max="300" step="5" value="150"></label>
+        <label class="range"><span class="range__row"><span>Link CTR</span><b id="vCtr">1.2%</b></span><input type="range" id="ctr" min="0.4" max="3" step="0.1" value="1.2"></label>
+        <label class="range"><span class="range__row"><span>Clicks → consult request</span><b id="vLead">6%</b></span><input type="range" id="lead" min="1" max="15" step="0.5" value="6"></label>
+        <label class="range"><span class="range__row"><span>Requests that attend</span><b id="vShow">25%</b></span><input type="range" id="show" min="10" max="60" step="1" value="25"></label>
+        <label class="range"><span class="range__row"><span>Consultations that close</span><b id="vClose">6%</b></span><input type="range" id="close" min="1" max="20" step="0.5" value="6"></label>
+        <label class="range"><span class="range__row"><span>Average order</span><b id="vAov">₱750,000</b></span><input type="range" id="aov" min="300000" max="2000000" step="25000" value="750000"></label>
+        <label class="range"><span class="range__row"><span>Gross margin</span><b id="vGm">20%</b></span><input type="range" id="gm" min="8" max="40" step="1" value="20"></label>
+        <p class="small mute">Months 2 and 3 improve 15% and 25% as retargeting and lookalikes mature.</p>
+      </aside>
+      <div class="panel" data-anim="right"><div class="panel__head"><h3>The 90-day funnel</h3><span class="pill">Expected</span></div><div class="chart" id="cFunnel"></div></div>
     </div>
   </div>
+  <span class="slide__num">03</span>
 </section>
 
-<section class="sec sec--soft sec--tight" id="calc">
-  <div class="wrap calc">
-    <aside class="controls rv">
-      <h3>Assumptions</h3>
-      <label class="range"><span class="range__row"><span>Daily ad budget</span><b id="vBud">₱2,500</b></span><input type="range" id="bud" min="500" max="10000" step="100" value="2500"></label>
-      <label class="range"><span class="range__row"><span>CPM (cost per 1,000 views)</span><b id="vCpm">₱150</b></span><input type="range" id="cpm" min="60" max="300" step="5" value="150"></label>
-      <label class="range"><span class="range__row"><span>Link click-through rate</span><b id="vCtr">1.2%</b></span><input type="range" id="ctr" min="0.4" max="3" step="0.1" value="1.2"></label>
-      <label class="range"><span class="range__row"><span>Clicks that request a consultation</span><b id="vLead">6%</b></span><input type="range" id="lead" min="1" max="15" step="0.5" value="6"></label>
-      <label class="range"><span class="range__row"><span>Requests that attend</span><b id="vShow">25%</b></span><input type="range" id="show" min="10" max="60" step="1" value="25"></label>
-      <label class="range"><span class="range__row"><span>Consultations that close</span><b id="vClose">6%</b></span><input type="range" id="close" min="1" max="20" step="0.5" value="6"></label>
-      <label class="range"><span class="range__row"><span>Average order (equipment + setup)</span><b id="vAov">₱750,000</b></span><input type="range" id="aov" min="300000" max="2000000" step="25000" value="750000"></label>
-      <label class="range"><span class="range__row"><span>Gross margin on orders</span><b id="vGm">20%</b></span><input type="range" id="gm" min="8" max="40" step="1" value="20"></label>
-      <p class="small mute">Defaults follow the ads plan. Months 2 and 3 improve by 15% and 25% as retargeting and lookalikes mature.</p>
-    </aside>
-    <div class="deck">
-      <div class="stats">
-        <div class="stat"><b id="kLeads">0</b><span>Consultation requests / 90 days</span></div>
-        <div class="stat"><b id="kOwners">0</b><span>New store owners / 90 days</span></div>
-        <div class="stat"><b class="money" id="kRev">₱0</b><span>Projected revenue</span></div>
-        <div class="stat"><b id="kRoas">0×</b><span>Return on ad spend</span></div>
-      </div>
-      <div class="panel" id="funnel"><div class="panel__head"><h3>The 90-day funnel</h3><span class="pill">Projection · not a guarantee</span></div><div class="chart" id="cFunnel"></div></div>
-      <div class="panel"><div class="panel__head"><h3>Monthly revenue, three scenarios</h3><span class="pill">Projection</span></div><div class="chart" id="cBars"></div><p class="small mute">Conservative cuts click-through and close rate to 60% of the sliders. Aggressive lifts both by 30%. Expected is the sliders as set.</p></div>
-      <div class="panel"><div class="panel__head"><h3>Cumulative gross profit vs. ad spend</h3><span class="pill">Projection</span></div><div class="chart" id="cLine"></div></div>
-    </div>
+<!-- 4 REVENUE BARS -->
+<section class="slide">
+  <div class="wrap slide-grid slide-grid--13">
+    <div style="display:grid;gap:16px"><span class="eyebrow" data-anim>Revenue by month</span><h2 class="slide__title" data-anim>Three scenarios, side by side.</h2><p class="lead" data-anim>Conservative cuts click-through and close rate to 60% of the sliders. Aggressive lifts both by 30%. Expected is the sliders as set.</p></div>
+    <div class="panel" data-anim="right"><div class="panel__head"><h3>Projected revenue per month</h3><span class="pill">Projection</span></div><div class="chart" id="cBars"></div></div>
   </div>
+  <span class="slide__num">04</span>
 </section>
 
-<section class="sec" id="scenarios">
-  <div class="wrap">
-    <div class="sec__head"><span class="eyebrow rv">What this could look like</span><h2 class="rv rv-d1">Three versions of the next 90 days</h2></div>
-    <div class="scen" id="scen"></div>
+<!-- 5 CUMULATIVE -->
+<section class="slide slide--dark">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap slide-grid slide-grid--13">
+    <div style="display:grid;gap:16px"><span class="eyebrow" data-anim>Payback</span><h2 class="slide__title" data-anim>Gross profit outruns ad spend in month one.</h2><p class="lead" data-anim>The dashed line is what you spend. The solid line is what the closed owners return at the margin you set.</p></div>
+    <div class="panel" data-anim="right"><div class="panel__head"><h3>Cumulative gross profit vs. ad spend</h3><span class="pill">Projection</span></div><div class="chart" id="cLine"></div></div>
   </div>
+  <span class="slide__num">05</span>
 </section>
 
-<section class="sec sec--soft" id="roi">
-  <div class="wrap">
-    <div class="sec__head"><span class="eyebrow rv">ROI table</span><h2 class="rv rv-d1">Spend, revenue, margin, net</h2></div>
-    <div class="panel rv"><table class="table"><thead><tr><th>Month</th><th class="num">Ad spend</th><th class="num">Leads</th><th class="num">Consults</th><th class="num">Owners</th><th class="num">Revenue</th><th class="num">Gross profit</th><th class="num">Net after ads</th><th class="num">ROAS</th></tr></thead><tbody id="roiBody"></tbody></table>
-    <p class="small mute">Agency retainer and consultant salary are not included; add them to "Net after ads" for a full picture. Owners are shown with one decimal because they are expected values, not whole people.</p></div>
+<!-- 6 ROI TABLE -->
+<section class="slide slide--soft">
+  <div class="wrap" style="display:grid;gap:22px">
+    <div><span class="eyebrow" data-anim>ROI table</span><h2 class="slide__title" data-anim>Spend, revenue, margin, net.</h2></div>
+    <div class="panel" data-anim="scale"><table class="table"><thead><tr><th>Month</th><th class="num">Ad spend</th><th class="num">Leads</th><th class="num">Consults</th><th class="num">Owners</th><th class="num">Revenue</th><th class="num">Gross profit</th><th class="num">Net after ads</th><th class="num">ROAS</th></tr></thead><tbody id="roiBody"></tbody></table>
+    <p class="small mute">Agency retainer and consultant salary not included. Owners carry one decimal because they are expected values, not whole people.</p></div>
   </div>
+  <span class="slide__num">06</span>
 </section>
 
-<section class="sec" id="store">
-  <div class="wrap">
-    <div class="sec__head"><span class="eyebrow rv">The other projection</span><h2 class="rv rv-d1">What each new owner is <em class="acc">buying</em>: the store P&amp;L</h2><p class="lead rv rv-d2">This is the scenario the funnel sells. It's the same model on the funnel's calculator, shown here as a 12-month ramp so the pitch and the proof match.</p></div>
-    <div class="grid grid--2">
-      <div class="panel rv"><div class="panel__head"><h3>Owner's monthly sales, first 12 months</h3><span class="pill">Illustrative scenario</span></div><div class="chart" id="cStore"></div></div>
-      <div class="panel rv rv-d1"><div class="panel__head"><h3>Scenario assumptions</h3></div>
+<!-- 7 CONSERVATIVE -->
+<section class="slide">
+  <div class="wrap scenario" id="scCon"></div>
+  <span class="slide__num">07</span>
+</section>
+<!-- 8 EXPECTED -->
+<section class="slide slide--brand">
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap scenario" id="scExp"></div>
+  <span class="slide__num">08</span>
+</section>
+<!-- 9 AGGRESSIVE -->
+<section class="slide slide--dark">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap scenario" id="scAgg"></div>
+  <span class="slide__num">09</span>
+</section>
+
+<!-- 10 STORE P&L -->
+<section class="slide slide--soft">
+  <div class="wrap" style="display:grid;gap:22px">
+    <div><span class="eyebrow" data-anim>The other projection</span><h2 class="slide__title" data-anim>What each new owner is <em class="acc">buying</em>: the store P&amp;L.</h2></div>
+    <div class="slide-grid">
+      <div class="panel" data-anim="left"><div class="panel__head"><h3>Owner's monthly sales, first 12 months</h3><span class="pill">Illustrative</span></div><div class="chart" id="cStore"></div></div>
+      <div class="panel" data-anim="right"><div class="panel__head"><h3>Scenario assumptions</h3></div>
         <ul class="assume">
           <li><span>Laundry tickets / day at maturity</span><b>40 × ₱220</b></li>
           <li><span>Water refills / day at maturity</span><b>100 × ₱40</b></li>
@@ -104,19 +148,30 @@
           <li><span>Year-1 profit (ramped)</span><b id="yr1">₱0</b></li>
           <li><span>Payback on ₱1.2M setup</span><b>~18 months</b></li>
         </ul>
-        <p class="small mute">Illustrative. Rebuilt with the owner's rent, utilities and market on the consultation call.</p>
+        <p class="small mute">Same model as the funnel's calculator, rebuilt with the owner's rent, utilities and market on the call.</p>
       </div>
     </div>
   </div>
+  <span class="slide__num">10</span>
 </section>
 
-<section class="sec sec--dark"><div class="wrap center" style="display:grid;gap:18px;justify-items:center">
-  <span class="eyebrow rv">Ready when you are</span><h2 class="rv rv-d1" style="max-width:18ch">The funnel is built. The plan is costed. Say go.</h2>
-  <div class="hero__ctas rv rv-d2"><a class="btn btn--light btn--xl" href="https://laundrodream-funnel.majcustodioph.com">Open the funnel</a><a class="btn btn--ghost" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35)" href="https://laundrodream-ads.majcustodioph.com">Review the ads plan</a></div>
-</div></section>
+<!-- 11 CLOSE -->
+<section class="slide slide--dark">
+  <div class="slide__bg"><img src="https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?w=2000&q=80&fit=crop&auto=format" alt=""></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap one">
+    <span class="eyebrow eyebrow--plain" data-anim>Ready when you are</span>
+    <h2 class="slide__title slide__title--xl" data-anim style="text-align:center;max-width:14ch">The funnel is built. The plan is costed. Say go.</h2>
+    <div class="hero__ctas" data-anim style="justify-content:center"><a class="btn btn--light btn--xl" href="https://laundrodream-funnel.majcustodioph.com">Open the funnel</a><a class="btn btn--ghost" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4)" href="https://laundrodream-ads.majcustodioph.com">Review the ads plan</a></div>
+    <p class="small" data-anim style="color:rgba(255,255,255,.7)">Projections by Magica Studio for LaundroDream. Computed from editable assumptions and Philippine paid-media benchmarks; planning estimates, not guarantees.</p>
+  </div>
+  <span class="slide__num">11</span>
+</section>
 </main>
-<footer class="footer"><div class="wrap"><p class="footer__legal">Projections prepared by Magica Studio for LaundroDream. All figures are computed from editable assumptions and Philippine paid-media benchmarks; they are planning estimates, not guarantees of revenue, profit or results.</p></div></footer>
+
 <script src="/funnels/shared/charts.js" defer></script>
+<script src="/funnels/shared/fx.js" defer></script>
+<script src="/funnels/shared/deck.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const g = (id) => document.getElementById(id), v = (id) => +g(id).value;
@@ -129,9 +184,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const t = months.reduce((a, m) => { for (const k in m) a[k] = (a[k] || 0) + m[k]; return a; }, {});
     return { months, t };
   }
+  const scen = (host, name, M, blurb, dark) => {
+    host.innerHTML = `<span class="eyebrow${dark ? '' : ''}" data-anim>Scenario · ${name}</span><div class="big-num money" data-anim="scale">₱${Charts.compact(M.t.rev)}</div><p class="lead" data-anim style="max-width:60ch">${blurb}</p><div class="meta" data-anim><div><b>${fmt(M.t.leads)}</b><span>Requests</span></div><div><b>${fmt(M.t.cons)}</b><span>Consultations</span></div><div><b>${M.t.owners.toFixed(1)}</b><span>New owners</span></div><div><b>${peso(M.t.gp)}</b><span>Gross profit</span></div><div><b>${peso(M.t.spend)}</b><span>Ad spend</span></div><div><b>${(M.t.rev / M.t.spend).toFixed(0)}×</b><span>ROAS</span></div></div>`;
+    const sl = host.closest('.slide'); if (sl && sl.classList.contains('is-active')) { host.querySelectorAll('[data-anim]').forEach((el, k) => el.style.setProperty('--d', `${k * 90}ms`)); }
+    else host.querySelectorAll('[data-anim]').forEach((el, k) => el.style.setProperty('--d', `${k * 90 + 120}ms`));
+  };
   function render() {
     g('vBud').textContent = peso(v('bud')); g('vCpm').textContent = peso(v('cpm')); g('vCtr').textContent = v('ctr').toFixed(1) + '%'; g('vLead').textContent = v('lead') + '%'; g('vShow').textContent = v('show') + '%'; g('vClose').textContent = v('close') + '%'; g('vAov').textContent = peso(v('aov')); g('vGm').textContent = v('gm') + '%';
     const E = model(1), Co = model(0.6), Ag = model(1.3);
+    g('heroRev').textContent = '₱' + Charts.compact(E.t.rev);
     g('kLeads').textContent = fmt(E.t.leads); g('kOwners').textContent = E.t.owners.toFixed(1); g('kRev').textContent = '₱' + Charts.compact(E.t.rev); g('kRoas').textContent = (E.t.rev / E.t.spend).toFixed(0) + '×';
     const pct = (a, b) => (a / b * 100).toFixed(1) + '%';
     Charts.funnel(g('cFunnel'), { stages: [
@@ -152,8 +213,9 @@ document.addEventListener('DOMContentLoaded', () => {
       { name: 'Cumulative gross profit', color: C.exp, values: gp },
       { name: 'Cumulative ad spend', color: C.con, values: sp, dashed: true },
     ] });
-    const card = (name, M, col, blurb) => `<div class="card rv in" style="border-top:4px solid ${col}"><span class="pill">${name}</span><b class="big money">₱${Charts.compact(M.t.rev)}</b><p><b>${fmt(M.t.leads)}</b> requests · <b>${fmt(M.t.cons)}</b> consultations · <b>${M.t.owners.toFixed(1)}</b> new owners in 90 days. Gross profit <b>${peso(M.t.gp)}</b> on <b>${peso(M.t.spend)}</b> of ads.</p><p class="small">${blurb}</p></div>`;
-    g('scen').innerHTML = card('Conservative', Co, C.con, 'Creative lands half as well as planned and show-rate disappoints. Still pays for itself at the default margin.') + card('Expected', E, C.exp, 'The ads plan performs to Philippine benchmarks. Twelve consultation slots a week stay full from week three.') + card('Aggressive', Ag, C.agg, 'A hook goes viral, lookalikes hit, close rate climbs. The constraint becomes consultant capacity.');
+    scen(g('scCon'), 'Conservative', Co, 'Creative lands below plan and show-rate disappoints. The campaign still pays for itself at the default margin, and the retargeting pool keeps filling for the next quarter.');
+    scen(g('scExp'), 'Expected', E, 'The plan performs to Philippine benchmarks. Twelve consultation slots a week stay full from week three, and the first owners install before day 90.');
+    scen(g('scAgg'), 'Aggressive', Ag, 'A hook goes viral, lookalikes hit, close rate climbs. The constraint stops being leads and becomes consultant capacity, so plan the second hire now.');
     g('roiBody').innerHTML = E.months.map((m, i) => `<tr><td>Month ${i + 1}</td><td class="num">${peso(m.spend)}</td><td class="num">${fmt(m.leads)}</td><td class="num">${fmt(m.cons)}</td><td class="num">${m.owners.toFixed(1)}</td><td class="num">${peso(m.rev)}</td><td class="num">${peso(m.gp)}</td><td class="num">${(m.net < 0 ? '– ' : '') + peso(Math.abs(m.net))}</td><td class="num">${(m.rev / m.spend).toFixed(0)}×</td></tr>`).join('') + `<tr class="total"><td>90 days</td><td class="num">${peso(E.t.spend)}</td><td class="num">${fmt(E.t.leads)}</td><td class="num">${fmt(E.t.cons)}</td><td class="num">${E.t.owners.toFixed(1)}</td><td class="num">${peso(E.t.rev)}</td><td class="num">${peso(E.t.gp)}</td><td class="num">${(E.t.net < 0 ? '– ' : '') + peso(Math.abs(E.t.net))}</td><td class="num">${(E.t.rev / E.t.spend).toFixed(0)}×</td></tr>`;
   }
   ['bud','cpm','ctr','lead','show','close','aov','gm'].forEach((id) => g(id).addEventListener('input', render));

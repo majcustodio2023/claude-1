@@ -4,11 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Keila's Bike Shop — 90-Day Projections</title>
-<meta name="description" content="Interactive 90-day projections for Keila's Bike Shop Marikina Bodega ad campaigns: leads, test rides, sales, revenue and ROAS under conservative, expected and aggressive scenarios.">
+<meta name="description" content="Interactive 90-day projections for Keila's Bike Shop Marikina Bodega ad campaigns, presented as a slide deck: leads, test rides, sales, revenue and ROAS under three scenarios.">
+<meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/funnels/shared/ui.css">
+<link rel="stylesheet" href="/funnels/shared/deck.css">
 <style>
 :root {
   --brand: #e63329; --brand-ink: #b8231c; --brand-soft: #fdecea;
@@ -18,159 +20,245 @@
   --font-display: 'Sora', system-ui, sans-serif;
   --font: 'DM Sans', system-ui, sans-serif;
 }
+.fx-progress { display: none; }
 .brand__mark { background: var(--dark); color: var(--accent); border-radius: 12px; }
-/* mobile overflow guards */
-.deck { grid-template-columns: minmax(0, 1fr); } .deck > * { min-width: 0; }
-.panel .table { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-.panel .table td, .panel .table th { white-space: normal; min-width: 120px; }
-.camp, .scen, .scripts, .cal, .kv, .stats, .grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
-.stats { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
-.stat b { font-size: clamp(26px, 3.4vw, 44px); word-break: break-word; }
-.calc { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); } @media (max-width: 900px) { .calc { grid-template-columns: minmax(0, 1fr); } }
-.ads { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
-.links a { white-space: normal; }
-.deckhero { background: var(--dark); color: #fff; padding: clamp(56px, 7vw, 100px) 0; position: relative; overflow: hidden; }
-.deckhero::after { content: ""; position: absolute; width: 520px; height: 520px; left: -160px; top: -200px; border-radius: 50%; background: var(--brand); filter: blur(120px); opacity: 0.5; }
-.deckhero .wrap { position: relative; display: grid; gap: 20px; max-width: 900px; margin-inline: auto; }
-.deckhero .eyebrow { color: var(--accent); } .deckhero .eyebrow::before { background: var(--accent); }
-.deckhero h1 { font-size: clamp(36px, 5vw, 64px); }
-.deckhero p { color: rgba(255,255,255,0.75); font-size: 18px; max-width: 62ch; }
-.links { display: flex; flex-wrap: wrap; gap: 10px; }
-.links a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); font-size: 14px; font-weight: 600; }
-.links a.on { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
-.calc__inputs { display: grid; gap: 18px; padding: 24px; border-radius: var(--radius); background: var(--bg-2); }
-.calc__inputs h3 { font-size: 18px; }
-.range__row span { color: var(--mute); }
-.scen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-@media (max-width: 900px) { .scen { grid-template-columns: 1fr; } }
-.scen .card { gap: 10px; }
-.scen .card .big { font-family: var(--font-display); font-size: clamp(30px, 3vw, 40px); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
-.scen .card ul { display: grid; gap: 4px; font-size: 14px; color: var(--mute); }
-.scen .card ul li b { color: var(--ink); }
-.scen .card--brand ul li, .scen .card--brand ul li b { color: #fff; }
-.scen .card--dark ul li b { color: #fff; }
-.note { font-size: 13px; color: var(--mute); }
+.deck-brand .brand__mark { background: var(--accent); color: var(--dark); }
+.slide--dark .eyebrow { color: var(--accent); } .slide--dark .eyebrow::before { background: var(--accent); }
+.slide--dark .big-num.money { background: linear-gradient(100deg, #ffd60a 0%, #ffb703 55%, #ff7a45 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.kicker-links { display: flex; flex-wrap: wrap; gap: 10px; }
+.kicker-links a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.16); font-size: 14px; font-weight: 700; color: #fff; }
+.kicker-links a.on { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.hdr { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
+.hdr h2 { font-size: clamp(30px, 4vw, 54px); max-width: 18ch; }
+.hdr .pill { margin-bottom: 8px; }
+.stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 900px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stat b { font-size: clamp(34px, 4.4vw, 64px); word-break: break-word; }
+.stat b.money { background: var(--money); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.calc-slide { grid-template-columns: 360px minmax(0, 1fr); }
+@media (max-width: 900px) { .calc-slide { grid-template-columns: minmax(0, 1fr); } }
+.controls { background: var(--bg-2); border: 1px solid var(--hair-soft); border-radius: var(--radius); display: grid; gap: 12px; padding: 22px; }
+.controls h3 { font-size: 18px; }
+.kv { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.kv b { font-size: 18px; }
 .toggle { display: inline-flex; background: var(--bg-2); border-radius: 999px; padding: 4px; gap: 4px; }
 .toggle button { padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--mute); }
 .toggle button[aria-pressed="true"] { background: var(--dark); color: #fff; }
-.sec--dark .result { background: var(--dark-2); border-color: rgba(255,255,255,0.08); }
+.chart--big svg { max-height: 62vh; }
+.panel { padding: clamp(18px, 2.4vw, 30px); }
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table td, .table th { font-size: 14px; }
+.scen-slide { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
+@media (max-width: 900px) { .scen-slide { grid-template-columns: minmax(0, 1fr); } }
+.scen-slide .big-num { font-size: clamp(64px, 11vw, 180px); }
+.scen-slide .facts { display: grid; gap: 10px; }
+.scen-slide .facts div { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid var(--hair); font-size: 16px; }
+.scen-slide .facts div b { font-family: var(--font-display); font-size: 22px; letter-spacing: -0.02em; }
+.slide--brand .facts div { border-top-color: rgba(255,255,255,0.3); } .slide--dark .facts div { border-top-color: rgba(255,255,255,0.15); }
+.slide--brand .big-num { color: #fff; }
+.slide--brand .pill { background: rgba(255,255,255,0.18); color: #fff; }
+.note { font-size: 13px; color: var(--mute); } .slide--dark .note { color: var(--on-dark-mute); } .slide--brand .note { color: rgba(255,255,255,0.8); }
+.results-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .results-grid { grid-template-columns: minmax(0, 1fr); } }
+.title-num { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+.title-num small { font-size: clamp(16px, 1.6vw, 22px); color: rgba(255,255,255,0.8); font-weight: 600; max-width: 24ch; }
+.sec > .blobs, .sec > .grain, .sec > .ghost, .slide > .blobs, .slide > .grain, .slide > .slide__num, .slide > .slide__bg { position: absolute !important; }
+.slide > .slide__bg { z-index: -2 !important; } .slide > .slide__num { z-index: -1 !important; } .sec > .ghost, .sec > .blobs, .sec > .grain { z-index: 0 !important; }
+.sec > .blobs, .slide > .blobs { z-index: -1 !important; }
+.gradient-text .w { background: inherit; -webkit-background-clip: text; background-clip: text; color: transparent; }
+.slide--dark .btn--light, .slide--brand .btn--light { color: var(--dark) !important; }
 </style>
 </head>
-<body>
+<body class="deck-body">
 
-<header class="nav">
-  <div class="wrap nav__in">
-    <a class="brand" href="https://keilasbikes.majcustodioph.com"><span class="brand__mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h-5l-4 11.5M15 6l3.5 11.5M15 6l-3 6h-6"/></svg></span>Keila's <span class="mute" style="font-weight:600">· Projections</span></a>
-    <nav class="nav__links"><a href="#calc">Calculator</a><a href="#funnel">Funnel</a><a href="#revenue">Revenue</a><a href="#roi">ROI</a><a href="#scenarios">Scenarios</a></nav>
-    <a class="btn btn--sm" href="https://keilasbikes-ads.majcustodioph.com">← Ads plan</a>
-  </div>
-</header>
+<a class="deck-brand" href="https://keilasbikes.majcustodioph.com"><span class="brand__mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h-5l-4 11.5M15 6l3.5 11.5M15 6l-3 6h-6"/></svg></span>Keila's · Projections</a>
+<nav class="deck-links"><a href="https://keilasbikes.majcustodioph.com">① Funnel</a><a href="https://keilasbikes-ads.majcustodioph.com">② Ads plan</a><a href="https://keilasbikes-results.majcustodioph.com" aria-current="page">③ Projections</a></nav>
 
-<section class="deckhero">
-  <div class="wrap">
-    <span class="eyebrow">90-day projections · Keila's Bike Shop Marikina Bodega</span>
-    <h1>What ₱1,000 a day could turn into.</h1>
-    <p>Move the sliders. Every chart below re-computes from the ad plan's benchmarks: impressions → clicks → leads → test rides → bikes sold. Three scenarios, one honest label on each: <strong style="color:#fff">projection, not a guarantee</strong>.</p>
-    <div class="links">
-      <a href="https://keilasbikes.majcustodioph.com">① Funnel</a>
-      <a href="https://keilasbikes-ads.majcustodioph.com">② Ads plan</a>
-      <a class="on" href="https://keilasbikes-results.majcustodioph.com">③ Projections</a>
-    </div>
+<main class="deck">
+
+<!-- 1 · Title -->
+<section class="slide slide--dark">
+  <div class="slide__bg"><img src="https://images.unsplash.com/photo-1521078803125-7efd09b65b8f?w=1800&q=80&fit=crop&auto=format" alt=""></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap" style="display:grid;gap:18px;max-width:1040px">
+    <span class="eyebrow" data-anim>90-day projections · Keila's Bike Shop Marikina Bodega</span>
+    <div class="title-num" data-anim><span class="big-num money" id="t-rev">₱3.2M</span><small>projected revenue in 90 days from ₱1,000 a day in ads. Expected scenario.</small></div>
+    <h1 class="slide__title" data-anim style="font-size:clamp(28px,3.6vw,52px);max-width:22ch">Move the sliders. Every chart re-computes. One honest label on each: projection, not a guarantee.</h1>
+    <div class="kicker-links" data-anim><a href="https://keilasbikes.majcustodioph.com">① Funnel</a><a href="https://keilasbikes-ads.majcustodioph.com">② Ads plan</a><a class="on" href="#s2">③ Projections</a></div>
   </div>
+  <span class="slide__num">01</span>
 </section>
 
-<main class="sec sec--tight">
-  <div class="wrap deck">
-
-    <!-- KPI tiles -->
-    <div class="stats" id="kpis">
-      <div class="stat"><b class="money" id="k-rev">₱0</b><span>Projected 90-day revenue</span><small>Expected scenario</small></div>
-      <div class="stat"><b id="k-sales">0</b><span>Bikes & e-bikes sold</span><small>retail + reseller orders</small></div>
-      <div class="stat"><b id="k-roas">0×</b><span>Return on ad spend</span><small>revenue ÷ media spend</small></div>
-      <div class="stat"><b id="k-net">₱0</b><span>Net after ad spend</span><small>at 22% blended gross margin</small></div>
+<!-- 2 · KPIs -->
+<section class="slide slide--soft">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>The headline numbers</span><h2 data-anim>Day 90, expected scenario</h2></div><span class="pill pill--accent" data-anim>Projection · not a guarantee</span></div>
+    <div class="stats">
+      <div class="stat" data-anim="scale"><b class="money" id="k-rev">₱0</b><span>Projected 90-day revenue</span><small>retail + reseller orders</small></div>
+      <div class="stat" data-anim="scale"><b id="k-sales">0</b><span>Bikes & e-bikes sold</span><small>from reserve & test-ride leads</small></div>
+      <div class="stat" data-anim="scale"><b id="k-roas">0×</b><span>Return on ad spend</span><small>revenue ÷ media spend</small></div>
+      <div class="stat" data-anim="scale"><b id="k-net">₱0</b><span>Net after ad spend</span><small>at 22% blended gross margin</small></div>
     </div>
-
-    <!-- Calculator -->
-    <div class="panel" id="calc">
-      <div class="panel__head"><div><span class="eyebrow">Interactive calculator</span><h3 style="margin-top:8px">Your assumptions, your numbers</h3></div><span class="pill pill--accent">Projection · not a guarantee</span></div>
-      <div class="calc">
-        <div class="calc__inputs">
-          <h3>Inputs</h3>
-          <label class="range"><span class="range__row"><span>Daily ad budget</span><b id="v-budget">₱1,000</b></span><input type="range" id="i-budget" min="300" max="3000" step="50" value="1000"></label>
-          <label class="range"><span class="range__row"><span>Average retail order</span><b id="v-aov">₱9,500</b></span><input type="range" id="i-aov" min="4000" max="30000" step="250" value="9500"></label>
-          <label class="range"><span class="range__row"><span>Lead → sale conversion</span><b id="v-conv">18%</b></span><input type="range" id="i-conv" min="5" max="35" step="1" value="18"></label>
-          <label class="range"><span class="range__row"><span>Reseller share of orders</span><b id="v-res">10%</b></span><input type="range" id="i-res" min="0" max="40" step="1" value="10"></label>
-          <div class="kv">
-            <div><b>₱120</b><span>CPM</span></div>
-            <div><b>2.0%</b><span>CTR</span></div>
-            <div><b>10%</b><span>Click → lead</span></div>
-            <div><b>₱38K</b><span>Avg reseller order</span></div>
-          </div>
-          <p class="note">Benchmarks fixed from the ads plan. Months ramp 75% → 100% → 115% as creatives and retargeting mature. Scenarios multiply leads by 0.6× (Conservative), 1.0× (Expected), 1.4× (Aggressive).</p>
-        </div>
-        <div class="chart" id="c-leads"></div>
-      </div>
-    </div>
-
-    <!-- Funnel -->
-    <div class="panel" id="funnel">
-      <div class="panel__head"><div><span class="eyebrow">Monthly funnel</span><h3 style="margin-top:8px">From impressions to bikes out the door</h3></div><div class="toggle" id="scen-toggle"><button aria-pressed="false" data-s="0">Conservative</button><button aria-pressed="true" data-s="1">Expected</button><button aria-pressed="false" data-s="2">Aggressive</button></div></div>
-      <div class="chart" id="c-funnel"></div>
-      <p class="note">Month 2 shown (full-rate month). Test rides = 55% of leads who show up; sales = lead → sale conversion applied to all leads, reseller orders counted as sales.</p>
-    </div>
-
-    <!-- Revenue -->
-    <div class="panel" id="revenue">
-      <div class="panel__head"><div><span class="eyebrow">Revenue by month</span><h3 style="margin-top:8px">Three scenarios, side by side</h3></div><span class="pill pill--accent">Projection · not a guarantee</span></div>
-      <div class="chart" id="c-revenue"></div>
-      <div class="chart" id="c-net" style="margin-top:10px"></div>
-    </div>
-
-    <!-- ROI table -->
-    <div class="panel" id="roi">
-      <div class="panel__head"><div><span class="eyebrow">90-day ROI</span><h3 style="margin-top:8px">Spend, revenue, margin, net</h3></div><span class="pill">22% blended gross margin</span></div>
-      <table class="table" id="t-roi">
-        <thead><tr><th>Scenario</th><th class="num">Ad spend</th><th class="num">Leads</th><th class="num">Sales</th><th class="num">Revenue</th><th class="num">Gross margin</th><th class="num">Net after ads</th><th class="num">ROAS</th></tr></thead>
-        <tbody></tbody>
-      </table>
-      <p class="note">Net after ads = gross margin − media spend. Excludes management fee, creative production and any installment financing costs. Gross margin of 22% is a blended retail + wholesale estimate — replace with the shop's actual margin on day one.</p>
-    </div>
-
-    <!-- Scenario cards -->
-    <div class="panel" id="scenarios">
-      <div class="panel__head"><div><span class="eyebrow">What this could look like</span><h3 style="margin-top:8px">Day 90, three ways</h3></div><span class="pill pill--accent">Projection · not a guarantee</span></div>
-      <div class="scen" id="scen-cards">
-        <article class="card"><span class="pill" style="width:max-content">Conservative</span><span class="big" id="s0-rev">₱0</span><p>Ads underperform benchmarks, slower ramp, fewer resellers bite.</p><ul><li><b id="s0-leads">0</b> leads · <b id="s0-sales">0</b> bikes sold</li><li>Net after ads <b id="s0-net">₱0</b></li><li>ROAS <b id="s0-roas">0×</b></li></ul></article>
-        <article class="card card--brand"><span class="pill" style="width:max-content;background:rgba(255,255,255,0.18);color:#fff">Expected</span><span class="big" id="s1-rev">₱0</span><p>Benchmarks hold. Test rides convert at the rate walk-ins already do.</p><ul><li><b id="s1-leads">0</b> leads · <b id="s1-sales">0</b> bikes sold</li><li>Net after ads <b id="s1-net">₱0</b></li><li>ROAS <b id="s1-roas">0×</b></li></ul></article>
-        <article class="card card--dark"><span class="pill" style="width:max-content;background:var(--accent);color:var(--accent-ink)">Aggressive</span><span class="big" id="s2-rev" style="color:#fff">₱0</span><p>A hook video takes off, reseller campaign lands 2–3 bulk accounts.</p><ul><li><b id="s2-leads">0</b> leads · <b id="s2-sales">0</b> bikes sold</li><li>Net after ads <b id="s2-net">₱0</b></li><li>ROAS <b id="s2-roas">0×</b></li></ul></article>
-      </div>
-    </div>
-
-    <!-- Sample results strip -->
-    <div class="panel">
-      <div class="panel__head"><div><span class="eyebrow">Illustrative results</span><h3 style="margin-top:8px">The kind of month we're building toward</h3></div><span class="pill">Sample · for presentation</span></div>
-      <div class="grid grid--4">
-        <div class="result"><span class="quote__tag" style="position:static;width:max-content">Sample</span><span class="result__big money">₱58</span><span class="mute">cost per reserve/test-ride lead</span><div class="result__bar"><i data-w="70%"></i></div></div>
-        <div class="result"><span class="quote__tag" style="position:static;width:max-content">Sample</span><span class="result__big money">63%</span><span class="mute">of booked test rides show up</span><div class="result__bar"><i data-w="63%"></i></div></div>
-        <div class="result"><span class="quote__tag" style="position:static;width:max-content">Sample</span><span class="result__big money">1 in 5</span><span class="mute">leads ride home with a bike</span><div class="result__bar"><i data-w="20%"></i></div></div>
-        <div class="result"><span class="quote__tag" style="position:static;width:max-content">Sample</span><span class="result__big money">3</span><span class="mute">new reseller accounts in month 1</span><div class="result__bar"><i data-w="45%"></i></div></div>
-      </div>
-    </div>
-
-    <div class="panel" style="background:var(--dark);color:#fff;border-color:transparent;text-align:center">
-      <span class="eyebrow" style="justify-content:center;color:var(--accent)">Ready</span>
-      <h3 style="color:#fff">Launch in 10 days. Measure by day 30. Scale by day 90.</h3>
-      <p style="color:rgba(255,255,255,0.75);max-width:52ch;margin-inline:auto">The funnel is built, the ads are scripted, the numbers are on the table.</p>
-      <div class="links" style="justify-content:center"><a href="https://keilasbikes.majcustodioph.com">① Funnel</a><a href="https://keilasbikes-ads.majcustodioph.com">② Ads plan</a></div>
-    </div>
-
+    <p class="note" style="margin-top:18px" data-anim>Benchmarks from the ads plan: ₱120 CPM, 2.0% CTR, 10% click-to-lead, 55% test-ride show rate. Months ramp 75% → 100% → 115% as creatives and retargeting mature.</p>
   </div>
+  <span class="slide__num">02</span>
+</section>
+
+<!-- 3 · Calculator -->
+<section class="slide">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>Interactive calculator</span><h2 data-anim>Your assumptions, your numbers.</h2></div><span class="pill pill--accent" data-anim>Projection · not a guarantee</span></div>
+    <div class="calc-slide">
+      <aside class="controls" data-anim="left">
+        <h3>Inputs</h3>
+        <label class="range"><span class="range__row"><span>Daily ad budget</span><b id="v-budget">₱1,000</b></span><input type="range" id="i-budget" min="300" max="3000" step="50" value="1000"></label>
+        <label class="range"><span class="range__row"><span>Average retail order</span><b id="v-aov">₱9,500</b></span><input type="range" id="i-aov" min="4000" max="30000" step="250" value="9500"></label>
+        <label class="range"><span class="range__row"><span>Lead → sale conversion</span><b id="v-conv">18%</b></span><input type="range" id="i-conv" min="5" max="35" step="1" value="18"></label>
+        <label class="range"><span class="range__row"><span>Reseller share of orders</span><b id="v-res">10%</b></span><input type="range" id="i-res" min="0" max="40" step="1" value="10"></label>
+        <div class="kv"><div><b>₱120</b><span>CPM</span></div><div><b>2.0%</b><span>CTR</span></div><div><b>10%</b><span>Click → lead</span></div><div><b>₱38K</b><span>Avg reseller order</span></div></div>
+      </aside>
+      <div class="panel" data-anim="right"><div class="chart" id="c-leads"></div><p class="note">Scenarios multiply leads by 0.6× (Conservative), 1.0× (Expected), 1.4× (Aggressive).</p></div>
+    </div>
+  </div>
+  <span class="slide__num">03</span>
+</section>
+
+<!-- 4 · Funnel -->
+<section class="slide slide--soft">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>Monthly funnel</span><h2 data-anim>From impressions to bikes out the door.</h2></div><div class="toggle" id="scen-toggle" data-anim><button aria-pressed="false" data-s="0">Conservative</button><button aria-pressed="true" data-s="1">Expected</button><button aria-pressed="false" data-s="2">Aggressive</button></div></div>
+    <div class="panel" data-anim="scale"><div class="chart chart--big" id="c-funnel"></div><p class="note">Month 2 shown (full-rate month). Test rides = 55% of leads who show up; sales = lead → sale conversion applied to all leads, reseller orders counted as sales.</p></div>
+  </div>
+  <span class="slide__num">04</span>
+</section>
+
+<!-- 5 · Revenue -->
+<section class="slide">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>Revenue by month</span><h2 data-anim>Three scenarios, side by side.</h2></div><span class="pill pill--accent" data-anim>Projection · not a guarantee</span></div>
+    <div class="panel" data-anim="scale"><div class="chart chart--big" id="c-revenue"></div></div>
+  </div>
+  <span class="slide__num">05</span>
+</section>
+
+<!-- 6 · Net -->
+<section class="slide slide--soft">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>Cumulative net after ad spend</span><h2 data-anim>When the ads start paying for themselves.</h2></div><span class="pill pill--accent" data-anim>Projection · not a guarantee</span></div>
+    <div class="panel" data-anim="scale"><div class="chart chart--big" id="c-net"></div><p class="note">Gross margin minus media spend, running total. Excludes management fee and creative production.</p></div>
+  </div>
+  <span class="slide__num">06</span>
+</section>
+
+<!-- 7 · ROI -->
+<section class="slide">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>90-day ROI</span><h2 data-anim>Spend, revenue, margin, net.</h2></div><span class="pill" data-anim>22% blended gross margin</span></div>
+    <div class="panel" data-anim="scale"><div class="table-scroll"><table class="table" id="t-roi">
+      <thead><tr><th>Scenario</th><th class="num">Ad spend</th><th class="num">Leads</th><th class="num">Sales</th><th class="num">Revenue</th><th class="num">Gross margin</th><th class="num">Net after ads</th><th class="num">ROAS</th></tr></thead>
+      <tbody></tbody>
+    </table></div><p class="note">Net after ads = gross margin − media spend. Replace the 22% with the shop's actual margin on day one.</p></div>
+  </div>
+  <span class="slide__num">07</span>
+</section>
+
+<!-- 8 · Conservative -->
+<section class="slide slide--soft">
+  <div class="wrap scen-slide">
+    <div style="display:grid;gap:14px">
+      <span class="pill" data-anim>Scenario 1 of 3 · Conservative</span>
+      <span class="big-num money" id="s0-rev" data-anim>₱0</span>
+      <h2 data-anim style="font-size:clamp(26px,3.4vw,44px)">Ads underperform benchmarks, slower ramp, fewer resellers bite.</h2>
+      <p class="lead" data-anim>Even here the bodega sells more bikes than it spends on ads, because the test-ride ask is cheap and the margin on a bike is real.</p>
+    </div>
+    <div class="facts" data-anim="right">
+      <div><span>Leads in 90 days</span><b id="s0-leads">0</b></div>
+      <div><span>Bikes & e-bikes sold</span><b id="s0-sales">0</b></div>
+      <div><span>Net after ads</span><b id="s0-net">₱0</b></div>
+      <div><span>Return on ad spend</span><b id="s0-roas">0×</b></div>
+      <p class="note">Projection · not a guarantee</p>
+    </div>
+  </div>
+  <span class="slide__num">08</span>
+</section>
+
+<!-- 9 · Expected -->
+<section class="slide slide--brand">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap scen-slide">
+    <div style="display:grid;gap:14px">
+      <span class="pill" data-anim>Scenario 2 of 3 · Expected</span>
+      <span class="big-num" id="s1-rev" data-anim>₱0</span>
+      <h2 data-anim style="font-size:clamp(26px,3.4vw,44px);color:#fff">Benchmarks hold. Test rides convert at the rate walk-ins already do.</h2>
+      <p class="lead" data-anim>The plan as written: two campaigns at launch, three by week three, a full reserve calendar from day 10.</p>
+    </div>
+    <div class="facts" data-anim="right">
+      <div><span>Leads in 90 days</span><b id="s1-leads">0</b></div>
+      <div><span>Bikes & e-bikes sold</span><b id="s1-sales">0</b></div>
+      <div><span>Net after ads</span><b id="s1-net">₱0</b></div>
+      <div><span>Return on ad spend</span><b id="s1-roas">0×</b></div>
+      <p class="note">Projection · not a guarantee</p>
+    </div>
+  </div>
+  <span class="slide__num">09</span>
+</section>
+
+<!-- 10 · Aggressive -->
+<section class="slide slide--dark">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap scen-slide">
+    <div style="display:grid;gap:14px">
+      <span class="pill" data-anim>Scenario 3 of 3 · Aggressive</span>
+      <span class="big-num money" id="s2-rev" data-anim>₱0</span>
+      <h2 data-anim style="font-size:clamp(26px,3.4vw,44px)">A hook video takes off and the reseller campaign lands 2–3 bulk accounts.</h2>
+      <p class="lead" data-anim>At this level the constraint stops being ads and becomes floor stock and staff. Plan the second phone and the battery reorder.</p>
+    </div>
+    <div class="facts" data-anim="right">
+      <div><span>Leads in 90 days</span><b id="s2-leads">0</b></div>
+      <div><span>Bikes & e-bikes sold</span><b id="s2-sales">0</b></div>
+      <div><span>Net after ads</span><b id="s2-net">₱0</b></div>
+      <div><span>Return on ad spend</span><b id="s2-roas">0×</b></div>
+      <p class="note">Projection · not a guarantee</p>
+    </div>
+  </div>
+  <span class="slide__num">10</span>
+</section>
+
+<!-- 11 · Sample results -->
+<section class="slide">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>Illustrative results</span><h2 data-anim>The kind of month we're building toward.</h2></div><span class="pill" data-anim>Sample · for presentation</span></div>
+    <div class="results-grid">
+      <div class="result" data-anim="scale"><span class="pill">Sample</span><span class="result__big money">₱58</span><span class="mute">cost per reserve/test-ride lead</span><div class="result__bar"><i data-w="70%"></i></div></div>
+      <div class="result" data-anim="scale"><span class="pill">Sample</span><span class="result__big money">63%</span><span class="mute">of booked test rides show up</span><div class="result__bar"><i data-w="63%"></i></div></div>
+      <div class="result" data-anim="scale"><span class="pill">Sample</span><span class="result__big money">1 in 5</span><span class="mute">leads ride home with a bike</span><div class="result__bar"><i data-w="20%"></i></div></div>
+      <div class="result" data-anim="scale"><span class="pill">Sample</span><span class="result__big money">3</span><span class="mute">new reseller accounts in month 1</span><div class="result__bar"><i data-w="45%"></i></div></div>
+    </div>
+  </div>
+  <span class="slide__num">11</span>
+</section>
+
+<!-- 12 · Close -->
+<section class="slide slide--dark">
+  <div class="slide__bg"><img src="https://images.unsplash.com/photo-1627044185459-09e6dbc39444?w=1800&q=80&fit=crop&auto=format" alt=""></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap" style="display:grid;gap:22px;max-width:960px">
+    <span class="eyebrow" data-anim>Ready</span>
+    <h2 class="slide__title" data-anim>Launch in 10 days. Measure by day 30. <span style="color:var(--accent)">Scale by day 90.</span></h2>
+    <p class="lead" data-anim>The funnel is built, the ads are scripted, the numbers are on the table.</p>
+    <div class="hero__ctas" data-anim><a class="btn btn--accent btn--xl" href="https://keilasbikes.majcustodioph.com">Open the funnel</a><a class="btn btn--light" href="https://keilasbikes-ads.majcustodioph.com">Review the ads plan</a></div>
+  </div>
+  <span class="slide__num">12</span>
+</section>
+
 </main>
 
-<footer class="footer"><div class="wrap"><p class="footer__legal">Prepared for Keila's Bike Shop Marikina Bodega. All figures on this page are projections computed from stated assumptions and Philippine advertising benchmarks. They are not guarantees of performance. Sample results are illustrative.</p></div></footer>
 <div class="ribbon"><span>Preview build · projections for presentation</span></div>
-
 <script src="/funnels/shared/charts.js" defer></script>
+<script src="/funnels/shared/fx.js" defer></script>
+<script src="/funnels/shared/deck.js" defer></script>
 <script defer>
 document.addEventListener('DOMContentLoaded', function () {
   var C = window.Charts;
@@ -199,16 +287,7 @@ document.addEventListener('DOMContentLoaded', function () {
     return out;
   }
 
-  function render() {
-    $('v-budget').textContent = peso($('i-budget').value); $('v-aov').textContent = peso($('i-aov').value);
-    $('v-conv').textContent = $('i-conv').value + '%'; $('v-res').textContent = $('i-res').value + '%';
-    var M = model(), E = M[1].total;
-    $('k-rev').textContent = pesoK(E.rev); $('k-sales').textContent = Math.round(E.sales).toLocaleString('en-PH');
-    $('k-roas').textContent = E.roas.toFixed(1) + '×'; $('k-net').textContent = pesoK(E.net);
-
-    C.lines($('c-leads'), { title: 'Leads per month', sub: 'Reserve & test-ride bookings, three scenarios', labels: ['Month 1', 'Month 2', 'Month 3'], area: false,
-      series: M.map(function (r, i) { return { name: NAMES[i], color: COL[i], values: r.months.map(function (m) { return Math.round(m.leads); }) }; }) });
-
+  function renderFunnel(M) {
     var f = M[scen].months[1];
     C.funnel($('c-funnel'), { title: NAMES[scen] + ' · month 2', sub: 'Monthly volume at ' + peso($('i-budget').value) + '/day', ramp: ['#e63329', '#cf2d25', '#b8231c', '#9c1d17', '#7f1712'],
       stages: [
@@ -218,10 +297,21 @@ document.addEventListener('DOMContentLoaded', function () {
         { name: 'Test rides', value: Math.round(f.rides), pct: Math.round(SHOW * 100) + '%' },
         { name: 'Bikes sold', value: Math.round(f.sales), pct: $('i-conv').value + '% of leads' }
       ] });
+  }
 
+  function render() {
+    $('v-budget').textContent = peso($('i-budget').value); $('v-aov').textContent = peso($('i-aov').value);
+    $('v-conv').textContent = $('i-conv').value + '%'; $('v-res').textContent = $('i-res').value + '%';
+    var M = model(), E = M[1].total;
+    $('t-rev').textContent = pesoK(E.rev);
+    $('k-rev').textContent = pesoK(E.rev); $('k-sales').textContent = Math.round(E.sales).toLocaleString('en-PH');
+    $('k-roas').textContent = E.roas.toFixed(1) + '×'; $('k-net').textContent = pesoK(E.net);
+
+    C.lines($('c-leads'), { title: 'Leads per month', sub: 'Reserve & test-ride bookings, three scenarios', labels: ['Month 1', 'Month 2', 'Month 3'], area: false,
+      series: M.map(function (r, i) { return { name: NAMES[i], color: COL[i], values: r.months.map(function (m) { return Math.round(m.leads); }) }; }) });
+    renderFunnel(M);
     C.bars($('c-revenue'), { title: 'Projected revenue per month', sub: 'Retail + reseller orders', money: true, labels: ['Month 1', 'Month 2', 'Month 3'],
       series: M.map(function (r, i) { return { name: NAMES[i], color: COL[i], values: r.months.map(function (m) { return Math.round(m.rev); }) }; }) });
-
     C.lines($('c-net'), { title: 'Cumulative net after ad spend', sub: 'Gross margin minus media spend, running total', money: true, labels: ['Launch', 'Day 30', 'Day 60', 'Day 90'],
       series: M.map(function (r, i) { var acc = 0; return { name: NAMES[i], color: COL[i], values: [0].concat(r.months.map(function (m) { acc += m.net; return Math.round(acc); })) }; }) });
 
@@ -236,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   ['i-budget', 'i-aov', 'i-conv', 'i-res'].forEach(function (id) { $(id).addEventListener('input', render); });
-  $('scen-toggle').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; scen = +b.dataset.s; Array.prototype.forEach.call(this.querySelectorAll('button'), function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); render(); });
+  $('scen-toggle').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; scen = +b.dataset.s; Array.prototype.forEach.call(this.querySelectorAll('button'), function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); renderFunnel(model()); });
   render();
 });
 </script>

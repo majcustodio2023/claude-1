@@ -64,7 +64,8 @@
   const money = (v) => '₱' + Math.round(v).toLocaleString('en-PH');
   const compact = (v) => Math.abs(v) >= 1e6 ? (v / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' : Math.abs(v) >= 1e4 ? Math.round(v / 1e3) + 'K' : Math.round(v).toLocaleString('en-PH');
   const nice = (max, n) => { const raw = max / n, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p; const s = m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10; return s * p; };
-  const ink = () => css('--ink') || '#0b1324', mute = () => css('--mute') || '#5b6676', hair = () => css('--hair-soft') || 'rgba(0,0,0,.08)', surf = () => css('--bg') || '#fff';
+  let themeHost = document.documentElement; const cssH = (n) => getComputedStyle(themeHost).getPropertyValue(n).trim();
+  const ink = () => cssH('--ink') || '#0b1324', mute = () => cssH('--mute') || '#5b6676', hair = () => cssH('--hair-soft') || 'rgba(0,0,0,.08)', surf = () => (themeHost.closest('.sec--dark, .slide--dark') ? (cssH('--dark-2') || '#121c30') : (cssH('--bg') || '#fff'));
 
   function legend(host, series) {
     if (series.length < 2) return;
@@ -74,7 +75,7 @@
   }
 
   function frame(host, cfg) {
-    host.innerHTML = '';
+    themeHost = host; host.innerHTML = '';
     if (cfg.title) { const t = document.createElement('div'); t.className = 'chart__title'; t.textContent = cfg.title; host.appendChild(t); }
     if (cfg.sub) { const t = document.createElement('div'); t.className = 'chart__sub'; t.textContent = cfg.sub; host.appendChild(t); }
     const W = cfg.width || 720, H = cfg.height || 300, P = { t: 18, r: 18, b: 36, l: 54 };
@@ -95,6 +96,7 @@
 
   /* Bars: cfg = { labels:[], series:[{name,color,values[]}], money, title, sub, stacked } */
   function bars(host, cfg) {
+    host.__cfg = { fn: 'bars', cfg }; host.classList.remove('chart--wait');
     const { svg, W, H, P } = frame(host, cfg);
     const n = cfg.labels.length, S = cfg.series, stacked = !!cfg.stacked;
     const totals = cfg.labels.map((_, i) => stacked ? S.reduce((a, s) => a + s.values[i], 0) : Math.max(...S.map((s) => s.values[i])));
@@ -115,7 +117,7 @@
         const d = isTop
           ? `M${x},${yBase} v${-(hh - r)} a${r},${r} 0 0 1 ${r},${-r} h${bw - 2 * r} a${r},${r} 0 0 1 ${r},${r} v${hh - r} z`
           : `M${x},${yBase} v${-hh} h${bw} v${hh} z`;
-        const p = el('path', { d, fill: s.color }, svg);
+        const p = el('path', { d, fill: s.color, class: 'bar', style: '--i:' + (i * S.length + j) }, svg);
         p.addEventListener('mousemove', (e) => showTip(`<b>${lab} · ${s.name}</b>${fmtV(v)}`, e.clientX, e.clientY));
         p.addEventListener('mouseleave', hideTip);
         acc += v;
@@ -123,7 +125,7 @@
       if (cfg.labelTop !== false) {
         const tv = stacked ? acc : Math.max(...S.map((s) => s.values[i]));
         const isMax = tv === maxTotal && !labeledMax; if (isMax) labeledMax = true;
-        if (cfg.labelAll || i === n - 1 || isMax) el('text', { x: x0, y: y(tv) - 8, 'text-anchor': 'middle', 'font-size': 12, 'font-weight': 700, fill: ink() }, svg).textContent = cfg.money ? '₱' + compact(tv) : compact(tv);
+        if (cfg.labelAll || i === n - 1 || isMax) el('text', { x: x0, y: y(tv) - 8, 'text-anchor': 'middle', 'font-size': 12, 'font-weight': 700, fill: ink(), class: 'val' }, svg).textContent = cfg.money ? '₱' + compact(tv) : compact(tv);
       }
     });
     el('line', { x1: P.l, x2: W - P.r, y1: y(0), y2: y(0), stroke: hair(), 'stroke-width': 1 }, svg);
@@ -132,6 +134,7 @@
 
   /* Lines: cfg = { labels:[], series:[{name,color,values[]}], money, area } */
   function lines(host, cfg) {
+    host.__cfg = { fn: 'lines', cfg }; host.classList.remove('chart--wait');
     const { svg, W, H, P } = frame(host, cfg);
     const S = cfg.series, n = cfg.labels.length;
     const max = Math.max(...S.flatMap((s) => s.values)) * 1.1;
@@ -141,23 +144,24 @@
     cfg.labels.forEach((lab, i) => { if (n <= 8 || i % Math.ceil(n / 8) === 0 || i === n - 1) el('text', { x: x(i), y: H - P.b + 20, 'text-anchor': 'middle', 'font-size': 12, fill: mute() }, svg).textContent = lab; });
     S.forEach((s) => {
       const pts = s.values.map((v, i) => [x(i), y(v)]);
-      if (cfg.area !== false) el('path', { d: `M${pts[0][0]},${y(0)} ` + pts.map((p) => `L${p[0]},${p[1]}`).join(' ') + ` L${pts[pts.length - 1][0]},${y(0)} z`, fill: s.color, opacity: 0.1 }, svg);
-      el('path', { d: pts.map((p, i) => (i ? 'L' : 'M') + p[0] + ',' + p[1]).join(' '), fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', 'stroke-dasharray': s.dashed ? '6 6' : 'none' }, svg);
+      if (cfg.area !== false) el('path', { d: `M${pts[0][0]},${y(0)} ` + pts.map((p) => `L${p[0]},${p[1]}`).join(' ') + ` L${pts[pts.length - 1][0]},${y(0)} z`, fill: s.color, opacity: 0.1, class: 'area' }, svg);
+      el('path', { d: pts.map((p, i) => (i ? 'L' : 'M') + p[0] + ',' + p[1]).join(' '), fill: 'none', stroke: s.color, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', 'stroke-dasharray': s.dashed ? '6 6' : 'none', class: s.dashed ? '' : 'line', pathLength: 1 }, svg);
       pts.forEach((p, i) => {
-        const c = el('circle', { cx: p[0], cy: p[1], r: 5, fill: s.color, stroke: surf(), 'stroke-width': 2 }, svg);
+        const c = el('circle', { cx: p[0], cy: p[1], r: 5, fill: s.color, stroke: surf(), 'stroke-width': 2, class: 'dot' }, svg);
         const hit = el('circle', { cx: p[0], cy: p[1], r: 14, fill: 'transparent' }, svg);
         hit.addEventListener('mousemove', (e) => { showTip(`<b>${cfg.labels[i]} · ${s.name}</b>${fmtV(s.values[i])}`, e.clientX, e.clientY); c.setAttribute('r', 7); });
         hit.addEventListener('mouseleave', () => { hideTip(); c.setAttribute('r', 5); });
       });
       const last = pts[pts.length - 1];
-      el('text', { x: last[0] + (S.length > 1 ? 0 : 0), y: last[1] - 12, 'text-anchor': 'end', 'font-size': 12, 'font-weight': 700, fill: ink() }, svg).textContent = cfg.money ? '₱' + compact(s.values[n - 1]) : compact(s.values[n - 1]);
+      el('text', { x: last[0] + (S.length > 1 ? 0 : 0), y: last[1] - 12, 'text-anchor': 'end', 'font-size': 12, 'font-weight': 700, fill: ink(), class: 'val' }, svg).textContent = cfg.money ? '₱' + compact(s.values[n - 1]) : compact(s.values[n - 1]);
     });
     legend(host, S);
   }
 
   /* Funnel: cfg = { stages:[{name, value, note}], color } — horizontal bars, 4px rounded ends */
   function funnel(host, cfg) {
-    host.innerHTML = '';
+    host.__cfg = { fn: 'funnel', cfg }; host.classList.remove('chart--wait');
+    themeHost = host; host.innerHTML = '';
     if (cfg.title) { const t = document.createElement('div'); t.className = 'chart__title'; t.textContent = cfg.title; host.appendChild(t); }
     if (cfg.sub) { const t = document.createElement('div'); t.className = 'chart__sub'; t.textContent = cfg.sub; host.appendChild(t); }
     const W = 720, rowH = 44, n = cfg.stages.length, H = n * rowH + 8, L = 150, R = 110;
@@ -167,13 +171,14 @@
     cfg.stages.forEach((s, i) => {
       const y = i * rowH + 6, w = Math.max(8, (W - L - R) * (s.value / max)), c = ramp[Math.min(i, ramp.length - 1)];
       el('text', { x: L - 12, y: y + 22, 'text-anchor': 'end', 'font-size': 13, 'font-weight': 600, fill: ink() }, svg).textContent = s.name;
-      const p = el('path', { d: `M${L},${y + 6} h${w - 4} a4,4 0 0 1 4,4 v16 a4,4 0 0 1 -4,4 h${-(w - 4)} z`, fill: c }, svg);
+      const p = el('path', { d: `M${L},${y + 6} h${w - 4} a4,4 0 0 1 4,4 v16 a4,4 0 0 1 -4,4 h${-(w - 4)} z`, fill: c, class: 'hbar', style: '--i:' + i }, svg);
       p.addEventListener('mousemove', (e) => showTip(`<b>${s.name}</b>${s.value.toLocaleString('en-PH')}${s.note ? ' · ' + s.note : ''}`, e.clientX, e.clientY));
       p.addEventListener('mouseleave', hideTip);
       el('text', { x: L + w + 10, y: y + 22, 'font-size': 13, 'font-weight': 700, fill: ink() }, svg).textContent = s.value.toLocaleString('en-PH') + (s.pct ? `  (${s.pct})` : '');
     });
   }
 
-  window.Charts = { bars, lines, funnel, money, compact };
+  const replay = (host) => { if (host.__cfg) window.Charts[host.__cfg.fn](host, host.__cfg.cfg); };
+  window.Charts = { bars, lines, funnel, money, compact, replay };
   $$('[data-chart]').forEach((h) => { try { const cfg = JSON.parse(h.dataset.chart); (window.Charts[cfg.type] || bars)(h, cfg); } catch (e) { console.error(e); } });
 })();
