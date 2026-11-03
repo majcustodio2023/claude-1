@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keila's Bike Shop — Ads Plan</title>
+<meta name="description" content="Meta and TikTok ad plan for Keila's Bike Shop Marikina Bodega, presented as a slide deck: campaign structure, creatives, hooks, targeting, budget tiers and the 30-day launch.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/funnels/shared/ui.css">
+<link rel="stylesheet" href="/funnels/shared/deck.css">
+<style>
+:root {
+  --brand: #e63329; --brand-ink: #b8231c; --brand-soft: #fdecea;
+  --accent: #ffd60a; --accent-ink: #111318;
+  --dark: #111318; --dark-2: #1b1e26;
+  --money: linear-gradient(100deg, #b8231c 0%, #e63329 45%, #ff7a45 100%);
+  --font-display: 'Sora', system-ui, sans-serif;
+  --font: 'DM Sans', system-ui, sans-serif;
+}
+.fx-progress { display: none; }
+.brand__mark { background: var(--dark); color: var(--accent); border-radius: 12px; }
+.deck-brand .brand__mark { background: var(--accent); color: var(--dark); }
+.slide--dark .eyebrow, .slide--dark .eyebrow::before { color: var(--accent); background-color: transparent; } .slide--dark .eyebrow::before { background: var(--accent); }
+.slide--brand .big-num, .slide--brand .slide__title { color: #fff; }
+.kicker-links { display: flex; flex-wrap: wrap; gap: 10px; }
+.kicker-links a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.16); font-size: 14px; font-weight: 700; color: #fff; }
+.kicker-links a.on { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.camp { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 1000px) { .camp { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .camp { grid-template-columns: minmax(0, 1fr); } }
+.camp .card { gap: 10px; padding: 24px; }
+.camp .card .pct { font-family: var(--font-display); font-size: clamp(44px, 5vw, 72px); font-weight: 800; letter-spacing: -0.05em; line-height: 1; color: var(--brand); }
+.camp .card--dark .pct { color: var(--accent); }
+.camp .card b.num { font-family: var(--font-display); font-size: 12px; letter-spacing: 0.12em; color: var(--mute); text-transform: uppercase; }
+.camp .card h3 { font-size: 20px; }
+.camp .card ul { display: grid; gap: 4px; font-size: 14px; color: var(--mute); }
+.camp .card ul li::before { content: "→ "; color: var(--brand); font-weight: 700; }
+.flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
+@media (max-width: 900px) { .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .flow { grid-template-columns: minmax(0, 1fr); } }
+.flow div { padding: 22px; border-radius: 18px; background: #fff; border: 1px solid var(--hair-soft); display: grid; gap: 8px; position: relative; }
+.flow div b { font-family: var(--font-display); font-size: 18px; }
+.flow div span { color: var(--mute); font-size: 14px; }
+.flow div i { font-style: normal; font-family: var(--font-display); font-weight: 800; color: var(--brand); font-size: 13px; letter-spacing: 0.1em; }
+.flow div.hot { background: var(--dark); color: #fff; border-color: transparent; } .flow div.hot span { color: rgba(255,255,255,0.75); } .flow div.hot i { color: var(--accent); }
+.scripts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 1000px) { .scripts { grid-template-columns: minmax(0, 1fr); } }
+.scripts > div { background: #fff; border: 1px solid var(--hair-soft); border-radius: 18px; padding: 20px; display: grid; gap: 10px; align-content: start; }
+.scripts > div > b { font-family: var(--font-display); font-size: 18px; }
+.script li { padding: 8px 0; font-size: 14px; grid-template-columns: 56px 1fr; }
+.tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 900px) { .tiers { grid-template-columns: minmax(0, 1fr); } }
+.tier { padding: 28px; border-radius: var(--radius); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: grid; gap: 10px; }
+.tier.hot { background: var(--brand); border-color: transparent; }
+.tier .big-num { font-size: clamp(48px, 6vw, 84px); color: #fff; }
+.tier .big-num small { font-size: 0.32em; letter-spacing: 0; font-weight: 700; color: rgba(255,255,255,0.7); margin-left: 6px; }
+.tier b.lab { font-family: var(--font-display); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.tier.hot b.lab { color: #ffe08a; }
+.tier p { color: rgba(255,255,255,0.78); font-size: 15px; }
+.tier .row { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.85); }
+.tier .row b { color: #fff; }
+.cal { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 900px) { .cal { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .cal { grid-template-columns: minmax(0, 1fr); } }
+.cal div { padding: 16px; border-radius: 14px; background: #fff; border: 1px solid var(--hair-soft); display: grid; gap: 6px; font-size: 14px; align-content: start; }
+.cal div b { font-family: var(--font-display); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brand-ink); }
+.cal div span { color: var(--ink-2); }
+.cal div.hot { background: var(--dark); color: #fff; border-color: transparent; } .cal div.hot b { color: var(--accent); } .cal div.hot span { color: rgba(255,255,255,0.8); }
+.table td, .table th { font-size: 14px; }
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.action-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 10px; }
+@media (max-width: 800px) { .action-grid { grid-template-columns: minmax(0, 1fr); } }
+.action-grid div { padding: 22px; border-radius: 18px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18); display: grid; gap: 4px; }
+.action-grid b { font-family: var(--font-display); font-size: 34px; letter-spacing: -0.03em; line-height: 1; }
+.action-grid span { font-size: 14px; color: rgba(255,255,255,0.85); }
+.note { font-size: 13px; color: var(--mute); }
+.slide--dark .note { color: var(--on-dark-mute); }
+.slide__title em { font-style: normal; color: var(--accent); }
+.hdr { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 26px; }
+.hdr h2 { font-size: clamp(30px, 4vw, 54px); max-width: 18ch; }
+.hdr .pill { margin-bottom: 8px; }
+.ads--deck .ad__text { font-size: 13px; }
+.sec > .blobs, .sec > .grain, .sec > .ghost, .slide > .blobs, .slide > .grain, .slide > .slide__num, .slide > .slide__bg { position: absolute !important; }
+.slide > .slide__bg { z-index: -2 !important; } .slide > .slide__num { z-index: -1 !important; } .sec > .ghost, .sec > .blobs, .sec > .grain { z-index: 0 !important; }
+.sec > .blobs, .slide > .blobs { z-index: -1 !important; }
+.gradient-text .w { background: inherit; -webkit-background-clip: text; background-clip: text; color: transparent; }
+.slide--dark .btn--light, .slide--brand .btn--light { color: var(--dark) !important; }
+</style>
+</head>
+<body class="deck-body">
+
+<a class="deck-brand" href="https://keilasbikes.majcustodioph.com"><span class="brand__mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h-5l-4 11.5M15 6l3.5 11.5M15 6l-3 6h-6"/></svg></span>Keila's · Ads plan</a>
+<nav class="deck-links"><a href="https://keilasbikes.majcustodioph.com">① Funnel</a><a href="https://keilasbikes-ads.majcustodioph.com" aria-current="page">② Ads plan</a><a href="https://keilasbikes-results.majcustodioph.com">③ Projections</a></nav>
+
+<main class="deck">
+
+<!-- 1 · Title -->
+<section class="slide slide--dark">
+  <div class="slide__bg"><img src="https://images.unsplash.com/photo-1561840884-9dda41ed54e4?w=1800&q=80&fit=crop&auto=format" alt=""></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap" style="display:grid;gap:22px;max-width:1000px">
+    <span class="eyebrow" data-anim>Ads plan · Keila's Bike Shop Marikina Bodega · November 2026</span>
+    <h1 class="slide__title slide__title--xl" data-anim>Fill the bodega with riders who <em>already want a bike.</em></h1>
+    <p class="lead slide__kicker" data-anim>Three Meta campaigns and one TikTok hook engine, all pointed at a single action: reserve a bike and book a free test ride. Every peso is measured by leads that walk into Lilac Street.</p>
+    <div class="kicker-links" data-anim><a href="https://keilasbikes.majcustodioph.com">① Funnel</a><a class="on" href="#s2">② Ads plan</a><a href="https://keilasbikes-results.majcustodioph.com">③ Projections</a></div>
+  </div>
+  <span class="slide__num">01</span>
+</section>
+
+<!-- 2 · The one action -->
+<section class="slide slide--brand">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap" style="display:grid;gap:22px">
+    <span class="eyebrow" data-anim>The one action</span>
+    <h2 class="slide__title" data-anim>Every ad ends at the same door: <em style="font-style:normal;color:#ffe08a">reserve + free test ride.</em></h2>
+    <p class="lead" data-anim style="max-width:60ch">A bodega wins when people walk in. So we don't sell bikes in the ad — we sell the 48-hour hold and the ride around Lilac Street. The sale happens on the saddle.</p>
+    <div class="action-grid">
+      <div data-anim="scale"><b>₱0</b><span>deposit to reserve — the lowest-friction ask in Marikina</span></div>
+      <div data-anim="scale"><b>48h</b><span>unit held at the counter, which creates urgency without pressure</span></div>
+      <div data-anim="scale"><b>1 in 5</b><span>test rides we plan to convert into a bike out the door (sample target)</span></div>
+    </div>
+  </div>
+  <span class="slide__num">02</span>
+</section>
+
+<!-- 3 · Structure -->
+<section class="slide slide--soft">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>Campaign structure</span><h2 data-anim>3 Meta campaigns + 1 TikTok engine</h2></div><span class="pill" data-anim>Objective: leads → test rides</span></div>
+    <div class="camp">
+      <article class="card" data-anim="scale"><span class="pct">40%</span><b class="num">Campaign 01 · Retail</b><h3>Marikina & neighbors</h3><p>Families, first-time buyers, weekend riders within 12 km of the bodega.</p><ul><li>Marikina, Pasig, QC, Antipolo, Cainta</li><li>Leads: instant form + funnel</li><li>Price-anchor + test-ride creative</li></ul></article>
+      <article class="card" data-anim="scale"><span class="pct">35%</span><b class="num">Campaign 02 · E-bike intent</b><h3>Commuters & seniors</h3><p>People paying daily fares, PWD/senior mobility buyers, 3–4 wheel shoppers.</p><ul><li>Interests: e-bike, Home Credit, commuting</li><li>Leads + Messenger</li><li>Fare-savings math, installment</li></ul></article>
+      <article class="card" data-anim="scale"><span class="pct">15%</span><b class="num">Campaign 03 · Reseller</b><h3>Wholesale lead gen</h3><p>Sari-sari owners, bike resellers, online sellers in Luzon looking for supply.</p><ul><li>Luzon-wide, 25–55, business owners</li><li>Messenger conversations</li><li>Bodega walkthrough, stock sheet</li></ul></article>
+      <article class="card card--dark" data-anim="scale"><span class="pct">10%</span><b class="num" style="color:rgba(255,255,255,0.6)">Engine · TikTok</b><h3 style="color:#fff">Hook videos</h3><p>Organic + Spark Ads on the shop's own TikTok. The bodega itself is the content.</p><ul><li>3 hooks/week, 15–30s vertical</li><li>Boost the top hook</li><li>Retarget viewers on Meta</li></ul></article>
+    </div>
+  </div>
+  <span class="slide__num">03</span>
+</section>
+
+<!-- 4 · Retargeting -->
+<section class="slide">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>Retargeting layer</span><h2 data-anim>Nobody leaves without a second invitation.</h2></div><span class="pill" data-anim>7-day window · all campaigns</span></div>
+    <div class="flow">
+      <div data-anim="left"><i>Signal</i><b>They touched the funnel</b><span>Visited the page, opened an instant form, or watched 50% of a hook video.</span></div>
+      <div data-anim="left"><i>Day 0–2</i><b>"Naka-reserve na yung unit mo."</b><span>The 48-hour hold ad: tuned, checked, waiting at the counter.</span></div>
+      <div data-anim="left"><i>Day 3–5</i><b>Objection ads</b><span>Installment in 20 minutes · libre delivery · warranty and batteries in stock.</span></div>
+      <div class="hot" data-anim="left"><i>Day 6–7</i><b>Last call + Messenger</b><span>A direct line to staff with the stock sheet. Then they drop out of the window.</span></div>
+    </div>
+    <p class="note" style="margin-top:18px" data-anim>Exclusions: existing customers list, employees, and anyone who converted in the last 30 days.</p>
+  </div>
+  <span class="slide__num">04</span>
+</section>
+
+<!-- 5 · Creatives A -->
+<section class="slide slide--soft">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>Launch creatives · 1 of 2</span><h2 data-anim>Price anchor. Fare math. First bike.</h2></div><span class="pill pill--accent" data-anim>Feed · Reels · Stories</span></div>
+    <div class="ads ads--deck">
+      <article class="ad ad--deck" data-anim="scale">
+        <div class="ad__top"><span class="avatar">K</span><div><b>Keila's Bike Shop Marikina Bodega</b><span>Sponsored · Marikina City</span></div></div>
+        <div class="ad__text">Nag-canvass ka sa mall? Same MTB, ₱4,000 cheaper sa bodega. 🚲
+Test-ride muna bago bayad. Libre delivery Metro Manila. Reserve your unit — walang deposit.</div>
+        <div class="ad__media"><span class="ad__badge">Bodega price</span><img src="https://images.unsplash.com/photo-1561840884-9dda41ed54e4?w=900&q=80&fit=crop&auto=format" alt=""><div class="ad__overlay"><b>MTB from ₱3,600</b><span>Mall price: ₱7,000+. Same specs.</span></div></div>
+        <div class="ad__cta"><div><b>keilasbikes.majcustodioph.com</b><span>Reserve & test-ride free</span></div><a class="btn" href="#">Book Now</a></div>
+      </article>
+      <article class="ad ad--deck" data-anim="scale">
+        <div class="ad__top"><span class="avatar">K</span><div><b>Keila's Bike Shop Marikina Bodega</b><span>Sponsored · Marikina City</span></div></div>
+        <div class="ad__text">₱100/day pamasahe = ₱3,000/month. 💸
+Isang e-bike, ₱0 down via Home Credit, approved sa store in 20 minutes. Marikina to Ortigas, zero fare, zero traffic stress.</div>
+        <div class="ad__media"><span class="ad__badge">₱0 down</span><img src="https://images.unsplash.com/photo-1620802051782-725fa33db067?w=900&q=80&fit=crop&auto=format" alt=""><div class="ad__overlay"><b>Stop paying fares.</b><span>E-bikes on Home Credit installment</span></div></div>
+        <div class="ad__cta"><div><b>keilasbikes.majcustodioph.com</b><span>Check installment in 20 min</span></div><a class="btn" href="#">Apply Now</a></div>
+      </article>
+      <article class="ad ad--deck" data-anim="scale">
+        <div class="ad__top"><span class="avatar">K</span><div><b>Keila's Bike Shop Marikina Bodega</b><span>Sponsored · Marikina City</span></div></div>
+        <div class="ad__text">First bike ng anak mo doesn't have to cost ₱5,000. 🎈
+Kids bikes from ₱1,600 — training wheels included, assembled and adjusted for free. Sit them on it first. Then decide.</div>
+        <div class="ad__media"><span class="ad__badge">From ₱1,600</span><img src="https://images.unsplash.com/photo-1600783794854-41292749a3d3?w=900&q=80&fit=crop&auto=format" alt=""><div class="ad__overlay"><b>Their first bike, this weekend.</b><span>Kids bikes · 12" to 20" · free assembly</span></div></div>
+        <div class="ad__cta"><div><b>keilasbikes.majcustodioph.com</b><span>Reserve a kids bike</span></div><a class="btn" href="#">Book Now</a></div>
+      </article>
+    </div>
+  </div>
+  <span class="slide__num">05</span>
+</section>
+
+<!-- 6 · Creatives B -->
+<section class="slide slide--soft">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>Launch creatives · 2 of 2</span><h2 data-anim>Wholesale. Four wheels. The reserved unit.</h2></div><span class="pill pill--accent" data-anim>Feed · Messenger · Retargeting</span></div>
+    <div class="ads ads--deck">
+      <article class="ad ad--deck" data-anim="scale">
+        <div class="ad__top"><span class="avatar">K</span><div><b>Keila's Bike Shop Marikina Bodega</b><span>Sponsored · Luzon</span></div></div>
+        <div class="ad__text">RESELLERS: tired of suppliers na nawawala ang stock? 📦
+Wholesale pricelist, consistent stock, batteries on hand. 2 branches in Marikina. Message us for the current stock sheet.</div>
+        <div class="ad__media"><span class="ad__badge">Wholesale</span><img src="https://images.unsplash.com/photo-1521078803125-7efd09b65b8f?w=900&q=80&fit=crop&auto=format" alt=""><div class="ad__overlay"><b>Bodega supply. Reseller margins.</b><span>Wholesale · Retail · Resell since 2020</span></div></div>
+        <div class="ad__cta"><div><b>m.me/KEILASBIKESHOP</b><span>Get the wholesale pricelist</span></div><a class="btn" href="#">Send Message</a></div>
+      </article>
+      <article class="ad ad--deck" data-anim="scale">
+        <div class="ad__top"><span class="avatar">K</span><div><b>Keila's Bike Shop Marikina Bodega</b><span>Sponsored · Metro Manila</span></div></div>
+        <div class="ad__text">Para kay Nanay, Tatay, or anyone na nahihirapan nang maglakad. 🧡
+4-wheel e-bikes ₱61,999–₱79,999, keyless, delivered free anywhere in Metro Manila. Home Credit available.</div>
+        <div class="ad__media"><span class="ad__badge">Free delivery</span><img src="https://images.unsplash.com/photo-1778574171671-fbe178537535?w=900&q=80&fit=crop&auto=format" alt=""><div class="ad__overlay"><b>Freedom on four wheels.</b><span>3 & 4-wheel e-bikes · installment OK</span></div></div>
+        <div class="ad__cta"><div><b>keilasbikes.majcustodioph.com</b><span>Book a home demo</span></div><a class="btn" href="#">Learn More</a></div>
+      </article>
+      <article class="ad ad--deck" data-anim="scale">
+        <div class="ad__top"><span class="avatar">K</span><div><b>Keila's Bike Shop Marikina Bodega</b><span>Sponsored · Retargeting</span></div></div>
+        <div class="ad__text">Naka-reserve na yung unit mo. 👀
+We hold it for 48 hours — walk in to 3 Lilac St., test-ride it, ride it home. Or we deliver. Free.</div>
+        <div class="ad__media"><span class="ad__badge">Reserved for you</span><img src="https://images.unsplash.com/photo-1676531443468-0e2b5a57e48f?w=900&q=80&fit=crop&auto=format" alt=""><div class="ad__overlay"><b>Tuned, checked, waiting.</b><span>Every unit test-ridden before it leaves</span></div></div>
+        <div class="ad__cta"><div><b>keilasbikes.majcustodioph.com</b><span>Confirm your test ride</span></div><a class="btn" href="#">Book Now</a></div>
+      </article>
+    </div>
+    <p class="note" style="margin-top:16px" data-anim>Images are stock placeholders. Launch creatives use the bodega's own photos, real units with price tags and staff on camera — authenticity outperforms polish for this audience.</p>
+  </div>
+  <span class="slide__num">06</span>
+</section>
+
+<!-- 7 · Hooks -->
+<section class="slide">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>Short-video hooks</span><h2 data-anim>Three scripts the staff can shoot on a phone.</h2></div><span class="pill" data-anim>15–30s · vertical · TikTok, Reels, Stories</span></div>
+    <div class="scripts">
+      <div data-anim="left"><b>Hook A · "Mall vs. Bodega"</b><ol class="script"><li><span>0–3s</span>Mall receipt next to our price tag. "₱9,800 sa mall. ₱5,400 dito. Same bike."</li><li><span>3–10s</span>Walk the aisle: MTBs, kids bikes, e-bikes. Price tags visible.</li><li><span>10–20s</span>Customer sits, rides out the door. "Test-ride muna. Bayad kung gusto mo."</li><li><span>20–30s</span>"Libre delivery Metro Manila." CTA: reserve, link in bio, walang deposit.</li></ol></div>
+      <div data-anim="left"><b>Hook B · "Pamasahe math"</b><ol class="script"><li><span>0–3s</span>Calculator: "₱100 × 30 = ₱3,000." Voice: "Ganito ang pamasahe mo."</li><li><span>3–10s</span>Cut to e-bike. "₱0 down, Home Credit, 20 minutes sa store."</li><li><span>10–20s</span>Commuter POV through Marikina streets at dawn.</li><li><span>20–30s</span>"Bayad sa sarili in under a year." CTA: book a free test ride.</li></ol></div>
+      <div data-anim="left"><b>Hook C · "Bodega tour"</b><ol class="script"><li><span>0–3s</span>Door opens on 200+ bikes. "Pinakamalaking bike bodega sa Marikina."</li><li><span>3–12s</span>Kids corner, MTB wall, e-bike row, battery shelf. "Batteries? Meron."</li><li><span>12–20s</span>Reseller loading 10 units into a van. "Wholesale? Meron din."</li><li><span>20–30s</span>"Started sa sala namin, 2020." CTA: 3 Lilac St., open daily 9–7.</li></ol></div>
+    </div>
+  </div>
+  <span class="slide__num">07</span>
+</section>
+
+<!-- 8 · Targeting -->
+<section class="slide slide--soft">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>Audience & targeting</span><h2 data-anim>Who sees what</h2></div><span class="pill" data-anim>Meta Advantage+ with guardrails</span></div>
+    <div class="panel" data-anim="scale" style="padding:18px 22px"><div class="table-scroll"><table class="table">
+      <thead><tr><th>Audience</th><th>Geo</th><th>Age</th><th>Signals</th><th>Creative</th><th>Placement</th></tr></thead>
+      <tbody>
+        <tr><td><b>Family buyers</b></td><td>Marikina + 12 km</td><td>25–50</td><td>Parents, kids' activities, bike interest, Home Credit</td><td>Kids bike ₱1,600 · Mall vs. bodega</td><td>Feed, Reels</td></tr>
+        <tr><td><b>Commuters</b></td><td>Marikina, Pasig, QC, Cainta, Antipolo</td><td>21–45</td><td>Commute, Grab/Angkas users, offices in Ortigas/Eastwood/BGC</td><td>Pamasahe math · ₱0 down e-bike</td><td>Reels, Stories, TikTok</td></tr>
+        <tr><td><b>Mobility & seniors' families</b></td><td>Metro Manila</td><td>30–60</td><td>Caregivers, PWD/senior interest, 3–4 wheel searches</td><td>Freedom on four wheels · free delivery</td><td>Feed, Messenger</td></tr>
+        <tr><td><b>Resellers</b></td><td>Luzon</td><td>25–55</td><td>Business owners, online sellers, wholesale, sari-sari</td><td>Bodega supply · stock sheet</td><td>Feed, Messenger, Marketplace</td></tr>
+        <tr><td><b>Retargeting</b></td><td>Anyone engaged</td><td>All</td><td>Funnel visitors, form opens, 50% video viewers, engagers (30 d)</td><td>"Reserved for you" · 48-hour hold</td><td>All placements</td></tr>
+      </tbody>
+    </table></div></div>
+  </div>
+  <span class="slide__num">08</span>
+</section>
+
+<!-- 9 · Budget -->
+<section class="slide slide--dark">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>Budget tiers</span><h2 data-anim>What ₱500, ₱1,000 and ₱2,000 a day buys</h2></div><span class="pill" data-anim>Projection · not a guarantee</span></div>
+    <div class="tiers">
+      <div class="tier" data-anim="scale"><b class="lab">Starter</b><span class="big-num">₱500<small>/day</small></span><p>Retail campaign only, Marikina radius. Prove the angle in 14 days.</p><div class="row"><span>Monthly spend</span><b>₱15,000</b></div><div class="row"><span>Impressions</span><b>100K–165K</b></div><div class="row"><span>Leads</span><b>180–330</b></div><div class="row"><span>Cost per lead</span><b>₱45–₱85</b></div></div>
+      <div class="tier hot" data-anim="scale"><b class="lab">Recommended · Growth</b><span class="big-num">₱1,000<small>/day</small></span><p>Retail + E-bike, TikTok Spark Ads on. Keeps test-ride slots full every day.</p><div class="row"><span>Monthly spend</span><b>₱30,000</b></div><div class="row"><span>Impressions</span><b>200K–330K</b></div><div class="row"><span>Leads</span><b>360–660</b></div><div class="row"><span>Cost per lead</span><b>₱45–₱85</b></div></div>
+      <div class="tier" data-anim="scale"><b class="lab">Dominate</b><span class="big-num">₱2,000<small>/day</small></span><p>All three campaigns plus reseller lead gen Luzon-wide. Plan a second staff phone.</p><div class="row"><span>Monthly spend</span><b>₱60,000</b></div><div class="row"><span>Impressions</span><b>400K–660K</b></div><div class="row"><span>Leads</span><b>720–1,300</b></div><div class="row"><span>Cost per lead</span><b>₱45–₱85</b></div></div>
+    </div>
+    <p class="note" style="margin-top:16px" data-anim>Assumptions: ₱90–₱150 CPM, 1.5–2.5% link CTR, 8–12% click-to-lead. Management fee and creative production are separate from media spend.</p>
+  </div>
+  <span class="slide__num">09</span>
+</section>
+
+<!-- 10 · Calendar -->
+<section class="slide">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>30-day launch calendar</span><h2 data-anim>Sign-off to first test rides in 10 days.</h2></div><span class="pill" data-anim>Days 1–30</span></div>
+    <div class="cal">
+      <div data-anim="scale"><b>Days 1–3</b><span>Pixel + Conversions API on the funnel. Instant forms built. Customer exclusion list uploaded.</span></div>
+      <div data-anim="scale"><b>Days 4–6</b><span>Bodega shoot: 30 photos, 9 vertical clips, staff on camera. Price tags visible.</span></div>
+      <div data-anim="scale"><b>Days 7–9</b><span>6 ads built, 3 hooks edited. Funnel copy finalized with real prices and stock.</span></div>
+      <div class="hot" data-anim="scale"><b>Day 10 · Launch</b><span>Retail + E-bike live at ₱500–₱1,000/day. First test rides booked the same week.</span></div>
+      <div data-anim="scale"><b>Days 11–16</b><span>Daily lead QA: text confirmations within the hour. Kill ads under 1% CTR, scale winners +20%.</span></div>
+      <div data-anim="scale"><b>Days 17–20</b><span>Reseller campaign + retargeting layer live. Hooks A/B/C posted organically.</span></div>
+      <div data-anim="scale"><b>Days 21–24</b><span>Spark-boost the top hook. Messenger auto-replies with the stock sheet.</span></div>
+      <div data-anim="scale"><b>Days 25–28</b><span>Creative refresh: swap the 2 lowest ads for customer-UGC versions from first buyers.</span></div>
+      <div data-anim="scale"><b>Day 29</b><span>Report: leads, test rides, sales, cost per sale. Compared against the projections.</span></div>
+      <div class="hot" data-anim="scale"><b>Day 30 · Decide</b><span>Scale to the next tier or hold. Month 2 built from real numbers, not benchmarks.</span></div>
+    </div>
+  </div>
+  <span class="slide__num">10</span>
+</section>
+
+<!-- 11 · Close -->
+<section class="slide slide--dark">
+  <div class="slide__bg"><img src="https://images.unsplash.com/photo-1620802051782-725fa33db067?w=1800&q=80&fit=crop&auto=format" alt=""></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap" style="display:grid;gap:22px;max-width:960px">
+    <span class="eyebrow" data-anim>Next</span>
+    <h2 class="slide__title" data-anim>See what these leads <em>turn into.</em></h2>
+    <p class="lead" data-anim>Interactive 90-day projections: conservative, expected and aggressive, re-computed live from the budget you pick.</p>
+    <div class="hero__ctas" data-anim><a class="btn btn--accent btn--xl" href="https://keilasbikes-results.majcustodioph.com">Open the projections</a><a class="btn btn--light" href="https://keilasbikes.majcustodioph.com">Back to the funnel</a></div>
+  </div>
+  <span class="slide__num">11</span>
+</section>
+
+</main>
+
+<div class="ribbon"><span>Preview build · media plan for presentation</span></div>
+<script src="/funnels/shared/charts.js" defer></script>
+<script src="/funnels/shared/fx.js" defer></script>
+<script src="/funnels/shared/deck.js" defer></script>
+</body>
+</html>

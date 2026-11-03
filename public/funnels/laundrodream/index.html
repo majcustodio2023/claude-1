@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LaundroDream · Own a laundry business that pays you every month</title>
+<meta name="description" content="Start a laundry + water-refilling business with LG commercial equipment, setup, training and 24/7 support. Book a free business consultation with LaundroDream.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,800;1,9..40,500&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/funnels/shared/ui.css">
+<style>
+  :root { --brand: #2f8fc4; --brand-ink: #1b6a99; --brand-soft: #e8f4fb; --bg-2: #f3f9fd; --bg-3: #e8f4fb; --accent: #fd5db6; --accent-ink: #fff; --dark: #0b1324; --dark-2: #121c30; --money: linear-gradient(100deg, #155f8c 0%, #2f8fc4 42%, #6cc1ea 100%); }
+  .sec { position: relative; overflow: hidden; }
+  /* nav over hero */
+  .nav { position: fixed; top: 0; left: 0; right: 0; background: transparent; border-bottom-color: transparent; color: #fff; transition: background .4s, color .4s, border-color .4s; backdrop-filter: none; }
+  .nav .nav__links { color: rgba(255,255,255,.85); } .nav .nav__links a:hover { color: #fff; }
+  .nav .brand__mark { background: #fff; color: var(--brand-ink); }
+  .nav .btn--sm { background: #fff; color: var(--brand-ink); }
+  .nav.solid { background: rgba(255,255,255,.86); color: var(--ink); border-bottom-color: var(--hair-soft); backdrop-filter: blur(14px); }
+  .nav.solid .nav__links { color: var(--ink-2); } .nav.solid .brand__mark { background: var(--brand); color: #fff; } .nav.solid .btn--sm { background: var(--brand); color: #fff; }
+  /* two streams */
+  .streams { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 860px) { .streams { grid-template-columns: 1fr; } }
+  .stream { position: relative; border-radius: 28px; overflow: hidden; min-height: 420px; display: grid; align-content: end; padding: 30px; color: #fff; isolation: isolate; }
+  .stream img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: transform 1.4s var(--ease); }
+  .stream:hover img { transform: scale(1.06); }
+  .stream::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(5,8,16,.05) 30%, rgba(5,8,16,.92) 100%); }
+  .stream b { font-size: clamp(40px, 5vw, 72px); letter-spacing: -0.04em; line-height: 1; }
+  .stream small { font-size: 16px; letter-spacing: 0; font-weight: 600; color: rgba(255,255,255,.75); }
+  .stream p { color: rgba(255,255,255,.8); max-width: 44ch; }
+  .plus { display: grid; place-items: center; font-size: 64px; font-weight: 300; color: var(--brand); }
+  /* calc dark */
+  .ledger { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 24px; padding: 28px; display: grid; gap: 12px; }
+  .ledger__row { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.1); font-size: 15px; }
+  .ledger__row span { color: var(--on-dark-mute); } .ledger__row b { font-variant-numeric: tabular-nums; }
+  .ledger__row--total { border: 0; padding-top: 16px; font-size: 20px; align-items: center; }
+  .ledger__row--total b { background: linear-gradient(100deg, #8ecdea, #fff); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: clamp(34px, 4vw, 56px); letter-spacing: -0.04em; }
+  .offerwrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 28px; align-items: start; }
+  @media (max-width: 940px) { .offerwrap { grid-template-columns: 1fr; } }
+  .result-ticks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+  @media (max-width: 900px) { .result-ticks { grid-template-columns: 1fr 1fr; } }
+  .result-ticks div { display: grid; gap: 6px; padding: 22px 0 0; border-top: 1px solid rgba(255,255,255,.18); }
+  .result-ticks b { font-size: clamp(40px, 4.6vw, 64px); letter-spacing: -0.04em; line-height: 1; }
+  .result-ticks span { font-size: 14px; color: var(--on-dark-mute); }
+  .trust { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  @media (max-width: 900px) { .trust { grid-template-columns: 1fr 1fr; } }
+  .trust div { text-align: center; padding: 18px 10px; border-radius: 16px; background: #fff; border: 1px solid var(--hair-soft); font-weight: 700; font-size: 14px; display: grid; gap: 6px; justify-items: center; }
+  .trust svg { width: 26px; height: 26px; color: var(--brand); }
+</style>
+</head>
+<body>
+<div class="ribbon"><span>Preview build · sample testimonials &amp; results for presentation</span></div>
+
+<header class="nav" id="nav">
+  <div class="wrap nav__in">
+    <a class="brand" href="#top"><span class="brand__mark"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="5"/><path d="M4 5h16v16H4z"/><path d="M8 5V3h8v2"/></svg></span>LaundroDream</a>
+    <nav class="nav__links"><a href="#why">Why laundry</a><a href="#numbers">The numbers</a><a href="#dream">The dream</a><a href="#story">Our story</a><a href="#stories">Owners</a><a href="#faq">FAQ</a></nav>
+    <a class="btn btn--sm" href="#book">Book free consultation</a>
+  </div>
+</header>
+
+<main id="top">
+<!-- HERO -->
+<section class="hero hero--cine">
+  <div class="hero__bg"><img src="https://images.unsplash.com/photo-1689143943908-729b4335c6dd?w=2400&q=80&fit=crop&auto=format" alt="A smiling shop owner fanning out a stack of cash"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="hero__cards" data-mouse aria-hidden="true">
+    <div class="glass g1" data-depth="22"><b>₱384K</b><span>Monthly sales scenario</span></div>
+    <div class="glass g2" data-depth="12"><b>₱100K</b><span>Profit target / month</span></div>
+    <div class="glass g3" data-depth="30"><b>6,000+</b><span>Shops served*</span></div>
+  </div>
+  <div class="wrap">
+    <span class="eyebrow">LG commercial laundry · Setup · Training · 24/7 repair</span>
+    <h1 data-split="chars">Own a laundry shop that pays you <em class="acc" style="color:#8ecdea">every single month.</em></h1>
+    <p class="lead">Dirty clothes never stop. Drinking water never stops. LaundroDream gives you both income streams in one store, with LG commercial machines, full setup and the support to hit a ₱100,000-a-month profit target.</p>
+    <div class="hero__ctas">
+      <a class="btn btn--xl btn--light" href="#book">Book my free consultation <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="btn btn--ghost" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.45)" href="#numbers">See the ₱100K math</a>
+    </div>
+    <div class="hero__proof"><span><b>Official</b> LG commercial partner</span><span><b>24/7</b> emergency repair</span><span><b>45–60 days</b> to opening day</span></div>
+  </div>
+  <div class="hero__scroll"><i></i>Scroll</div>
+</section>
+
+<!-- PHOTO MARQUEE -->
+<div class="pmarq" aria-hidden="true"><div class="pmarq__track">
+  <img src="https://images.unsplash.com/photo-1638949493140-edb10b7be2f3?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1518458028785-8fbcd101ebb9?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1551761429-8232f9f5955c?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1758523671893-0ba21cf4260f?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=800&q=75&fit=crop&auto=format" alt="">
+  <img src="https://images.unsplash.com/photo-1638949493140-edb10b7be2f3?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1518458028785-8fbcd101ebb9?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1551761429-8232f9f5955c?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1758523671893-0ba21cf4260f?w=800&q=75&fit=crop&auto=format" alt=""><img src="https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=800&q=75&fit=crop&auto=format" alt="">
+</div></div>
+
+<!-- PAIN -->
+<section class="sec" id="why">
+  <span class="ghost ghost--scroll" data-scrub>01</span>
+  <div class="wrap" style="display:grid;gap:40px">
+    <div style="display:grid;gap:18px;max-width:1000px">
+      <span class="eyebrow rv">Sound familiar?</span>
+      <h2 class="scrubline" data-split data-scrub>You've saved for years. You're scared to put it into something that doesn't sell.</h2>
+      <p class="lead rv">Most people we talk to aren't short on capital. They're short on certainty. The fear isn't the washing machines. It's waking up in month four with an empty shop and a loan to pay.</p>
+    </div>
+    <div class="stack">
+      <div class="pain__item" style="--k:0" data-tilt="3"><i>!</i><div><b>The trend trap</b><p>Milk tea. Samgyupsal. The viral product of the year. Trends spike, then everyone copies it, then it dies, and your capital dies with it.</p></div></div>
+      <div class="pain__item" style="--k:1" data-tilt="3"><i>!</i><div><b>Salary ceiling</b><p>You work harder every year and your income barely moves. One job, one paycheck, zero leverage.</p></div></div>
+      <div class="pain__item" style="--k:2" data-tilt="3"><i>!</i><div><b>Franchise fees that eat your profit</b><p>Royalties, marketing fees, mandatory supplies. You own the risk; someone else owns the upside.</p></div></div>
+      <div class="pain__item" style="--k:3" data-tilt="3"><i>!</i><div><b>Nobody to call when a machine breaks</b><p>A dead dryer on a Saturday is a week of lost sales and refunds. Most suppliers vanish after delivery.</p></div></div>
+      <div class="pain__item pain__item--good" style="--k:4" data-tilt="3"><i>✓</i><div><b>What you actually want</b><p>A store that sells a need, not a trend. A number you can plan around. A partner who picks up the phone.</p></div></div>
+    </div>
+    <div class="rv"><a class="btn btn--xl" href="#book">Show me a business that sells every day</a></div>
+  </div>
+</section>
+
+<!-- STREAMS + MATH -->
+<section class="sec band band--dark" id="numbers">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div><div class="grain" aria-hidden="true"></div>
+  <span class="ghost ghost--scroll" data-scrub>02</span>
+  <div class="wrap" style="display:grid;gap:clamp(40px,6vw,80px)">
+    <div class="sec__head" style="margin:0">
+      <span class="eyebrow rv">The opportunity</span>
+      <h2 data-split class="rv" style="font-size:clamp(36px,5.6vw,84px)">Why settle for one revenue stream when your location can support <span class="gradient-text">two?</span></h2>
+    </div>
+    <div class="tickrow">
+      <div class="rv"><div class="tick money" data-tick="264000" data-prefix="₱">₱0</div><span>Laundry sales per month: 40 wash-dry-fold tickets a day at ₱220.</span></div>
+      <div class="rv rv-d1"><div class="tick money" data-tick="120000" data-prefix="₱">₱0</div><span>Water sales per month: 100 refills a day at ₱40.</span></div>
+      <div class="rv rv-d2"><div class="tick money" data-tick="100000" data-prefix="₱">₱0</div><span>Net profit target after ₱284K of rent, staff, utilities and supplies.</span></div>
+    </div>
+    <div class="streams">
+      <article class="stream wipe" data-tilt="3"><img src="https://images.unsplash.com/photo-1638949493140-edb10b7be2f3?w=1400&q=80&fit=crop&auto=format" alt=""><span class="eyebrow" style="color:#8ecdea">Stream 01 · Laundry</span><b>₱264,000 <small>/ month</small></b><p>Rain or shine, payday or not, the hamper fills up. Laundry brings the neighbourhood in every single week.</p></article>
+      <article class="stream wipe" data-tilt="3"><img src="https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=1400&q=80&fit=crop&auto=format" alt=""><span class="eyebrow" style="color:#8ecdea">Stream 02 · Water refilling</span><b>₱120,000 <small>/ month</small></b><p>Families don't skip drinking water, and they rarely switch stations once they trust yours. Same rent, same staff, second register.</p></article>
+    </div>
+    <div class="calc">
+      <div style="display:grid;gap:18px">
+        <span class="eyebrow rv">The ₱100K math</span>
+        <h3 class="rv" style="font-size:clamp(28px,3.4vw,46px)">Move the sliders. Watch the profit line.</h3>
+        <p class="lead rv">This is the scenario we build with you on the call, using your actual location, rent and utility rates. Illustrative, not a promise, but it's the same model our shops are run on.</p>
+        <div class="grid" style="gap:16px">
+          <label class="range"><span class="range__row"><span>Laundry tickets per day</span><b id="vTx">40</b></span><input type="range" id="tx" min="15" max="90" value="40"></label>
+          <label class="range"><span class="range__row"><span>Average laundry ticket</span><b id="vTicket">₱220</b></span><input type="range" id="ticket" min="150" max="400" step="10" value="220"></label>
+          <label class="range"><span class="range__row"><span>Water refills per day</span><b id="vRef">100</b></span><input type="range" id="ref" min="30" max="300" step="10" value="100"></label>
+          <label class="range"><span class="range__row"><span>Monthly expenses</span><b id="vExp">₱284,000</b></span><input type="range" id="exp" min="120000" max="400000" step="1000" value="284000"></label>
+        </div>
+      </div>
+      <div class="ledger rise" data-tilt="2">
+        <span class="eyebrow">Monthly scenario</span>
+        <div class="ledger__row"><span>Laundry sales</span><b id="oL">₱264,000</b></div>
+        <div class="ledger__row"><span>Water sales</span><b id="oW">₱120,000</b></div>
+        <div class="ledger__row"><span>Total sales</span><b id="oS">₱384,000</b></div>
+        <div class="ledger__row"><span>Operating expenses</span><b id="oE">– ₱284,000</b></div>
+        <div class="ledger__row ledger__row--total"><span>Net profit to you</span><b id="oP">₱100,000</b></div>
+        <p class="small" style="color:var(--on-dark-mute)">Over 12 months that's <b id="oY" style="color:#fff">₱1,200,000</b> in profit from one location. A second branch is how owners turn it into ₱2.4M.</p>
+        <a class="btn btn--light" href="#book">Build my scenario on a free call</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DREAM: horizontal strip -->
+<section class="hpin band" id="dream" data-hpin style="background:var(--bg-2)">
+  <div class="hpin__sticky">
+    <div class="hpin__head"><span class="eyebrow">The real dream</span><h2 style="font-size:clamp(34px,5vw,72px);max-width:16ch">You don't want a laundry shop. You want what a laundry shop <em class="acc">gives you.</em></h2><p class="mute">Scroll to move through it →</p></div>
+    <div class="hpin__track">
+      <article class="xcard"><img src="https://images.unsplash.com/photo-1700190827479-c79e8db4bc88?w=1000&q=75&fit=crop&auto=format" alt=""><span class="num">01</span><h3>An extra ₱50K, ₱100K or more every month</h3><p>Income that lands whether you clocked in or not. The kind that makes a salary feel like a bonus.</p></article>
+      <article class="xcard"><img src="https://images.unsplash.com/photo-1758227365187-016878604d94?w=1000&q=75&fit=crop&auto=format" alt=""><span class="num">02</span><h3>The next property, fully funded</h3><p>Owners use month-12 profit as the down payment on the lot, the condo or the second branch.</p></article>
+      <article class="xcard"><img src="https://images.unsplash.com/photo-1639765766830-d829d2fe4219?w=1000&q=75&fit=crop&auto=format" alt=""><span class="num">03</span><h3>Tuition that's never a question again</h3><p>A store that quietly pays the school fees, the tutors and the trips while you keep your day job or finally leave it.</p></article>
+      <article class="xcard"><img src="https://images.unsplash.com/photo-1653762379954-8943c787e78b?w=1000&q=75&fit=crop&auto=format" alt=""><span class="num">04</span><h3>Time that belongs to you</h3><p>Trained staff run the floor. You review the day's sales from your phone and show up when you want to.</p></article>
+      <article class="xcard"><img src="https://images.unsplash.com/photo-1772413438617-937e44f2642e?w=1000&q=75&fit=crop&auto=format" alt=""><span class="num">05</span><h3>An asset you can expand or sell</h3><p>Equipment, a customer base and a proven P&amp;L. Unlike a trend, a laundry shop is worth something to the next buyer.</p></article>
+      <article class="xcard" style="background:var(--brand)"><img src="https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?w=1000&q=75&fit=crop&auto=format" alt="" style="opacity:.35"><span class="num" style="color:#fff">06</span><h3>Start in 45 to 60 days</h3><p>Location check, layout, LG delivery, installation, training, opening day. We've run this playbook thousands of times.</p><a class="btn btn--light" href="#book" style="justify-self:start">Book the call</a></article>
+    </div>
+    <div class="hpin__bar"><i></i></div>
+  </div>
+</section>
+
+<!-- STORY: scrollytelling -->
+<section class="sec band" id="story" style="background:#fff">
+  <span class="ghost ghost--scroll" data-scrub>03</span>
+  <div class="wrap" style="display:grid;gap:36px">
+    <div class="sec__head" style="margin:0"><span class="eyebrow rv">Why LaundroDream exists</span><h2 data-split class="rv">Built by people who got tired of watching good savings go into bad businesses.</h2><p class="pull pull-xl rv" style="border:0;padding:0;max-width:24ch">"We've seen too many Filipinos put ₱1M into a trend and lose it in a year. Laundry is boring. Boring is what pays."</p></div>
+    <div class="story">
+      <div class="story__media">
+        <img src="https://images.unsplash.com/photo-1639580133969-48cbbce72e1f?w=1400&q=80&fit=crop&auto=format" alt="">
+        <img src="https://images.unsplash.com/photo-1610305401607-8745a10c75dd?w=1400&q=80&fit=crop&auto=format" alt="">
+        <img src="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=1400&q=80&fit=crop&auto=format" alt="">
+        <img src="https://images.unsplash.com/photo-1551761429-8232f9f5955c?w=1400&q=80&fit=crop&auto=format" alt="">
+        <div class="cap"><span class="pill pill--dark">Las Piñas HQ · nationwide installs</span></div>
+      </div>
+      <div class="story__steps">
+        <div class="story__step"><span class="k">STEP 01 · THE PROBLEM</span><h3>A machine supplier that kept getting the same phone call.</h3><p>"The shop is open, the machines are here, and nobody's coming." LaundroDream started as an LG commercial laundry supplier and heard that call too many times. Equipment was never the hard part. Location, setup and support were.</p></div>
+        <div class="story__step"><span class="k">STEP 02 · THE PARTNER MODEL</span><h3>So we stopped selling boxes and started building stores.</h3><p>Location check, floor layout, delivery, installation and commissioning by our own technicians. You get working machines and a plan, not a crate and a receipt.</p></div>
+        <div class="story__step"><span class="k">STEP 03 · THE TRAINING</span><h3>Owners who had never run a shop now run two.</h3><p>Daily operations, pricing, ticketing, machine care, customer handling. Your staff trains with you, so the store runs without you on the floor.</p></div>
+        <div class="story__step"><span class="k">STEP 04 · THE PROMISE</span><h3>Twenty-four-seven repair, because a machine that's down is a store that's bleeding.</h3><p>Preventive maintenance on a schedule, genuine LG parts in stock, and an emergency line that answers on a Sunday. Today the team reports more than 6,000 laundry shops served across the Philippines.</p></div>
+      </div>
+    </div>
+    <div class="trust rv" data-stagger>
+      <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>Official LG partner</div>
+      <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H4z"/><path d="M8 20h8M12 16v4"/></svg>Owner training</div>
+      <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.4 2.4-2.6-2.6z"/></svg>24/7 repair line</div>
+      <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-5 7-12a7 7 0 0 0-14 0c0 7 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>Nationwide installs</div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee marquee--xl marquee--outline" aria-hidden="true"><div class="marquee__track"><span>₱100K months</span><span>Zero royalties</span><span>Two income streams</span><span>45-day launch</span><span>24/7 repair</span><span>₱100K months</span><span>Zero royalties</span><span>Two income streams</span><span>45-day launch</span><span>24/7 repair</span></div></div>
+
+<!-- PACKAGE -->
+<section class="sec sec--soft" id="package">
+  <span class="ghost ghost--scroll" data-scrub>04</span>
+  <div class="wrap" style="display:grid;gap:36px">
+    <div class="sec__head" style="margin:0"><span class="eyebrow rv">What you get</span><h2 data-split class="rv">Not a franchise. <em class="acc">Your</em> store, our system, zero royalties.</h2><p class="lead rv">You keep 100% of your profit. We make money once, on the equipment and setup, so our only incentive is to make your store work.</p></div>
+    <div class="offerwrap">
+      <ul class="offer__list" data-stagger>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg><div><b>LG commercial washers and dryers</b><span>Sized to your location: a compact starter set or a full self-service floor, with priority allocation and partner pricing.</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg><div><b>Water-refilling station option</b><span>Filtration, dispensing and a second income stream from the same space and staff.</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg><div><b>Location check and store layout</b><span>Foot traffic, competition, water and power requirements, then a floor plan that fits the machines and the queue.</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg><div><b>Delivery, installation and commissioning</b><span>Our technicians install, test and hand over. You get working machines, not boxes.</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg><div><b>Owner and staff training</b><span>Daily operations, pricing, ticketing, machine care and customer handling, so the store runs without you on the floor.</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 6L9 17l-5-5"/></svg><div><b>Preventive maintenance and 24/7 emergency repair</b><span>A breakdown is a phone call, not a crisis. Genuine parts, trained technicians, nationwide.</span></div></li>
+      </ul>
+      <div class="offer__box rise" data-tilt="3" style="position:sticky;top:96px">
+        <span class="eyebrow">Free, no obligation</span>
+        <div class="offer__price"><s>₱5,000</s>₱0</div>
+        <p style="color:var(--on-dark-mute)">A 30-minute business consultation where we build your store's numbers on your location, your capital range and your target profit.</p>
+        <ul><li>Capital requirement for your exact setup</li><li>Sales volume needed to hit your profit target</li><li>Equipment list and layout for your space</li><li>Payback timeline under 3 scenarios</li><li>Partner pricing and current LG promos</li></ul>
+        <a class="btn btn--light" href="#book">Claim my free consultation</a>
+        <p class="small" style="color:var(--on-dark-mute)">Only 12 consultation slots open per week.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STORIES -->
+<section class="sec band band--dark" id="stories">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <span class="ghost ghost--scroll" data-scrub>05</span>
+  <div style="display:grid;gap:40px">
+    <div class="wrap sec__head sec__head--center" style="margin:0 auto"><span class="eyebrow eyebrow--plain rv">Owner stories</span><h2 data-split class="rv">Ordinary people. Boring business. <em class="acc">Extraordinary months.</em></h2><p class="lead rv" style="text-align:center">Sample stories for this preview, written in the voice of the three owners we see most often: the first-timer, the OFW investor and the expanding entrepreneur.</p></div>
+    <div class="qmarq"><div class="qmarq__track">
+      <div class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"I kept my job in BGC and opened in Imus. By month three the shop was clearing the rent and my staff's salary before the 10th. By month seven I hit my first ₱100K profit month."</p><div class="quote__who"><span class="avatar">JR</span><div><b>Jessa R.</b><span>First-time owner · Cavite</span></div></div></div>
+      <div class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"I'm in Dubai. My sister runs the floor, I run the numbers from my phone. The team did the location check, the install and the training while I was abroad. The water station alone pays the electricity."</p><div class="quote__who"><span class="avatar">MD</span><div><b>Mark D.</b><span>OFW investor · Bulacan</span></div></div></div>
+      <div class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"We already had a sari-sari and a water station. Adding four LG washers turned a ₱40K-a-month corner into a ₱180K-a-month store. A dryer went down on a Sunday; the technician was there Monday morning."</p><div class="quote__who"><span class="avatar">AL</span><div><b>Ana &amp; Lito</b><span>Expanding entrepreneurs · Laguna</span></div></div></div>
+      <div class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"Opened in Tarlac with two washers and two dryers. Added two more in month nine from profit. Branch two is signing next quarter."</p><div class="quote__who"><span class="avatar">RB</span><div><b>Rico B.</b><span>Nurse turned owner · Tarlac</span></div></div></div>
+      <div class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"I kept my job in BGC and opened in Imus. By month three the shop was clearing the rent and my staff's salary before the 10th. By month seven I hit my first ₱100K profit month."</p><div class="quote__who"><span class="avatar">JR</span><div><b>Jessa R.</b><span>First-time owner · Cavite</span></div></div></div>
+      <div class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"I'm in Dubai. My sister runs the floor, I run the numbers from my phone. The team did the location check, the install and the training while I was abroad. The water station alone pays the electricity."</p><div class="quote__who"><span class="avatar">MD</span><div><b>Mark D.</b><span>OFW investor · Bulacan</span></div></div></div>
+      <div class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"We already had a sari-sari and a water station. Adding four LG washers turned a ₱40K-a-month corner into a ₱180K-a-month store. A dryer went down on a Sunday; the technician was there Monday morning."</p><div class="quote__who"><span class="avatar">AL</span><div><b>Ana &amp; Lito</b><span>Expanding entrepreneurs · Laguna</span></div></div></div>
+      <div class="quote"><span class="quote__tag">Sample</span><div class="quote__stars">★★★★★</div><p>"Opened in Tarlac with two washers and two dryers. Added two more in month nine from profit. Branch two is signing next quarter."</p><div class="quote__who"><span class="avatar">RB</span><div><b>Rico B.</b><span>Nurse turned owner · Tarlac</span></div></div></div>
+    </div></div>
+    <div class="wrap result-ticks">
+      <div class="rv"><b class="gradient-text" data-tick="412" data-prefix="₱" data-suffix="K">₱0K</b><span>First full month of sales, 6-washer store <em class="small">(sample)</em></span></div>
+      <div class="rv rv-d1"><b class="gradient-text" data-tick="7" data-suffix=" mo">0 mo</b><span>To first ₱100K profit month <em class="small">(sample)</em></span></div>
+      <div class="rv rv-d2"><b class="gradient-text" data-tick="18" data-suffix=" mo">0 mo</b><span>Payback on a ₱1.2M setup in the model <em class="small">(sample)</em></span></div>
+      <div class="rv rv-d3"><b class="gradient-text" data-tick="31" data-suffix="%">0%</b><span>Owners who open branch two within 2 years <em class="small">(illustrative)</em></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section class="sec" id="steps" style="background:#fff">
+  <span class="ghost ghost--scroll" data-scrub>06</span>
+  <div class="wrap" style="display:grid;gap:36px">
+    <div class="sec__head" style="margin:0"><span class="eyebrow rv">From "someday" to opening day</span><h2 data-split class="rv">Five steps. We hold your hand through all of them.</h2></div>
+    <div class="steps" data-stagger>
+      <div class="step" data-tilt="4"><h3>Free consultation</h3><p>Tell us where you want to open, the space you have and the capital range you're considering. We build your scenario live.</p></div>
+      <div class="step" data-tilt="4"><h3>Location &amp; layout</h3><p>We assess the market, the foot traffic, the water and power supply, then design the floor around the queue.</p></div>
+      <div class="step" data-tilt="4"><h3>Equipment &amp; install</h3><p>LG machines delivered, installed and commissioned by our technicians. Water station included if you want stream two.</p></div>
+      <div class="step" data-tilt="4"><h3>Training &amp; launch</h3><p>You and your staff learn the daily playbook. We help you set prices and open with a grand-opening promo that fills the shop.</p></div>
+    </div>
+    <p class="mute rv">Step five is the one you'll like most: track sales and expenses, improve, repeat. Most owners are planning branch two before the first anniversary.</p>
+  </div>
+</section>
+
+<!-- BOOK -->
+<section class="sec sec--soft" id="book">
+  <span class="ghost ghost--scroll" data-scrub>07</span>
+  <div class="wrap">
+    <div class="book-cine rise">
+      <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div style="display:grid;gap:18px;align-content:start;position:relative">
+        <span class="eyebrow" style="color:#8ecdea">Book your free consultation</span>
+        <h2 style="font-size:clamp(34px,4.4vw,60px)">Thirty minutes. Your numbers. Zero pressure.</h2>
+        <p class="lead">You'll leave the call knowing exactly how much capital you need, what you'd earn in three scenarios and whether your location can support it. If it can't, we'll tell you.</p>
+        <div class="guarantee"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg><div><b>The honest-numbers promise.</b> We'd rather lose a sale than open a store that won't make it. Every scenario we show you comes with the assumptions written down.</div></div>
+        <p style="color:rgba(255,255,255,.8)">Prefer to talk now? Call <b style="color:#fff">0946 923 5583</b> or <b style="color:#fff">0908 899 8089</b>, Mon–Sun 8:00 AM–6:00 PM, or message <a style="color:#8ecdea" href="https://m.me/laundrodreamph" target="_blank" rel="noopener"><b>LaundroDream on Messenger</b></a>.</p>
+      </div>
+      <div style="position:relative">
+        <form class="form" data-demo>
+          <div class="form__row">
+            <label class="field">Full name<input type="text" name="name" placeholder="Juan dela Cruz" required></label>
+            <label class="field">Mobile number<input type="tel" name="phone" placeholder="09XX XXX XXXX" required></label>
+          </div>
+          <div class="form__row">
+            <label class="field">City / area you want to open in<input type="text" name="city" placeholder="e.g. Imus, Cavite"></label>
+            <label class="field">Email (optional)<input type="email" name="email" placeholder="you@email.com"></label>
+          </div>
+          <div class="field">Capital range you're considering
+            <div class="chips" data-chips="single">
+              <button type="button" class="chip" aria-pressed="false">Under ₱500K</button>
+              <button type="button" class="chip" aria-pressed="true">₱500K–₱1M</button>
+              <button type="button" class="chip" aria-pressed="false">₱1M–₱2M</button>
+              <button type="button" class="chip" aria-pressed="false">₱2M+</button>
+            </div>
+          </div>
+          <div class="field">Pick a day<div class="chips" data-chips="single" id="days"></div></div>
+          <div class="field">Pick a time<div class="chips" data-chips="single" id="slots"></div></div>
+          <button class="btn btn--xl btn--light" type="submit">Book my free consultation</button>
+          <p class="small center" style="color:rgba(255,255,255,.6)">No fees. No obligation. We'll confirm by text within the hour.</p>
+        </form>
+        <div class="form__done"><b>You're booked.</b>A LaundroDream consultant will text you to confirm your slot and ask two quick questions about your location.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec" id="faq" style="background:#fff">
+  <div class="wrap">
+    <div class="sec__head sec__head--center"><span class="eyebrow eyebrow--plain rv">Questions</span><h2 data-split class="rv">Everything people ask before they book</h2></div>
+    <div class="faq" data-stagger>
+      <details><summary>How much capital do I need?</summary><p>It depends on the number of machines, your space and whether you add the water station. The consultation gives you an exact figure for your setup; most starter stores fall between a compact 2-washer setup and a full self-service floor.</p></details>
+      <details><summary>Is this a franchise? Are there royalties?</summary><p>No. You own the store and the equipment outright. There are no royalties or monthly franchise fees. LaundroDream supplies the machines, setup, training and support.</p></details>
+      <details><summary>I have no experience running a shop.</summary><p>Most of our owners didn't either. Training covers daily operations, pricing, ticketing, machine care and customer handling. Your staff can be trained with you.</p></details>
+      <details><summary>I'm abroad. Can I still open one?</summary><p>Yes. OFW owners typically run the numbers remotely while a family member or trained manager runs the floor. We handle the location check, installation and training on the ground.</p></details>
+      <details><summary>What happens when a machine breaks?</summary><p>You call the 24/7 emergency repair line. Preventive maintenance is scheduled so breakdowns are rare, and genuine LG parts are stocked.</p></details>
+      <details><summary>Is the ₱100,000 profit guaranteed?</summary><p>No business can guarantee profit. ₱100K is the target scenario at 40 laundry tickets and 100 refills a day with ₱284K monthly expenses. On the call we rebuild it with your actual rent, utilities and market.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section class="sec band band--dark" data-sticky-end>
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div><div class="grain" aria-hidden="true"></div>
+  <div class="wrap center" style="display:grid;gap:22px;justify-items:center;padding:4vh 0">
+    <span class="eyebrow rv">Your move</span>
+    <h2 data-split="chars" class="rv" style="max-width:16ch;font-size:clamp(40px,7vw,110px)">Twelve months from now, the hamper will still be full. Will it be <em class="acc">your</em> store?</h2>
+    <p class="lead rv" style="text-align:center">Book the free consultation. Get your real numbers. Decide with certainty.</p>
+    <a class="btn btn--xl btn--light rv" href="#book">Book my free consultation</a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div><a class="brand" href="#top"><span class="brand__mark"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="5"/><path d="M4 5h16v16H4z"/><path d="M8 5V3h8v2"/></svg></span>LaundroDream</a><p>Two essential services. One business opportunity. A bigger financial goal.</p></div>
+      <div><span class="eyebrow eyebrow--plain">Visit</span><p>501 Alabang–Zapote Rd, Almanza Uno<br>Las Piñas, 1750 Metro Manila<br>Mon–Sun 8:00 AM–6:00 PM</p></div>
+      <div><span class="eyebrow eyebrow--plain">Talk</span><p>0946 923 5583<br>0908 899 8089<br>official@laundrodream-ph.com</p></div>
+      <div><span class="eyebrow eyebrow--plain">Follow</span><p><a href="https://www.facebook.com/laundrodreamph/" target="_blank" rel="noopener">Facebook</a><br><a href="https://www.laundrodream-ph.com/" target="_blank" rel="noopener">laundrodream-ph.com</a></p></div>
+    </div>
+    <p class="footer__legal">*Shops-served figure as reported by LaundroDream. Sales, profit and payback figures on this page are illustrative scenarios based on stated assumptions and are not guarantees of performance. Owner stories and results marked "Sample" are presentation placeholders pending verified testimonials. Funnel design by Magica Studio.</p>
+  </div>
+</footer>
+
+<div class="sticky"><span>Free 30-min consultation · 12 slots/week</span><a class="btn" href="#book">Book now</a></div>
+
+<script src="/funnels/shared/charts.js" defer></script>
+<script src="/funnels/shared/fx.js" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const nav = document.getElementById('nav'); const onS = () => nav.classList.toggle('solid', scrollY > 80); addEventListener('scroll', onS, { passive: true }); onS();
+  const peso = (n) => '₱' + Math.round(n).toLocaleString('en-PH');
+  const calc = () => {
+    const tx = +document.getElementById('tx').value, tk = +document.getElementById('ticket').value, rf = +document.getElementById('ref').value, ex = +document.getElementById('exp').value;
+    const L = tx * tk * 30, W = rf * 40 * 30, S = L + W, P = S - ex;
+    document.getElementById('vTx').textContent = tx; document.getElementById('vTicket').textContent = peso(tk); document.getElementById('vRef').textContent = rf; document.getElementById('vExp').textContent = peso(ex);
+    document.getElementById('oL').textContent = peso(L); document.getElementById('oW').textContent = peso(W); document.getElementById('oS').textContent = peso(S); document.getElementById('oE').textContent = '– ' + peso(ex);
+    const p = document.getElementById('oP'); p.textContent = (P < 0 ? '– ' : '') + peso(Math.abs(P)); document.getElementById('oY').textContent = (P < 0 ? '– ' : '') + peso(Math.abs(P * 12));
+  };
+  ['tx','ticket','ref','exp'].forEach((i) => document.getElementById(i).addEventListener('input', calc)); calc();
+  const dn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const days = document.getElementById('days'), d = new Date(); d.setDate(d.getDate() + 1); let k = 0;
+  while (days.children.length < 5) { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.setAttribute('aria-pressed', k === 0 ? 'true' : 'false'); b.textContent = `${dn[d.getDay()]} ${mn[d.getMonth()]} ${d.getDate()}`; days.appendChild(b); d.setDate(d.getDate() + 1); k++; }
+  const slots = document.getElementById('slots'); ['9:00 AM','10:30 AM','1:00 PM','2:30 PM','4:00 PM','5:00 PM'].forEach((s, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.setAttribute('aria-pressed', i === 1 ? 'true' : 'false'); b.textContent = s; slots.appendChild(b); });
+});
+</script>
+</body>
+</html>
