@@ -12,6 +12,8 @@ interface BriefInput {
   model: string;
   links: string[];
   description: string;
+  /** The owner's own prompt instructions for this build. They come from the agency, so the builder follows them. */
+  instructions?: string;
   scraped: Scraped;
   settings?: PrototypeSettings;
   /** Absolute address of the finished site, ending in a slash. */
@@ -61,7 +63,7 @@ ${sources || "- no links"}
 
 Pictures saved from their socials/site (use these first; they are the client's real photos):
 ${pictures}
-${b.settings?.extra?.trim() ? `\n## Standing instructions from the agency\n"""${b.settings.extra.trim()}"""\n` : ""}
+${b.instructions?.trim() ? `\n## Prompt instructions for THIS prototype (from the agency owner: follow them; where they clash with the defaults below, they win)\n"""${b.instructions.trim()}"""\n` : ""}${b.settings?.extra?.trim() ? `\n## Standing instructions from the agency\n"""${b.settings.extra.trim()}"""\n` : ""}
 ## Step 1: understand the business (max 3 minutes)
 - Work out the business name, what it sells, who it sells to, where it is, price level and brand voice.
 - If the facts above are thin, use WebSearch / WebFetch on the name, handle and links (menu, services, prices, address, hours, reviews). Instagram usually blocks fetching; don't waste time retrying it.

@@ -427,6 +427,8 @@ export interface Settings {
   sound?: { music?: number; sfx?: number; lastMusic?: number; lastSfx?: number };
   /** Prototype maker (see lib/prototype.ts). */
   prototype?: PrototypeSettings;
+  /** Wendy, the second (separately branded) maker. Same shape; the builder start link is shared with the Prototype maker. */
+  wendy?: PrototypeSettings;
 }
 
 export interface PrototypeSettings {

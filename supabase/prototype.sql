@@ -219,3 +219,42 @@ revoke all on function public.prototype_plan(text, int) from public, anon, authe
 revoke all on function public.prototype_save_page(text, text, text, text) from public, anon, authenticated;
 revoke all on function public.prototype_finish(text, text, text, text) from public, anon, authenticated;
 revoke all on function public.prototype_fail(text, text) from public, anon, authenticated;
+
+-- ---------- Wendy (2026-11-03): a second, separately branded maker on the same queue ----------
+-- brand says which maker a job came from ('prototype' or 'wendy'); instructions are the owner's
+-- prompt instructions for that one build (also written into the brief).
+alter table public.prototype_jobs add column if not exists brand text not null default 'prototype';
+alter table public.prototype_jobs add column if not exists instructions text not null default '';
+
+create or replace function public.prototype_create(p_key text, p_job jsonb) returns void
+language plpgsql security definer set search_path = public, extensions as $$
+begin
+  if not tracker_key_ok(p_key) then raise exception 'unauthorized'; end if;
+  insert into prototype_jobs (id, slug, status, model, links, description, scraped, brief, progress, brand, instructions)
+  values (p_job->>'id', p_job->>'slug', 'preparing', coalesce(p_job->>'model', 'claude-opus-5-5'), coalesce(p_job->'links', '[]'::jsonb),
+          coalesce(p_job->>'description', ''), coalesce(p_job->'scraped', '{}'::jsonb), p_job->>'brief',
+          jsonb_build_array(jsonb_build_object('at', now(), 'text', 'Reading the links and saving the pictures.')),
+          case when p_job->>'brand' = 'wendy' then 'wendy' else 'prototype' end,
+          left(coalesce(p_job->>'instructions', ''), 4000));
+end $$;
+
+create or replace function public.prototype_list(p_key text) returns jsonb
+language plpgsql security definer set search_path = public, extensions as $$
+begin
+  if not tracker_key_ok(p_key) then raise exception 'unauthorized'; end if;
+  return coalesce((select jsonb_agg(jsonb_build_object(
+      'id', j.id, 'slug', j.slug, 'status', j.status, 'model', j.model, 'links', j.links, 'description', j.description,
+      'businessName', j.business_name, 'businessType', j.business_type, 'summary', j.summary, 'error', j.error,
+      'createdAt', j.created_at, 'startedAt', j.started_at, 'finishedAt', j.finished_at,
+      'progress', j.progress, 'planned', j.planned, 'brand', j.brand, 'instructions', j.instructions,
+      'styles', exists (select 1 from prototype_pages p where p.job_id = j.id and p.path = 'site.css'),
+      'pictures', (select count(*) from prototype_assets a where a.job_id = j.id),
+      'pages', coalesce((select jsonb_agg(jsonb_build_object('path', p.path, 'title', p.title) order by p.path = 'index' desc, p.updated_at)
+                         from prototype_pages p where p.job_id = j.id and p.path not like '%.css' and p.path not like '%.js'), '[]'::jsonb),
+      'scraped', j.scraped
+    ) order by j.created_at desc) from prototype_jobs j where j.status <> 'removed'), '[]'::jsonb);
+end $$;
+revoke all on function public.prototype_create(text, jsonb) from public;
+revoke all on function public.prototype_list(text) from public;
+grant execute on function public.prototype_create(text, jsonb) to anon;
+grant execute on function public.prototype_list(text) to anon;

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { guessName, linkKind, makeSlug, normalizeLink } from "../lib/prototype";
+import { brandOf, guessName, linkKind, makeSlug, normalizeLink } from "../lib/prototype";
 
 test("links: handles, bare domains and junk", () => {
   assert.equal(normalizeLink("@kape.ni.juan"), "https://www.instagram.com/kape.ni.juan/");
@@ -28,4 +28,11 @@ test("name guess before the builder reads anything", () => {
   assert.equal(guessName(["https://www.instagram.com/kapenijuan/"], ""), "kapenijuan");
   assert.equal(guessName(["https://www.brandname.com/about"], ""), "brandname");
   assert.equal(guessName([], "Small dental clinic in Cebu"), "Small dental clinic");
+});
+
+test("Wendy and the Prototype maker keep separate lists", () => {
+  assert.equal(brandOf("wendy"), "wendy");
+  assert.equal(brandOf("prototype"), "prototype");
+  assert.equal(brandOf(undefined), "prototype");
+  assert.equal(brandOf("WENDY; drop"), "prototype");
 });

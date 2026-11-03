@@ -17,6 +17,10 @@ export const PROTOTYPE_DEADLINE_MIN = 18;
 
 export const modelLabel = (id: string) => PROTOTYPE_MODELS.find((m) => m.id === id)?.label ?? id;
 
+/** Which maker a job came from: the Prototype maker, or Wendy (same builder, its own look and list). */
+export type PrototypeBrand = "prototype" | "wendy";
+export const brandOf = (v: unknown): PrototypeBrand => (v === "wendy" ? "wendy" : "prototype");
+
 export type PrototypeStatus = "preparing" | "queued" | "building" | "ready" | "failed";
 
 export interface ScrapedSource {
@@ -63,6 +67,9 @@ export interface PrototypeJob {
   model: string;
   links: string[];
   description: string;
+  brand?: PrototypeBrand;
+  /** The owner's prompt instructions for this one build (Wendy). */
+  instructions?: string;
   businessName?: string | null;
   businessType?: string | null;
   summary?: string | null;

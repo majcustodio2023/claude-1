@@ -1,0 +1,186 @@
+/* Wendy: the feminine twin of the Prototype maker. White, blush pink, royal purple.
+   Everything is scoped under .wd (and html.wendy for the page background) so the tracker's look is untouched. */
+
+html.wendy {
+  --wd-bg: #fffafc;
+  --wd-blush: #fdeef5;
+  --wd-pink: #f8cfe0;
+  --wd-rose: #ec8fba;
+  --wd-hot: #d9579a;
+  --wd-purple: #5e2b97;
+  --wd-purple-2: #7a45b8;
+  --wd-lilac: #ece2fb;
+  --wd-ink: #3a1e55;
+  --wd-muted: #876f9c;
+  --wd-line: #f1d9e7;
+  --wd-good: #2f9e78;
+  --wd-bad: #c43c6c;
+  --wd-display: "Playfair Display", Georgia, serif;
+  --wd-sans: "Quicksand", "Nunito", ui-sans-serif, system-ui, sans-serif;
+  color-scheme: light;
+}
+html.wendy body { background: var(--wd-bg); background-image: none; color: var(--wd-ink); }
+
+.wd {
+  font-family: var(--wd-sans); color: var(--wd-ink); font-weight: 500;
+  background-color: var(--wd-bg);
+  background-image:
+    radial-gradient(900px 520px at 100% 0, rgb(248 207 224 / 0.55), transparent 62%),
+    radial-gradient(800px 600px at -10% 18%, rgb(236 226 251 / 0.7), transparent 60%),
+    radial-gradient(900px 700px at 70% 100%, rgb(253 230 241 / 0.7), transparent 60%);
+}
+.wd-display { font-family: var(--wd-display); font-weight: 700; letter-spacing: -0.01em; }
+.wd-script { font-family: var(--wd-display); font-style: italic; font-weight: 600; }
+.wd-muted { color: var(--wd-muted); }
+
+.wd-card {
+  background: rgb(255 255 255 / 0.86);
+  border: 1px solid var(--wd-line);
+  border-radius: 28px;
+  box-shadow: 0 1px 0 #fff inset, 0 24px 60px -30px rgb(94 43 151 / 0.35), 0 6px 18px -10px rgb(236 143 186 / 0.35);
+  backdrop-filter: blur(8px);
+}
+.wd-chip-label {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: 0.85rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--wd-purple); background: var(--wd-lilac); border-radius: 999px; padding: 0.35rem 0.9rem;
+}
+
+/* Fields: override the tracker's game-style inputs inside Wendy. */
+.wd input:not([type="radio"]):not([type="checkbox"]), .wd textarea, .wd select {
+  width: 100%;
+  font-family: var(--wd-sans); font-weight: 600; font-size: 1.1rem; color: var(--wd-ink);
+  background: #fff; border: 1.5px solid var(--wd-line); border-radius: 16px; box-shadow: 0 2px 0 rgb(248 207 224 / 0.35);
+  padding: 0.85rem 1rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.wd input::placeholder, .wd textarea::placeholder { color: #b49dc4; font-weight: 500; }
+.wd input:focus, .wd textarea:focus, .wd select:focus { border-color: var(--wd-purple-2); box-shadow: 0 0 0 4px rgb(122 69 184 / 0.16); }
+.wd textarea { resize: vertical; line-height: 1.5; }
+.wd-instr { background: linear-gradient(180deg, #fff, #fff7fb) !important; border-color: #e7c9f5 !important; }
+
+.wd-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.55rem;
+  font-family: var(--wd-sans); font-weight: 700; font-size: 1.05rem;
+  border-radius: 999px; padding: 0.7rem 1.3rem; border: 1.5px solid var(--wd-line);
+  background: #fff; color: var(--wd-purple); cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+}
+.wd-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px -10px rgb(94 43 151 / 0.45); }
+.wd-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
+.wd-btn-primary {
+  color: #fff; border: 0;
+  background: linear-gradient(120deg, var(--wd-purple) 0%, var(--wd-purple-2) 45%, var(--wd-hot) 100%);
+  background-size: 200% 100%;
+  box-shadow: 0 14px 30px -14px rgb(94 43 151 / 0.7);
+}
+.wd-btn-primary:not(:disabled):hover { background-position: 100% 0; }
+.wd-btn-soft { background: var(--wd-blush); border-color: transparent; }
+.wd-generate { position: relative; overflow: hidden; font-size: 1.4rem; padding: 1.1rem 1.5rem; width: 100%; }
+.wd-generate::after {
+  content: ""; position: absolute; inset: 0; transform: translateX(-120%);
+  background: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / 0.45) 50%, transparent 70%);
+  animation: wd-shine 3.2s ease-in-out infinite;
+}
+@keyframes wd-shine { 0%, 55% { transform: translateX(-120%); } 100% { transform: translateX(120%); } }
+
+.wd-pick { border: 1.5px solid var(--wd-line); border-radius: 20px; background: #fff; padding: 1rem; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
+.wd-pick:hover { transform: translateY(-1px); }
+.wd-pick[data-on="true"] { border-color: var(--wd-purple-2); box-shadow: 0 0 0 4px rgb(122 69 184 / 0.14), 0 12px 24px -16px rgb(94 43 151 / 0.6); background: linear-gradient(180deg, #fff, #faf5ff); }
+.wd .wd-radio { appearance: none; background: #fff; padding: 0; box-shadow: none; width: 1.3rem; height: 1.3rem; border-radius: 999px; border: 2px solid #cdb6e3; display: inline-grid; place-content: center; flex-shrink: 0; margin-top: 0.2rem; }
+ .wd .wd-radio:checked { background: #fff; border-color: var(--wd-purple); }
+.wd .wd-radio:checked::after { content: ""; width: 0.65rem; height: 0.65rem; border-radius: 999px; background: var(--wd-purple); }
+
+.wd-tag { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.95rem; font-weight: 700; border-radius: 999px; padding: 0.4rem 0.85rem; background: var(--wd-blush); color: var(--wd-purple); border: 1px solid transparent; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
+.wd-tag:hover { background: #fff; border-color: var(--wd-rose); }
+
+.wd-status { font-size: 0.85rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 0.35rem 0.85rem; }
+
+/* ---------- The studio: Wendy building the site, live ---------- */
+.wd-studio { position: relative; overflow: hidden; border-radius: 28px; background: linear-gradient(160deg, #fff 0%, #fff3f9 45%, #f3ebff 100%); border: 1px solid var(--wd-line); }
+.wd-blob { position: absolute; border-radius: 999px; filter: blur(40px); opacity: 0.7; animation: wd-drift 14s ease-in-out infinite alternate; pointer-events: none; }
+.wd-blob.b1 { width: 320px; height: 320px; background: #f8cfe0; top: -90px; left: -60px; }
+.wd-blob.b2 { width: 280px; height: 280px; background: #e2d2fb; bottom: -110px; right: -40px; animation-delay: -5s; }
+.wd-blob.b3 { width: 200px; height: 200px; background: #ffd9ea; top: 40%; left: 55%; animation-delay: -9s; }
+@keyframes wd-drift { from { transform: translate(0, 0) scale(1); } to { transform: translate(40px, 30px) scale(1.15); } }
+
+.wd-spark { position: absolute; bottom: -20px; color: var(--wd-rose); animation: wd-rise linear infinite; pointer-events: none; }
+.wd-spark.p { color: var(--wd-purple-2); }
+@keyframes wd-rise {
+  0% { transform: translateY(0) rotate(0deg) scale(0.6); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translateY(-520px) rotate(200deg) scale(1.1); opacity: 0; }
+}
+
+/* The site taking shape inside a browser window */
+.wd-window { position: relative; background: #fff; border-radius: 18px; border: 1px solid #f0dbe8; box-shadow: 0 30px 60px -30px rgb(94 43 151 / 0.45); overflow: hidden; }
+.wd-window-bar { display: flex; align-items: center; gap: 0.4rem; padding: 0.6rem 0.8rem; background: linear-gradient(180deg, #fff, #fdf2f8); border-bottom: 1px solid #f5e3ee; }
+.wd-dot { width: 0.7rem; height: 0.7rem; border-radius: 999px; }
+.wd-url { flex: 1; margin-left: 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--wd-muted); background: #fff; border: 1px solid #f3e1ec; border-radius: 999px; padding: 0.25rem 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wd-tabs { display: flex; gap: 0.35rem; padding: 0.5rem 0.7rem 0; overflow: hidden; flex-wrap: wrap; }
+.wd-tab { font-size: 0.8rem; font-weight: 700; padding: 0.25rem 0.7rem; border-radius: 10px 10px 0 0; background: #f9eef5; color: var(--wd-muted); animation: wd-pop 0.5s cubic-bezier(.2,1.6,.4,1) both; }
+.wd-tab.done { background: var(--wd-lilac); color: var(--wd-purple); }
+.wd-tab.ghost { background: repeating-linear-gradient(90deg, #f7ecf3 0 8px, #fbf4f8 8px 16px); color: transparent; animation: wd-pulse 1.4s ease-in-out infinite; }
+
+.wd-canvas { padding: 0.9rem; display: grid; gap: 0.6rem; }
+.wd-block { position: relative; border-radius: 12px; overflow: hidden; background: #f8eef4; transition: background 0.8s ease, transform 0.6s ease, opacity 0.6s; }
+.wd-block.wait { opacity: 0.55; }
+.wd-block.wait::before, .wd-block.work::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgb(255 255 255 / 0.85) 50%, transparent 80%);
+  animation: wd-shimmer 1.6s linear infinite; transform: translateX(-100%);
+}
+.wd-block.work { outline: 2px dashed var(--wd-purple-2); outline-offset: 2px; animation: wd-breathe 1.6s ease-in-out infinite; }
+.wd-block.done { animation: wd-pop 0.6s cubic-bezier(.2,1.6,.4,1) both; }
+@keyframes wd-shimmer { to { transform: translateX(100%); } }
+@keyframes wd-breathe { 50% { transform: scale(1.012); } }
+@keyframes wd-pop { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes wd-pulse { 50% { opacity: 0.45; } }
+.wd-line { height: 0.55rem; border-radius: 99px; background: rgb(255 255 255 / 0.75); }
+
+.wd-type { border-right: 2px solid currentColor; white-space: nowrap; overflow: hidden; animation: wd-caret 0.8s step-end infinite; }
+@keyframes wd-caret { 50% { border-color: transparent; } }
+
+.wd-swatch { width: 1.6rem; height: 1.6rem; border-radius: 999px; border: 2px solid #fff; box-shadow: 0 4px 10px -4px rgb(94 43 151 / 0.5); animation: wd-drop 0.7s cubic-bezier(.2,1.6,.4,1) both; }
+@keyframes wd-drop { from { transform: translateY(-30px) scale(0.4); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* The wand that hops between blocks */
+.wd-wand { position: absolute; z-index: 5; color: var(--wd-purple); filter: drop-shadow(0 6px 10px rgb(94 43 151 / 0.4)); transition: left 1.1s cubic-bezier(.6,.05,.3,1), top 1.1s cubic-bezier(.6,.05,.3,1); pointer-events: none; }
+.wd-wand .tip { animation: wd-twinkle 0.9s ease-in-out infinite; transform-origin: 4px 4px; }
+@keyframes wd-twinkle { 50% { transform: scale(1.5) rotate(45deg); opacity: 0.6; } }
+
+/* Tools floating at the window's corners; the one in use glows */
+.wd-floater { position: absolute; z-index: 6; width: 2.8rem; height: 2.8rem; border-radius: 999px; display: grid; place-items: center; background: #fff; color: #c2a9d6; box-shadow: 0 10px 22px -10px rgb(94 43 151 / 0.55); animation: wd-bob 3.6s ease-in-out infinite; pointer-events: none; transition: color 0.4s, background 0.4s; }
+.wd-floater.on { color: #fff; background: linear-gradient(135deg, var(--wd-purple), var(--wd-hot)); }
+@keyframes wd-bob { 50% { transform: translateY(-8px) rotate(-6deg); } }
+
+/* The code being written, typed live */
+.wd-code { background: #2c1442; color: #f3e6ff; border-radius: 16px; padding: 0.9rem 1rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85rem; line-height: 1.6; min-height: 8.4rem; box-shadow: 0 18px 40px -24px rgb(44 20 66 / 0.9); overflow: hidden; }
+.wd-code .k { color: #f6a5c4; } .wd-code .v { color: #c9a8ff; } .wd-code .c { color: #8f78a8; }
+
+/* Steps */
+.wd-step { display: flex; gap: 0.75rem; align-items: center; font-weight: 700; font-size: 1.05rem; color: #b8a3c8; transition: color 0.4s; }
+.wd-step .bead { width: 2rem; height: 2rem; border-radius: 999px; display: grid; place-items: center; background: #f6edf3; color: #c9b4d8; flex-shrink: 0; transition: background 0.4s, color 0.4s; }
+.wd-step.done { color: var(--wd-ink); }
+.wd-step.done .bead { background: var(--wd-lilac); color: var(--wd-purple); }
+.wd-step.now { color: var(--wd-purple); }
+.wd-step.now .bead { background: linear-gradient(135deg, var(--wd-purple), var(--wd-hot)); color: #fff; box-shadow: 0 0 0 0 rgb(217 87 154 / 0.5); animation: wd-ring 1.6s ease-out infinite; }
+@keyframes wd-ring { 70% { box-shadow: 0 0 0 12px rgb(217 87 154 / 0); } 100% { box-shadow: 0 0 0 0 rgb(217 87 154 / 0); } }
+
+.wd-ribbon { height: 0.9rem; border-radius: 99px; background: #f7e8f1; overflow: hidden; }
+.wd-ribbon > i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--wd-rose), var(--wd-purple-2), var(--wd-purple), var(--wd-rose)); background-size: 300% 100%; animation: wd-flow 3s linear infinite; transition: width 0.9s ease; }
+@keyframes wd-flow { to { background-position: 300% 0; } }
+
+.wd-log li { animation: wd-slide 0.5s ease both; }
+@keyframes wd-slide { from { transform: translateX(-12px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.wd-overlay { position: fixed; inset: 0; z-index: 60; background: rgb(58 30 85 / 0.32); backdrop-filter: blur(6px); display: grid; place-items: center; padding: 1rem; animation: wd-fade 0.3s ease both; overflow-y: auto; }
+@keyframes wd-fade { from { opacity: 0; } }
+.wd-modal { width: min(1080px, 100%); animation: wd-rise-in 0.5s cubic-bezier(.2,1.2,.4,1) both; }
+@keyframes wd-rise-in { from { transform: translateY(30px) scale(0.97); opacity: 0; } }
+
+.wd-confetti { position: absolute; top: -12px; width: 10px; height: 14px; border-radius: 3px; animation: wd-fall 2.6s cubic-bezier(.3,.6,.5,1) forwards; pointer-events: none; }
+@keyframes wd-fall { to { transform: translateY(620px) rotate(720deg); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .wd *, .wd *::before, .wd *::after { animation-duration: 0.001s !important; animation-iteration-count: 1 !important; transition-duration: 0.001s !important; }
+}
