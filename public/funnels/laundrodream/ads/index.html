@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LaundroDream · Ads plan</title>
-<meta name="description" content="Paid media plan for the LaundroDream consultation funnel, presented as slides.">
+<meta name="description" content="The simple ads plan for LaundroDream: who sees the ads, what they say, what it costs and how many people book a call.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,800;1,9..40,500&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
@@ -15,9 +15,29 @@
   .camp { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
   @media (max-width: 900px) { .camp { grid-template-columns: 1fr; } }
   .camp .card { gap: 12px; padding: 30px; }
-  .camp .card .pct { font-size: clamp(54px, 7vw, 96px); font-weight: 800; letter-spacing: -0.05em; line-height: 0.9; }
+  .camp .card .pct { font-size: clamp(44px, 5.4vw, 72px); font-weight: 800; letter-spacing: -0.05em; line-height: 0.9; }
+  .camp .card .pct small { font-size: 0.3em; letter-spacing: 0; font-weight: 700; color: var(--mute); margin-left: 4px; }
+  .camp .card--dark .pct small { color: var(--on-dark-mute); }
   .camp .card ul { display: grid; gap: 6px; font-size: 14px; color: var(--ink-2); }
   .camp .card ul li::before { content: "— "; color: var(--brand); }
+  .steps4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 900px) { .steps4 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .steps4 { grid-template-columns: 1fr; } }
+  .steps4 div { position: relative; padding: 26px 22px; border-radius: 20px; background: var(--bg); border: 1px solid var(--hair-soft); display: grid; gap: 10px; align-content: start; }
+  .steps4 div em { font-style: normal; font-size: 56px; font-weight: 800; letter-spacing: -0.05em; line-height: 1; color: var(--brand); }
+  .steps4 div b { font-size: 20px; letter-spacing: -0.01em; }
+  .steps4 div span { color: var(--mute); font-size: 15px; }
+  .steps4 div.hot { background: var(--dark); color: #fff; border-color: transparent; } .steps4 div.hot span { color: var(--on-dark-mute); } .steps4 div.hot em { color: #8ecdea; }
+  .chain { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px 18px; }
+  @media (max-width: 1000px) { .chain { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .chain { grid-template-columns: 1fr; } }
+  .chain div { position: relative; padding: 22px 18px; border-radius: 18px; background: var(--bg); border: 1px solid var(--hair-soft); display: grid; gap: 6px; align-content: start; min-width: 0; }
+  .chain div b { font-size: clamp(30px, 3.2vw, 46px); letter-spacing: -0.04em; line-height: 1; word-break: break-word; }
+  .chain div span { font-size: 15px; font-weight: 700; }
+  .chain div small { font-size: 13px; color: var(--mute); }
+  .chain div:not(:last-child)::after { content: "→"; position: absolute; right: -16px; top: 32px; width: 30px; height: 30px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 800; display: grid; place-items: center; z-index: 2; }
+  @media (max-width: 1000px) { .chain div::after { display: none !important; } }
+  .chain div.end { background: var(--brand); color: #fff; border-color: transparent; } .chain div.end small { color: rgba(255,255,255,.85); }
   .cal { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
   @media (max-width: 900px) { .cal { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 560px) { .cal { grid-template-columns: 1fr; } }
@@ -31,14 +51,20 @@
   .tier b.v { font-size: clamp(36px, 4vw, 54px); letter-spacing: -0.04em; line-height: 1; }
   .tier.hot { background: var(--dark); color: #fff; border-color: transparent; }
   .tier.hot .mute { color: var(--on-dark-mute); }
-  .tier .row { display: flex; justify-content: space-between; font-size: 14px; padding: 6px 0; border-bottom: 1px solid var(--hair-soft); }
+  .tier .row { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; padding: 7px 0; border-bottom: 1px solid var(--hair-soft); }
   .tier.hot .row { border-color: rgba(255,255,255,0.12); }
+  .tier .row.big b { font-size: 20px; color: var(--brand); } .tier.hot .row.big b { color: #8ecdea; }
   .one { display: grid; gap: 20px; justify-items: center; text-align: center; }
-  .one .arrow { font-size: 64px; line-height: 1; color: var(--brand); }
+  .remind { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 900px) { .remind { grid-template-columns: 1fr; } }
+  .remind div { padding: 24px; border-radius: 20px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); display: grid; gap: 8px; }
+  .remind div i { font-style: normal; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-weight: 800; color: #8ecdea; }
+  .remind div b { font-size: 20px; }
+  .remind div span { color: var(--on-dark-mute); font-size: 15px; }
 </style>
 </head>
 <body class="deck-body">
-<div class="ribbon"><span>Preview build · media plan</span></div>
+<div class="ribbon"><span>Preview build · ads plan</span></div>
 <a class="deck-brand" href="#s1"><span class="brand__mark"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="5"/><path d="M4 5h16v16H4z"/><path d="M8 5V3h8v2"/></svg></span>LaundroDream · Ads plan</a>
 <nav class="deck-links"><a href="https://laundrodream-funnel.majcustodioph.com">① Funnel</a><a href="https://laundrodream-ads.majcustodioph.com" aria-current="page">② Ads plan</a><a href="https://laundrodream-results.majcustodioph.com">③ Projections</a></nav>
 
@@ -48,52 +74,53 @@
   <div class="slide__bg"><img src="https://images.unsplash.com/photo-1604335398980-ededcadcc37d?w=2000&q=80&fit=crop&auto=format" alt=""></div>
   <div class="grain" aria-hidden="true"></div>
   <div class="wrap" style="display:grid;gap:26px">
-    <span class="eyebrow" data-anim>Paid media plan · Meta · TikTok · Google</span>
-    <h1 class="slide__title slide__title--xl" data-anim>Fill the calendar with people who already have the <em class="acc" style="color:#8ecdea">capital</em> and the itch.</h1>
-    <p class="lead" data-anim style="max-width:56ch">One job for the ads: put the right person on the booking page, pre-sold on "boring beats trendy," so the consultant closes instead of convinces.</p>
-    <div class="hero__ctas" data-anim><a class="btn btn--light" href="#s2">Start the plan →</a><a class="btn btn--ghost" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4)" href="https://laundrodream-funnel.majcustodioph.com">See the funnel</a></div>
+    <span class="eyebrow" data-anim>The ads plan · Facebook, Instagram, TikTok, Google</span>
+    <h1 class="slide__title slide__title--xl" data-anim>More people <em class="acc" style="color:#8ecdea">booking a call</em> with LaundroDream. Every week.</h1>
+    <p class="lead" data-anim style="max-width:56ch">This is the whole plan in plain words. Who we show the ads to, what the ads say, what it costs, and how many people book a call. No ad-industry talk.</p>
+    <div class="hero__ctas" data-anim><a class="btn btn--light" href="#s2">Start →</a><a class="btn btn--ghost" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4)" href="https://laundrodream-funnel.majcustodioph.com">See the funnel page</a></div>
   </div>
   <span class="slide__num">01</span>
 </section>
 
-<!-- 2 THE ONE ACTION -->
+<!-- 2 THE ONE GOAL -->
 <section class="slide">
   <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="wrap one">
-    <span class="eyebrow eyebrow--plain" data-anim>Everything points at one action</span>
+    <span class="eyebrow eyebrow--plain" data-anim>The ads have one job</span>
     <div class="big-num money" data-anim="scale">Book a call.</div>
-    <p class="lead" data-anim style="text-align:center">Not likes. Not followers. Not "DM us." A 30-minute consultation on the calendar, confirmed by text. Every peso below is measured in booked calls and the owners they turn into.</p>
+    <p class="lead" data-anim style="text-align:center;max-width:60ch">Not likes. Not followers. A real person, with real savings, booking a free 30-minute call with your consultant. That's the only number we care about, because that's where sales come from.</p>
     <div class="stats" data-anim style="width:100%;max-width:980px">
-      <div class="stat"><b data-count="3">3</b><span>Meta campaigns</span><small>Cold · Retarget · OFW</small></div>
-      <div class="stat"><b data-count="6">6</b><span>Launch creatives</span><small>3 angles × 2 formats</small></div>
-      <div class="stat"><b data-count="3">3</b><span>Video hooks</span><small>9–15s vertical</small></div>
-      <div class="stat"><b>₱2.5K</b><span>Daily budget</span><small>Recommended tier</small></div>
+      <div class="stat"><b data-count="3">3</b><span>Groups of people we show ads to</span><small>Explained on slide 4</small></div>
+      <div class="stat"><b data-count="6">6</b><span>Ads ready at launch</span><small>Slides 5 and 6</small></div>
+      <div class="stat"><b data-count="3">3</b><span>Short videos</span><small>Shot at a real shop</small></div>
+      <div class="stat"><b>₱2,500</b><span>A day on ads</span><small>Our recommended budget</small></div>
     </div>
   </div>
   <span class="slide__num">02</span>
 </section>
 
-<!-- 3 STRUCTURE -->
+<!-- 3 HOW IT WORKS -->
 <section class="slide slide--soft">
   <div class="wrap" style="display:grid;gap:30px">
-    <div><span class="eyebrow" data-anim>Campaign structure</span><h2 class="slide__title" data-anim>Three campaigns. One objective: <span class="sky">booked consultations.</span></h2></div>
-    <div class="camp">
-      <div class="card" data-anim data-tilt="4"><span class="pill">Campaign 01 · Cold</span><div class="pct">55<span class="sky">%</span></div><h3>"Boring business"</h3><p>Advantage+ audiences seeded with business-owner, franchise and investing interests. NCR, Calabarzon, Central Luzon, Cebu, Davao. Ages 28–55.</p><ul><li>Optimise for the Schedule event</li><li>Dynamic creative, 3 angles × 2 formats</li><li>₱1,400/day at the recommended tier</li></ul></div>
-      <div class="card" data-anim data-tilt="4"><span class="pill">Campaign 02 · Retarget</span><div class="pct">25<span class="sky">%</span></div><h3>"See the math"</h3><p>Video viewers 50%+, funnel visitors 30 days, calculator users, form abandoners. Hits them with the ₱100K ledger and the owner stories.</p><ul><li>Frequency cap 3 per 7 days</li><li>Calculator screen-record creative</li><li>Objection ads: "no experience", "I'm abroad"</li></ul></div>
-      <div class="card card--dark" data-anim data-tilt="4"><span class="pill" style="background:rgba(255,255,255,.14);color:#fff">Campaign 03 · OFW</span><div class="pct">20<span style="color:#8ecdea">%</span></div><h3>"Business back home"</h3><p>Filipinos in UAE, Saudi, Qatar, Singapore, Hong Kong, Taiwan, Japan. Filipino + English. Lookalike of PH leads.</p><ul style="color:var(--on-dark-mute)"><li>Messenger + instant-form backup</li><li>Remote-owner angle, family runs the floor</li><li>Consultation by video call</li></ul></div>
+    <div><span class="eyebrow" data-anim>How it works</span><h2 class="slide__title" data-anim>Four steps from "never heard of you" to "booked a call."</h2></div>
+    <div class="steps4">
+      <div data-anim><em>1</em><b>They see the ad</b><span>While scrolling Facebook, Instagram or TikTok. The ad says: boring business, ₱100K months.</span></div>
+      <div data-anim><em>2</em><b>They tap it</b><span>It opens the funnel page. They read the story, play with the ₱100K calculator and see the owner stories.</span></div>
+      <div data-anim><em>3</em><b>They book a free call</b><span>They pick a day and time. You get a text with their name and number right away.</span></div>
+      <div class="hot" data-anim><em>4</em><b>Your consultant closes</b><span>They already believe in the business when they call. Your consultant just helps them pick a location and a package.</span></div>
     </div>
   </div>
   <span class="slide__num">03</span>
 </section>
 
-<!-- 4 ENGINES -->
+<!-- 4 WHO SEES THE ADS -->
 <section class="slide">
-  <div class="wrap slide-grid">
-    <div style="display:grid;gap:18px"><span class="eyebrow" data-anim>Supporting engines</span><h2 class="slide__title" data-anim>Organic feeds the machine. Search catches the ready.</h2><p class="lead" data-anim>Paid social creates demand; two cheaper channels harvest it.</p></div>
-    <div style="display:grid;gap:18px">
-      <div class="card card--dark" data-anim="right" data-tilt="4"><div class="card__icon" style="background:rgba(255,255,255,.14);color:#fff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3v12a4 4 0 1 1-4-4"/><path d="M15 3c0 3 2 5 5 5"/></svg></div><h3>TikTok + Reels organic engine</h3><p>Three hook videos a week from the shop floor: coin counts, installs, "what ₱384K of laundry looks like." Winners get ₱300/day Spark Ads and feed the retargeting pool.</p></div>
-      <div class="card" data-anim="right" data-tilt="4"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></div><h3>Google Search safety net</h3><p>Exact match on "laundry business philippines", "laundromat franchise", "LG commercial washer price", "paano magsimula ng laundry shop". ₱300/day straight to the booking page.</p></div>
-      <div class="card" data-anim="right" data-tilt="4"><div class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12a8 8 0 1 0 2.3-5.7"/><path d="M4 4v5h5"/></svg></div><h3>Retargeting layer</h3><p>Anyone who touches the funnel, the calculator or a video sees the ₱100K ledger and the "who do you call when it breaks" ad for the next 7 days.</p></div>
+  <div class="wrap" style="display:grid;gap:30px">
+    <div><span class="eyebrow" data-anim>Who sees the ads</span><h2 class="slide__title" data-anim>Three kinds of people. Three different messages.</h2></div>
+    <div class="camp">
+      <div class="card" data-anim data-tilt="4"><span class="pill">Group 1 · Biggest</span><div class="pct">₱1,400<small>a day</small></div><h3>People with savings who want a business</h3><p>Employees and professionals aged 28 to 55 in Metro Manila, Cavite, Laguna, Bulacan, Pampanga, Cebu and Davao. They follow business and franchise pages.</p><ul><li>The message: "Boring business, steady ₱100K months."</li><li>About half the budget goes here</li></ul></div>
+      <div class="card" data-anim data-tilt="4"><span class="pill">Group 2 · Warm</span><div class="pct">₱600<small>a day</small></div><h3>People who already looked</h3><p>Anyone who watched our video, visited the funnel page or started booking but didn't finish. They get a friendly reminder for 7 days.</p><ul><li>The message: "Here's the ₱100K math again."</li><li>Cheapest people to win, because they already know you</li></ul></div>
+      <div class="card card--dark" data-anim data-tilt="4"><span class="pill" style="background:rgba(255,255,255,.14);color:#fff">Group 3 · Abroad</span><div class="pct">₱500<small style="color:var(--on-dark-mute)">a day</small></div><h3>Filipinos working abroad</h3><p>OFWs in Dubai, Saudi, Qatar, Singapore, Hong Kong, Taiwan and Japan who want a business back home that the family can run.</p><ul style="color:var(--on-dark-mute)"><li>The message: "A business in the Philippines, run from your phone."</li><li>Calls happen on video</li></ul></div>
     </div>
   </div>
   <span class="slide__num">04</span>
@@ -102,17 +129,17 @@
 <!-- 5 CREATIVES A -->
 <section class="slide slide--soft">
   <div class="wrap" style="display:grid;gap:26px">
-    <div><span class="eyebrow" data-anim>Launch creatives · 1 of 2</span><h2 class="slide__title" data-anim>Three angles: <em class="acc">fear, math, freedom.</em></h2></div>
+    <div><span class="eyebrow" data-anim>The ads · 1 of 2</span><h2 class="slide__title" data-anim>What people will actually see on their phone.</h2></div>
     <div class="ads ads--deck">
       <article class="ad ad--deck" data-anim data-tilt="3"><div class="ad__top"><span class="avatar">LD</span><div><b>LaundroDream</b><span>Sponsored · 🌐</span></div></div><div class="ad__text">You saved for 6 years. Please don't put it into this year's milk tea.
 
-Dirty clothes don't go out of style. Here's the ₱100K-a-month math 👇</div><div class="ad__media"><img src="https://images.unsplash.com/photo-1604335398980-ededcadcc37d?w=900&q=80&fit=crop&auto=format" alt=""><span class="ad__badge">Fear</span><div class="ad__overlay"><b>Boring business.<br>₱100K months.</b><span>Laundry + water refilling, one store</span></div></div><div class="ad__cta"><div><b>Free 30-min consultation</b><span>laundrodream-funnel.majcustodioph.com</span></div><a class="btn" href="#">Book Now</a></div></article>
+Dirty clothes don't go out of style. Here's the ₱100K-a-month math 👇</div><div class="ad__media"><img src="https://images.unsplash.com/photo-1604335398980-ededcadcc37d?w=900&q=80&fit=crop&auto=format" alt=""><span class="ad__badge">Ad 1 · Safe choice</span><div class="ad__overlay"><b>Boring business.<br>₱100K months.</b><span>Laundry + water refilling, one store</span></div></div><div class="ad__cta"><div><b>Free 30-min consultation</b><span>laundrodream-funnel.majcustodioph.com</span></div><a class="btn" href="#">Book Now</a></div></article>
       <article class="ad ad--deck" data-anim data-tilt="3"><div class="ad__top"><span class="avatar">LD</span><div><b>LaundroDream</b><span>Sponsored · 🌐</span></div></div><div class="ad__text">40 laundry tickets × ₱220 + 100 refills × ₱40 = ₱384,000 a month.
 
-Minus ₱284K expenses = ₱100K to you. Move the sliders yourself:</div><div class="ad__media"><img src="https://images.unsplash.com/photo-1638949493140-edb10b7be2f3?w=900&q=80&fit=crop&auto=format" alt=""><span class="ad__badge">Math</span><div class="ad__overlay"><b>₱384K in.<br>₱284K out.<br>₱100K yours.</b><span>Try the calculator</span></div></div><div class="ad__cta"><div><b>See the ₱100K math</b><span>laundrodream-funnel.majcustodioph.com</span></div><a class="btn" href="#">Learn More</a></div></article>
+Minus ₱284K expenses = ₱100K to you. Move the sliders yourself:</div><div class="ad__media"><img src="https://images.unsplash.com/photo-1638949493140-edb10b7be2f3?w=900&q=80&fit=crop&auto=format" alt=""><span class="ad__badge">Ad 2 · The math</span><div class="ad__overlay"><b>₱384K in.<br>₱284K out.<br>₱100K yours.</b><span>Try the calculator</span></div></div><div class="ad__cta"><div><b>See the ₱100K math</b><span>laundrodream-funnel.majcustodioph.com</span></div><a class="btn" href="#">Learn More</a></div></article>
       <article class="ad ad--deck" data-anim data-tilt="3"><div class="ad__top"><span class="avatar">LD</span><div><b>LaundroDream</b><span>Sponsored · 🌐</span></div></div><div class="ad__text">"My sister runs the floor. I run the numbers from Dubai."
 
-Open a laundry shop back home without flying home. We do the location check, install and training.</div><div class="ad__media"><img src="https://images.unsplash.com/photo-1639580133969-48cbbce72e1f?w=900&q=80&fit=crop&auto=format" alt=""><span class="ad__badge">Freedom · OFW</span><div class="ad__overlay"><b>A business in the PH,<br>run from your phone.</b><span>Video consultation available</span></div></div><div class="ad__cta"><div><b>Book a video consultation</b><span>laundrodream-funnel.majcustodioph.com</span></div><a class="btn" href="#">Send Message</a></div></article>
+Open a laundry shop back home without flying home. We do the location check, install and training.</div><div class="ad__media"><img src="https://images.unsplash.com/photo-1639580133969-48cbbce72e1f?w=900&q=80&fit=crop&auto=format" alt=""><span class="ad__badge">Ad 3 · For OFWs</span><div class="ad__overlay"><b>A business in the PH,<br>run from your phone.</b><span>Video consultation available</span></div></div><div class="ad__cta"><div><b>Book a video consultation</b><span>laundrodream-funnel.majcustodioph.com</span></div><a class="btn" href="#">Send Message</a></div></article>
     </div>
   </div>
   <span class="slide__num">05</span>
@@ -121,97 +148,106 @@ Open a laundry shop back home without flying home. We do the location check, ins
 <!-- 6 CREATIVES B -->
 <section class="slide slide--soft">
   <div class="wrap" style="display:grid;gap:26px">
-    <div><span class="eyebrow" data-anim>Launch creatives · 2 of 2</span><h2 class="slide__title" data-anim>Objections, answered before the call.</h2></div>
+    <div><span class="eyebrow" data-anim>The ads · 2 of 2</span><h2 class="slide__title" data-anim>These answer the questions people ask before they book.</h2></div>
     <div class="ads ads--deck">
       <article class="ad ad--deck" data-anim data-tilt="3"><div class="ad__top"><span class="avatar">LD</span><div><b>LaundroDream</b><span>Sponsored · 🌐</span></div></div><div class="ad__text">Franchise fees: ₱0. Royalties: ₱0. Marketing fund: ₱0.
 
-You own the store. We supply the LG machines, the setup, the training and the 24/7 repair line.</div><div class="ad__media"><img src="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=900&q=80&fit=crop&auto=format" alt=""><span class="ad__badge">Math</span><div class="ad__overlay"><b>Not a franchise.<br>Your store.</b><span>Keep 100% of the profit</span></div></div><div class="ad__cta"><div><b>What's included</b><span>laundrodream-funnel.majcustodioph.com</span></div><a class="btn" href="#">Learn More</a></div></article>
+You own the store. We supply the LG machines, the setup, the training and the 24/7 repair line.</div><div class="ad__media"><img src="https://images.unsplash.com/photo-1545173168-9f1947eebb7f?w=900&q=80&fit=crop&auto=format" alt=""><span class="ad__badge">Ad 4 · "Is it a franchise?"</span><div class="ad__overlay"><b>Not a franchise.<br>Your store.</b><span>Keep 100% of the profit</span></div></div><div class="ad__cta"><div><b>What's included</b><span>laundrodream-funnel.majcustodioph.com</span></div><a class="btn" href="#">Learn More</a></div></article>
       <article class="ad ad--deck" data-anim data-tilt="3"><div class="ad__top"><span class="avatar">LD</span><div><b>LaundroDream</b><span>Sponsored · 🌐</span></div></div><div class="ad__text">A dryer died on a Sunday. The technician was there Monday 9 AM.
 
-That's the difference between a supplier and a partner. 6,000+ shops served.</div><div class="ad__media"><img src="https://images.unsplash.com/photo-1663068307522-1731d9c8fbc2?w=900&q=80&fit=crop&auto=format" alt=""><span class="ad__badge">Fear · Retarget</span><div class="ad__overlay"><b>Who do you call<br>when it breaks?</b><span>24/7 repair, nationwide</span></div></div><div class="ad__cta"><div><b>Talk to a consultant</b><span>laundrodream-funnel.majcustodioph.com</span></div><a class="btn" href="#">Book Now</a></div></article>
+That's the difference between a supplier and a partner. 6,000+ shops served.</div><div class="ad__media"><img src="https://images.unsplash.com/photo-1663068307522-1731d9c8fbc2?w=900&q=80&fit=crop&auto=format" alt=""><span class="ad__badge">Ad 5 · "What if it breaks?"</span><div class="ad__overlay"><b>Who do you call<br>when it breaks?</b><span>24/7 repair, nationwide</span></div></div><div class="ad__cta"><div><b>Talk to a consultant</b><span>laundrodream-funnel.majcustodioph.com</span></div><a class="btn" href="#">Book Now</a></div></article>
       <article class="ad ad--deck" data-anim data-tilt="3"><div class="ad__top"><span class="avatar">LD</span><div><b>LaundroDream</b><span>Sponsored · 🌐</span></div></div><div class="ad__text">Month 7: first ₱100K profit month.
 Month 12: scouting branch two.
 
-Sample owner story from a first-timer who kept her day job.</div><div class="ad__media"><img src="https://images.unsplash.com/photo-1635274605638-d44babc08a4f?w=900&q=80&fit=crop&auto=format" alt=""><span class="ad__badge">Freedom</span><div class="ad__overlay"><b>Keep the job.<br>Add the ₱100K.</b><span>12 consultation slots a week</span></div></div><div class="ad__cta"><div><b>Claim a free slot</b><span>laundrodream-funnel.majcustodioph.com</span></div><a class="btn" href="#">Book Now</a></div></article>
+Sample owner story from a first-timer who kept her day job.</div><div class="ad__media"><img src="https://images.unsplash.com/photo-1635274605638-d44babc08a4f?w=900&q=80&fit=crop&auto=format" alt=""><span class="ad__badge">Ad 6 · "Can I keep my job?"</span><div class="ad__overlay"><b>Keep the job.<br>Add the ₱100K.</b><span>12 consultation slots a week</span></div></div><div class="ad__cta"><div><b>Claim a free slot</b><span>laundrodream-funnel.majcustodioph.com</span></div><a class="btn" href="#">Book Now</a></div></article>
     </div>
   </div>
   <span class="slide__num">06</span>
 </section>
 
-<!-- 7 HOOKS -->
+<!-- 7 VIDEOS -->
 <section class="slide slide--dark">
   <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="wrap" style="display:grid;gap:28px">
-    <div><span class="eyebrow" data-anim>Video hooks</span><h2 class="slide__title" data-anim>Nine seconds to earn the next nine.</h2></div>
+    <div><span class="eyebrow" data-anim>Short videos</span><h2 class="slide__title" data-anim>Three 15-second videos we'll film at a real shop.</h2><p class="lead" data-anim style="max-width:60ch">Short videos are the cheapest way to reach a lot of people on TikTok and Facebook. The first 3 seconds have to make them stop scrolling.</p></div>
     <div class="grid grid--3">
-      <div class="panel" data-anim data-tilt="3"><div class="panel__head"><h3>01 · The coin count</h3><span class="pill">TikTok / Reels</span></div><ol class="script"><li><span>0–2s</span>A tray of ₱20 coins poured onto a counter. "One Tuesday. One shop."</li><li><span>2–6s</span>Owner VO: "Walang trend dito. Labada lang. Pero ito ang Tuesday ko."</li><li><span>6–11s</span>Washers spinning, queue outside, water bottles lined up. "₱12,800 today."</li><li><span>11–15s</span>CTA: "₱100K-a-month math. Link in bio."</li></ol></div>
-      <div class="panel" data-anim data-tilt="3"><div class="panel__head"><h3>02 · Trend vs need</h3><span class="pill">TikTok / Reels</span></div><ol class="script"><li><span>0–2s</span>Split screen: shuttered milk-tea stall / busy laundry shop. "2023 vs 2026."</li><li><span>2–7s</span>VO: "Every year there's a new sure-win business. Every year people still have dirty clothes."</li><li><span>7–12s</span>Calculator screen recording hitting ₱100,000.</li><li><span>12–15s</span>CTA: "Build yours with us. Free 30-min call."</li></ol></div>
-      <div class="panel" data-anim data-tilt="3"><div class="panel__head"><h3>03 · Install day</h3><span class="pill">Reels / Shorts</span></div><ol class="script"><li><span>0–3s</span>Truck doors open on LG machines. "Day 1 of her ₱100K shop."</li><li><span>3–9s</span>Timelapse: unboxing, plumbing, first test cycle. Owner thumbs up.</li><li><span>9–13s</span>VO: "Location checked. Installed. Trained. Opening Saturday."</li><li><span>13–15s</span>CTA: "Your install day is 45 days away."</li></ol></div>
+      <div class="panel" data-anim data-tilt="3"><div class="panel__head"><h3>Video 1 · The coin count</h3><span class="pill">TikTok / Reels</span></div><ol class="script"><li><span>0–2s</span>A tray of ₱20 coins poured onto a counter. "One Tuesday. One shop."</li><li><span>2–6s</span>Owner's voice: "Walang trend dito. Labada lang. Pero ito ang Tuesday ko."</li><li><span>6–11s</span>Washers spinning, line outside, water bottles lined up. "₱12,800 today."</li><li><span>11–15s</span>"See the ₱100K-a-month math. Link in bio."</li></ol></div>
+      <div class="panel" data-anim data-tilt="3"><div class="panel__head"><h3>Video 2 · Trend vs need</h3><span class="pill">TikTok / Reels</span></div><ol class="script"><li><span>0–2s</span>Split screen: closed milk-tea stall / busy laundry shop. "2023 vs 2026."</li><li><span>2–7s</span>"Every year there's a new sure-win business. Every year people still have dirty clothes."</li><li><span>7–12s</span>Screen recording of the calculator hitting ₱100,000.</li><li><span>12–15s</span>"Build yours with us. Free 30-min call."</li></ol></div>
+      <div class="panel" data-anim data-tilt="3"><div class="panel__head"><h3>Video 3 · Install day</h3><span class="pill">Reels / Shorts</span></div><ol class="script"><li><span>0–3s</span>Truck doors open on LG machines. "Day 1 of her ₱100K shop."</li><li><span>3–9s</span>Fast-forward: unboxing, plumbing, first test wash. Owner thumbs up.</li><li><span>9–13s</span>"Location checked. Installed. Trained. Opening Saturday."</li><li><span>13–15s</span>"Your install day is 45 days away."</li></ol></div>
     </div>
   </div>
   <span class="slide__num">07</span>
 </section>
 
-<!-- 8 AUDIENCES -->
-<section class="slide">
-  <div class="wrap" style="display:grid;gap:24px">
-    <div><span class="eyebrow" data-anim>Audiences &amp; targeting</span><h2 class="slide__title" data-anim>Who sees what</h2></div>
-    <div class="panel" data-anim="scale">
-      <table class="table">
-        <thead><tr><th>Audience</th><th>Definition</th><th>Campaign</th><th>Angle</th><th class="num">Est. size</th></tr></thead>
-        <tbody>
-          <tr><td><b>Capital-ready professionals</b></td><td>28–55, NCR + Calabarzon + Central Luzon; small business, franchising, investing, real estate; engaged shoppers</td><td>Cold</td><td>Fear + Math</td><td class="num">2.1M</td></tr>
-          <tr><td><b>Existing store owners</b></td><td>Page admins, "business owner" titles, sari-sari / water station / pharmacy interests</td><td>Cold</td><td>Math (second stream)</td><td class="num">640K</td></tr>
-          <tr><td><b>OFW abroad</b></td><td>Lives in UAE, KSA, QA, SG, HK, TW, JP; PH expat; Filipino language</td><td>OFW</td><td>Freedom</td><td class="num">1.4M</td></tr>
-          <tr><td><b>Engagers</b></td><td>Video 50%+ viewers 90d, page/IG engagers 90d</td><td>Retarget</td><td>Math + Objections</td><td class="num">Grows</td></tr>
-          <tr><td><b>Funnel visitors</b></td><td>Site 30d, calculator users, form abandoners</td><td>Retarget</td><td>Fear + Stories</td><td class="num">Grows</td></tr>
-          <tr><td><b>Lookalike 1%</b></td><td>Seeded from booked consultations after 100 events</td><td>Cold, week 3+</td><td>Best performer</td><td class="num">1.1M</td></tr>
-        </tbody>
-      </table>
-      <p class="small mute">Meta Ads Manager estimates for the stated geos, refreshed at setup. Exclusions: customers, employees, booked consultations (30 days).</p>
+<!-- 8 IF THEY DON'T BOOK RIGHT AWAY -->
+<section class="slide slide--dark">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap" style="display:grid;gap:28px">
+    <div><span class="eyebrow" data-anim>If they don't book right away</span><h2 class="slide__title" data-anim>Most people need to see you 3 or 4 times first. So we follow up.</h2></div>
+    <div class="remind">
+      <div data-anim><i>Day 1</i><b>They looked, but didn't book</b><span>They watched half the video, or visited the page, or started the booking form and stopped. Facebook remembers them.</span></div>
+      <div data-anim><i>Days 2 to 7</i><b>They see a reminder ad</b><span>Not the same ad again. The ₱100K math, the "who do you call when it breaks" ad, and a real owner story. At most 3 times a week, so it never feels like spam.</span></div>
+      <div data-anim><i>Any day</i><b>They search on Google</b><span>When someone types "laundry business Philippines" or "paano magsimula ng laundry shop" into Google, LaundroDream shows up at the top. ₱300 a day covers it.</span></div>
     </div>
+    <p class="small" data-anim style="color:var(--on-dark-mute)">People who already booked, and current LaundroDream customers, never see these ads.</p>
   </div>
   <span class="slide__num">08</span>
 </section>
 
-<!-- 9 BUDGET -->
+<!-- 9 THE SIMPLE MATH -->
 <section class="slide slide--soft">
   <div class="wrap" style="display:grid;gap:26px">
-    <div class="slide-grid--31 slide-grid" style="align-items:end">
-      <div><span class="eyebrow" data-anim>Budget tiers</span><h2 class="slide__title" data-anim>What each tier buys in a month</h2></div>
-      <div data-anim="right"><div class="big-num money" style="font-size:clamp(56px,8vw,120px)">₱2.5K</div><p class="mute">a day, recommended. ₱75K a month.</p></div>
+    <div><span class="eyebrow" data-anim>The simple math</span><h2 class="slide__title" data-anim>Out of every 100,000 people who see the ad…</h2></div>
+    <div class="chain">
+      <div data-anim><span>See the ad</span><b>100,000</b><small>Costs about ₱15,000 in ads</small></div>
+      <div data-anim><span>Tap it</span><b>1,200</b><small>About 12 out of every 1,000</small></div>
+      <div data-anim><span>Book a call</span><b>72</b><small>About 6 out of every 100 who tap</small></div>
+      <div data-anim><span>Show up to the call</span><b>18</b><small>About 1 in 4 who booked</small></div>
+      <div class="end" data-anim><span>Become a franchise buyer</span><b>1</b><small>About 6 out of 100 who show up. One buyer = one ₱750,000 sale.</small></div>
     </div>
-    <div class="tiers" id="tiers"></div>
-    <p class="small mute" data-anim>Assumptions: ₱150 CPM, 1.2% link CTR, 6% of clicks request a consultation, 25% attend, 6% close, ₱750,000 average order. Revenue is equipment + setup before margin. Not a guarantee; change every assumption on the projections deck.</p>
+    <p class="lead" data-anim style="max-width:62ch"><b>So about ₱15,000 in ads brings in one ₱750,000 sale.</b> These are average results for Facebook ads in the Philippines. Your real numbers will be higher or lower, and we'll show you the real ones every week.</p>
   </div>
   <span class="slide__num">09</span>
 </section>
 
-<!-- 10 CALENDAR -->
-<section class="slide slide--dark">
-  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-  <div class="wrap" style="display:grid;gap:28px">
-    <div><span class="eyebrow" data-anim>30-day launch</span><h2 class="slide__title" data-anim>Week by week</h2></div>
-    <div class="cal">
-      <div data-anim><em>W1</em><b>Build</b><span>Pixel + Schedule event on the funnel, Meta Lead ads, 6 creatives, 3 hook videos shot at a live install. Calculator event tracking.</span></div>
-      <div data-anim><em>W2</em><b>Learn</b><span>Cold + OFW live at ₱1,500/day. Daily creative report. Kill anything above ₱900 per lead by day 10.</span></div>
-      <div data-anim><em>W3</em><b>Retarget</b><span>Retargeting on. Lookalike from first bookings. Winning angle gets 2 fresh variants. Scale to ₱2,500/day.</span></div>
-      <div data-anim><em>W4</em><b>Scale</b><span>Google Search live. Show-rate fixes (SMS reminders, calendar invite). Report: cost per consultation, close rate, pipeline value.</span></div>
+<!-- 10 BUDGET -->
+<section class="slide">
+  <div class="wrap" style="display:grid;gap:26px">
+    <div class="panel__head" style="align-items:flex-end;gap:16px;flex-wrap:wrap">
+      <div><span class="eyebrow" data-anim>What it costs</span><h2 class="slide__title" data-anim style="font-size:clamp(28px,3.8vw,52px);max-width:20ch">Pick a budget. Here's what each one gets you in a month.</h2></div>
+      <p class="mute" data-anim="right" style="max-width:30ch"><b class="sky" style="font-size:28px;letter-spacing:-0.03em">₱2,500 a day</b><br>is what we recommend. That's ₱75,000 a month on ads.</p>
     </div>
+    <div class="tiers" id="tiers"></div>
+    <p class="small mute" data-anim>Same math as the last slide. Ads money goes straight to Facebook, TikTok and Google. Our fee is separate (see the projections). These are estimates, not promises.</p>
   </div>
   <span class="slide__num">10</span>
 </section>
 
-<!-- 11 CLOSE -->
+<!-- 11 FIRST 30 DAYS -->
+<section class="slide slide--dark">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap" style="display:grid;gap:28px">
+    <div><span class="eyebrow" data-anim>The first 30 days</span><h2 class="slide__title" data-anim>What happens after you say go.</h2></div>
+    <div class="cal">
+      <div data-anim><em>W1</em><b>We build</b><span>Funnel page goes live. We make the 6 ads and film the 3 videos at a real install. We connect the booking page so every call shows up on your calendar.</span></div>
+      <div data-anim><em>W2</em><b>We turn the ads on</b><span>Groups 1 and 3 start at ₱1,500 a day. You get a short report every day: how many booked, what they cost. Any ad that's doing badly gets switched off.</span></div>
+      <div data-anim><em>W3</em><b>We follow up</b><span>Reminder ads start for people who looked but didn't book. The best ad gets 2 new versions. Budget goes up to ₱2,500 a day.</span></div>
+      <div data-anim><em>W4</em><b>We report</b><span>Google ads start. Text reminders so more people show up to their call. Month-1 report: how many calls, how many buyers, what each one cost.</span></div>
+    </div>
+  </div>
+  <span class="slide__num">11</span>
+</section>
+
+<!-- 12 CLOSE -->
 <section class="slide slide--brand">
   <div class="grain" aria-hidden="true"></div>
   <div class="wrap one">
     <span class="eyebrow eyebrow--plain" data-anim>Next</span>
-    <h2 class="slide__title slide__title--xl" data-anim style="text-align:center;max-width:14ch">See what 90 days of this plan could return.</h2>
+    <h2 class="slide__title slide__title--xl" data-anim style="text-align:center;max-width:14ch">Now let's see how much money this makes you.</h2>
     <div class="hero__ctas" data-anim style="justify-content:center"><a class="btn btn--light btn--xl" href="https://laundrodream-results.majcustodioph.com">Open the projections</a><a class="btn btn--ghost" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5)" href="https://laundrodream-funnel.majcustodioph.com">Back to the funnel</a></div>
-    <p class="small" data-anim style="color:rgba(255,255,255,.75)">Media plan by Magica Studio for LaundroDream. Planning estimates based on Philippine Meta benchmarks; actual results vary.</p>
+    <p class="small" data-anim style="color:rgba(255,255,255,.75)">Ads plan by Magica Studio for LaundroDream. Estimates are based on average Facebook ad results in the Philippines. Real results will vary.</p>
   </div>
-  <span class="slide__num">11</span>
+  <span class="slide__num">12</span>
 </section>
 </main>
 
@@ -220,11 +256,12 @@ Sample owner story from a first-timer who kept her day job.</div><div class="ad_
 <script src="/funnels/shared/deck.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const A = { cpm: 150, ctr: 0.012, lead: 0.06, show: 0.25, close: 0.06, aov: 750000 };
-  const fmt = (n) => Math.round(n).toLocaleString('en-PH'), peso = (n) => '₱' + fmt(n);
-  document.getElementById('tiers').innerHTML = [['Starter', 1000, 'Prove the angle'], ['Recommended', 2500, 'Fill the calendar'], ['Scale', 5000, 'Add a consultant']].map(([name, d, sub], i) => {
-    const spend = d * 30, imp = spend / A.cpm * 1000, clicks = imp * A.ctr, leads = clicks * A.lead, cons = leads * A.show, owners = cons * A.close, rev = owners * A.aov;
-    return `<div class="tier${i === 1 ? ' hot' : ''}" data-anim data-tilt="4"><span class="pill"${i === 1 ? ' style="background:rgba(255,255,255,.14);color:#fff"' : ''}>${name}</span><b class="v">₱${fmt(d)}<span class="mute" style="font-size:16px;letter-spacing:0"> /day</span></b><p class="mute">${sub}</p><div class="row"><span>Spend</span><b>${peso(spend)}</b></div><div class="row"><span>Impressions</span><b>${fmt(imp)}</b></div><div class="row"><span>Consult requests</span><b>${fmt(leads)}</b></div><div class="row"><span>Consultations</span><b>${fmt(cons)}</b></div><div class="row"><span>New owners</span><b>${owners.toFixed(1)}</b></div><div class="row" style="border:0"><span>Revenue</span><b>${peso(rev)}</b></div></div>`;
+  // Same simple chain as slide 9: ₱150 per 1,000 views, 12 taps per 1,000 views, 6 of 100 book, 1 in 4 show up, 6 of 100 buy, ₱750,000 per sale.
+  const A = { cpm: 150, tap: 0.012, book: 0.06, show: 0.25, buy: 0.06, sale: 750000 };
+  const fmt = (n) => Math.round(n).toLocaleString('en-PH'), peso = (n) => '₱' + fmt(n), R = Math.round;
+  document.getElementById('tiers').innerHTML = [['Starter', 1000, 'Test the ads first'], ['Recommended', 2500, 'Keep the calendar full'], ['Big push', 5000, 'You may need a second consultant']].map(([name, d, sub], i) => {
+    const spend = d * 30, views = R(spend / A.cpm * 1000), taps = R(views * A.tap), booked = R(taps * A.book), shows = R(booked * A.show), buyers = R(shows * A.buy), sales = buyers * A.sale;
+    return `<div class="tier${i === 1 ? ' hot' : ''}" data-anim data-tilt="4"><span class="pill"${i === 1 ? ' style="background:rgba(255,255,255,.14);color:#fff"' : ''}>${name}</span><b class="v">₱${fmt(d)}<span class="mute" style="font-size:16px;letter-spacing:0"> a day</span></b><p class="mute">${sub}</p><div class="row"><span>You spend on ads (a month)</span><b>${peso(spend)}</b></div><div class="row"><span>People who see the ads</span><b>${fmt(views)}</b></div><div class="row"><span>People who book a call</span><b>${fmt(booked)}</b></div><div class="row"><span>People who show up</span><b>${fmt(shows)}</b></div><div class="row big"><span>New franchise buyers</span><b>${buyers}</b></div><div class="row big" style="border:0"><span>Sales for LaundroDream</span><b>${peso(sales)}</b></div></div>`;
   }).join('');
 });
 </script>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Keila's Bike Shop — What 90 days of ads puts in the till</title>
-<meta name="description" content="Owner projections for Keila's Bike Shop Marikina Bodega: extra bikes sold, extra revenue, what you pay for ads and Magica Studio, and what you keep. Interactive slide deck.">
+<meta name="description" content="For the owners of Keila's Bike Shop Marikina Bodega, in plain words: extra bikes sold, what you pay for ads and Magica Studio, and what you keep.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,8 +40,9 @@
 .controls { background: var(--bg-2); border: 1px solid var(--hair-soft); border-radius: var(--radius); display: grid; gap: 10px; padding: 22px; }
 .controls h3 { font-size: 18px; }
 .controls .grp { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 800; color: var(--brand-ink); margin-top: 6px; }
-.kv { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.kv b { font-size: 18px; }
+.controls details { border-top: 1px solid var(--hair-soft); padding-top: 10px; margin-top: 4px; }
+.controls summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--mute); }
+.controls details .range { margin-top: 10px; }
 .toggle { display: inline-flex; background: var(--bg-2); border-radius: 999px; padding: 4px; gap: 4px; }
 .toggle button { padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--mute); }
 .toggle button[aria-pressed="true"] { background: var(--dark); color: #fff; }
@@ -70,6 +71,26 @@
 .paykeep small { font-size: 13px; opacity: 0.75; }
 .payline { font-family: var(--font-display); font-size: clamp(22px, 3vw, 40px); letter-spacing: -0.02em; line-height: 1.15; }
 .takeaway { font-family: var(--font-display); font-size: clamp(20px, 2.4vw, 32px); letter-spacing: -0.02em; line-height: 1.2; max-width: 30ch; }
+.chain { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px 18px; }
+@media (max-width: 1000px) { .chain { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .chain { grid-template-columns: minmax(0, 1fr); } }
+.chain div { position: relative; padding: 20px 16px; border-radius: 18px; background: #fff; border: 1px solid var(--hair-soft); display: grid; gap: 6px; align-content: start; min-width: 0; }
+.chain div b { font-family: var(--font-display); font-size: clamp(26px, 2.8vw, 40px); letter-spacing: -0.04em; line-height: 1; word-break: break-word; }
+.chain div span { font-size: 14px; font-weight: 700; }
+.chain div small { font-size: 12px; color: var(--mute); }
+.chain div:not(:last-child)::after { content: "→"; position: absolute; right: -16px; top: 28px; width: 30px; height: 30px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 800; display: grid; place-items: center; z-index: 2; }
+@media (max-width: 1000px) { .chain div::after { display: none !important; } }
+.chain div.end { background: var(--brand); color: #fff; border-color: transparent; } .chain div.end small { color: rgba(255,255,255,.85); }
+.mathline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px 18px; margin-top: 4px; }
+@media (max-width: 1000px) { .mathline { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .mathline { grid-template-columns: minmax(0, 1fr); } }
+.mathline div { position: relative; padding: 20px 16px; border-radius: 18px; background: var(--dark); color: #fff; display: grid; gap: 6px; min-width: 0; }
+.mathline div b { font-family: var(--font-display); font-size: clamp(26px, 2.8vw, 40px); letter-spacing: -0.04em; line-height: 1; word-break: break-word; }
+.mathline div span { font-size: 14px; font-weight: 700; color: var(--accent); }
+.mathline div small { font-size: 12px; color: rgba(255,255,255,0.7); }
+.mathline div:not(:last-child)::after { content: attr(data-op); position: absolute; right: -16px; top: 28px; width: 30px; height: 30px; border-radius: 50%; background: #fff; color: var(--dark); font-weight: 800; display: grid; place-items: center; z-index: 2; border: 1px solid var(--hair-soft); }
+@media (max-width: 1000px) { .mathline div::after { display: none !important; } }
+.mathline div.end { background: var(--accent); color: var(--accent-ink); } .mathline div.end span { color: var(--accent-ink); } .mathline div.end small { color: rgba(0,0,0,.65); }
 .sec > .blobs, .sec > .grain, .sec > .ghost, .slide > .blobs, .slide > .grain, .slide > .slide__num, .slide > .slide__bg { position: absolute !important; }
 .slide > .slide__bg { z-index: -2 !important; } .slide > .slide__num { z-index: -1 !important; } .sec > .ghost, .sec > .blobs, .sec > .grain { z-index: 0 !important; }
 .sec > .blobs, .slide > .blobs { z-index: -1 !important; }
@@ -89,232 +110,250 @@
   <div class="slide__bg"><img src="https://images.unsplash.com/photo-1521078803125-7efd09b65b8f?w=1800&q=80&fit=crop&auto=format" alt=""></div>
   <div class="grain" aria-hidden="true"></div>
   <div class="wrap" style="display:grid;gap:18px;max-width:1040px">
-    <span class="eyebrow" data-anim>For the owners of Keila's Bike Shop Marikina Bodega</span>
-    <h1 class="slide__title" data-anim style="max-width:16ch">Keila's, here's what 90 days of ads with us puts in the till.</h1>
-    <div class="title-num" data-anim><span class="big-num money" id="t-rev">₱0</span><small>extra revenue to Keila's in 90 days, on top of what you sell today. Expected scenario.</small></div>
-    <p class="lead" data-anim style="max-width:56ch">More bikes and e-bikes out the door, from people who booked a test ride because of the funnel and the ads. Move the sliders on slide 3; every number re-computes. Projection, not a guarantee.</p>
+    <span class="eyebrow" data-anim>For the owners of Keila's Bike Shop Marikina Bodega · The next 90 days</span>
+    <h1 class="slide__title" data-anim style="max-width:16ch">Here's what 90 days of ads with us puts in the till.</h1>
+    <div class="title-num" data-anim><span class="big-num money" id="t-rev">₱0</span><small>in extra sales for Keila's in 90 days, on top of what you sell today.</small></div>
+    <p class="lead" data-anim style="max-width:56ch">More bikes and e-bikes out the door, from people who booked a test ride because of the ads. Everything is explained step by step in plain words, and you can change any number on slide 4. These are estimates, not promises.</p>
     <div class="kicker-links" data-anim><a href="https://keilasbikes.majcustodioph.com">① Funnel</a><a href="https://keilasbikes-ads.majcustodioph.com">② Ads plan</a><a class="on" href="#s2">③ Projections</a></div>
   </div>
   <span class="slide__num">01</span>
 </section>
 
-<!-- 2 · Owner headline -->
+<!-- 2 · The simple version -->
 <section class="slide slide--soft">
   <div class="wrap">
-    <div class="hdr"><div><span class="eyebrow" data-anim>Your numbers, day 90</span><h2 data-anim>Extra bikes. Extra pesos. What you pay. What you keep.</h2></div><span class="pill pill--accent" data-anim>Projection · not a guarantee</span></div>
+    <div class="hdr"><div><span class="eyebrow" data-anim>The simple version</span><h2 data-anim>Four numbers. That's the whole story.</h2></div><span class="pill pill--accent" data-anim>Estimates, not promises</span></div>
     <div class="stats">
-      <div class="stat" data-anim="scale"><b id="k-bikes">0</b><span>Extra bikes &amp; e-bikes sold</span><small>on top of your current sales</small></div>
-      <div class="stat" data-anim="scale"><b class="money" id="k-rev">₱0</b><span>Extra revenue to Keila's</span><small>retail + reseller orders</small></div>
-      <div class="stat" data-anim="scale"><b id="k-pay">₱0</b><span>What you pay</span><small>ads + Magica Studio retainer</small></div>
-      <div class="stat" data-anim="scale"><b class="money" id="k-keep">₱0</b><span>What you keep</span><small id="k-keep-sub">gross profit on extra sales, minus what you pay</small></div>
+      <div class="stat" data-anim="scale"><b id="k-bikes">0</b><span>Extra bikes sold</span><small>in 90 days, on top of today</small></div>
+      <div class="stat" data-anim="scale"><b class="money" id="k-rev">₱0</b><span>Extra sales</span><small>walk-in + reseller orders</small></div>
+      <div class="stat" data-anim="scale"><b id="k-pay">₱0</b><span>What you pay</span><small>ads + our fee, 3 months</small></div>
+      <div class="stat" data-anim="scale"><b class="money" id="k-keep">₱0</b><span>What you keep</span><small>profit on the extra sales, after paying us</small></div>
     </div>
-    <p class="takeaway" style="margin-top:22px" data-anim id="k-line">Every ₱1 you pay us comes back as ₱0 in gross profit.</p>
-    <p class="note" data-anim>Gross profit uses a 22% blended margin on bikes and e-bikes. Replace it with your real margin on day one and the deck re-runs.</p>
+    <p class="takeaway" style="margin-top:22px" data-anim id="k-line"></p>
+    <p class="note" data-anim>Profit uses 22% per bike. Put in your real profit on slide 4 and everything updates.</p>
   </div>
   <span class="slide__num">02</span>
 </section>
 
-<!-- 3 · Calculator -->
+<!-- 3 · Step by step -->
 <section class="slide">
   <div class="wrap">
-    <div class="hdr"><div><span class="eyebrow" data-anim>Interactive calculator</span><h2 data-anim>Your shop, your assumptions.</h2></div><span class="pill pill--accent" data-anim>Projection · not a guarantee</span></div>
-    <div class="calc-slide">
-      <aside class="controls" data-anim="left">
-        <h3>Inputs</h3>
-        <span class="grp">Your shop today</span>
-        <label class="range"><span class="range__row"><span>Bikes you sell today, no ads (per month)</span><b id="v-base">45</b></span><input type="range" id="i-base" min="0" max="200" step="1" value="45"></label>
-        <label class="range"><span class="range__row"><span>Average retail order</span><b id="v-aov">₱9,500</b></span><input type="range" id="i-aov" min="4000" max="30000" step="250" value="9500"></label>
-        <span class="grp">With Magica Studio</span>
-        <label class="range"><span class="range__row"><span>Daily ad budget</span><b id="v-budget">₱1,000</b></span><input type="range" id="i-budget" min="300" max="3000" step="50" value="1000"></label>
-        <label class="range"><span class="range__row"><span>Monthly retainer to Magica Studio</span><b id="v-fee">₱25,000</b></span><input type="range" id="i-fee" min="0" max="60000" step="1000" value="25000"></label>
-        <label class="range"><span class="range__row"><span>Lead → sale conversion</span><b id="v-conv">18%</b></span><input type="range" id="i-conv" min="5" max="35" step="1" value="18"></label>
-        <label class="range"><span class="range__row"><span>Reseller share of extra orders</span><b id="v-res">10%</b></span><input type="range" id="i-res" min="0" max="40" step="1" value="10"></label>
-        <div class="kv"><div><b>₱120</b><span>CPM</span></div><div><b>2.0%</b><span>CTR</span></div><div><b>10%</b><span>Click → lead</span></div><div><b>22%</b><span>Gross margin</span></div></div>
-      </aside>
-      <div class="panel" data-anim="right"><div class="chart" id="c-leads"></div><p class="note">Reserve &amp; test-ride leads the funnel books each month. Scenarios multiply leads by 0.6× (Conservative), 1.0× (Expected), 1.4× (Aggressive). Months ramp 75% → 100% → 115% as creatives and retargeting mature.</p></div>
-    </div>
+    <div class="hdr"><div><span class="eyebrow" data-anim>How the math works</span><h2 data-anim>Step by step, over 90 days.</h2></div><span class="pill pill--accent" data-anim>If it goes as planned</span></div>
+    <div class="chain" id="chain-people"></div>
+    <div class="mathline" id="chain-money" style="margin-top:22px"></div>
+    <p class="note" style="margin-top:16px" data-anim>Every step uses average results for Facebook ads in the Philippines. Change any of them on the next slide and this whole deck updates.</p>
   </div>
   <span class="slide__num">03</span>
 </section>
 
-<!-- 4 · Today vs with us -->
+<!-- 4 · Your numbers -->
 <section class="slide slide--soft">
   <div class="wrap">
-    <div class="hdr"><div><span class="eyebrow" data-anim>Today vs. with us</span><h2 data-anim>Bikes out the door, month by month.</h2></div><span class="pill pill--accent" data-anim>Projection · not a guarantee</span></div>
-    <div class="slide-grid slide-grid--31">
-      <div class="panel" data-anim="scale"><div class="chart chart--big" id="c-vs"></div></div>
-      <div style="display:grid;gap:16px" data-anim="right">
-        <p class="takeaway" id="vs-line">—</p>
-        <p class="note">"Today" is the number you gave us on the calculator: what the bodega moves on its own. "With funnel + ads" adds the bikes bought by people who booked a test ride through the funnel. Expected scenario.</p>
-      </div>
+    <div class="hdr"><div><span class="eyebrow" data-anim>Your numbers</span><h2 data-anim style="max-width:24ch">Don't like a number? Move it.</h2></div><span class="pill pill--accent" data-anim>Estimates, not promises</span></div>
+    <div class="calc-slide">
+      <aside class="controls" data-anim="left">
+        <span class="grp">Your shop today</span>
+        <label class="range"><span class="range__row"><span>Bikes you sell in a normal month, without ads</span><b id="v-base">45</b></span><input type="range" id="i-base" min="0" max="200" step="1" value="45"></label>
+        <label class="range"><span class="range__row"><span>Average price of a bike you sell</span><b id="v-aov">₱9,500</b></span><input type="range" id="i-aov" min="4000" max="30000" step="250" value="9500"></label>
+        <label class="range"><span class="range__row"><span>Profit you keep from each bike</span><b id="v-gm">22%</b></span><input type="range" id="i-gm" min="8" max="45" step="1" value="22"></label>
+        <span class="grp">What you pay</span>
+        <label class="range"><span class="range__row"><span>Ad budget per day</span><b id="v-budget">₱1,000</b></span><input type="range" id="i-budget" min="300" max="3000" step="50" value="1000"></label>
+        <label class="range"><span class="range__row"><span>Magica Studio fee per month</span><b id="v-fee">₱25,000</b></span><input type="range" id="i-fee" min="0" max="60000" step="1000" value="25000"></label>
+        <span class="grp">Out of 100 people…</span>
+        <label class="range"><span class="range__row"><span>…who book a test ride, how many buy?</span><b id="v-conv">18</b></span><input type="range" id="i-conv" min="5" max="35" step="1" value="18"></label>
+        <label class="range"><span class="range__row"><span>…who buy, how many are resellers buying in bulk?</span><b id="v-res">10</b></span><input type="range" id="i-res" min="0" max="40" step="1" value="10"></label>
+        <details>
+          <summary>Advanced (you can skip these)</summary>
+          <label class="range"><span class="range__row"><span>Cost to show the ad to 1,000 people</span><b id="v-cpm">₱120</b></span><input type="range" id="i-cpm" min="60" max="250" step="5" value="120"></label>
+          <label class="range"><span class="range__row"><span>Out of 1,000 who see the ad, how many tap it?</span><b id="v-ctr">20</b></span><input type="range" id="i-ctr" min="5" max="40" step="1" value="20"></label>
+          <label class="range"><span class="range__row"><span>Out of 100 who tap, how many book a test ride?</span><b id="v-lead">10</b></span><input type="range" id="i-lead" min="2" max="20" step="1" value="10"></label>
+          <label class="range"><span class="range__row"><span>Average reseller order</span><b id="v-resaov">₱38,000</b></span><input type="range" id="i-resaov" min="10000" max="100000" step="1000" value="38000"></label>
+        </details>
+      </aside>
+      <div class="panel" data-anim="right"><div class="chart" id="c-leads"></div><p class="note">Test-ride bookings the funnel makes for you each month. <b>Slow</b> = the ads work 60% as well as average. <b>As planned</b> = average. <b>Great</b> = 40% better than average. Months 2 and 3 do better because Facebook learns who clicks.</p></div>
     </div>
   </div>
   <span class="slide__num">04</span>
 </section>
 
-<!-- 5 · Funnel -->
+<!-- 5 · Today vs with us -->
 <section class="slide">
   <div class="wrap">
-    <div class="hdr"><div><span class="eyebrow" data-anim>Where the extra bikes come from</span><h2 data-anim>From ad view to bike sold, one month.</h2></div><div class="toggle" id="scen-toggle" data-anim><button aria-pressed="false" data-s="0">Conservative</button><button aria-pressed="true" data-s="1">Expected</button><button aria-pressed="false" data-s="2">Aggressive</button></div></div>
-    <div class="panel" data-anim="scale"><div class="chart chart--big" id="c-funnel"></div><p class="note">Month 2 shown (full-rate month). Test rides = 55% of leads who show up; bikes sold = lead → sale conversion applied to all leads, reseller orders counted as sales. Projection · not a guarantee.</p></div>
+    <div class="hdr"><div><span class="eyebrow" data-anim>Today vs. with us</span><h2 data-anim>Bikes out the door, month by month.</h2></div><span class="pill pill--accent" data-anim>Estimates, not promises</span></div>
+    <div class="slide-grid slide-grid--31">
+      <div class="panel" data-anim="scale"><div class="chart chart--big" id="c-vs"></div></div>
+      <div style="display:grid;gap:16px" data-anim="right">
+        <p class="takeaway" id="vs-line">—</p>
+        <p class="note">"Today" is the number you gave us on slide 4: what the bodega sells on its own. "With ads" adds the bikes bought by people who booked a test ride through the ads.</p>
+      </div>
+    </div>
   </div>
   <span class="slide__num">05</span>
 </section>
 
-<!-- 6 · Extra revenue -->
+<!-- 6 · Funnel -->
 <section class="slide slide--soft">
   <div class="wrap">
-    <div class="hdr"><div><span class="eyebrow" data-anim>Extra revenue to Keila's</span><h2 data-anim>Three scenarios, side by side.</h2></div><span class="pill pill--accent" data-anim>Projection · not a guarantee</span></div>
-    <div class="panel" data-anim="scale"><div class="chart chart--big" id="c-revenue"></div><p class="note">Revenue from the extra bikes only. Your current sales are not counted here; they stay yours either way.</p></div>
+    <div class="hdr"><div><span class="eyebrow" data-anim>Where the extra bikes come from</span><h2 data-anim>From seeing the ad to buying a bike, one month.</h2></div><div class="toggle" id="scen-toggle" data-anim><button aria-pressed="false" data-s="0">Slow</button><button aria-pressed="true" data-s="1">As planned</button><button aria-pressed="false" data-s="2">Great</button></div></div>
+    <div class="panel" data-anim="scale"><div class="chart chart--big" id="c-funnel"></div><p class="note">Month 2 shown. Not everyone who books a test ride shows up, but some buy without riding first (delivery orders), so "bikes sold" counts everyone who booked.</p></div>
   </div>
   <span class="slide__num">06</span>
 </section>
 
-<!-- 7 · Cumulative keep vs pay -->
+<!-- 7 · Three ways -->
 <section class="slide">
   <div class="wrap">
-    <div class="hdr"><div><span class="eyebrow" data-anim>Running total</span><h2 data-anim>What you keep vs. what you pay, day by day.</h2></div><span class="pill pill--accent" data-anim>Projection · not a guarantee</span></div>
-    <div class="panel" data-anim="scale"><div class="chart chart--big" id="c-net"></div><p class="note">"What you keep" is gross profit on the extra sales minus ads and the Magica Studio retainer, running total. "What you pay" is ads plus retainer, running total. Expected scenario.</p></div>
+    <div class="hdr"><div><span class="eyebrow" data-anim>Three ways it can go</span><h2 data-anim>Slow, as planned, or great.</h2></div><span class="pill pill--accent" data-anim>Estimates, not promises</span></div>
+    <div class="panel" data-anim="scale"><div class="chart chart--big" id="c-revenue"></div><p class="note">Sales from the extra bikes only. What you sell today is not counted here. It stays yours either way.</p></div>
   </div>
   <span class="slide__num">07</span>
 </section>
 
-<!-- 8 · Pay vs keep -->
-<section class="slide slide--dark">
-  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-  <div class="grain" aria-hidden="true"></div>
-  <div class="wrap" style="display:grid;gap:26px">
-    <div class="hdr" style="margin:0"><div><span class="eyebrow" data-anim>90 days · expected scenario</span><h2 data-anim>What you pay vs. what you keep.</h2></div><span class="pill" data-anim>Projection · not a guarantee</span></div>
-    <div class="paykeep">
-      <div data-anim="scale"><span>Ads</span><b id="p-ads">₱0</b><small>paid to Meta and TikTok</small></div>
-      <div data-anim="scale"><span>Magica Studio</span><b id="p-fee">₱0</b><small>retainer, 3 months</small></div>
-      <div data-anim="scale"><span>Gross profit on extra sales</span><b id="p-gp">₱0</b><small id="p-gp-sub">22% of extra revenue</small></div>
-      <div class="keep" data-anim="scale"><span>What you keep</span><b id="p-keep">₱0</b><small>after ads and retainer</small></div>
-    </div>
-    <p class="payline" data-anim id="p-line">Pays for itself 0× over.</p>
+<!-- 8 · Running total -->
+<section class="slide slide--soft">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>Running total</span><h2 data-anim>What you keep vs. what you pay, added up.</h2></div><span class="pill pill--accent" data-anim>Estimates, not promises</span></div>
+    <div class="panel" data-anim="scale"><div class="chart chart--big" id="c-net"></div><p class="note">The solid line is what you keep: profit on the extra bikes minus ads and our fee, added up. The dotted line is what you pay: ads plus our fee, added up.</p></div>
   </div>
   <span class="slide__num">08</span>
 </section>
 
-<!-- 9 · ROI table -->
-<section class="slide slide--soft">
-  <div class="wrap">
-    <div class="hdr"><div><span class="eyebrow" data-anim>Your 90-day P&amp;L on the extra sales</span><h2 data-anim>Three scenarios, every peso accounted for.</h2></div><span class="pill" data-anim>22% blended gross margin</span></div>
-    <div class="panel" data-anim="scale"><div class="table-scroll"><table class="table" id="t-roi">
-      <thead><tr><th>Scenario</th><th class="num">Ads</th><th class="num">Retainer</th><th class="num">Extra bikes</th><th class="num">Extra revenue</th><th class="num">Gross profit</th><th class="num">What you keep</th><th class="num">Per ₱1 paid</th></tr></thead>
-      <tbody></tbody>
-    </table></div><p class="note">What you keep = gross profit on extra sales − ads − retainer. Per ₱1 paid = gross profit ÷ (ads + retainer). Projection · not a guarantee.</p></div>
+<!-- 9 · Pay vs keep -->
+<section class="slide slide--dark">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap" style="display:grid;gap:26px">
+    <div class="hdr" style="margin:0"><div><span class="eyebrow" data-anim>90 days · if it goes as planned</span><h2 data-anim>What you pay vs. what you keep.</h2></div><span class="pill" data-anim>Estimates, not promises</span></div>
+    <div class="paykeep">
+      <div data-anim="scale"><span>You pay for ads</span><b id="p-ads">₱0</b><small>goes to Facebook and TikTok</small></div>
+      <div data-anim="scale"><span>You pay Magica Studio</span><b id="p-fee">₱0</b><small>our fee, 3 months</small></div>
+      <div data-anim="scale"><span>Profit on the extra bikes</span><b id="p-gp">₱0</b><small id="p-gp-sub">22% of extra sales</small></div>
+      <div class="keep" data-anim="scale"><span>What you keep</span><b id="p-keep">₱0</b><small>profit minus what you paid</small></div>
+    </div>
+    <p class="payline" data-anim id="p-line"></p>
   </div>
   <span class="slide__num">09</span>
 </section>
 
-<!-- 10 · Conservative -->
-<section class="slide">
-  <div class="wrap scen-slide">
-    <div style="display:grid;gap:14px">
-      <span class="pill" data-anim>Scenario 1 of 3 · Conservative</span>
-      <span class="eyebrow eyebrow--plain" data-anim>You keep</span>
-      <span class="big-num money" id="s0-keep" data-anim>₱0</span>
-      <h2 data-anim style="font-size:clamp(26px,3.4vw,44px)">Ads land below benchmark and fewer resellers bite.</h2>
-      <p class="lead" data-anim>Even here the bodega sells more bikes than the ads and the retainer cost, because a test ride is a cheap ask and the margin on a bike is real.</p>
-    </div>
-    <div class="facts" data-anim="right">
-      <div><span>Extra bikes sold</span><b id="s0-bikes">0</b></div>
-      <div><span>Extra revenue to Keila's</span><b id="s0-rev">₱0</b></div>
-      <div><span>What you pay (ads + retainer)</span><b id="s0-pay">₱0</b></div>
-      <div><span>Per ₱1 paid, back in gross profit</span><b id="s0-roi">₱0</b></div>
-      <p class="note">Projection · not a guarantee</p>
-    </div>
+<!-- 10 · Table -->
+<section class="slide slide--soft">
+  <div class="wrap">
+    <div class="hdr"><div><span class="eyebrow" data-anim>All three, side by side</span><h2 data-anim>Every peso, one line per scenario.</h2></div><span class="pill" data-anim id="t-gm-pill">22% profit per bike</span></div>
+    <div class="panel" data-anim="scale"><div class="table-scroll"><table class="table" id="t-roi">
+      <thead><tr><th>If it goes…</th><th class="num">Ads</th><th class="num">Our fee</th><th class="num">Extra bikes</th><th class="num">Extra sales</th><th class="num">Profit</th><th class="num">You keep</th><th class="num">Back per ₱1</th></tr></thead>
+      <tbody></tbody>
+    </table></div><p class="note">"You keep" is the profit on the extra bikes minus ads and our fee. "Back per ₱1" is how many pesos of profit you get for every ₱1 you pay us.</p></div>
   </div>
   <span class="slide__num">10</span>
 </section>
 
-<!-- 11 · Expected -->
-<section class="slide slide--brand">
-  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+<!-- 11 · Slow -->
+<section class="slide">
   <div class="wrap scen-slide">
     <div style="display:grid;gap:14px">
-      <span class="pill" data-anim>Scenario 2 of 3 · Expected</span>
+      <span class="pill" data-anim>1 of 3 · If it goes slow</span>
       <span class="eyebrow eyebrow--plain" data-anim>You keep</span>
-      <span class="big-num" id="s1-keep" data-anim>₱0</span>
-      <h2 data-anim style="font-size:clamp(26px,3.4vw,44px);color:#fff">Benchmarks hold. Test rides convert the way walk-ins already do.</h2>
-      <p class="lead" data-anim>The plan as written: two campaigns at launch, three by week three, a full reserve calendar from day 10.</p>
+      <span class="big-num money" id="s0-keep" data-anim>₱0</span>
+      <h2 data-anim style="font-size:clamp(26px,3.4vw,44px)">The ads work only 60% as well as average, and fewer resellers bite.</h2>
+      <p class="lead" data-anim>Even then, the bodega sells more bikes than the ads and our fee cost. A free test ride is an easy yes, and the profit on a bike is real.</p>
     </div>
     <div class="facts" data-anim="right">
-      <div><span>Extra bikes sold</span><b id="s1-bikes">0</b></div>
-      <div><span>Extra revenue to Keila's</span><b id="s1-rev">₱0</b></div>
-      <div><span>What you pay (ads + retainer)</span><b id="s1-pay">₱0</b></div>
-      <div><span>Per ₱1 paid, back in gross profit</span><b id="s1-roi">₱0</b></div>
-      <p class="note">Projection · not a guarantee</p>
+      <div><span>Extra bikes sold</span><b id="s0-bikes">0</b></div>
+      <div><span>Extra sales</span><b id="s0-rev">₱0</b></div>
+      <div><span>You pay (ads + fee)</span><b id="s0-pay">₱0</b></div>
+      <div><span>Back for every ₱1 you pay</span><b id="s0-roi">₱0</b></div>
+      <p class="note">Estimates, not promises</p>
     </div>
   </div>
   <span class="slide__num">11</span>
 </section>
 
-<!-- 12 · Aggressive -->
-<section class="slide slide--dark">
+<!-- 12 · As planned -->
+<section class="slide slide--brand">
   <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-  <div class="grain" aria-hidden="true"></div>
   <div class="wrap scen-slide">
     <div style="display:grid;gap:14px">
-      <span class="pill" data-anim>Scenario 3 of 3 · Aggressive</span>
+      <span class="pill" data-anim>2 of 3 · If it goes as planned</span>
       <span class="eyebrow eyebrow--plain" data-anim>You keep</span>
-      <span class="big-num money" id="s2-keep" data-anim>₱0</span>
-      <h2 data-anim style="font-size:clamp(26px,3.4vw,44px)">A hook video takes off and the reseller campaign lands 2–3 bulk accounts.</h2>
-      <p class="lead" data-anim>At this level the limit stops being ads and becomes floor stock and staff. Plan the second phone and the battery reorder.</p>
+      <span class="big-num" id="s1-keep" data-anim>₱0</span>
+      <h2 data-anim style="font-size:clamp(26px,3.4vw,44px);color:#fff">The ads do what Facebook ads in the Philippines usually do.</h2>
+      <p class="lead" data-anim>The plan as written: two groups at launch, all four by week three, test rides booked every day from day 10.</p>
     </div>
     <div class="facts" data-anim="right">
-      <div><span>Extra bikes sold</span><b id="s2-bikes">0</b></div>
-      <div><span>Extra revenue to Keila's</span><b id="s2-rev">₱0</b></div>
-      <div><span>What you pay (ads + retainer)</span><b id="s2-pay">₱0</b></div>
-      <div><span>Per ₱1 paid, back in gross profit</span><b id="s2-roi">₱0</b></div>
-      <p class="note">Projection · not a guarantee</p>
+      <div><span>Extra bikes sold</span><b id="s1-bikes">0</b></div>
+      <div><span>Extra sales</span><b id="s1-rev">₱0</b></div>
+      <div><span>You pay (ads + fee)</span><b id="s1-pay">₱0</b></div>
+      <div><span>Back for every ₱1 you pay</span><b id="s1-roi">₱0</b></div>
+      <p class="note">Estimates, not promises</p>
     </div>
   </div>
   <span class="slide__num">12</span>
 </section>
 
-<!-- 13 · Close -->
+<!-- 13 · Great -->
+<section class="slide slide--dark">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap scen-slide">
+    <div style="display:grid;gap:14px">
+      <span class="pill" data-anim>3 of 3 · If it goes great</span>
+      <span class="eyebrow eyebrow--plain" data-anim>You keep</span>
+      <span class="big-num money" id="s2-keep" data-anim>₱0</span>
+      <h2 data-anim style="font-size:clamp(26px,3.4vw,44px)">A video takes off and 2 or 3 resellers start ordering every month.</h2>
+      <p class="lead" data-anim>At this point the problem isn't ads. It's having enough bikes on the floor and enough staff to answer the phone.</p>
+    </div>
+    <div class="facts" data-anim="right">
+      <div><span>Extra bikes sold</span><b id="s2-bikes">0</b></div>
+      <div><span>Extra sales</span><b id="s2-rev">₱0</b></div>
+      <div><span>You pay (ads + fee)</span><b id="s2-pay">₱0</b></div>
+      <div><span>Back for every ₱1 you pay</span><b id="s2-roi">₱0</b></div>
+      <p class="note">Estimates, not promises</p>
+    </div>
+  </div>
+  <span class="slide__num">13</span>
+</section>
+
+<!-- 14 · Close -->
 <section class="slide slide--dark">
   <div class="slide__bg"><img src="https://images.unsplash.com/photo-1627044185459-09e6dbc39444?w=1800&q=80&fit=crop&auto=format" alt=""></div>
   <div class="grain" aria-hidden="true"></div>
   <div class="wrap" style="display:grid;gap:22px;max-width:960px">
     <span class="eyebrow" data-anim>Ready when you are</span>
     <h2 class="slide__title" data-anim>Say go and we launch in <span style="color:var(--accent)">7 days.</span></h2>
-    <p class="lead" data-anim>The funnel is built, the ads are scripted, and your numbers are on the table. First test rides booked by day 10, first report on day 30.</p>
+    <p class="lead" data-anim>The funnel page is built, the ads are written, and your numbers are on the table. First test rides booked by day 10, first report on day 30.</p>
     <div class="hero__ctas" data-anim><a class="btn btn--accent btn--xl" href="https://keilasbikes.majcustodioph.com">Open the funnel</a><a class="btn btn--light" href="https://keilasbikes-ads.majcustodioph.com">Review the ads plan</a></div>
   </div>
-  <span class="slide__num">13</span>
+  <span class="slide__num">14</span>
 </section>
 
 </main>
 
-<div class="ribbon"><span>Preview build · projections for presentation</span></div>
+<div class="ribbon"><span>Preview build · estimates for presentation</span></div>
 <script src="/funnels/shared/charts.js" defer></script>
 <script src="/funnels/shared/fx.js" defer></script>
 <script src="/funnels/shared/deck.js" defer></script>
 <script defer>
 document.addEventListener('DOMContentLoaded', function () {
-  var C = window.Charts;
-  var CPM = 120, CTR = 0.02, L = 0.10, SHOW = 0.55, RES_AOV = 38000, GM = 0.22;
-  var RAMP = [0.75, 1.0, 1.15], MULT = [0.6, 1.0, 1.4], NAMES = ['Conservative', 'Expected', 'Aggressive'], COL = ['#eda100', '#e63329', '#2a78d6'];
+  var C = window.Charts, R = Math.round;
+  var RAMP = [0.75, 1.0, 1.15], MULT = [0.6, 1.0, 1.4], NAMES = ['Slow', 'As planned', 'Great'], COL = ['#eda100', '#e63329', '#2a78d6'], SHOW = 0.55;
   var scen = 1;
-  var $ = function (id) { return document.getElementById(id); };
-  var peso = function (v) { return (v < 0 ? '−₱' : '₱') + Math.round(Math.abs(v)).toLocaleString('en-PH'); };
+  var $ = function (id) { return document.getElementById(id); }, val = function (id) { return +$(id).value; };
+  var n = function (v) { return R(v).toLocaleString('en-PH'); };
+  var peso = function (v) { return (v < 0 ? '−₱' : '₱') + n(Math.abs(v)); };
   var pesoK = function (v) { return (v < 0 ? '−₱' : '₱') + C.compact(Math.abs(v)); };
-  var n = function (v) { return Math.round(v).toLocaleString('en-PH'); };
-  var roi = function (v) { return '₱' + v.toFixed(2); };
+  var per1 = function (v) { return '₱' + v.toFixed(2); };
 
+  // Whole numbers at every step, so the chain on slide 3 adds up exactly.
   function model() {
-    var budget = +$('i-budget').value, aov = +$('i-aov').value, conv = +$('i-conv').value / 100, res = +$('i-res').value / 100, fee = +$('i-fee').value, base = +$('i-base').value;
+    var budget = val('i-budget'), aov = val('i-aov'), gm = val('i-gm') / 100, conv = val('i-conv') / 100, res = val('i-res') / 100, fee = val('i-fee');
+    var cpm = val('i-cpm'), tap = val('i-ctr') / 1000, book = val('i-lead') / 100, resAov = val('i-resaov');
     var out = [];
     for (var s = 0; s < 3; s++) {
-      var months = [], tot = { spend: 0, fee: 0, pay: 0, imp: 0, clicks: 0, leads: 0, rides: 0, sales: 0, base: 0, rev: 0, gp: 0, keep: 0 };
+      var months = [], tot = { spend: 0, fee: 0, pay: 0, views: 0, taps: 0, leads: 0, rides: 0, sales: 0, resellers: 0, walkins: 0, rev: 0, gp: 0, keep: 0 };
       for (var m = 0; m < 3; m++) {
-        var spend = budget * 30, imp = spend / CPM * 1000 * RAMP[m] * (0.9 + 0.1 * MULT[s]);
-        var clicks = imp * CTR, leads = clicks * L * MULT[s], rides = leads * SHOW, sales = leads * conv;
-        var rev = sales * (1 - res) * aov + sales * res * RES_AOV, gp = rev * GM, pay = spend + fee;
-        var mo = { spend: spend, fee: fee, pay: pay, imp: imp, clicks: clicks, leads: leads, rides: rides, sales: sales, base: base, rev: rev, gp: gp, keep: gp - pay };
+        var spend = budget * 30, views = R(spend / cpm * 1000 * RAMP[m]), taps = R(views * tap), leads = R(taps * book * MULT[s]), rides = R(leads * SHOW), sales = R(leads * conv);
+        var resellers = R(sales * res), walkins = sales - resellers, rev = walkins * aov + resellers * resAov, gp = R(rev * gm), pay = spend + fee;
+        var mo = { spend: spend, fee: fee, pay: pay, views: views, taps: taps, leads: leads, rides: rides, sales: sales, resellers: resellers, walkins: walkins, rev: rev, gp: gp, keep: gp - pay };
         months.push(mo); for (var k in tot) tot[k] += mo[k];
       }
       tot.roi = tot.pay > 0 ? tot.gp / tot.pay : 0;
@@ -325,59 +364,79 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function renderFunnel(M) {
     var f = M[scen].months[1];
-    C.funnel($('c-funnel'), { title: NAMES[scen] + ' · month 2', sub: 'One month at ' + peso($('i-budget').value) + '/day in ads', ramp: ['#e63329', '#cf2d25', '#b8231c', '#9c1d17', '#7f1712'],
+    C.funnel($('c-funnel'), { title: NAMES[scen] + ' · month 2', sub: 'One month at ' + peso(val('i-budget')) + ' a day in ads', ramp: ['#e63329', '#cf2d25', '#b8231c', '#9c1d17', '#7f1712'],
       stages: [
-        { name: 'Ad views', value: Math.round(f.imp) },
-        { name: 'Clicks', value: Math.round(f.clicks), pct: (CTR * 100).toFixed(1) + '%' },
-        { name: 'Test-ride leads', value: Math.round(f.leads), pct: Math.round(f.leads / f.clicks * 100) + '%' },
-        { name: 'Show up to ride', value: Math.round(f.rides), pct: Math.round(SHOW * 100) + '%' },
-        { name: 'Extra bikes sold', value: Math.round(f.sales), pct: $('i-conv').value + '% of leads' }
+        { name: 'Saw the ad', value: f.views },
+        { name: 'Tapped it', value: f.taps, pct: val('i-ctr') + ' of 1,000' },
+        { name: 'Booked a test ride', value: f.leads, pct: val('i-lead') + ' of 100' },
+        { name: 'Showed up to ride', value: f.rides, pct: '55 of 100' },
+        { name: 'Bought a bike', value: f.sales, pct: val('i-conv') + ' of 100 who booked' }
       ] });
   }
 
   function render() {
-    $('v-base').textContent = n($('i-base').value); $('v-aov').textContent = peso($('i-aov').value); $('v-budget').textContent = peso($('i-budget').value);
-    $('v-fee').textContent = peso($('i-fee').value); $('v-conv').textContent = $('i-conv').value + '%'; $('v-res').textContent = $('i-res').value + '%';
-    var M = model(), E = M[1].total, Em = M[1].months, base = +$('i-base').value;
+    $('v-base').textContent = n(val('i-base')); $('v-aov').textContent = peso(val('i-aov')); $('v-gm').textContent = val('i-gm') + '%'; $('v-budget').textContent = peso(val('i-budget'));
+    $('v-fee').textContent = peso(val('i-fee')); $('v-conv').textContent = val('i-conv'); $('v-res').textContent = val('i-res');
+    $('v-cpm').textContent = peso(val('i-cpm')); $('v-ctr').textContent = val('i-ctr'); $('v-lead').textContent = val('i-lead'); $('v-resaov').textContent = peso(val('i-resaov'));
+    var M = model(), E = M[1].total, Em = M[1].months, base = val('i-base'), gm = val('i-gm');
 
     $('t-rev').textContent = pesoK(E.rev);
     $('k-bikes').textContent = '+' + n(E.sales); $('k-rev').textContent = pesoK(E.rev); $('k-pay').textContent = pesoK(E.pay); $('k-keep').textContent = pesoK(E.keep);
-    $('k-line').textContent = 'Every ₱1 you pay us comes back as ' + roi(E.roi) + ' in gross profit' + (E.keep >= 0 ? ', and you keep ' + pesoK(E.keep) + ' after paying for everything.' : '. At these settings the ads cost more than they return; move the sliders to your real numbers.');
+    $('k-line').textContent = E.keep >= 0 ? 'For every ₱1 you pay us, about ' + per1(E.roi) + ' comes back as profit. You keep ' + pesoK(E.keep) + ' after paying for everything.' : 'At these numbers the ads cost more than they bring back. Move the sliders on slide 4 to your real numbers.';
 
-    C.lines($('c-leads'), { title: 'Test-ride leads per month', sub: 'Bookings the funnel makes for you, three scenarios', labels: ['Month 1', 'Month 2', 'Month 3'], area: false,
-      series: M.map(function (r, i) { return { name: NAMES[i], color: COL[i], values: r.months.map(function (m) { return Math.round(m.leads); }) }; }) });
+    // Step by step (slide 3)
+    $('chain-people').innerHTML = [
+      ['See the ad', n(E.views), peso(E.spend) + ' in ads over 90 days'],
+      ['Tap it', n(E.taps), val('i-ctr') + ' out of every 1,000'],
+      ['Book a test ride', n(E.leads), val('i-lead') + ' out of every 100 who tap'],
+      ['Show up to ride', n(E.rides), '55 out of every 100 who book'],
+      ['Buy a bike', n(E.sales), val('i-conv') + ' out of every 100 who book', 'end']
+    ].map(function (c, i) { return '<div class="' + (c[3] || '') + '" data-anim style="--d:' + (i * 90) + 'ms"><span>' + c[0] + '</span><b>' + c[1] + '</b><small>' + c[2] + '</small></div>'; }).join('');
+    var salesLine = E.resellers > 0
+      ? n(E.walkins) + ' walk-in bikes × ' + peso(val('i-aov')) + ' + ' + n(E.resellers) + ' reseller orders × ' + peso(val('i-resaov'))
+      : n(E.sales) + ' bikes × ' + peso(val('i-aov'));
+    $('chain-money').innerHTML = [
+      ['×', salesLine, pesoK(E.rev), 'extra sales'],
+      ['−', gm + '% of that is profit', pesoK(E.gp), 'profit on the extra bikes'],
+      ['=', 'You pay us (ads + fee)', pesoK(E.pay), peso(E.spend) + ' ads + ' + peso(E.fee) + ' fee'],
+      ['', 'You keep', pesoK(E.keep), E.keep >= 0 ? per1(E.roi) + ' back for every ₱1' : 'Not paying back at these numbers', 'end']
+    ].map(function (c, i) { return '<div class="' + (c[4] || '') + '" data-op="' + c[0] + '" data-anim style="--d:' + (450 + i * 90) + 'ms"><span>' + c[1] + '</span><b>' + c[2] + '</b><small>' + c[3] + '</small></div>'; }).join('');
 
-    C.bars($('c-vs'), { title: 'Bikes & e-bikes sold per month', sub: 'Today vs. with funnel + ads, expected scenario', labelAll: true, labels: ['Month 1', 'Month 2', 'Month 3'],
-      series: [{ name: 'Today (no ads)', color: '#eda100', values: Em.map(function () { return base; }) }, { name: 'With funnel + ads', color: '#e63329', values: Em.map(function (m) { return Math.round(base + m.sales); }) }] });
+    C.lines($('c-leads'), { title: 'Test-ride bookings per month', sub: 'Bookings the ads make for you, three ways it can go', labels: ['Month 1', 'Month 2', 'Month 3'], area: false,
+      series: M.map(function (r, i) { return { name: NAMES[i], color: COL[i], values: r.months.map(function (m) { return m.leads; }) }; }) });
+
+    C.bars($('c-vs'), { title: 'Bikes and e-bikes sold per month', sub: 'Today vs. with ads, if it goes as planned', labelAll: true, labels: ['Month 1', 'Month 2', 'Month 3'],
+      series: [{ name: 'Today (no ads)', color: '#eda100', values: Em.map(function () { return base; }) }, { name: 'With ads', color: '#e63329', values: Em.map(function (m) { return base + m.sales; }) }] });
     var m2 = Em[1];
     $('vs-line').textContent = base > 0
-      ? 'From ' + n(base) + ' bikes a month to ' + n(base + m2.sales) + ' by month two: ' + Math.round(m2.sales / base * 100) + '% more bikes out the door, ' + n(E.sales) + ' extra in 90 days.'
+      ? 'From ' + n(base) + ' bikes a month to ' + n(base + m2.sales) + ' by month two. That\'s ' + n(m2.sales / base * 100) + '% more bikes out the door, and ' + n(E.sales) + ' extra bikes in 90 days.'
       : n(E.sales) + ' extra bikes out the door in 90 days, ' + n(m2.sales) + ' of them in month two alone.';
 
     renderFunnel(M);
-    C.bars($('c-revenue'), { title: 'Extra revenue to Keila’s per month', sub: 'From the extra bikes only, retail + reseller', money: true, labels: ['Month 1', 'Month 2', 'Month 3'],
-      series: M.map(function (r, i) { return { name: NAMES[i], color: COL[i], values: r.months.map(function (m) { return Math.round(m.rev); }) }; }) });
+    C.bars($('c-revenue'), { title: 'Extra sales per month', sub: 'From the extra bikes only, walk-in + reseller', money: true, labels: ['Month 1', 'Month 2', 'Month 3'],
+      series: M.map(function (r, i) { return { name: NAMES[i], color: COL[i], values: r.months.map(function (m) { return m.rev; }) }; }) });
 
     var keep = 0, pay = 0, keepS = [0], payS = [0];
-    Em.forEach(function (m) { keep += m.keep; pay += m.pay; keepS.push(Math.round(Math.max(0, keep))); payS.push(Math.round(pay)); });
-    C.lines($('c-net'), { title: 'Running total, expected scenario', sub: 'What you keep after ads and retainer vs. what you pay', money: true, labels: ['Launch', 'Day 30', 'Day 60', 'Day 90'],
-      series: [{ name: 'What you keep', color: '#e63329', values: keepS }, { name: 'What you pay (ads + retainer)', color: '#eda100', values: payS, dashed: true }] });
+    Em.forEach(function (m) { keep += m.keep; pay += m.pay; keepS.push(Math.max(0, keep)); payS.push(pay); });
+    C.lines($('c-net'), { title: 'Added up, if it goes as planned', sub: 'What you keep after ads and our fee vs. what you pay', money: true, labels: ['Start', 'Day 30', 'Day 60', 'Day 90'],
+      series: [{ name: 'What you keep', color: '#e63329', values: keepS }, { name: 'What you pay (ads + fee)', color: '#eda100', values: payS, dashed: true }] });
 
     $('p-ads').textContent = pesoK(E.spend); $('p-fee').textContent = pesoK(E.fee); $('p-gp').textContent = pesoK(E.gp); $('p-keep').textContent = pesoK(E.keep);
-    $('p-gp-sub').textContent = '22% of ' + pesoK(E.rev) + ' extra revenue';
-    $('p-line').textContent = E.roi >= 1 ? 'Pays for itself ' + E.roi.toFixed(1) + '× over: ' + pesoK(E.pay) + ' out, ' + pesoK(E.gp) + ' back in gross profit.' : 'At these settings it returns ₱' + E.roi.toFixed(2) + ' per peso paid. Move the sliders to your real numbers.';
+    $('p-gp-sub').textContent = gm + '% of ' + pesoK(E.rev) + ' in extra sales';
+    $('p-line').textContent = E.roi >= 1 ? 'You pay ' + pesoK(E.pay) + '. You get ' + pesoK(E.gp) + ' back in profit. It pays for itself ' + E.roi.toFixed(1) + ' times over.' : 'At these numbers you get ' + per1(E.roi) + ' back for every ₱1. Move the sliders to your real numbers.';
+    $('t-gm-pill').textContent = gm + '% profit per bike';
 
     var tb = $('t-roi').querySelector('tbody'); tb.innerHTML = '';
     M.forEach(function (r, i) {
       var t = r.total, tr = document.createElement('tr'); if (i === 1) tr.className = 'total';
-      tr.innerHTML = '<td><b>' + NAMES[i] + '</b></td><td class="num">' + peso(t.spend) + '</td><td class="num">' + peso(t.fee) + '</td><td class="num">+' + n(t.sales) + '</td><td class="num">' + peso(t.rev) + '</td><td class="num">' + peso(t.gp) + '</td><td class="num"><b>' + peso(t.keep) + '</b></td><td class="num">' + peso(t.roi) + '</td>';
+      tr.innerHTML = '<td><b>' + NAMES[i] + '</b></td><td class="num">' + peso(t.spend) + '</td><td class="num">' + peso(t.fee) + '</td><td class="num">+' + n(t.sales) + '</td><td class="num">' + peso(t.rev) + '</td><td class="num">' + peso(t.gp) + '</td><td class="num"><b>' + peso(t.keep) + '</b></td><td class="num">' + per1(t.roi) + '</td>';
       tb.appendChild(tr);
       $('s' + i + '-keep').textContent = pesoK(t.keep); $('s' + i + '-bikes').textContent = '+' + n(t.sales);
-      $('s' + i + '-rev').textContent = pesoK(t.rev); $('s' + i + '-pay').textContent = pesoK(t.pay); $('s' + i + '-roi').textContent = roi(t.roi);
+      $('s' + i + '-rev').textContent = pesoK(t.rev); $('s' + i + '-pay').textContent = pesoK(t.pay); $('s' + i + '-roi').textContent = per1(t.roi);
     });
   }
 
-  ['i-base', 'i-aov', 'i-budget', 'i-fee', 'i-conv', 'i-res'].forEach(function (id) { $(id).addEventListener('input', render); });
+  ['i-base', 'i-aov', 'i-gm', 'i-budget', 'i-fee', 'i-conv', 'i-res', 'i-cpm', 'i-ctr', 'i-lead', 'i-resaov'].forEach(function (id) { $(id).addEventListener('input', render); });
   $('scen-toggle').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; scen = +b.dataset.s; Array.prototype.forEach.call(this.querySelectorAll('button'), function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); renderFunnel(model()); });
   render();
 });

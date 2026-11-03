@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LaundroDream · What you make in 90 days</title>
-<meta name="description" content="For LaundroDream's owners: how many more franchise buyers this funnel and Magica Studio's ads bring in, what it costs, and what LaundroDream keeps.">
+<meta name="description" content="For LaundroDream's owners, in plain words: how many more franchise buyers the funnel and ads bring, what you pay, and what you keep.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,800;1,9..40,500&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
@@ -15,6 +15,9 @@
   .controls { display: grid; gap: 12px; background: var(--bg); border: 1px solid var(--hair-soft); border-radius: var(--radius); padding: 22px; }
   .controls h3 { font-size: 17px; }
   .controls .grp { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 800; color: var(--brand-ink); margin-top: 6px; }
+  .controls details { border-top: 1px solid var(--hair-soft); padding-top: 10px; margin-top: 4px; }
+  .controls summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--mute); }
+  .controls details .range { margin-top: 10px; }
   .scenario { display: grid; gap: 20px; }
   .scenario .meta { display: flex; flex-wrap: wrap; gap: 22px 36px; font-size: 15px; }
   .scenario .meta div { display: grid; gap: 2px; }
@@ -26,8 +29,9 @@
   .paykeep div { padding: 26px; border-radius: var(--radius); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); display: grid; gap: 8px; }
   .paykeep b { font-size: clamp(30px, 3.6vw, 52px); letter-spacing: -0.04em; line-height: 1; }
   .paykeep span { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; color: var(--on-dark-mute); }
+  .paykeep small { font-size: 13px; color: var(--on-dark-mute); }
   .paykeep .keep { background: var(--brand); border-color: transparent; }
-  .paykeep .keep span { color: rgba(255,255,255,.8); }
+  .paykeep .keep span, .paykeep .keep small { color: rgba(255,255,255,.85); }
   .takeaway { font-family: var(--font-accent); font-style: italic; font-size: clamp(22px, 2.6vw, 34px); line-height: 1.25; }
   .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
   @media (max-width: 700px) { .vs { grid-template-columns: 1fr; } }
@@ -36,10 +40,30 @@
   .vs b { font-size: clamp(40px, 5vw, 72px); letter-spacing: -0.04em; line-height: 1; }
   .vs span { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; color: var(--mute); }
   .vs div.with span { color: var(--on-dark-mute); }
+  .chain { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px 18px; }
+  @media (max-width: 1000px) { .chain { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .chain { grid-template-columns: 1fr; } }
+  .chain div { position: relative; padding: 20px 16px; border-radius: 18px; background: var(--bg); border: 1px solid var(--hair-soft); display: grid; gap: 6px; align-content: start; min-width: 0; }
+  .chain div b { font-size: clamp(26px, 2.8vw, 40px); letter-spacing: -0.04em; line-height: 1; word-break: break-word; }
+  .chain div span { font-size: 14px; font-weight: 700; }
+  .chain div small { font-size: 12px; color: var(--mute); }
+  .chain div:not(:last-child)::after { content: "→"; position: absolute; right: -16px; top: 28px; width: 30px; height: 30px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 800; display: grid; place-items: center; z-index: 2; }
+  @media (max-width: 1000px) { .chain div::after { display: none !important; } }
+  .chain div.end { background: var(--brand); color: #fff; border-color: transparent; } .chain div.end small { color: rgba(255,255,255,.85); }
+  .mathline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px 18px; }
+  @media (max-width: 1000px) { .mathline { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .mathline { grid-template-columns: 1fr; } }
+  .mathline div { position: relative; padding: 20px 16px; border-radius: 18px; background: var(--dark); color: #fff; display: grid; gap: 6px; min-width: 0; }
+  .mathline div b { font-size: clamp(26px, 2.8vw, 40px); letter-spacing: -0.04em; line-height: 1; word-break: break-word; }
+  .mathline div span { font-size: 14px; font-weight: 700; color: #8ecdea; }
+  .mathline div small { font-size: 12px; color: var(--on-dark-mute); }
+  .mathline div:not(:last-child)::after { content: attr(data-op); position: absolute; right: -16px; top: 28px; width: 30px; height: 30px; border-radius: 50%; background: #fff; color: var(--dark); font-weight: 800; display: grid; place-items: center; z-index: 2; border: 1px solid var(--hair-soft); }
+  @media (max-width: 1000px) { .mathline div::after { display: none !important; } }
+  .mathline div.end { background: var(--brand); } .mathline div.end span { color: #fff; } .mathline div.end small { color: rgba(255,255,255,.85); }
 </style>
 </head>
 <body class="deck-body">
-<div class="ribbon"><span>Preview build · projections, not guarantees</span></div>
+<div class="ribbon"><span>Preview build · estimates, not promises</span></div>
 <a class="deck-brand" href="#s1"><span class="brand__mark"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="5"/><path d="M4 5h16v16H4z"/><path d="M8 5V3h8v2"/></svg></span>LaundroDream · Projections</a>
 <nav class="deck-links"><a href="https://laundrodream-funnel.majcustodioph.com">① Funnel</a><a href="https://laundrodream-ads.majcustodioph.com">② Ads plan</a><a href="https://laundrodream-results.majcustodioph.com" aria-current="page">③ Projections</a></nav>
 
@@ -49,154 +73,166 @@
   <div class="slide__bg"><img src="https://images.unsplash.com/photo-1638949493140-edb10b7be2f3?w=2000&q=80&fit=crop&auto=format" alt=""></div>
   <div class="grain" aria-hidden="true"></div>
   <div class="wrap" style="display:grid;gap:22px">
-    <span class="eyebrow" data-anim>For Wendy · LaundroDream · 90-day projection</span>
-    <div class="big-num money" data-anim="scale" id="heroRev">₱13.8M</div>
-    <h1 class="slide__title" data-anim style="font-size:clamp(28px,3.6vw,52px);max-width:24ch">That's the extra revenue this funnel and our ads put into LaundroDream's account in 90 days.</h1>
-    <p class="lead" data-anim style="max-width:58ch">You're not buying ads. You're buying franchise buyers. Every number in this deck is LaundroDream's money, computed live from the sliders on slide 3, with what you pay us already counted. Projection, not a guarantee.</p>
-    <div class="hero__ctas" data-anim><a class="btn btn--light" href="#s2">Show me the numbers →</a></div>
+    <span class="eyebrow" data-anim>For Wendy · LaundroDream · The next 90 days</span>
+    <div class="big-num money" data-anim="scale" id="heroRev">₱13.5M</div>
+    <h1 class="slide__title" data-anim style="font-size:clamp(28px,3.6vw,52px);max-width:24ch">That's the extra sales the funnel and the ads can bring LaundroDream in 90 days.</h1>
+    <p class="lead" data-anim style="max-width:58ch">Extra means on top of what you sell today. Every number in this deck is explained in plain words, step by step, and you can change any of them on slide 4. These are estimates, not promises.</p>
+    <div class="hero__ctas" data-anim><a class="btn btn--light" href="#s2">Show me →</a></div>
   </div>
   <span class="slide__num">01</span>
 </section>
 
-<!-- 2 KPIs -->
+<!-- 2 THE SIMPLE VERSION -->
 <section class="slide">
   <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="wrap" style="display:grid;gap:30px">
-    <div><span class="eyebrow" data-anim>The headline</span><h2 class="slide__title" data-anim>Ninety days. Four numbers. All yours.</h2></div>
+    <div><span class="eyebrow" data-anim>The simple version</span><h2 class="slide__title" data-anim>Four numbers. That's the whole story.</h2></div>
     <div class="stats">
-      <div class="stat" data-anim data-tilt="4"><b id="kOwners">0</b><span>Extra franchise buyers</span><small>On top of what you close today</small></div>
-      <div class="stat" data-anim data-tilt="4"><b class="money" id="kRev">₱0</b><span>Extra revenue to LaundroDream</span><small>Equipment + setup orders</small></div>
-      <div class="stat" data-anim data-tilt="4"><b class="money" id="kKeep">₱0</b><span>What you keep</span><small>Gross profit after ads and our fee</small></div>
-      <div class="stat" data-anim data-tilt="4"><b id="kRoi">0×</b><span>Return per peso paid to us</span><small>Gross profit ÷ (ads + retainer)</small></div>
+      <div class="stat" data-anim data-tilt="4"><b id="kOwners">0</b><span>Extra franchise buyers</span><small>In 90 days, on top of today</small></div>
+      <div class="stat" data-anim data-tilt="4"><b class="money" id="kRev">₱0</b><span>Extra sales</span><small>Machines + setup orders</small></div>
+      <div class="stat" data-anim data-tilt="4"><b id="kPay">₱0</b><span>What you pay</span><small>Ads + our fee, 3 months</small></div>
+      <div class="stat" data-anim data-tilt="4"><b class="money" id="kKeep">₱0</b><span>What you keep</span><small>Profit on the extra sales, after paying us</small></div>
     </div>
-    <p class="lead" data-anim>A ₱750K setup order means a handful of new franchise buyers pays for a year of ads and our fee. The whole plan hinges on consultation show-rate and close-rate, which is why the sliders expose both.</p>
+    <p class="takeaway" data-anim id="t2"></p>
   </div>
   <span class="slide__num">02</span>
 </section>
 
-<!-- 3 CALCULATOR + FUNNEL -->
+<!-- 3 STEP BY STEP -->
 <section class="slide slide--soft">
-  <div class="wrap" style="display:grid;gap:22px">
-    <div class="panel__head"><div><span class="eyebrow" data-anim>Interactive calculator</span><h2 class="slide__title" data-anim style="font-size:clamp(28px,4vw,56px)">Your assumptions. Your pipeline.</h2></div><span class="pill" data-anim>Projection · not a guarantee</span></div>
-    <div class="calc-slide">
-      <aside class="controls" data-anim="left">
-        <h3>Assumptions</h3>
-        <div class="grp">Your business today</div>
-        <label class="range"><span class="range__row"><span>Franchise buyers you close per month now</span><b id="vBase">2</b></span><input type="range" id="base" min="0" max="15" step="1" value="2"></label>
-        <label class="range"><span class="range__row"><span>Average order (equipment + setup)</span><b id="vAov">₱750,000</b></span><input type="range" id="aov" min="300000" max="2000000" step="25000" value="750000"></label>
-        <label class="range"><span class="range__row"><span>Gross margin on an order</span><b id="vGm">20%</b></span><input type="range" id="gm" min="8" max="40" step="1" value="20"></label>
-        <div class="grp">What you pay</div>
-        <label class="range"><span class="range__row"><span>Daily ad budget</span><b id="vBud">₱2,500</b></span><input type="range" id="bud" min="500" max="10000" step="100" value="2500"></label>
-        <label class="range"><span class="range__row"><span>Monthly retainer to Magica Studio</span><b id="vFee">₱40,000</b></span><input type="range" id="fee" min="0" max="150000" step="5000" value="40000"></label>
-        <div class="grp">How the funnel performs</div>
-        <label class="range"><span class="range__row"><span>CPM</span><b id="vCpm">₱150</b></span><input type="range" id="cpm" min="60" max="300" step="5" value="150"></label>
-        <label class="range"><span class="range__row"><span>Link CTR</span><b id="vCtr">1.2%</b></span><input type="range" id="ctr" min="0.4" max="3" step="0.1" value="1.2"></label>
-        <label class="range"><span class="range__row"><span>Clicks → consult request</span><b id="vLead">6%</b></span><input type="range" id="lead" min="1" max="15" step="0.5" value="6"></label>
-        <label class="range"><span class="range__row"><span>Requests that attend</span><b id="vShow">25%</b></span><input type="range" id="show" min="10" max="60" step="1" value="25"></label>
-        <label class="range"><span class="range__row"><span>Consultations that close</span><b id="vClose">6%</b></span><input type="range" id="close" min="1" max="20" step="0.5" value="6"></label>
-        <p class="small mute">Months 2 and 3 improve 15% and 25% as retargeting and lookalikes mature.</p>
-      </aside>
-      <div style="display:grid;gap:18px">
-        <div class="panel" data-anim="right"><div class="panel__head"><h3>Where the buyers come from</h3><span class="pill">Expected · 90 days</span></div><div class="chart" id="cFunnel"></div></div>
-        <p class="takeaway" data-anim id="t3"></p>
-      </div>
-    </div>
+  <div class="wrap" style="display:grid;gap:24px">
+    <div><span class="eyebrow" data-anim>How the math works</span><h2 class="slide__title" data-anim style="font-size:clamp(28px,4vw,56px)">Step by step, over 90 days.</h2></div>
+    <div class="chain" id="chainPeople"></div>
+    <div class="mathline" id="chainMoney"></div>
+    <p class="small mute" data-anim>Every step uses average results for Facebook ads in the Philippines. Change any of them on the next slide and this whole deck updates.</p>
   </div>
   <span class="slide__num">03</span>
 </section>
 
-<!-- 4 TODAY VS WITH US -->
+<!-- 4 YOUR NUMBERS -->
 <section class="slide">
-  <div class="wrap slide-grid slide-grid--13">
-    <div style="display:grid;gap:18px">
-      <span class="eyebrow" data-anim>Today vs. with us</span>
-      <h2 class="slide__title" data-anim>Same LaundroDream. More buyers walking in.</h2>
-      <div class="vs" data-anim>
-        <div><b id="vsToday">6</b><span>Buyers in 90 days today</span></div>
-        <div class="with"><b id="vsWith">24</b><span>Buyers in 90 days with us</span></div>
+  <div class="wrap" style="display:grid;gap:22px">
+    <div class="panel__head"><div><span class="eyebrow" data-anim>Your numbers</span><h2 class="slide__title" data-anim style="font-size:clamp(28px,4vw,56px)">Don't like a number? Move it.</h2></div><span class="pill" data-anim>Estimates, not promises</span></div>
+    <div class="calc-slide">
+      <aside class="controls" data-anim="left">
+        <div class="grp">Your business today</div>
+        <label class="range"><span class="range__row"><span>Franchise buyers you close in a normal month</span><b id="vBase">2</b></span><input type="range" id="base" min="0" max="15" step="1" value="2"></label>
+        <label class="range"><span class="range__row"><span>Average sale per buyer (machines + setup)</span><b id="vAov">₱750,000</b></span><input type="range" id="aov" min="300000" max="2000000" step="25000" value="750000"></label>
+        <label class="range"><span class="range__row"><span>Profit you keep from each sale</span><b id="vGm">20%</b></span><input type="range" id="gm" min="8" max="40" step="1" value="20"></label>
+        <div class="grp">What you pay</div>
+        <label class="range"><span class="range__row"><span>Ad budget per day</span><b id="vBud">₱2,500</b></span><input type="range" id="bud" min="500" max="10000" step="100" value="2500"></label>
+        <label class="range"><span class="range__row"><span>Magica Studio fee per month</span><b id="vFee">₱40,000</b></span><input type="range" id="fee" min="0" max="150000" step="5000" value="40000"></label>
+        <div class="grp">Out of 100 people…</div>
+        <label class="range"><span class="range__row"><span>…who book a call, how many show up?</span><b id="vShow">25</b></span><input type="range" id="show" min="10" max="60" step="1" value="25"></label>
+        <label class="range"><span class="range__row"><span>…who show up, how many buy?</span><b id="vClose">6</b></span><input type="range" id="close" min="1" max="20" step="1" value="6"></label>
+        <details>
+          <summary>Advanced (you can skip these)</summary>
+          <label class="range"><span class="range__row"><span>Cost to show the ad to 1,000 people</span><b id="vCpm">₱150</b></span><input type="range" id="cpm" min="60" max="300" step="5" value="150"></label>
+          <label class="range"><span class="range__row"><span>Out of 1,000 who see the ad, how many tap it?</span><b id="vCtr">12</b></span><input type="range" id="ctr" min="4" max="30" step="1" value="12"></label>
+          <label class="range"><span class="range__row"><span>Out of 100 who tap, how many book a call?</span><b id="vLead">6</b></span><input type="range" id="lead" min="1" max="15" step="1" value="6"></label>
+        </details>
+      </aside>
+      <div style="display:grid;gap:18px">
+        <div class="panel" data-anim="right"><div class="panel__head"><h3>From seeing the ad to buying, 90 days</h3><span class="pill">If it goes as planned</span></div><div class="chart" id="cFunnel"></div></div>
+        <p class="takeaway" data-anim id="t3"></p>
       </div>
-      <p class="takeaway" data-anim id="t4"></p>
     </div>
-    <div class="panel" data-anim="right"><div class="panel__head"><h3>Franchise buyers per month</h3><span class="pill">Projection</span></div><div class="chart" id="cVs"></div></div>
   </div>
   <span class="slide__num">04</span>
 </section>
 
-<!-- 5 PAY VS KEEP -->
-<section class="slide slide--dark">
-  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-  <div class="wrap" style="display:grid;gap:28px">
-    <div><span class="eyebrow" data-anim>What you pay vs. what you keep</span><h2 class="slide__title" data-anim>Ninety days, bottom line.</h2></div>
-    <div class="paykeep">
-      <div data-anim><b id="pkAds">₱0</b><span>Ad spend (Meta, TikTok, Google)</span></div>
-      <div data-anim><b id="pkFee">₱0</b><span>Magica Studio retainer</span></div>
-      <div data-anim><b id="pkGp">₱0</b><span>Gross profit on the extra orders</span></div>
-      <div data-anim class="keep"><b id="pkKeep">₱0</b><span>What LaundroDream keeps</span></div>
+<!-- 5 TODAY VS WITH US -->
+<section class="slide slide--soft">
+  <div class="wrap slide-grid slide-grid--13">
+    <div style="display:grid;gap:18px">
+      <span class="eyebrow" data-anim>Today vs. with us</span>
+      <h2 class="slide__title" data-anim>Same LaundroDream. More buyers.</h2>
+      <div class="vs" data-anim>
+        <div><b id="vsToday">6</b><span>Buyers in 90 days, today</span></div>
+        <div class="with"><b id="vsWith">24</b><span>Buyers in 90 days, with us</span></div>
+      </div>
+      <p class="takeaway" data-anim id="t4"></p>
     </div>
-    <p class="takeaway" data-anim id="t5"></p>
+    <div class="panel" data-anim="right"><div class="panel__head"><h3>Franchise buyers each month</h3><span class="pill">Estimate</span></div><div class="chart" id="cVs"></div></div>
   </div>
   <span class="slide__num">05</span>
 </section>
 
-<!-- 6 REVENUE BARS -->
-<section class="slide slide--soft">
-  <div class="wrap slide-grid slide-grid--13">
-    <div style="display:grid;gap:16px"><span class="eyebrow" data-anim>Extra revenue by month</span><h2 class="slide__title" data-anim>Three ways the next 90 days can go.</h2><p class="lead" data-anim>Conservative cuts click-through and close rate to 60% of the sliders. Aggressive lifts both by 30%. Expected is the sliders as set. All three are revenue on top of what you close today.</p></div>
-    <div class="panel" data-anim="right"><div class="panel__head"><h3>Extra revenue to LaundroDream per month</h3><span class="pill">Projection</span></div><div class="chart" id="cBars"></div></div>
+<!-- 6 PAY VS KEEP -->
+<section class="slide slide--dark">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap" style="display:grid;gap:28px">
+    <div><span class="eyebrow" data-anim>What you pay vs. what you keep</span><h2 class="slide__title" data-anim>90 days. Money out, money in.</h2></div>
+    <div class="paykeep">
+      <div data-anim><span>You pay for ads</span><b id="pkAds">₱0</b><small>Goes to Facebook, TikTok, Google</small></div>
+      <div data-anim><span>You pay Magica Studio</span><b id="pkFee">₱0</b><small>Our fee, 3 months</small></div>
+      <div data-anim><span>Profit on the extra sales</span><b id="pkGp">₱0</b><small id="pkGpSub"></small></div>
+      <div data-anim class="keep"><span>What you keep</span><b id="pkKeep">₱0</b><small>Profit minus what you paid</small></div>
+    </div>
+    <p class="takeaway" data-anim id="t5"></p>
   </div>
   <span class="slide__num">06</span>
 </section>
 
-<!-- 7 CUMULATIVE -->
-<section class="slide slide--dark">
-  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+<!-- 7 THREE WAYS -->
+<section class="slide slide--soft">
   <div class="wrap slide-grid slide-grid--13">
-    <div style="display:grid;gap:16px"><span class="eyebrow" data-anim>Payback</span><h2 class="slide__title" data-anim>What you keep outruns what you pay in month one.</h2><p class="lead" data-anim>The dashed line is everything you pay: ads plus our retainer. The solid line is the gross profit the new franchise buyers return at the margin you set.</p></div>
-    <div class="panel" data-anim="right"><div class="panel__head"><h3>Cumulative gross profit vs. cumulative cost</h3><span class="pill">Projection</span></div><div class="chart" id="cLine"></div></div>
+    <div style="display:grid;gap:16px"><span class="eyebrow" data-anim>Three ways it can go</span><h2 class="slide__title" data-anim>Slow, as planned, or great.</h2><p class="lead" data-anim><b>Slow</b> means the ads work only 60% as well as average. <b>As planned</b> means average. <b>Great</b> means 30% better than average. All three are extra sales on top of what you sell today.</p></div>
+    <div class="panel" data-anim="right"><div class="panel__head"><h3>Extra sales each month</h3><span class="pill">Estimate</span></div><div class="chart" id="cBars"></div></div>
   </div>
   <span class="slide__num">07</span>
 </section>
 
-<!-- 8 ROI TABLE -->
-<section class="slide slide--soft">
-  <div class="wrap" style="display:grid;gap:22px">
-    <div><span class="eyebrow" data-anim>Month by month</span><h2 class="slide__title" data-anim>Your P&amp;L on this campaign.</h2></div>
-    <div class="panel" data-anim="scale"><table class="table"><thead><tr><th>Month</th><th class="num">Ads</th><th class="num">Retainer</th><th class="num">Consults</th><th class="num">Extra buyers</th><th class="num">Extra revenue</th><th class="num">Gross profit</th><th class="num">You keep</th><th class="num">Return</th></tr></thead><tbody id="roiBody"></tbody></table>
-    <p class="small mute">Extra buyers are on top of your current monthly closes. Buyers carry one decimal because they are expected values. Return = gross profit ÷ (ads + retainer).</p></div>
+<!-- 8 RUNNING TOTAL -->
+<section class="slide slide--dark">
+  <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap slide-grid slide-grid--13">
+    <div style="display:grid;gap:16px"><span class="eyebrow" data-anim>Running total</span><h2 class="slide__title" data-anim>The money coming in passes the money going out in month one.</h2><p class="lead" data-anim>The dotted line is everything you pay: ads plus our fee, added up. The solid line is the profit from the new buyers, added up.</p></div>
+    <div class="panel" data-anim="right"><div class="panel__head"><h3>Profit in vs. money out, added up</h3><span class="pill">Estimate</span></div><div class="chart" id="cLine"></div></div>
   </div>
   <span class="slide__num">08</span>
 </section>
 
-<!-- 9 CONSERVATIVE -->
-<section class="slide">
-  <div class="wrap scenario" id="scCon"></div>
+<!-- 9 MONTH BY MONTH -->
+<section class="slide slide--soft">
+  <div class="wrap" style="display:grid;gap:22px">
+    <div><span class="eyebrow" data-anim>Month by month</span><h2 class="slide__title" data-anim>Every peso, one line per month.</h2></div>
+    <div class="panel" data-anim="scale"><div style="overflow-x:auto"><table class="table"><thead><tr><th>Month</th><th class="num">Ads</th><th class="num">Our fee</th><th class="num">Calls that happen</th><th class="num">New buyers</th><th class="num">Extra sales</th><th class="num">Profit</th><th class="num">You keep</th><th class="num">Back per ₱1</th></tr></thead><tbody id="roiBody"></tbody></table></div>
+    <p class="small mute">"You keep" is the profit on the extra sales minus ads and our fee. "Back per ₱1" is how many pesos of profit you get for every ₱1 you pay us. Months 2 and 3 do better because Facebook learns who clicks.</p></div>
+  </div>
   <span class="slide__num">09</span>
 </section>
-<!-- 10 EXPECTED -->
+
+<!-- 10 SLOW -->
+<section class="slide">
+  <div class="wrap scenario" id="scCon"></div>
+  <span class="slide__num">10</span>
+</section>
+<!-- 11 AS PLANNED -->
 <section class="slide slide--brand">
   <div class="grain" aria-hidden="true"></div>
   <div class="wrap scenario" id="scExp"></div>
-  <span class="slide__num">10</span>
+  <span class="slide__num">11</span>
 </section>
-<!-- 11 AGGRESSIVE -->
+<!-- 12 GREAT -->
 <section class="slide slide--dark">
   <div class="blobs" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="wrap scenario" id="scAgg"></div>
-  <span class="slide__num">11</span>
+  <span class="slide__num">12</span>
 </section>
 
-<!-- 12 CLOSE -->
+<!-- 13 CLOSE -->
 <section class="slide slide--dark">
   <div class="slide__bg"><img src="https://images.unsplash.com/photo-1604335399105-a0c585fd81a1?w=2000&q=80&fit=crop&auto=format" alt=""></div>
   <div class="grain" aria-hidden="true"></div>
   <div class="wrap one">
     <span class="eyebrow eyebrow--plain" data-anim>Ready when you are</span>
     <h2 class="slide__title slide__title--xl" data-anim style="text-align:center;max-width:14ch">Say go and we launch in 7 days.</h2>
-    <p class="lead" data-anim style="text-align:center;max-width:52ch">Funnel live, pixel firing, six creatives in the account, first consultations on your calendar by week two.</p>
+    <p class="lead" data-anim style="text-align:center;max-width:52ch">Funnel page live, six ads ready, and the first calls on your calendar by week two.</p>
     <div class="hero__ctas" data-anim style="justify-content:center"><a class="btn btn--light btn--xl" href="https://laundrodream-funnel.majcustodioph.com">Open the funnel</a><a class="btn btn--ghost" style="color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.4)" href="https://laundrodream-ads.majcustodioph.com">Review the ads plan</a></div>
-    <p class="small" data-anim style="color:rgba(255,255,255,.7)">Projections by Magica Studio for LaundroDream. Computed from editable assumptions and Philippine paid-media benchmarks; planning estimates, not guarantees.</p>
+    <p class="small" data-anim style="color:rgba(255,255,255,.7)">Estimates by Magica Studio for LaundroDream, based on average Facebook ad results in the Philippines and the numbers you set on slide 4. Not a guarantee.</p>
   </div>
-  <span class="slide__num">12</span>
+  <span class="slide__num">13</span>
 </section>
 </main>
 
@@ -205,59 +241,81 @@
 <script src="/funnels/shared/deck.js" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const g = (id) => document.getElementById(id), v = (id) => +g(id).value;
-  const fmt = (n) => Math.round(n).toLocaleString('en-PH'), peso = (n) => '₱' + fmt(n), cpt = (n) => '₱' + Charts.compact(n);
+  const g = (id) => document.getElementById(id), v = (id) => +g(id).value, R = Math.round;
+  const fmt = (n) => R(n).toLocaleString('en-PH'), peso = (n) => '₱' + fmt(n), cpt = (n) => (n < 0 ? '−₱' : '₱') + Charts.compact(Math.abs(n));
   const C = { exp: '#2f8fc4', con: '#eb6834', agg: '#1baf7a', today: '#9ec5f4' };
-  const RAMP = [1, 1.15, 1.25];
+  const RAMP = [1, 1.15, 1.25]; // months 2 and 3 reach more people for the same money
+  // Whole numbers at every step, so the chain on slide 3 adds up exactly.
   function model(mult) {
-    const bud = v('bud'), fee = v('fee'), cpm = v('cpm'), ctr = v('ctr') / 100 * mult, lead = v('lead') / 100, show = v('show') / 100, close = v('close') / 100 * mult, aov = v('aov'), gm = v('gm') / 100;
-    const months = RAMP.map((r) => { const ads = bud * 30, imp = ads / cpm * 1000, clicks = imp * ctr * r, leads = clicks * lead, cons = leads * show, owners = cons * close, rev = owners * aov, gp = rev * gm, cost = ads + fee; return { ads, fee, cost, imp, clicks, leads, cons, owners, rev, gp, keep: gp - cost }; });
+    const bud = v('bud'), fee = v('fee'), cpm = v('cpm'), tap = v('ctr') / 1000 * mult, book = v('lead') / 100, show = v('show') / 100, buy = v('close') / 100 * mult, aov = v('aov'), gm = v('gm') / 100;
+    const months = RAMP.map((r) => {
+      const ads = bud * 30, views = R(ads / cpm * 1000 * r), taps = R(views * tap), booked = R(taps * book), shows = R(booked * show), buyers = R(shows * buy);
+      const rev = buyers * aov, gp = R(rev * gm), cost = ads + fee;
+      return { ads, fee, cost, views, taps, booked, shows, buyers, rev, gp, keep: gp - cost };
+    });
     const t = months.reduce((a, m) => { for (const k in m) a[k] = (a[k] || 0) + m[k]; return a; }, {});
     return { months, t };
   }
+  const per1 = (M) => M.t.cost > 0 ? (M.t.gp / M.t.cost) : 0;
   const scen = (host, name, M, blurb) => {
-    host.innerHTML = `<span class="eyebrow" data-anim>Scenario · ${name}</span><div class="big-num money" data-anim="scale">${cpt(M.t.keep)}</div><p class="lead" data-anim style="max-width:60ch"><b>That's what you keep</b> after ads and our fee. ${blurb}</p><div class="meta" data-anim><div><b>+${M.t.owners.toFixed(1)}</b><span>Extra buyers</span></div><div><b>${cpt(M.t.rev)}</b><span>Extra revenue</span></div><div><b>${cpt(M.t.gp)}</b><span>Gross profit</span></div><div><b>${cpt(M.t.cost)}</b><span>You pay (ads + fee)</span></div><div><b>${(M.t.gp / M.t.cost).toFixed(1)}×</b><span>Return per peso</span></div></div>`;
+    host.innerHTML = `<span class="eyebrow" data-anim>${name}</span><div class="big-num money" data-anim="scale">${cpt(M.t.keep)}</div><p class="lead" data-anim style="max-width:60ch"><b>That's what you keep</b> after paying for ads and our fee. ${blurb}</p><div class="meta" data-anim><div><b>+${fmt(M.t.buyers)}</b><span>Extra buyers</span></div><div><b>${cpt(M.t.rev)}</b><span>Extra sales</span></div><div><b>${cpt(M.t.gp)}</b><span>Profit on those sales</span></div><div><b>${cpt(M.t.cost)}</b><span>You pay (ads + fee)</span></div><div><b>₱${per1(M).toFixed(2)}</b><span>Back for every ₱1</span></div></div>`;
     host.querySelectorAll('[data-anim]').forEach((el, k) => el.style.setProperty('--d', `${k * 90 + 120}ms`));
   };
   function render() {
     g('vBase').textContent = v('base'); g('vAov').textContent = peso(v('aov')); g('vGm').textContent = v('gm') + '%'; g('vBud').textContent = peso(v('bud')); g('vFee').textContent = peso(v('fee'));
-    g('vCpm').textContent = peso(v('cpm')); g('vCtr').textContent = v('ctr').toFixed(1) + '%'; g('vLead').textContent = v('lead') + '%'; g('vShow').textContent = v('show') + '%'; g('vClose').textContent = v('close') + '%';
-    const E = model(1), Co = model(0.6), Ag = model(1.3), base = v('base');
-    g('heroRev').textContent = cpt(E.t.rev);
-    g('kOwners').textContent = '+' + E.t.owners.toFixed(1); g('kRev').textContent = cpt(E.t.rev); g('kKeep').textContent = cpt(E.t.keep); g('kRoi').textContent = (E.t.gp / E.t.cost).toFixed(1) + '×';
-    const pct = (a, b) => (a / b * 100).toFixed(1) + '%';
+    g('vCpm').textContent = peso(v('cpm')); g('vCtr').textContent = v('ctr'); g('vLead').textContent = v('lead'); g('vShow').textContent = v('show'); g('vClose').textContent = v('close');
+    const E = model(1), Co = model(0.6), Ag = model(1.3), base = v('base'), T = E.t, p1 = per1(E);
+    g('heroRev').textContent = cpt(T.rev);
+    g('kOwners').textContent = '+' + fmt(T.buyers); g('kRev').textContent = cpt(T.rev); g('kPay').textContent = cpt(T.cost); g('kKeep').textContent = cpt(T.keep);
+    g('t2').textContent = T.keep > 0 ? `For every ₱1 you pay us, about ₱${p1.toFixed(2)} comes back as profit.` : `At these numbers the ads cost more than they bring back. Move the sliders on slide 4 to your real numbers.`;
+    // Step by step (slide 3)
+    g('chainPeople').innerHTML = [
+      ['See the ad', fmt(T.views), `₱${fmt(T.ads)} in ads over 90 days`],
+      ['Tap it', fmt(T.taps), `${v('ctr')} out of every 1,000`],
+      ['Book a call', fmt(T.booked), `${v('lead')} out of every 100 who tap`],
+      ['Show up', fmt(T.shows), `${v('show')} out of every 100 who book`],
+      ['Buy', fmt(T.buyers), `${v('close')} out of every 100 who show up`, 'end'],
+    ].map(([s, b, sm, cls], i) => `<div class="${cls || ''}" data-anim style="--d:${i * 90}ms"><span>${s}</span><b>${b}</b><small>${sm}</small></div>`).join('');
+    g('chainMoney').innerHTML = [
+      ['×', `${fmt(T.buyers)} buyers × ${peso(v('aov'))}`, cpt(T.rev), 'extra sales'],
+      ['−', `${v('gm')}% of that is profit`, cpt(T.gp), 'profit on the extra sales'],
+      ['=', 'You pay us (ads + fee)', cpt(T.cost), `₱${fmt(T.ads)} ads + ₱${fmt(T.fee)} fee`],
+      ['', 'You keep', cpt(T.keep), T.keep > 0 ? `₱${p1.toFixed(2)} back for every ₱1` : 'Not paying back at these numbers', 'end'],
+    ].map(([op, s, b, sm, cls], i) => `<div class="${cls || ''}" data-op="${op}" data-anim style="--d:${450 + i * 90}ms"><span>${s}</span><b>${b}</b><small>${sm}</small></div>`).join('');
     Charts.funnel(g('cFunnel'), { stages: [
-      { name: 'Impressions', value: Math.round(E.t.imp) },
-      { name: 'Link clicks', value: Math.round(E.t.clicks), pct: pct(E.t.clicks, E.t.imp) },
-      { name: 'Consult requests', value: Math.round(E.t.leads), pct: pct(E.t.leads, E.t.clicks) },
-      { name: 'Consults attended', value: Math.round(E.t.cons), pct: pct(E.t.cons, E.t.leads) },
-      { name: 'Franchise buyers', value: Math.round(E.t.owners * 10) / 10, pct: pct(E.t.owners, E.t.cons) },
+      { name: 'Saw the ad', value: T.views },
+      { name: 'Tapped it', value: T.taps, pct: `${v('ctr')} of 1,000` },
+      { name: 'Booked a call', value: T.booked, pct: `${v('lead')} of 100` },
+      { name: 'Showed up', value: T.shows, pct: `${v('show')} of 100` },
+      { name: 'Bought', value: T.buyers, pct: `${v('close')} of 100` },
     ] });
-    g('t3').textContent = `${fmt(E.t.cons)} consultations on your calendar in 90 days, and ${E.t.owners.toFixed(1)} of them sign.`;
-    const todayQ = base * 3, withQ = base * 3 + E.t.owners;
-    g('vsToday').textContent = fmt(todayQ); g('vsWith').textContent = withQ.toFixed(1);
+    g('t3').textContent = `${fmt(T.shows)} calls happen in 90 days. About ${fmt(T.buyers)} of them become franchise buyers.`;
+    const todayQ = base * 3, withQ = base * 3 + T.buyers;
+    g('vsToday').textContent = fmt(todayQ); g('vsWith').textContent = fmt(withQ);
     Charts.bars(g('cVs'), { labels: ['Month 1', 'Month 2', 'Month 3'], labelAll: true, series: [
       { name: 'Today (no ads)', color: C.today, values: [base, base, base] },
-      { name: 'With funnel + ads', color: C.exp, values: E.months.map((m) => Math.round((base + m.owners) * 10) / 10) },
+      { name: 'With funnel + ads', color: C.exp, values: E.months.map((m) => base + m.buyers) },
     ] });
-    g('t4').textContent = base > 0 ? `That's ${((withQ / todayQ - 1) * 100).toFixed(0)}% more franchise buyers than you close today, without adding a single salesperson.` : `From zero to ${withQ.toFixed(1)} franchise buyers in 90 days, without adding a single salesperson.`;
-    g('pkAds').textContent = cpt(E.t.ads); g('pkFee').textContent = cpt(E.t.fee); g('pkGp').textContent = cpt(E.t.gp); g('pkKeep').textContent = cpt(E.t.keep);
-    g('t5').textContent = E.t.keep > 0 ? `Every peso you pay us comes back ${(E.t.gp / E.t.cost).toFixed(1)} times. It pays for itself in month one.` : `At these assumptions the campaign doesn't pay back in 90 days. Move the close-rate or margin sliders to see what has to be true.`;
+    g('t4').textContent = base > 0 ? `That's ${R((withQ / todayQ - 1) * 100)}% more franchise buyers than today, without hiring anyone new.` : `From zero to ${fmt(withQ)} franchise buyers in 90 days, without hiring anyone new.`;
+    g('pkAds').textContent = cpt(T.ads); g('pkFee').textContent = cpt(T.fee); g('pkGp').textContent = cpt(T.gp); g('pkKeep').textContent = cpt(T.keep);
+    g('pkGpSub').textContent = `${v('gm')}% of ${cpt(T.rev)} in extra sales`;
+    g('t5').textContent = T.keep > 0 ? `You pay ${cpt(T.cost)}. You get ${cpt(T.gp)} back in profit. It pays for itself in the first month.` : `At these numbers it doesn't pay back in 90 days. Try a higher "how many buy" or profit number on slide 4.`;
     Charts.bars(g('cBars'), { labels: ['Month 1', 'Month 2', 'Month 3'], money: true, labelAll: true, series: [
-      { name: 'Conservative', color: C.con, values: Co.months.map((m) => m.rev) },
-      { name: 'Expected', color: C.exp, values: E.months.map((m) => m.rev) },
-      { name: 'Aggressive', color: C.agg, values: Ag.months.map((m) => m.rev) },
+      { name: 'Slow', color: C.con, values: Co.months.map((m) => m.rev) },
+      { name: 'As planned', color: C.exp, values: E.months.map((m) => m.rev) },
+      { name: 'Great', color: C.agg, values: Ag.months.map((m) => m.rev) },
     ] });
     let cg = 0, cc = 0; const gp = [], cost = [];
     E.months.forEach((m) => { cg += m.gp; cc += m.cost; gp.push(cg); cost.push(cc); });
     Charts.lines(g('cLine'), { labels: ['Day 30', 'Day 60', 'Day 90'], money: true, series: [
-      { name: 'Cumulative gross profit to you', color: C.exp, values: gp },
-      { name: 'Cumulative cost (ads + retainer)', color: C.con, values: cost, dashed: true },
+      { name: 'Profit coming in (added up)', color: C.exp, values: gp },
+      { name: 'Money going out: ads + fee (added up)', color: C.con, values: cost, dashed: true },
     ] });
-    scen(g('scCon'), 'Conservative', Co, 'Creative lands below plan and show-rate disappoints. The campaign still pays for itself, and the retargeting pool keeps filling for the next quarter.');
-    scen(g('scExp'), 'Expected', E, 'The plan performs to Philippine benchmarks. Twelve consultation slots a week stay full from week three, and the first new franchise buyers install before day 90.');
-    scen(g('scAgg'), 'Aggressive', Ag, 'A hook goes viral, lookalikes hit, close rate climbs. The constraint stops being leads and becomes consultant capacity, so plan the second hire now.');
-    g('roiBody').innerHTML = E.months.map((m, i) => `<tr><td>Month ${i + 1}</td><td class="num">${peso(m.ads)}</td><td class="num">${peso(m.fee)}</td><td class="num">${fmt(m.cons)}</td><td class="num">+${m.owners.toFixed(1)}</td><td class="num">${peso(m.rev)}</td><td class="num">${peso(m.gp)}</td><td class="num">${(m.keep < 0 ? '– ' : '') + peso(Math.abs(m.keep))}</td><td class="num">${(m.gp / m.cost).toFixed(1)}×</td></tr>`).join('') + `<tr class="total"><td>90 days</td><td class="num">${peso(E.t.ads)}</td><td class="num">${peso(E.t.fee)}</td><td class="num">${fmt(E.t.cons)}</td><td class="num">+${E.t.owners.toFixed(1)}</td><td class="num">${peso(E.t.rev)}</td><td class="num">${peso(E.t.gp)}</td><td class="num">${(E.t.keep < 0 ? '– ' : '') + peso(Math.abs(E.t.keep))}</td><td class="num">${(E.t.gp / E.t.cost).toFixed(1)}×</td></tr>`;
+    scen(g('scCon'), 'If it goes slow', Co, 'The ads work only 60% as well as average and fewer people show up to their call. It still pays for itself.');
+    scen(g('scExp'), 'If it goes as planned', E, 'The ads do what Facebook ads in the Philippines usually do. The calendar stays full from week three.');
+    scen(g('scAgg'), 'If it goes great', Ag, 'A video takes off and the ads do 30% better than average. The problem becomes having enough consultants to take the calls.');
+    const row = (label, m) => `<tr><td>${label}</td><td class="num">${peso(m.ads)}</td><td class="num">${peso(m.fee)}</td><td class="num">${fmt(m.shows)}</td><td class="num">+${fmt(m.buyers)}</td><td class="num">${peso(m.rev)}</td><td class="num">${peso(m.gp)}</td><td class="num">${(m.keep < 0 ? '− ' : '') + peso(Math.abs(m.keep))}</td><td class="num">₱${(m.cost > 0 ? m.gp / m.cost : 0).toFixed(2)}</td></tr>`;
+    g('roiBody').innerHTML = E.months.map((m, i) => row(`Month ${i + 1}`, m)).join('') + row('90 days', T).replace('<tr>', '<tr class="total">');
   }
   ['base','aov','gm','bud','fee','cpm','ctr','lead','show','close'].forEach((id) => g(id).addEventListener('input', render));
   render();
